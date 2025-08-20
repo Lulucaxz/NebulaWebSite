@@ -1,4 +1,4 @@
-import express, { RequestHandler } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import session from 'express-session';
@@ -10,6 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import multer from "multer";
 import { v2 as cloudinary, UploadStream } from "cloudinary";
+
+import { pool } from "./db";
 
 dotenv.config();
 
@@ -66,8 +68,10 @@ function getNextIdSite(): number {
 }
 
 // Async handler para tratar erros em async routes
-const asyncHandler = (fn: RequestHandler): RequestHandler => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
+export const asyncHandler = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
+): RequestHandler => (req, res, next) => {
+  fn(req, res, next).catch(next);
 };
 
 // Middlewares
@@ -188,58 +192,48 @@ app.get('/auth/logout', (req, res, next) => {
 // Cadastro local
 app.post('/auth/register', asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  const users = readUsers();
 
-  if (users.find(u => u.email === email)) {
+  const [rows] = await pool.query("SELECT * FROM usuario WHERE email = ?", [email]);
+  if ((rows as any[]).length > 0) {
     res.status(409).json({ error: 'Email já cadastrado' });
-    return;
+    return 
   }
-
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser: UserType = {
-    idsite: getNextIdSite(),
-    id: uuidv4(),
-    name,
-    email,
-    password: hashedPassword,
-    photo: 'https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png',
-    provider: 'local',
-    prf_user: `@${name.replace(/\s/g, '')}${getNextIdSite()}`,
-    bio: "..."
-  };
-
-  users.push(newUser);
-  saveUsers(users);
+  await pool.query(
+    `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
+      progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, seguidores, seguindo)
+     VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, 'Astronomia', 'pt-br', 'dark', 0, 0)`,
+    [name, `@${name}${Date.now()}`, 0, "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png", email, hashedPassword]
+  );
 
   res.status(201).json({ message: 'Usuário registrado com sucesso' });
 }));
 
+
 // Login local
 app.post('/auth/login', asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const users = readUsers();
 
-  const user = users.find(u => u.email === email && u.provider === 'local');
-  if (!user) {
-    res.status(401).json({ error: 'Usuário local não encontrado' });
-    return;
+  const [rows] = await pool.query("SELECT * FROM usuario WHERE email = ?", [email]);
+  const users = rows as any[];
+  if (users.length === 0){ 
+    res.status(401).json({ error: 'Usuário não encontrado' });
+    return
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
+  const user = users[0];
+  const isMatch = await bcrypt.compare(password, user.senha);
   if (!isMatch) {
     res.status(401).json({ error: 'Senha incorreta' });
-    return;
+    return
   }
 
   req.login(user, (err) => {
-    if (err) {
-      res.status(500).json({ error: 'Erro ao autenticar' });
-      return;
-    }
+    if (err) return res.status(500).json({ error: 'Erro ao autenticar' });
     res.json({ message: 'Login bem-sucedido', user });
   });
 }));
+
 
 // Atualizar perfil
 app.put(
