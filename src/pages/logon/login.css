@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Questrial&display=swap');
+
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bgc-login {
+    background-image: url(../../assets/background-padrao.webp);
+    width: 70vw;
+    height: 100vh;
+    background-size: cover;
+}
+
+.form-login{
+    width: 30vw;
+    height: 100vh;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form-login input {
+    height: 6%;
+    width: 60%;
+    margin-top: 5%;
+    background-color: #E7D9FF;
+    border: none;
+    padding-left: 5%;
+    font-size: 20px;
+    font-family: "Questrial";
+}
+
+.input-login::placeholder {
+    font-size: 20px;
+    font-family: "Questrial";
+    padding-left: 5%;
+}
+
+.login-title {
+    color: var(--barra-clara);
+    font-family: "Archivo black" ;
+    text-transform: uppercase;
+    margin-top: 20%;
+    font-size: 30px;
+}
+
+.form-login h2 {
+    color: white;
+    font-family: "Questrial";
+    font-size: 20px;
+}
+
+.enter-btn {
+    width: 60%;
+    height: 5%;
+    background-color: var(--barra-clara);
+    margin-top: 5%;
+    font-family: "archivo black";
+    color: white;
+    text-transform: uppercase;
+    border: none;
+    font-size: 20px;
+}
+
+.enter-btn:hover {
+    cursor: pointer;
+    background-color: #fff;
+    color: var(--barra-clara);
+} 
+
+.login-google {
+    width: 60%;
+    height: 5%;
+    background-color: white;
+    font-family: "Questrial";
+    font-size: 20px;
+    color: var(--barra-clara);
+    margin-top: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.login-google img {
+    width: 8%;
+    padding-right: 5%;
+}
+
+.login-google:hover {
+    cursor: pointer;
+}
+
+.form-login h3 {
+    color: var(--barra-clara);
+    font-family: "Questrial";
+    margin-top: 10%;
+    text-decoration:underline;
+}

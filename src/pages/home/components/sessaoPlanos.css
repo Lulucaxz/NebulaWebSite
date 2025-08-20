@@ -1,0 +1,160 @@
+#ssp-container {
+    width: 90%;
+}
+
+.video-planos-background {
+    background-image: url(background-padrao2.jpg);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px);
+}
+
+/* Área de planos */
+
+/* Vídeo */
+.video-planos {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.video-planos div {
+    width: 100%;
+    position: relative;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.video-planos div div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px);
+
+    z-index: 10;
+}
+
+.video-planos div img {
+    width: 100px;
+    height: 100px;
+
+    z-index: 15;
+}
+
+/* Planos */
+.container-planos-pagIni {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: center;
+    gap: 60px;
+    margin-bottom: 60px;
+}
+
+.plano {
+    width: 100%;
+    display: flex;
+    text-align: justify;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.plano h2 {
+    margin: 25px 30px 0 30px;
+    color: #ffffff;
+    font-size: 32px;
+    
+    font-family: "Archivo black", sans-serif;
+}
+
+.plano p {
+    margin: 0 30px;
+    color: #ffffff;
+    font-size: 20px;
+    
+    font-family: "Questrial", sans-serif;
+}
+
+.plano h3 {
+    margin: 15px 30px -15px 30px;
+    color: var(--branco);
+    font-size: 16px;
+    
+    font-family: "Questrial", sans-serif;
+}
+
+.plano-button {
+    width: calc(100% - (30px * 2));
+    margin: 0 30px 25px 30px;
+    color: #ffffff;
+    background-color: #585858;
+    font-size: 40px;
+    font-weight: 600;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0px;
+    cursor: pointer;
+    
+    font-family: "Questrial", sans-serif;
+}
+
+.plano-nav-beneficios {
+    margin: 10px 0px 10px 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-beneficio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+}
+
+.nav-beneficio img {
+    width: 30px;
+    height: 30px;
+}
+
+/* Plano: universo */
+.plano {
+    background-color: #A751D9;
+}
+
+.plano h2 {
+    opacity: 1;
+}
+
+.plano h3 {
+    opacity: 0.5;
+}
+
+.plano .plano-button {
+    background-color: #ffffff;
+    color: #A751D9;
+    height: 35px;
+}
+
+.planos-mini-texto {
+    font-family: "Questrial", sans-serif;
+    font-size: 20px;
+    color: #fff;
+    margin: 25px 0;
+    text-align: center;
+}
+/* Área de planos */

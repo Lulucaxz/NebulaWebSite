@@ -1,0 +1,306 @@
+.frm-comentario {
+    width: 1500px;
+    background-color: #454545;
+    overflow: hidden;
+    border-radius: 10px;
+    display: flex;
+    justify-self: center;
+    padding: 0;
+    margin-bottom: 100px;
+    transition: all 0.5s;
+}
+
+.frm-comentario-lateral-esquerda .frm-comentario-foto-perfil {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.frm-comentario-lateral-esquerda {
+    width: 100px;
+    min-height: 400px;
+    max-height: calc(100% - (30px * 2));
+    background-color: #363636;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 0;
+}
+
+.frm-comentario img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.outroUsuario {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.frm-comentario-lateral-esquerda div {
+    width: 65px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+.frm-comentario-lateral-esquerda div p {
+    color: #D390FF;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-lateral-esquerda nav {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 30px;
+    gap: 20px;
+}
+
+
+.frm-comentario-lateral-direita {
+    width: 100%;
+    min-height: 420px;
+    padding: 40px 0 0 0;
+    position: relative;
+}
+
+.frm-comentario-titulo {
+    width: calc(100% - (50px * 2));
+    padding: 0 50px;
+}
+
+.frm-comentario-titulo h3 {
+    font-weight: 700;
+    font-size: 24px;
+    color: #ffffff;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-titulo h4 {
+    font-weight: 400;
+    font-size: 20px;
+    color: #a4a4a4;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-conteudo {
+    width: calc(100% - (50px * 2));
+    padding: 40px 50px 200px 50px;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    font-weight: 300;
+    font-size: 24px;
+    text-align: justify;
+    color: #FFFFFF;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-conteudo-editar-input {
+    width: 100%;
+    height: 300px;
+    box-sizing: border-box;
+    background-color: rgba(240, 248, 255, 0);
+
+    font-weight: 300;
+    font-size: 24px;
+    text-align: justify;
+    color: #FFFFFF;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-conteudo-editar {
+    width: calc(100% - (50px * 2));
+    padding: 40px 50px 200px 50px;
+    border: none;
+}
+
+.frm-comentario-baixo {
+    width: 100%;
+    padding: 30px 0;
+    display: flex;
+    background-color: #555555;
+    flex-direction: row-reverse;
+    position: absolute;
+    gap: 80px;
+    bottom: 0;
+}
+
+.frm-comentario-baixo div {
+    display: flex;
+    align-items: center;
+
+    font-weight: 400;
+    font-size: 24px;
+    color: #A4A4A4;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-baixo button {
+    border: none;
+    background-color: #555555;
+    padding: 10px 40px;
+    border-radius: 5px;
+    margin-right: 30px;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    font-weight: 400;
+    font-size: 24px;
+    color: #D390FF;
+
+    font-family: "Inter", sans-serif;
+}
+
+.frm-comentario-baixo button:hover {
+    background-color: #454545;
+}
+
+.frm-comentario-baixo button:active {
+    background-color: #2c2c2c;
+}
+
+
+.ver-respostas-form-esconder {
+    overflow: hidden;
+    height: 0;
+    transition: all 0.5s;
+    margin-bottom: 25px;
+    margin-top: -100px;
+}
+
+.ver-respostas-form {
+    width: calc(1500px - (50px * 2));
+    background-color: #363636;
+    overflow: hidden;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    justify-self: center;
+    gap: 50px;
+    padding: 50px;
+}
+
+.ver-respostas-form textarea {
+    width: calc(100% - 125px);
+    height: 130px;
+    background-color: #555555;
+    border: 2px solid #A4A4A4;
+    border-radius: 7px;
+    padding: 20px 20px 0 20px;
+
+    font-weight: 400;
+    font-size: 32px;
+    color: #e7e7e7;
+
+    font-family: 'Inter';
+}
+
+.ver-respostas-form button {
+    width: 75px;
+    height: 75px;
+    background-color: #555555;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ver-respostas-form button:hover {
+    background-color: #454545;
+}
+
+.ver-respostas-form button:active {
+    background-color: #2c2c2c;
+}
+
+.ver-respostas-form button img {
+    width: 70%;
+    height: 70%;
+    transform: rotateZ(-40deg);
+    margin-top: -10%;
+    margin-right: -5%;
+}
+
+.ver-respostas-container {
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 1s;
+    margin-bottom: 100px;
+}
+
+.forum-imput-comentar {
+    position: fixed;
+    bottom: 50px;
+    align-self: center;
+    background-color: #303030;
+    padding: 25px;
+    border: 3px solid #1d1d1d;
+    display: flex;
+    gap: 25px;
+}
+
+.forum-imput-comentar textarea {
+    width: 900px;
+    height: 130px;
+    background-color: #555555;
+    border: 2px solid #A4A4A4;
+    padding: 20px 20px 0 20px;
+
+    font-family: 'Questrial';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 25px;
+    text-align: justify;
+
+    color: #F8EFFF;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.forum-imput-comentar button {
+    width: 75px;
+    height: 75px;
+    background-color: #555555;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.forum-imput-comentar button img {
+    width: 70%;
+    height: 70%;
+    transform: rotateZ(-40deg);
+    margin-top: -10%;
+    margin-right: -5%;
+}

@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Questrial&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    user-select: text;
+    line-height: 24px;
+    letter-spacing: 1px;
+}
+
+:root {
+    --branco: #F8EFFF;
+    --preto: #070209;
+
+    --cinza-escuro1: #282828;
+    --cinza-escuro2: #1D1D1D;
+    --cinza-escuro3: #141414;
+
+    --cinza-claro1: #4E4E4E;
+    --cinza-claro2: #dbdbdb;
+
+    --roxo1: #9A30EB;
+}
+
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--cinza-escuro3);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--roxo1);
+}
+
+.container {
+    width:calc(100% - 220px);
+    justify-self: center;
+    position: absolute;
+    right: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--cinza-escuro2);
+}
+
+.pdr-descricao {
+    color: #fff;
+    margin: 40px 0;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 28px;
+}
+
+.pdr-descricao-destaque {
+    color: var(--roxo1);
+    font-size: 36px;
+}
+
+.sessao {
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 25px;
+    padding: 50px 0px 25px 0px;
+}
+
+.sessao-descentralizada {
+    width: 90%;
+}
+
+.sessao h1 {
+    font-family: 'Archivo Black';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 35px;
+
+    color: #F8EFFF;
+}
+
+.sessao hr {
+    width: max-content;
+    flex-grow: 1;
+    height: 1px;
+    box-sizing: border-box;
+    background-color: #F8EFFF;
+}
+
+@media screen and (max-width: 425px) {
+    #container {
+        width: 100%;
+    }
+}

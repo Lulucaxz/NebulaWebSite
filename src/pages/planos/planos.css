@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Questrial&display=swap');    
+    
+    html {
+        overflow-x: hidden;
+        user-select: none !important;
+    }
+
+    .container-planos {
+      width: calc(100%-220px);
+      position: relative;
+      right: 0;
+    }
+
+
+    input::placeholder {
+      color: rgb(197, 193, 193);
+      text-transform: uppercase;
+    }
+
+    input:focus {
+      border: none;
+    }
+
+    .pay-input{
+      border: none;
+    }
+
+   
+    .qrcode-content{
+      display: flex;
+    }
+    
+  
+
+    .plan-span{
+      color: white;
+      font-family: "Archivo black";
+      font-size: 20px;
+    
+    }
+
+    .plan-select {
+      font-family: "Archivo black";
+    }
+
+    .btn-hover {
+      background-color: white;
+      color: #9B3BD2;
+    }
+
+  
+    .strong-pay {
+      font-family: "Archivo black";
+    }
+
+    
+    .slick-center {
+      transform: scale(1.05) !important;
+      z-index: 2 !important;
+ 
+    }
+    
+    .slick-slide:not(.slick-center) {
+      transform: scale(0.9) translateY(10px) !important;
+      
+    }
+
+    .payment-method-container {
+      transition: all 0.3s ease;
+    }
+    
+    .payment-content {
+      transition: height 0.3s ease, padding 0.3s ease;
+      will-change: height;
+    }
+    
+    .payment-toggle-icon {
+      transition: transform 0.3s ease;
+    }
+    
+    .payment-method-button:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .qrcode-content {
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .qrcode-content {
+      animation: fadeIn 0.3s ease-out;
+    }
+  
+
+
+    @media screen and (min-width:1025px ) {
+        .slick-list {
+     
+      margin: 0 -10px !important;
+      overflow: visible !important;
+    }
+    }
+
+    @keyframes toastSlideIn {
+      from { 
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    @keyframes toastFadeOut {
+      from { 
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      to { 
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px);
+      }
+    }
+    
+   

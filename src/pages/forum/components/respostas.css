@@ -1,0 +1,75 @@
+.resposta {
+    width: 1300px;
+    background-color: #282828;
+    overflow: hidden;
+    border-radius: 10px;
+    display: flex;
+    justify-self: center;
+    padding: 0  ;
+    margin-bottom: 50px;
+}
+
+
+.resposta-lateral-esquerda {
+    width: 100px;
+    max-height: calc(100% - (30px * 2));
+    background-color: #363636;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 0;
+}
+.resposta img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.resposta-lateral-direita {
+    width: 100%;
+    padding: 40px 0 0 0;
+    position: relative;
+}
+.resposta-titulo {
+    width: calc(100% - (50px * 2));
+    padding: 0 50px;
+}
+.resposta-titulo h3 {
+    font-weight: 700;
+    font-size: 24px;
+    color: #ffffff;
+
+    font-family: "Inter", sans-serif;
+}
+.resposta-titulo h4 {
+    font-weight: 400;
+    font-size: 20px;
+    color: #a4a4a4;
+
+    font-family: "Inter", sans-serif;
+}
+.resposta-conteudo {
+    width: calc(100% - (50px * 2));
+    padding: 40px 50px 100px 50px;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    font-weight: 300;
+    font-size: 24px;
+    text-align: justify;
+    color: #FFFFFF;
+
+    font-family: "Inter", sans-serif;
+}
+.resposta-baixo {
+    width: 100%;
+    padding: 30px 0;
+    display: flex;
+    background-color: #555555;
+    flex-direction: row-reverse;
+    position: absolute;
+    gap: 80px;
+    bottom: 0;
+}

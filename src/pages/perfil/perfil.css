@@ -1,0 +1,289 @@
+.container-perfil {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+#prf-containerAll {
+  width: calc(100vw - 220px);
+  margin-left: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 60px);
+}
+
+.prf-banner {
+  width: 100%;
+  height: 200px;
+  background-image: url(nebulosaBanner.jpg);
+}
+
+.prf-usuario-barra {
+  width: 100%;
+  height: 100px;
+  background-color: var(--roxo1);
+  display: flex;
+  justify-content: center;
+
+  color: #fff;
+}
+
+.prf-container {
+  width: 90%;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.prf-foto {
+  width: 150px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  position: relative;
+  top: -50px;
+  object-fit: cover;
+}
+
+.prf-nome-usuario span {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 40px;
+}
+
+.prf-usuario-rank {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  top: -10px;
+  font-family: "Questrial", sans-serif;
+}
+
+.prf-usuario span {
+  font-size: 20px;
+}
+
+.prf-rank span {
+  color: var(--branco);
+}
+
+.prf-editar svg {
+  min-width: 40px;
+  min-height: 40px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.prf-container2 {
+  width: 90%;
+}
+
+/* COLUNAS */
+
+.prf-colunas {
+  display: flex;
+  margin: 50px 0;
+  gap: 25px;
+}
+
+.prf-coluna1 {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.prf-biografia {
+  padding: 40px;
+  text-align: justify;
+  width: calc(100% - 80px);
+
+  color: var(--branco);
+  background-color: var(--cinza-escuro3);
+
+  font-family: "Questrial", sans-serif;
+  font-size: 24px;
+
+  letter-spacing: 1.5px;
+
+  & span {
+    white-space: pre-wrap;
+    width: 100%;
+    word-break: break-word
+  }
+}
+
+.prf-curso-estatistica {
+  background-color: var(--cinza-escuro3);
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prf-titulo-estatistica {
+  background-color: var(--roxo1);
+  height: 100%;
+  width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--branco);
+  font-family: "Archivo Black", sans-serif;
+}
+
+.prf-barra-estatistica {
+  background-color: var(--cinza-escuro1);
+  height: 20px;
+  width: 60%;
+  overflow: hidden;
+}
+.prf-barra-estatistica::-webkit-progress-value {
+  background-color: var(--roxo1);
+}
+
+.prf-barra-estatistica::-webkit-progress-bar {
+  background-color: var(--cinza-escuro1);
+}
+
+.prf-porcentagem-estatistica {
+  background-color: var(--roxo1);
+  height: 100%;
+}
+
+.prf-descricao-estatistica {
+  width: 80px;
+  height: 100%;
+
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  color: #fff;
+  font-family: "Questrial", sans-serif;
+  font-size: 12px;
+}
+
+.prf-infomacoes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+@media screen and (max-width: 425px) {
+  .prf-colunas {
+    flex-direction: column;
+  }
+
+  .prf-coluna1 {
+    width: 100%;
+  }
+
+  .prf-coluna2 {
+    width: 100%;
+  }
+}
+
+.prf-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Questrial", sans-serif;
+}
+
+.aba-editar {
+  background-color: var(--cinza-escuro2);
+  padding: 25px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.prf-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.prf-editar-nome {
+  border: 0;
+  font-size: 16px;
+  background-color: var(--cinza-escuro3);
+  width: calc(100% - 20px);
+  padding: 10px;
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+  outline: none;
+}
+
+.prf-editar-biografia {
+  border: 0;
+  height: 100px;
+  font-size: 16px;
+  background-color: var(--cinza-escuro3);
+  width: calc(100% - 20px);
+  padding: 10px;
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+
+  outline: none;
+  resize: none;
+}
+
+.prf-editar-biografia::-webkit-scrollbar {
+  width: 10px;
+}
+
+.prf-editar-biografia::-webkit-scrollbar-track {
+    background: var(--cinza-claro1);
+}
+
+.prf-editar-biografia::-webkit-scrollbar-thumb {
+    background-color: var(--roxo1);
+}
+
+.prf-add-imagem {
+  height: 35px;
+  background-color: var(--roxo1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.prf-add-imagem:hover, .prf-add-imagem label:hover, .prf-add-imagem input:hover {
+  background-color: var(--cinza-escuro3);
+  cursor: pointer;
+}
+
+.prf-preview-img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+.prf-botao-editar-enviar {
+  height: 35px;
+  font-family: "Questrial", sans-serif;
+  border: 0;
+  background-color: var(--roxo1);
+  color: var(--branco);
+}
+
+.prf-botao-editar-enviar:hover {
+  background-color: var(--branco);
+  color: var(--roxo1);
+  cursor: pointer;
+}

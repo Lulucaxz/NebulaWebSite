@@ -1,0 +1,136 @@
+.prf-coluna2 {
+    width: 45%;
+    font-family: "Questrial", sans-serif;
+}
+
+/* coluna 2 */
+
+.prf-rank-header {
+    background-color: var(--roxo1);
+    height: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.prf-container3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+
+    font-family: "Questrial", sans-serif;
+    color: var(--branco);
+    font-size: 20px;
+    gap: 25px;
+}
+
+.prf-pesquisa-usuario {
+    background-color: var(--cinza-escuro1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    width: 100%;
+    position: relative;
+}
+
+.prf-pesquisa-usuario input {
+    border: 0;
+    height: 100%;
+    font-size: 16px;
+    background-color: #ffffff00;
+    width: 100%;
+    padding: 0 0 0 10px;
+    color: var(--branco);
+    font-family: "Questrial", sans-serif;
+}
+
+.prf-pesquisa-usuario input:focus {
+    outline: 0;
+}
+
+
+.prf-pesquisa-usuario svg {
+    margin-right: 10px;
+    position: absolute;
+    right: 0px;
+}
+
+.prf-usuarios-rank, .prf-sticky-user{
+    display: flex;
+    height: 60px;
+    width: 100%;
+    color: #fff;
+    justify-content: center;
+}
+
+.prf-usuarios-rank.prf-cor2 {
+    background-color: var(--cinza-escuro1);
+}
+
+.prf-sticky-user .prf-usuarios-rank {
+    background-color: #00000000;
+}
+
+.prf-container4 {
+    width: 90%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prf-foto-rank {
+    height: 40px;
+    width: 40px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+}
+
+.prf-container-rank {
+    overflow-y: scroll;
+    height: 320px;
+    background-color: var(--cinza-escuro3);
+}
+
+.prf-container-rank::-webkit-scrollbar {
+    width: 10px;
+}
+
+.prf-container-rank::-webkit-scrollbar-track {
+    background: #3b393b;
+}
+
+.prf-container-rank::-webkit-scrollbar-thumb {
+    background-color: var(--roxo1);
+
+}
+
+.prf-container-rank-nao-encontrado {
+    background-color: var(--cinza-escuro3);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--branco);
+}
+
+.prf-nome-rank {
+    width: 30%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.prf-sticky-user {
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    background-color: var(--branco);
+}
+
+.prf-sticky-user .prf-usuarios-rank {
+    color: var(--roxo1);
+}

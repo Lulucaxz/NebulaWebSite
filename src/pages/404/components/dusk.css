@@ -1,0 +1,64 @@
+.dusk{
+    height: 5px;
+    width: 5px;
+    background-color:#b665e6;
+    box-shadow: 0 0 20px rgba(255,255,255,.5);
+    border-radius: 50%;
+    position: absolute;
+}
+@keyframes ababa {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+#d1{
+    top:33%;
+    left: 35%;
+    -webkit-filter:blur(1.5px);
+}
+#d2{
+    top:53%;
+    left: 65%;
+    -webkit-filter:blur(1px);
+}
+#d3{
+    top:53%;
+    left: 75%;
+    -webkit-filter:blur(2px);
+}
+#d4{
+    top:53%;
+    left: 40%;
+    -webkit-filter:blur(0.5px);
+}
+#d5{
+    top:65%;
+    left: 37%;
+    -webkit-filter:blur(1px);
+}
+#d6{
+    top:70%;
+    left: 30%;
+    -webkit-filter:blur(2px);
+}
+#d7{
+    top:77%;
+    left: 53%;
+    -webkit-filter:blur(1px);
+}
+#d8{
+    top:59%;
+    left: 64%;
+    -webkit-filter:blur(1px);
+}
+#d9{
+    top:44%;
+    left: 61%;
+    -webkit-filter:blur(0.5px);
+}
