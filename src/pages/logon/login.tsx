@@ -30,19 +30,15 @@ const LoginPage: React.FC = () => {
     }
   };
 
+
   const login = async () => {
     try {
-      await axios.post(`${API_URL}/auth/login`, { email, password });
-      const res = await axios.get(`${API_URL}/auth/me`);
+      await axios.post(`${API_URL}/auth/login`, { email, password }, { withCredentials: true });
+      const res = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
       setUser(res.data);
     } catch (err: any) {
       alert(err.response?.data?.error || "Erro no login");
     }
-  };
-
-  const logout = async () => {
-    await axios.get(`${API_URL}/auth/logout`);
-    setUser(null);
   };
 
   const loginGoogle = () => {
