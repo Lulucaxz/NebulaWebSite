@@ -109,41 +109,59 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID || '',
   clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
   callbackURL: "/auth/google/callback"
-}, (accessToken, refreshToken, profile, done) => {
-  const users = readUsers();
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    const email = profile.emails?.[0].value || '';
+    const photo = profile.photos?.[0].value || '';
 
-  const existingUser = users.find(u => u.id === profile.id || u.email === profile.emails?.[0].value);
-  if (existingUser) {
-    return done(null, existingUser);
+    // Verifica se já existe no banco
+    const [rows] = await pool.query("SELECT * FROM usuario WHERE email = ?", [email]);
+    const users = rows as any[];
+    if (users.length > 0) {
+      return done(null, users[0]);
+    }
+
+    // Cria novo usuário
+    const [result] = await pool.query(
+      `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
+        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, seguidores, seguindo, provider)
+       VALUES (?, ?, 0, ?, ?, ?, 0, 0, 0, ?, NULL, 'Astronomia', 'pt-br', 'dark', 0, 0, 'google')`,
+      [
+        profile.displayName,
+        `@${profile.displayName.replace(/\s/g, '')}${Date.now()}`,
+        0,
+        photo || "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png",
+        "...",
+        email
+      ]
+    );
+
+    const newUserId = (result as any).insertId;
+    const [newUserRows] = await pool.query("SELECT * FROM usuario WHERE id = ?", [newUserId]);
+    done(null, (newUserRows as any[])[0]);
+  } catch (error) {
+    done(error);
   }
 
-  const newUser: UserType = {
-    idsite: getNextIdSite(),
-    id: profile.id,
-    name: profile.displayName,
-    email: profile.emails?.[0].value || '',
-    photo: profile.photos?.[0].value || '',
-    password: '',
-    provider: 'google',
-    prf_user: `@${profile.displayName.replace(/\s/g, '')}${getNextIdSite()}`,
-    bio: "..."
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  return done(null, newUser);
 }));
+
+
 
 passport.serializeUser((user: any, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user: any, done) => {
-  if (user && user.id) {
-    done(null, user);
-  } else {
-    done(new Error('Usuário inválido'), null);
+passport.deserializeUser(async (user: any, done) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM usuario WHERE id = ?", [user.id]);
+    const users = rows as any[];
+    if (users.length > 0) {
+      done(null, users[0]);
+    } else {
+      done(new Error("Usuário não encontrado"), null);
+    }
+  } catch (error) {
+    done(error, null);
   }
 });
 
@@ -160,22 +178,21 @@ app.get('/auth/google/callback',
 );
 
 // Obter usuário logado
-app.get('/auth/me', (req, res) => {
+app.get('/auth/me', asyncHandler(async (req: any, res: any) => {
   if (!req.isAuthenticated() || !req.user) {
     res.status(401).json({ error: "Não autenticado" });
     return;
   }
 
-  const users = readUsers();
-  const userId = (req.user as UserType).id;
-  const userAtualizado = users.find(u => u.id === userId);
-  if (!userAtualizado) {
-    res.status(404).json({ error: "Usuário não encontrado" });
-    return;
+  const [rows] = await pool.query("SELECT * FROM usuario WHERE id = ?", [(req.user as any).id]);
+  const users = rows as any[];
+
+  if (users.length === 0) {
+    return res.status(404).json({ error: "Usuário não encontrado" });
   }
 
-  res.json(userAtualizado);
-});
+  res.json(users[0]);
+}));
 
 // Logout
 app.get('/auth/logout', (req, res, next) => {
@@ -202,8 +219,8 @@ app.post('/auth/register', asyncHandler(async (req, res) => {
 
   await pool.query(
     `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
-      progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, seguidores, seguindo)
-     VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, 'Astronomia', 'pt-br', 'dark', 0, 0)`,
+      progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
+     VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, 'Astronomia', 'pt-br', 'dark','local', 0, 0)`,
     [name, `@${name}${Date.now()}`, 0, "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png", email, hashedPassword]
   );
 
@@ -214,6 +231,7 @@ app.post('/auth/register', asyncHandler(async (req, res) => {
 // Login local
 app.post('/auth/login', asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
 
   const [rows] = await pool.query("SELECT * FROM usuario WHERE email = ?", [email]);
   const users = rows as any[];
