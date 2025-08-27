@@ -1,6 +1,6 @@
 .cursos-espacamento {
     width: 100%;
-    padding: 30px 60px 30px 190px;
+    padding: 30px 60px 30px  60px;
     box-sizing: border-box;
     justify-self: center;
 
@@ -157,7 +157,7 @@
     background-image: url(/seta-carrocel-esquerda.svg);
     background-size: cover;
     cursor: pointer;
-    left: 0;
+    left: -15px;
 }
 
 .videos-sessao-arrow-rigth {
@@ -167,7 +167,17 @@
     background-image: url(/seta-carrocel-direita.svg);
     background-size: cover;
     cursor: pointer;
-    right: 0;
+    right: 20px;
+}
+
+.atividades-sessao-arrow-left {
+    width: 75px;
+    height: 75px;
+    position: absolute;
+    background-image: url(/seta-carrocel-esquerda.svg);
+    background-size: cover;
+    cursor: pointer;
+    left: 40px;
 }
 
 .carrocel-atividades {
@@ -182,7 +192,7 @@
 .carrocel-atividades-card-cont {
     width: calc(100% / 4);
     flex-shrink: 0;
-    height: 300px;
+    height: 400px;
     position: relative;
     display: flex;
     align-items: center;
@@ -240,12 +250,12 @@
 
 .carrocel-atividades-card-descricao {
     margin: 30px;
-
+    
     font-family: 'Questrial';
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
-    line-height: 16px;
+    line-height: 21px;
     text-align: justify;
 
     color: #F8EFFF;

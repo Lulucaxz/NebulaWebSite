@@ -20,5 +20,16 @@
     "provider": "local",
     "prf_user": "@Lucas2",
     "bio": "bioooo"
+  },
+  {
+    "idsite": 3,
+    "id": "114470140006344904947",
+    "name": "Papagaio do picpay",
+    "email": "tavaresluiz216@gmail.com",
+    "photo": "https://res.cloudinary.com/djerq4npq/image/upload/v1756291386/NEBULA_PFP_IMGS/dxjbbaj8cpozd2wrjxeq.jpg",
+    "password": "",
+    "provider": "google",
+    "prf_user": "@LuizTavares3",
+    "bio": "pic pay"
   }
 ]

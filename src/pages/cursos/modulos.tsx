@@ -27,7 +27,7 @@ function Modulos() {
   }
 
   const [matrizAtividades, setMatrizAtividades] = useState(Array.from({ length: modulo.atividades.length }, (_, i) => i === 0));
-  const [matrizAtividadesIndex, setMatrizAtividadesIndex] = useState(0);
+  const [matrizAtividadesIndex, setMatrizAtividadesIndex] = useState(1);
 
 
   function updateMatrizAtividades(index: number) {
@@ -75,7 +75,9 @@ function Modulos() {
                   scale: index < matrizAtividadesIndex - 1 || index > matrizAtividadesIndex + 1 ? '0.8' : '1',
                   filter: index < matrizAtividadesIndex - 1 || index > matrizAtividadesIndex + 1 ? 'brightness(0.7)' : 'none',
                 }} onClick={() => {
-                  updateMatrizAtividades(index)
+                  if (index - 1 >= 0 && index < matrizVideos.length) {
+                    updateMatrizAtividades(index)
+                  }
                 }}>
                   <div className="carrocel-atividades-card-fundo">
                     <div className="carrocel-atividades-card-cima" style={{
@@ -105,8 +107,8 @@ function Modulos() {
                 </div>
               )
             })}
-            <div className="videos-sessao-arrow-left" onClick={() => {
-              if (matrizAtividadesIndex - 1 >= 0) {
+            <div className="atividades-sessao-arrow-left" onClick={() => {
+              if (matrizAtividadesIndex - 2 >= 0) {
                 updateMatrizAtividades(matrizAtividadesIndex - 1)
               }
             }}></div>
