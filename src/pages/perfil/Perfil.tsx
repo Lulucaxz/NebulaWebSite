@@ -1,6 +1,8 @@
 import "./perfil.css";
 import "../../index.css";
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from 'react-i18next';
+import { CropImageModal } from "./CropImageModal";
 import { Menu } from "../../components/Menu";
 import { Rank } from "./components/rank";
 import { BarraDeProgresso } from "./components/barraProgresso";
@@ -8,17 +10,26 @@ import Footer from "../../components/footer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 type User = {
   name: string;
   bio: string;
   prf_user: string;
   rank: number;
   photo: string;
+  curso: string;
+  idioma: string;
+  tema: string;
+  progresso1: number;
+  progresso2: number;
+  progresso3: number;
 };
 
 function Perfil() {
+  const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [mostrarEditor, setMostrarEditor] = useState(false);
+
 
   // Estados dos dados do usuário
   const [nome, setNome] = useState("");
@@ -26,45 +37,57 @@ function Perfil() {
   const [usuario, setUsuario] = useState("");
   const [rank, setRank] = useState("0025");
   const [fotoUrl, setFotoUrl] = useState("");
+  const [curso, setCurso] = useState("");
+  const [idioma, setIdioma] = useState("");
+  const [tema, setTema] = useState("");
+  const [progresso1, setProgresso1] = useState(0);
+  const [progresso2, setProgresso2] = useState(0);
+  const [progresso3, setProgresso3] = useState(0);
+
 
   // Estados para edição
   const [nomeEditado, setNomeEditado] = useState("");
   const [bioEditada, setBioEditada] = useState("");
+  const [cursoEditado, setCursoEditado] = useState("");
+  const [idiomaEditado, setIdiomaEditado] = useState("");
+  const [temaEditado, setTemaEditado] = useState("");
+  const [progresso1Editado, setProgresso1Editado] = useState(0);
+  const [progresso2Editado, setProgresso2Editado] = useState(0);
+  const [progresso3Editado, setProgresso3Editado] = useState(0);
   const [fotoEditada, setFotoEditada] = useState<File | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string>("");
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string>("");
 
   // Para controlar o objeto URL e liberar memória depois
   const fotoPreviewUrlRef = useRef<string | null>(null);
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    axios
-      .get("http://localhost:4000/auth/me", { withCredentials: true })
-      .then((res) => {
-        const data: User = res.data;
-        setUser(data);
-
-        setNome(data.name);
-        setBiografia(data.bio || "");
-        setUsuario(data.prf_user);
-        setFotoUrl(data.photo);
-
-        setNomeEditado(data.name);
-        setBioEditada(data.bio || "");
-        setFotoPreview(data.photo);
-      })
-      .catch(() => {
-        setUser(null);
-        navigate("/cadastrar");
-      });
-    return () => {
-      if (fotoPreviewUrlRef.current) {
-        URL.revokeObjectURL(fotoPreviewUrlRef.current);
-        fotoPreviewUrlRef.current = null;
-      }
-    };
-  }, [navigate]);
+  axios
+    .get("http://localhost:4000/auth/me", { withCredentials: true })
+    .then((res) => {
+      const userData = res.data;
+  setUser(userData);
+  setNome(userData.username);
+  setBiografia(userData.biografia || "");
+  setUsuario(userData.user);
+  setRank(userData.colocacao);
+  setFotoUrl(userData.icon);
+  setCurso(userData.curso || "");
+  setIdioma(userData.idioma || "");
+  setTema(userData.tema || "");
+  setProgresso1(userData.progresso1 || 0);
+  setProgresso2(userData.progresso2 || 0);
+  setProgresso3(userData.progresso3 || 0);
+    })
+    .catch((err) => {
+      console.error("Erro ao buscar usuário:", err);
+      navigate("/cadastrar");
+    });
+}, [navigate]);
 
   const salvarEdicao = () => {
     setMostrarEditor(false);
@@ -72,6 +95,12 @@ function Perfil() {
     formData.append("name", nomeEditado);
     formData.append("bio", bioEditada);
     formData.append("idUser", usuario);
+    formData.append("curso", cursoEditado);
+    formData.append("idioma", idiomaEditado);
+    formData.append("tema", temaEditado);
+    formData.append("progresso1", progresso1Editado.toString());
+    formData.append("progresso2", progresso2Editado.toString());
+    formData.append("progresso3", progresso3Editado.toString());
     if (fotoEditada) {
       formData.append("photo", fotoEditada);
     }
@@ -81,20 +110,8 @@ function Perfil() {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((res) => {
-        const updatedUser = res.data.user;
-        setNome(updatedUser.name);
-        setBiografia(updatedUser.bio || "");
-        setFotoUrl(updatedUser.photo);
-        setMostrarEditor(false);
-        setFotoPreview(updatedUser.photo);
-        setFotoEditada(null);
-
-        // Limpa o preview antigo da imagem se foi um arquivo
-        if (fotoPreviewUrlRef.current) {
-          URL.revokeObjectURL(fotoPreviewUrlRef.current);
-          fotoPreviewUrlRef.current = null;
-        }
+      .then(() => {
+        window.location.reload();
       })
       .catch((err) => {
         console.error("Erro ao atualizar perfil:", err);
@@ -105,17 +122,27 @@ function Perfil() {
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFotoEditada(file);
-
-      // Revoga o preview antigo antes de criar um novo
-      if (fotoPreviewUrlRef.current) {
-        URL.revokeObjectURL(fotoPreviewUrlRef.current);
-      }
-
-      const previewUrl = URL.createObjectURL(file);
-      fotoPreviewUrlRef.current = previewUrl;
-      setFotoPreview(previewUrl);
+      // Abre o modal de crop com a imagem selecionada
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setCropImageSrc(ev.target?.result as string);
+        setCropModalOpen(true);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  // Callback para receber a imagem croppada
+  const handleCropComplete = (croppedBlob: Blob) => {
+    setCropModalOpen(false);
+    // Atualiza preview e arquivo para upload
+    const previewUrl = URL.createObjectURL(croppedBlob);
+    if (fotoPreviewUrlRef.current) {
+      URL.revokeObjectURL(fotoPreviewUrlRef.current);
+    }
+    fotoPreviewUrlRef.current = previewUrl;
+    setFotoPreview(previewUrl);
+    setFotoEditada(new File([croppedBlob], "profile.jpg", { type: "image/jpeg" }));
   };
 
   return (
@@ -144,7 +171,20 @@ function Perfil() {
                 </div>
               </div>
 
-              <div className="prf-editar" onClick={() => setMostrarEditor(true)}>
+              <div
+                className="prf-editar"
+                onClick={() => {
+                    setNomeEditado(nome);
+                    setBioEditada(biografia);
+                    setCursoEditado(curso);
+                    setIdiomaEditado(idioma);
+                    setTemaEditado(tema);
+                    setProgresso1Editado(progresso1);
+                    setProgresso2Editado(progresso2);
+                    setProgresso3Editado(progresso3);
+                    setMostrarEditor(true);
+                  }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -170,20 +210,68 @@ function Perfil() {
                         className="prf-editar-nome"
                         type="text"
                         value={nomeEditado}
-                        placeholder="Nome"
+                        placeholder={t('Nome')}
                         onChange={(e) => setNomeEditado(e.target.value)}
                       />
                       <textarea
                         className="prf-editar-biografia"
                         value={bioEditada}
-                        placeholder="Biografia"
+                        placeholder={t('Biografia')}
                         rows={5}
                         onChange={(e) => setBioEditada(e.target.value)}
                       />
 
+
+                      <input
+                        className="prf-editar-curso"
+                        type="text"
+                        value={cursoEditado}
+                        placeholder={t('Curso')}
+                        onChange={(e) => setCursoEditado(e.target.value)}
+                      />
+                      <select
+                        className="prf-editar-idioma"
+                        value={idiomaEditado}
+                        onChange={(e) => setIdiomaEditado(e.target.value)}
+                      >
+                        <option value="pt-br">{t('Português')}</option>
+                        <option value="en-us">{t('English')}</option>
+                      </select>
+                      <select
+                        className="prf-editar-tema"
+                        value={temaEditado}
+                        onChange={(e) => setTemaEditado(e.target.value)}
+                      >
+                        <option value="dark">{t('Dark')}</option>
+                        <option value="light">{t('Light')}</option>
+                      </select>
+                      <label>{t('Progresso 1')}
+                        <input
+                          type="number"
+                          value={progresso1Editado}
+                          min={0}
+                          onChange={e => setProgresso1Editado(Number(e.target.value))}
+                        />
+                      </label>
+                      <label>{t('Progresso 2')}
+                        <input
+                          type="number"
+                          value={progresso2Editado}
+                          min={0}
+                          onChange={e => setProgresso2Editado(Number(e.target.value))}
+                        />
+                      </label>
+                      <label>{t('Progresso 3')}
+                        <input
+                          type="number"
+                          value={progresso3Editado}
+                          min={0}
+                          onChange={e => setProgresso3Editado(Number(e.target.value))}
+                        />
+                      </label>
                       <div className="prf-add-imagem">
                         <label htmlFor="prf-editar-imagem">
-                          ESCOLHA UMA IMAGEM
+                          {t('ESCOLHA UMA IMAGEM')}
                         </label>
                         <input
                           id="prf-editar-imagem"
@@ -198,17 +286,24 @@ function Perfil() {
                         <div className="prf-preview-imagem">
                           <img
                             src={fotoPreview}
-                            alt="Prévia da imagem"
+                            alt={t('Prévia da imagem')}
                             className="prf-preview-img"
                           />
                         </div>
+                      )}
+                      {cropModalOpen && (
+                        <CropImageModal
+                          imageSrc={cropImageSrc}
+                          onCancel={() => setCropModalOpen(false)}
+                          onCropComplete={handleCropComplete}
+                        />
                       )}
 
                       <button
                         className="prf-botao-editar-enviar"
                         onClick={salvarEdicao}
                       >
-                        ENVIAR
+                        {t('ENVIAR')}
                       </button>
                     </div>
                   </div>
@@ -223,7 +318,11 @@ function Perfil() {
                 <div className="prf-biografia">
                   <span>{biografia}</span>
                 </div>
-                <BarraDeProgresso />
+                <BarraDeProgresso
+                  progresso1={progresso1}
+                  progresso2={progresso2}
+                  progresso3={progresso3}
+                />
               </div>
               <div className="prf-coluna2">
                 <Rank />

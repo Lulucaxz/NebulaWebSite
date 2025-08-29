@@ -4,24 +4,30 @@ interface barraProgressoProps {
     maximoEstatistica: number;
 }
 
+import { useTranslation } from 'react-i18next';
 const BarraProgresso = ({ tituloEstatistica, pontosEstatistica, maximoEstatistica }: barraProgressoProps) => {
-
+    const { t } = useTranslation();
     return (
         <div className="prf-curso-estatistica">
-            <div className="prf-titulo-estatistica"><span>{tituloEstatistica}</span></div>
+            <div className="prf-titulo-estatistica"><span>{t(tituloEstatistica)}</span></div>
             <progress className="prf-barra-estatistica" value={pontosEstatistica} max={maximoEstatistica}></progress>
-            <div className="prf-descricao-estatistica"><span>{pontosEstatistica}/{maximoEstatistica} pts</span></div>
+            <div className="prf-descricao-estatistica"><span>{pontosEstatistica}/{maximoEstatistica} {t('pts')}</span></div>
         </div>
     )
 }
 
-export function BarraDeProgresso() {
+interface BarraDeProgressoProps {
+    progresso1: number;
+    progresso2: number;
+    progresso3: number;
+}
 
+export function BarraDeProgresso({ progresso1, progresso2, progresso3 }: BarraDeProgressoProps) {
     return (
         <>
-            <BarraProgresso tituloEstatistica={"ORBITA"} pontosEstatistica={8} maximoEstatistica={10} />
-            <BarraProgresso tituloEstatistica={"GALAXIA"} pontosEstatistica={10} maximoEstatistica={15} />
-            <BarraProgresso tituloEstatistica={"UNIVERSO"} pontosEstatistica={20} maximoEstatistica={20} />
+            <BarraProgresso tituloEstatistica={"ÓRBITA"} pontosEstatistica={progresso1} maximoEstatistica={10} />
+            <BarraProgresso tituloEstatistica={"GALÁXIA"} pontosEstatistica={progresso2} maximoEstatistica={15} />
+            <BarraProgresso tituloEstatistica={"UNIVERSO"} pontosEstatistica={progresso3} maximoEstatistica={20} />
         </>
-    )
+    );
 }

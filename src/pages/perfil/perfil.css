@@ -1,3 +1,147 @@
+/* Customização do input de zoom do cropper */
+.crop-modal-content input[type="range"] {
+  width: 80%;
+  margin: 0 10%;
+  accent-color: #8e5cff;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #8e5cff 0%, #6c47ff 100%);
+  outline: none;
+  box-shadow: 0 1px 4px rgba(80, 60, 180, 0.10);
+}
+
+/* Thumb setinha para webkit */
+.crop-modal-content input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  margin-top: -6px;
+  box-shadow: none;
+}
+.crop-modal-content input[type="range"]::-webkit-slider-thumb::before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  margin: auto;
+  border-left: 14px solid #8e5cff;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-radius: 2px;
+  position: absolute;
+  left: 7px;
+  top: 4px;
+}
+.crop-modal-content input[type="range"]:focus::-webkit-slider-thumb::before {
+  border-left: 14px solid #6c47ff;
+}
+/* Thumb setinha para Firefox */
+.crop-modal-content input[type="range"]::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+.crop-modal-content input[type="range"]::-moz-range-thumb {
+  background: transparent;
+  border: none;
+}
+.crop-modal-content input[type="range"]::-moz-range-thumb:before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  margin: auto;
+  border-left: 14px solid #8e5cff;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-radius: 2px;
+  position: absolute;
+  left: 7px;
+  top: 4px;
+}
+.crop-modal-content input[type="range"]:focus::-moz-range-thumb:before {
+  border-left: 14px solid #6c47ff;
+}
+/* Thumb setinha para Edge/IE */
+.crop-modal-content input[type="range"]::-ms-thumb {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+/* Não há suporte para ::before em ::-ms-thumb, então só muda o formato */
+.crop-modal-content input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #8e5cff 0%, #6c47ff 100%);
+}
+.crop-modal-content input[type="range"]::-ms-fill-lower {
+  background: #8e5cff;
+}
+.crop-modal-content input[type="range"]::-ms-fill-upper {
+  background: #6c47ff;
+}
+.crop-modal-content input[type="range"]:focus {
+  outline: none;
+}
+/* Crop modal styles */
+.crop-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.crop-modal-content {
+  background: #222;
+  padding: 32px 24px 24px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  min-width: 320px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.crop-modal-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.crop-modal-actions button {
+  background: #8e5cff;
+  color: #fff;
+  border: none;
+  border-radius: 0px;
+  padding: 10px 28px;
+  font-size: 1.08rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(80, 60, 180, 0.10);
+}
+.crop-modal-actions button:hover {
+  background: #6c47ff;
+}
 .container-perfil {
   min-height: 100vh;
   width: 100vw;

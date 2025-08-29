@@ -1,25 +1,42 @@
 import "./rank.css";
-import { useState } from "react";
-import { usuariosRank } from "./rankDados"; // substitua pelo caminho correto
-import UsuarioRank from "./usuarioRank"; // componente individual
+
+import { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
+import UsuarioRank from "./usuarioRank";
+import axios from "axios";
 
 export function Rank() {
+  const { t } = useTranslation();
   const [pesquisa, setPesquisa] = useState("");
+  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [usuarioLogado, setUsuarioLogado] = useState<string>("");
 
-  const usuariosFiltrados = usuariosRank.filter((usuario) =>
-    usuario.usuarioRank.toLowerCase().includes(pesquisa.toLowerCase())
+  useEffect(() => {
+    // Busca ranking
+    axios.get("http://localhost:4000/api/rank")
+      .then(res => setUsuarios(res.data))
+      .catch(() => setUsuarios([]));
+    // Busca usuário logado
+    axios.get("http://localhost:4000/auth/me", { withCredentials: true })
+      .then(res => setUsuarioLogado(res.data.user))
+      .catch(() => setUsuarioLogado(""));
+  }, []);
+
+  const usuariosFiltrados = usuarios.filter((usuario) =>
+    usuario.user.toLowerCase().includes(pesquisa.toLowerCase()) ||
+    usuario.username.toLowerCase().includes(pesquisa.toLowerCase())
   );
 
   return (
     <>
       <div className="prf-rank-header">
         <div className="prf-container3">
-          <span>ASTRONAUTAS</span>
+          <span>{t('ASTRONAUTAS')}</span>
           <div className="prf-pesquisa-usuario">
             <input
               name="pesquisa"
               type="text"
-              placeholder="Pesquisar usuário..."
+              placeholder={t('Pesquisar usuário...')}
               value={pesquisa}
               onChange={(e) => setPesquisa(e.target.value)}
             />
@@ -38,24 +55,24 @@ export function Rank() {
 
       <div className="prf-container-rank">
         {usuariosFiltrados.length > 0 ? (
-          usuariosFiltrados.map((user) => (
+          usuariosFiltrados.map((user, idx) => (
             <div
-              key={user.posicaoRank}
+              key={user.id}
               className={
-                user.usuarioRank === "Luiz Tavares" ? "prf-sticky-user" : ""
+                user.user === usuarioLogado ? "prf-sticky-user" : ""
               }
             >
               <UsuarioRank
-                fotoRank={user.fotoRank}
-                usuarioRank={user.usuarioRank}
-                pontosRank={user.pontosRank}
-                posicaoRank={user.posicaoRank}
+                fotoRank={user.icon}
+                nomeRank={user.username}
+                pontosRank={0}
+                posicaoRank={(idx + 1).toString()}
               />
             </div>
           ))
         ) : (
           <div className="prf-container-rank-nao-encontrado">
-            <p className="prf-sem-resultado">Nenhum usuário encontrado.</p>
+            <p className="prf-sem-resultado">{t('Nenhum usuário encontrado.')}</p>
           </div>
         )}
       </div>

@@ -13,6 +13,8 @@ import { v2 as cloudinary, UploadStream } from "cloudinary";
 
 import { pool } from "./db";
 
+import rankRoutes from "./rankRoutes";
+
 dotenv.config();
 
 cloudinary.config({
@@ -30,42 +32,7 @@ const PORT = 4000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const USERS_FILE = path.join(__dirname, 'users.json');
 
-// Tipos
-interface UserType {
-  idsite: number;
-  id: string;
-  name: string;
-  email: string;
-  photo: string;
-  password: string;
-  provider: 'google' | 'local';
-  prf_user: string;
-  bio?: string;
-  /*orbita_pontos: number;
-  galaxia_pontos: number;
-  universo_pontos: number;
-  rank: string;*/
-}
 
-// Funções utilitárias
-function readUsers(): UserType[] {
-  try {
-    return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8'));
-  } catch {
-    return [];
-  }
-}
-
-function saveUsers(users: UserType[]) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-}
-
-function getNextIdSite(): number {
-  const users = readUsers();
-  if (users.length === 0) return 1;
-  const maxId = Math.max(...users.map(u => u.idsite));
-  return maxId + 1;
-}
 
 // Async handler para tratar erros em async routes
 export const asyncHandler = (
@@ -103,6 +70,9 @@ app.use(cors({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Rotas de ranking
+app.use("/api", rankRoutes);
 
 // Config Google Strategy
 passport.use(new GoogleStrategy({
@@ -207,24 +177,43 @@ app.get('/auth/logout', (req, res, next) => {
 });
 
 // Cadastro local
+
 app.post('/auth/register', asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
+  // Verifica se email já existe
   const [rows] = await pool.query("SELECT * FROM usuario WHERE email = ?", [email]);
   if ((rows as any[]).length > 0) {
     res.status(409).json({ error: 'Email já cadastrado' });
-    return 
+    return;
   }
+
+  // Gera hash da senha
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await pool.query(
-    `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
-      progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
-     VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, 'Astronomia', 'pt-br', 'dark','local', 0, 0)`,
-    [name, `@${name}${Date.now()}`, 0, "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png", email, hashedPassword]
-  );
+  // Gera user único
+  const userTag = `@${name.replace(/\s/g, '')}${Date.now()}`;
 
-  res.status(201).json({ message: 'Usuário registrado com sucesso' });
+  // Busca próxima colocacao disponível
+  const [colRows] = await pool.query("SELECT MAX(colocacao) as maxCol FROM usuario");
+  const maxCol = (colRows as any[])[0]?.maxCol || 0;
+  const nextColocacao = maxCol + 1;
+
+  try {
+    await pool.query(
+      `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
+        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
+       VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, 'Astronomia', 'pt-br', 'dark','local', 0, 0)`,
+      [name, userTag, nextColocacao, "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png", email, hashedPassword]
+    );
+    res.status(201).json({ message: 'Usuário registrado com sucesso' });
+  } catch (err: any) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      res.status(409).json({ error: 'Usuário ou colocação já existe' });
+    } else {
+      res.status(500).json({ error: 'Erro ao registrar usuário', details: err.message });
+    }
+  }
 }));
 
 
@@ -254,6 +243,7 @@ app.post('/auth/login', asyncHandler(async (req, res) => {
 
 
 // Atualizar perfil
+
 app.put(
   "/auth/update",
   upload.single("photo"),
@@ -263,22 +253,11 @@ app.put(
       return;
     }
 
-    const { name, bio, idUser } = req.body;
+  const { name, bio, idUser, curso, idioma, tema, progresso1, progresso2, progresso3 } = req.body;
     const photoFile = req.file;
+    const userId = (req.user as any).id;
 
-    const users = readUsers();
-    const userId = (req.user as UserType).id;
-    const index = users.findIndex((u) => u.id === userId);
-
-    if (index === -1) {
-      res.status(404).json({ error: "Usuário não encontrado" });
-      return;
-    }
-
-    if (name) users[index].name = name;
-    if (idUser) users[index].prf_user = idUser;
-    if (bio) users[index].bio = bio;
-
+    let photoUrl: string | undefined;
     if (photoFile) {
       const uploadToCloudinary = (fileBuffer: Buffer) => {
         return new Promise<string>((resolve, reject) => {
@@ -292,10 +271,8 @@ app.put(
           uploadStream.end(fileBuffer);
         });
       };
-
       try {
-        const photoUrl = await uploadToCloudinary(photoFile.buffer);
-        users[index].photo = photoUrl;
+        photoUrl = await uploadToCloudinary(photoFile.buffer);
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Erro no upload do Cloudinary" });
@@ -303,8 +280,70 @@ app.put(
       }
     }
 
-    saveUsers(users);
-    res.json({ success: true, user: users[index] });
+    // Monta query dinâmica
+    const fields = [];
+    const values = [];
+    if (name) {
+      fields.push("username = ?");
+      values.push(name);
+    }
+    if (idUser) {
+      fields.push("user = ?");
+      values.push(idUser);
+    }
+    if (bio) {
+      fields.push("biografia = ?");
+      values.push(bio);
+    }
+    if (curso) {
+      fields.push("curso = ?");
+      values.push(curso);
+    }
+    if (idioma) {
+      fields.push("idioma = ?");
+      values.push(idioma);
+    }
+    if (tema) {
+      fields.push("tema = ?");
+      values.push(tema);
+    }
+    if (typeof progresso1 !== 'undefined') {
+      fields.push("progresso1 = ?");
+      values.push(Number(progresso1));
+    }
+    if (typeof progresso2 !== 'undefined') {
+      fields.push("progresso2 = ?");
+      values.push(Number(progresso2));
+    }
+    if (typeof progresso3 !== 'undefined') {
+      fields.push("progresso3 = ?");
+      values.push(Number(progresso3));
+    }
+    if (photoUrl) {
+      fields.push("icon = ?");
+      values.push(photoUrl);
+    }
+
+    if (fields.length === 0) {
+      res.status(400).json({ error: "Nenhuma informação para atualizar" });
+      return;
+    }
+
+    try {
+      await pool.query(
+        `UPDATE usuario SET ${fields.join(", ")} WHERE id = ?`,
+        [...values, userId]
+      );
+      // Retorna usuário atualizado
+      const [rows] = await pool.query("SELECT * FROM usuario WHERE id = ?", [userId]);
+      res.json({ success: true, user: (rows as any[])[0] });
+    } catch (err: any) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        res.status(409).json({ error: 'Nome de usuário já existe' });
+      } else {
+        res.status(500).json({ error: 'Erro ao atualizar perfil', details: err.message });
+      }
+    }
   })
 );
 
