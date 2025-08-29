@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import { initial_cursos } from './components/cursosDados';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VideoCard } from './videos';
 import { Link } from "react-router-dom";
 
@@ -25,6 +25,14 @@ function Modulos() {
     setMatrizVideos(prev => prev.map((_, i) => i === index));
     setMatrizVideoIndex(index);
   }
+
+  const [itemsPerView, setItemsPerView] = useState<number>(
+    typeof window !== 'undefined' && window.innerWidth > 1500 ? 3 : window.innerWidth > 1250 ? 2 : 1
+  );
+
+  const updateItemsPerView = setInterval(() => {
+    setItemsPerView(typeof window !== 'undefined' && window.innerWidth > 1500 ? 3 : window.innerWidth > 1250 ? 2 : 1)
+  }, 100);
 
   const [matrizAtividades, setMatrizAtividades] = useState(Array.from({ length: modulo.atividades.length }, (_, i) => i === 0));
   const [matrizAtividadesIndex, setMatrizAtividadesIndex] = useState(1);
@@ -71,9 +79,16 @@ function Modulos() {
             {modulo.atividades.map((atividade, index) => {
               return (
                 <div key={`atividades${atividade.id}`} className='carrocel-atividades-card-cont' style={{
-                  marginLeft: index === 0 ? `calc((100%/4 + 30px) * ${-matrizAtividadesIndex} + 100%/2 - 100%/8)` : '',
-                  scale: index < matrizAtividadesIndex - 1 || index > matrizAtividadesIndex + 1 ? '0.8' : '1',
-                  filter: index < matrizAtividadesIndex - 1 || index > matrizAtividadesIndex + 1 ? 'brightness(0.7)' : 'none',
+                  width: `${itemsPerView < 3 ? itemsPerView < 2 ? 'calc(100% / 2)' : 'calc(100% / 3)' : 'calc(100% / 4)'}`,
+                  marginLeft: index === 0
+                    ? itemsPerView < 3
+                      ? itemsPerView < 2
+                        ? `calc((100%/2 + 30px) * ${-matrizAtividadesIndex} + 100%*3/4 + 30px)`
+                        : `calc((100%/3 + 30px) * ${-matrizAtividadesIndex} + 100%/2 + 15px)`
+                      : `calc((100%/4 + 30px) * ${-matrizAtividadesIndex} + 100%/2 - 100%/8)`
+                    : '',
+                  scale: index < matrizAtividadesIndex - 1 || index > (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex - 1 : matrizAtividadesIndex : matrizAtividadesIndex + 1) ? '0.8' : '1',
+                  filter: index < matrizAtividadesIndex - 1 || index > (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex - 1 : matrizAtividadesIndex : matrizAtividadesIndex + 1) ? 'brightness(0.7)' : 'none',
                 }} onClick={() => {
                   if (index - 1 >= 0 && index < matrizVideos.length) {
                     updateMatrizAtividades(index)
@@ -94,14 +109,14 @@ function Modulos() {
                       <div className="carrocel-atividades-card-titulo">{atividade.template.titulo}</div>
                       <div className="carrocel-atividades-card-descricao">{atividade.template.descricao}</div>
                     </div>
-                    
+
                     <Link to={`/modulos/${assinatura}/${modulo.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
-                        backgroundColor: atividade.terminado ? '#F8EFFF' : '#323232',
-                        cursor: 'pointer'
-                      }}>
-                        <div className="carrocel-atividades-card-butao" style={{
-                          color: atividade.terminado ? '#323232' : '#ffffff',
-                        }}>ABRIR ATIVIDADE</div>
+                      backgroundColor: atividade.terminado ? '#F8EFFF' : '#323232',
+                      cursor: 'pointer'
+                    }}>
+                      <div className="carrocel-atividades-card-butao" style={{
+                        color: atividade.terminado ? '#323232' : '#ffffff',
+                      }}>ABRIR ATIVIDADE{itemsPerView}</div>
                     </Link>
                   </div>
                 </div>
@@ -113,7 +128,7 @@ function Modulos() {
               }
             }}></div>
             <div className="videos-sessao-arrow-rigth" onClick={() => {
-              if (matrizAtividadesIndex + 1 < matrizVideos.length) {
+              if (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex < matrizVideos.length + 1 : matrizAtividadesIndex < matrizVideos.length : matrizAtividadesIndex + 1 < matrizVideos.length) {
                 updateMatrizAtividades(matrizAtividadesIndex + 1)
               }
             }}></div>
