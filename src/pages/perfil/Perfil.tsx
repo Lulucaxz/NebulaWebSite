@@ -29,7 +29,7 @@ function Perfil() {
   const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [mostrarEditor, setMostrarEditor] = useState(false);
-
+  const [loading, setLoading] = useState(true); // Adicionado para controle de carregamento
 
   // Estados dos dados do usuário
   const [nome, setNome] = useState("");
@@ -66,28 +66,29 @@ function Perfil() {
 
 
   useEffect(() => {
-  axios
-    .get("http://localhost:4000/auth/me", { withCredentials: true })
-    .then((res) => {
-      const userData = res.data;
-  setUser(userData);
-  setNome(userData.username);
-  setBiografia(userData.biografia || "");
-  setUsuario(userData.user);
-  setRank(userData.colocacao);
-  setFotoUrl(userData.icon);
-  setCurso(userData.curso || "");
-  setIdioma(userData.idioma || "");
-  setTema(userData.tema || "");
-  setProgresso1(userData.progresso1 || 0);
-  setProgresso2(userData.progresso2 || 0);
-  setProgresso3(userData.progresso3 || 0);
-    })
-    .catch((err) => {
-      console.error("Erro ao buscar usuário:", err);
-      navigate("/cadastrar");
-    });
-}, [navigate]);
+    axios
+      .get("http://localhost:4000/auth/me", { withCredentials: true })
+      .then((res) => {
+        const userData = res.data;
+        setUser(userData);
+        setNome(userData.username);
+        setBiografia(userData.biografia || "");
+        setUsuario(userData.user);
+        setRank(userData.colocacao);
+        setFotoUrl(userData.icon);
+        setCurso(userData.curso || "");
+        setIdioma(userData.idioma || "");
+        setTema(userData.tema || "");
+        setProgresso1(userData.progresso1 || 0);
+        setProgresso2(userData.progresso2 || 0);
+        setProgresso3(userData.progresso3 || 0);
+        setLoading(false); // Finaliza carregamento
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar usuário:", err);
+        navigate("/cadastrar");
+      });
+  }, [navigate]);
 
   const salvarEdicao = () => {
     setMostrarEditor(false);
@@ -144,6 +145,10 @@ function Perfil() {
     setFotoPreview(previewUrl);
     setFotoEditada(new File([croppedBlob], "profile.jpg", { type: "image/jpeg" }));
   };
+
+  if (loading) {
+    return <div style={{background: '#070209', width: '100vw', height: '100vh'}}></div>; // Ou um spinner
+  }
 
   return (
     <div className="container">
