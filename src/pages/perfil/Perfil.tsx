@@ -49,8 +49,7 @@ function Perfil() {
   const [nomeEditado, setNomeEditado] = useState("");
   const [bioEditada, setBioEditada] = useState("");
   const [cursoEditado, setCursoEditado] = useState("");
-  const [idiomaEditado, setIdiomaEditado] = useState("");
-  const [temaEditado, setTemaEditado] = useState("");
+
   const [progresso1Editado, setProgresso1Editado] = useState(0);
   const [progresso2Editado, setProgresso2Editado] = useState(0);
   const [progresso3Editado, setProgresso3Editado] = useState(0);
@@ -97,8 +96,6 @@ function Perfil() {
     formData.append("bio", bioEditada);
     formData.append("idUser", usuario);
     formData.append("curso", cursoEditado);
-    formData.append("idioma", idiomaEditado);
-    formData.append("tema", temaEditado);
     formData.append("progresso1", progresso1Editado.toString());
     formData.append("progresso2", progresso2Editado.toString());
     formData.append("progresso3", progresso3Editado.toString());
@@ -147,7 +144,7 @@ function Perfil() {
   };
 
   if (loading) {
-    return <div style={{background: '#070209', width: '100vw', height: '100vh'}}></div>; // Ou um spinner
+    return <div style={{ background: '#070209', width: '100vw', height: '100vh' }}></div>; // Ou um spinner
   }
 
   return (
@@ -179,16 +176,14 @@ function Perfil() {
               <div
                 className="prf-editar"
                 onClick={() => {
-                    setNomeEditado(nome);
-                    setBioEditada(biografia);
-                    setCursoEditado(curso);
-                    setIdiomaEditado(idioma);
-                    setTemaEditado(tema);
-                    setProgresso1Editado(progresso1);
-                    setProgresso2Editado(progresso2);
-                    setProgresso3Editado(progresso3);
-                    setMostrarEditor(true);
-                  }}
+                  setNomeEditado(nome);
+                  setBioEditada(biografia);
+                  setCursoEditado(curso);
+                  setProgresso1Editado(progresso1);
+                  setProgresso2Editado(progresso2);
+                  setProgresso3Editado(progresso3);
+                  setMostrarEditor(true);
+                }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -234,22 +229,6 @@ function Perfil() {
                         placeholder={t('Curso')}
                         onChange={(e) => setCursoEditado(e.target.value)}
                       />
-                      <select
-                        className="prf-editar-idioma"
-                        value={idiomaEditado}
-                        onChange={(e) => setIdiomaEditado(e.target.value)}
-                      >
-                        <option value="pt-br">{t('Português')}</option>
-                        <option value="en-us">{t('English')}</option>
-                      </select>
-                      <select
-                        className="prf-editar-tema"
-                        value={temaEditado}
-                        onChange={(e) => setTemaEditado(e.target.value)}
-                      >
-                        <option value="dark">{t('Dark')}</option>
-                        <option value="light">{t('Light')}</option>
-                      </select>
                       <label>{t('Progresso 1')}
                         <input
                           type="number"

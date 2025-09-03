@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario` (
   `progresso3` INT NOT NULL DEFAULT 0,
   `email` VARCHAR(100) NOT NULL,
   `senha` VARCHAR(100) NULL,
-  `curso` VARCHAR(45) NOT NULL,
+  `curso` VARCHAR(45) NULL,
   `idioma` ENUM("pt-br", "en-us") NOT NULL,
   `tema` ENUM("dark", "light") NOT NULL,
   `provider` ENUM("local","google") NULL,

@@ -95,7 +95,7 @@ passport.use(new GoogleStrategy({
     const [result] = await pool.query(
       `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
         progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, seguidores, seguindo, provider)
-       VALUES (?, ?, 0, ?, ?, ?, 0, 0, 0, ?, NULL, 'Astronomia', 'pt-br', 'dark', 0, 0, 'google')`,
+       VALUES (?, ?, 0, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 0, 0, 'google')`,
       [
         profile.displayName,
         `@${profile.displayName.replace(/\s/g, '')}${Date.now()}`,
@@ -203,7 +203,7 @@ app.post('/auth/register', asyncHandler(async (req, res) => {
     await pool.query(
       `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
         progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
-       VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, 'Astronomia', 'pt-br', 'dark','local', 0, 0)`,
+       VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','local', 0, 0)`,
       [name, userTag, nextColocacao, "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png", email, hashedPassword]
     );
     res.status(201).json({ message: 'Usuário registrado com sucesso' });

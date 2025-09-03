@@ -14,23 +14,43 @@ import Forum from './pages/forum/forum';
 
 function App() {
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/anotacoes" element={<Anotacoes />} />
-          <Route path="/cursos" element={<Cursos />} />
-          <Route path="/modulos/:assinatura/:moduloId" element={<Modulos />} />
-          <Route path="/modulos/:assinatura/:moduloId/atividades/:atividadeInd" element={<Atividades />} />
-          <Route path="/forum" element={<Forum />} />
-          <Route path="/planos" element={<Planos />} />
-          <Route path="/configuracoes" element={<Configuracoes />} />
-          <Route path="/cadastrar" element={<Login />} />
-          <Route path="*" element={<Page404 />} />
-        </Routes>
-      </Router>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <Home />
+        } />
+        <Route path="/perfil" element={
+          <Perfil />
+        } />
+        <Route path="/anotacoes" element={
+          <Anotacoes />
+        } />
+        <Route path="/cursos" element={
+          <Cursos />
+        } />
+        <Route path="/modulos/:assinatura/:moduloId" element={
+          <Modulos />
+        } />
+        <Route path="/modulos/:assinatura/:moduloId/atividades/:atividadeInd" element={
+          <Atividades />
+        } />
+        <Route path="/forum" element={
+          <Forum />
+        } />
+        <Route path="/planos" element={
+          <Planos />
+        } />
+        <Route path="/configuracoes" element={
+          <Configuracoes />
+        } />
+        <Route path="/cadastrar" element={
+          <Login />
+        } />
+        <Route path="*" element={
+          <Page404 />
+        } />
+      </Routes>
+    </Router>
   );
 }
 
