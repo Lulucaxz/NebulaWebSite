@@ -4,6 +4,7 @@ import Perfil from './pages/perfil/Perfil';
 import Home from './pages/home/paginaInicial';
 import Page404 from './pages/404/page404';
 import Anotacoes from './pages/anotacoes/Anotacoes';
+import Anotacoes2 from './pages/anotacoes2/Anotacoes2';
 import Login from './pages/logon/login';
 import Configuracoes from './pages/configuracoes/configuracoes';
 import Cursos from './pages/cursos/cursos';
@@ -24,6 +25,9 @@ function App() {
         } />
         <Route path="/anotacoes" element={
           <Anotacoes />
+        } />
+        <Route path="/anotacoes2" element={
+          <Anotacoes2 />
         } />
         <Route path="/cursos" element={
           <Cursos />
