@@ -65,7 +65,7 @@ export function Rank() {
               <UsuarioRank
                 fotoRank={user.icon}
                 nomeRank={user.username}
-                pontosRank={0}
+                pontosRank={user.pontos}
                 posicaoRank={(idx + 1).toString()}
               />
             </div>

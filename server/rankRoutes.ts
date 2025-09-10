@@ -9,7 +9,7 @@ const router = Router();
 router.get('/rank', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      'SELECT id, username, user, icon FROM usuario ORDER BY id ASC LIMIT 50'
+      'SELECT id, username, user, icon, pontos FROM usuario ORDER BY pontos DESC LIMIT 50'
     );
     // Adiciona posição (rank) manualmente
     const users = (rows as any[]).map((u, i) => ({

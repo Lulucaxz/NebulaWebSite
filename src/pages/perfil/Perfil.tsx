@@ -48,11 +48,7 @@ function Perfil() {
   // Estados para edição
   const [nomeEditado, setNomeEditado] = useState("");
   const [bioEditada, setBioEditada] = useState("");
-  const [cursoEditado, setCursoEditado] = useState("");
 
-  const [progresso1Editado, setProgresso1Editado] = useState(0);
-  const [progresso2Editado, setProgresso2Editado] = useState(0);
-  const [progresso3Editado, setProgresso3Editado] = useState(0);
   const [fotoEditada, setFotoEditada] = useState<File | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string>("");
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -95,10 +91,6 @@ function Perfil() {
     formData.append("name", nomeEditado);
     formData.append("bio", bioEditada);
     formData.append("idUser", usuario);
-    formData.append("curso", cursoEditado);
-    formData.append("progresso1", progresso1Editado.toString());
-    formData.append("progresso2", progresso2Editado.toString());
-    formData.append("progresso3", progresso3Editado.toString());
     if (fotoEditada) {
       formData.append("photo", fotoEditada);
     }
@@ -178,10 +170,6 @@ function Perfil() {
                 onClick={() => {
                   setNomeEditado(nome);
                   setBioEditada(biografia);
-                  setCursoEditado(curso);
-                  setProgresso1Editado(progresso1);
-                  setProgresso2Editado(progresso2);
-                  setProgresso3Editado(progresso3);
                   setMostrarEditor(true);
                 }}
               >
@@ -220,39 +208,6 @@ function Perfil() {
                         rows={5}
                         onChange={(e) => setBioEditada(e.target.value)}
                       />
-
-
-                      <input
-                        className="prf-editar-curso"
-                        type="text"
-                        value={cursoEditado}
-                        placeholder={t('Curso')}
-                        onChange={(e) => setCursoEditado(e.target.value)}
-                      />
-                      <label>{t('Progresso 1')}
-                        <input
-                          type="number"
-                          value={progresso1Editado}
-                          min={0}
-                          onChange={e => setProgresso1Editado(Number(e.target.value))}
-                        />
-                      </label>
-                      <label>{t('Progresso 2')}
-                        <input
-                          type="number"
-                          value={progresso2Editado}
-                          min={0}
-                          onChange={e => setProgresso2Editado(Number(e.target.value))}
-                        />
-                      </label>
-                      <label>{t('Progresso 3')}
-                        <input
-                          type="number"
-                          value={progresso3Editado}
-                          min={0}
-                          onChange={e => setProgresso3Editado(Number(e.target.value))}
-                        />
-                      </label>
                       <div className="prf-add-imagem">
                         <label htmlFor="prf-editar-imagem">
                           {t('ESCOLHA UMA IMAGEM')}
