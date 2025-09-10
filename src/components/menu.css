@@ -103,3 +103,18 @@
     display: none;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .menu-barra-lateral {
+    width: 150px;
+    font-size: 14px;
+  }
+
+  .menu-icones span {
+    margin-left: 5px;
+  }
+
+  .menu-icones svg {
+    padding-left: 10px;
+  }
+}

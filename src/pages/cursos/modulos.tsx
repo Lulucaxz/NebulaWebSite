@@ -31,7 +31,13 @@ function Modulos() {
   );
 
   const updateItemsPerView = setInterval(() => {
-    setItemsPerView(typeof window !== 'undefined' && window.innerWidth > 1500 ? 3 : window.innerWidth > 1250 ? 2 : 1)
+    setItemsPerView(
+      typeof window !== 'undefined' && window.innerWidth > 1500 ?
+      3 : window.innerWidth > 1250 ?
+      2 : window.innerWidth > 768 ?
+      1 :
+      0
+    )
   }, 100);
 
   const [matrizAtividades, setMatrizAtividades] = useState(Array.from({ length: modulo.atividades.length }, (_, i) => i === 0));
@@ -122,7 +128,7 @@ function Modulos() {
                 </div>
               )
             })}
-            <div className="atividades-sessao-arrow-left" onClick={() => {
+            <div className="videos-sessao-arrow-left" onClick={() => {
               if (matrizAtividadesIndex - 2 >= 0) {
                 updateMatrizAtividades(matrizAtividadesIndex - 1)
               }
@@ -147,9 +153,35 @@ function Modulos() {
                     key={videoCard.id}
                     className="videos-sessao-card"
                     style={{
-                      width: matrizVideos[videoCargIndex] ? `calc((100% - (60px * 3)) * 2.5 / 4.5)` : `calc((100% - (60px * 3)) / 4.5)`,
+                      width: 
+                      matrizVideos[videoCargIndex] ?
+                        itemsPerView < 2 ?
+                          itemsPerView < 1 ?
+                            `calc((100% - (60px * 3))`
+                          :
+                            `calc(((100% - (60px * 3)) * 2.5 / 4.5) * 1.5)`
+                        :
+                        `calc((100% - (60px * 3)) * 2.5 / 4.5)`
+                      : 
+                        itemsPerView < 2 ?
+                          itemsPerView < 1 ?
+                            `calc(((100% - (60px * 3)) / 2))`
+                          :
+                            `calc(((100% - (60px * 3)) / 4.5) * 1.5)`
+                        :
+                          `calc((100% - (60px * 3)) / 4.5)`,
                       flexShrink: 0,
-                      marginLeft: videoCargIndex === 0 ? `calc(((100% - (60px * 3)) / 4.5) * ${matrizVideoIndex * -1} + ${matrizVideoIndex * -30}px)` : '0px',
+                      marginLeft: 
+                      videoCargIndex === 0 ?
+                        itemsPerView < 2 ?
+                          itemsPerView < 1 ?
+                            `calc(((100% - (60px * 3)) / 2) * ${matrizVideoIndex * -1} + ${matrizVideoIndex * -30}px + 60px)`
+                          :
+                            `calc((((100% - (60px * 3)) / 4.5) * ${matrizVideoIndex * -1}) * 1.5 + ${matrizVideoIndex * -30}px + 60px)`
+                        :
+                        `calc(((100% - (60px * 3)) / 4.5) * ${matrizVideoIndex * -1} + ${matrizVideoIndex * -30}px + 60px)`
+                      :
+                        '0px',
                       filter: videoCargIndex < matrizVideoIndex || videoCargIndex >= matrizVideoIndex + 3 ? 'brightness(0.3)' : 'none',
                       border: videoCargIndex === matrizVideoIndex ? '1px solid white' : 'none',
                     }}

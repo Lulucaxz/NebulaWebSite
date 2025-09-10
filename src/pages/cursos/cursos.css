@@ -81,13 +81,16 @@
 }
 
 .videos-sessao-container-int {
-    width: 100%;
+    width: calc(100% + 120px);
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     padding: 0 30px;
     gap: 30px;
+    left: -60px;
     position: relative;
     align-items: center;
+    overflow: hidden;
 }
 
 .videos-sessao-card {
@@ -139,12 +142,12 @@
 
 .videos-sessao-descricao {
     margin: -15px 0 0 30px;
-    width: 55%;
+    max-width: 600px;
 
     font-family: 'Questrial';
     font-style: normal;
     font-weight: 100;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 21px;
 
     color: #F8EFFF;
@@ -157,7 +160,7 @@
     background-image: url(/seta-carrocel-esquerda.svg);
     background-size: cover;
     cursor: pointer;
-    left: -15px;
+    left: 30px;
 }
 
 .videos-sessao-arrow-rigth {
@@ -167,26 +170,18 @@
     background-image: url(/seta-carrocel-direita.svg);
     background-size: cover;
     cursor: pointer;
-    right: 20px;
-}
-
-.atividades-sessao-arrow-left {
-    width: 75px;
-    height: 75px;
-    position: absolute;
-    background-image: url(/seta-carrocel-esquerda.svg);
-    background-size: cover;
-    cursor: pointer;
-    left: 40px;
+    right: 30px;
 }
 
 .carrocel-atividades {
-    width: 100%;
+    width: calc(100% + 120px);
     position: relative;
+    left: -60px;
     display: flex;
     gap: 30px;
     margin: 30px 0;
     align-items: center;
+    overflow: hidden;
 }
 
 .carrocel-atividades-card-cont {

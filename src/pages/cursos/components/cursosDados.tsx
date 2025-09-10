@@ -228,7 +228,7 @@ export const initial_cursos = {
             terminado: false,
             template: {
                 titulo: 'Módulo 2 - Título Genérico',
-                descricao: `Pequena descricao do que o aluno irá aprender neste modulo do curso. Lorem ipsum dolor sit amet. 33 galisum eaque rem dolorem autem est deseruntLorem ipsum dolor sit amet. 33 galisum eaque rem dolorem autem est deserunt`
+                descricao: `Pequena descricao do que o aluno irá aprender neste modulo do curso. Lorem ipsum dolor sit amet.`
             },
             introducao: {
                 descricao: `A introdução do segundo módulo traz uma visão geral dos temas que serão abordados, destacando a importância de cada tópico para o desenvolvimento do aprendizado contínuo. 
@@ -343,7 +343,7 @@ export const initial_cursos = {
             terminado: false,
             template: {
                 titulo: 'Módulo 3 - Título Genérico',
-                descricao: `Pequena descricao do que o aluno irá aprender neste modulo do curso. Lorem ipsum dolor sit amet. 33 galisum eaque rem dolorem autem est deserunt`
+                descricao: `Pequena descricao do que o aluno irá aprender neste modulo do curso. Lorem ipsum dolor sit amet.`
             },
             introducao: {
                 descricao: `A introdução do módulo 3 contextualiza os assuntos a serem tratados, destacando a relevância dos tópicos avançados para o desenvolvimento do conhecimento e habilidades específicas. 
