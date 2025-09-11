@@ -1,10 +1,14 @@
 .antcc-anotacao-hoverlines {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 0px;
     overflow: hidden;
-    transition: max-height 0.4s;
+    transition: max-height 1s cubic-bezier(0.4, 0, 0.2, 1);
     max-height: 0;
+}
+.antcc-anotacao-hoverlines.active {
+    max-height: 160px;
+    gap: 10px;
 }
 
 .antcc-anotacao:hover .antcc-anotacao-hoverlines {
@@ -15,17 +19,19 @@
 .antcc-hoverline {
     height: 50px;
     width: 100%;
-    background: linear-gradient(90deg, var(--roxo1) 0%, var(--roxo2) 100%);
-    border-radius: 8px;
     margin-bottom: 0;
     opacity: 1;
-    transition: opacity 0.3s, transform 0.3s;
+    background-color: red;
 }
 
 .antcc-anotacao .antcc-anotacao-hoverlines .antcc-hoverline {
-    opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-30px);
 }
+.antcc-anotacao .antcc-anotacao-hoverlines.active .antcc-hoverline {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .antcc-anotacao:hover .antcc-anotacao-hoverlines .antcc-hoverline {
     opacity: 1;
     transform: translateY(0);
@@ -53,7 +59,7 @@
 .antcc-container {
 	position: absolute;
 	left: 220px;
-	right: 550px;
+	right: 400px;
 	top: 0;
 	bottom: 0;
 	display: flex;
@@ -81,8 +87,26 @@
 .antcc-anotacao-textos {
     background-color: var(--cinza-escuro1);
     color: var(--branco);
-    padding: 25px 10px;
+    padding: 25px 10px 40px 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.antcc-seta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--cinza-escuro1);
+
+    svg {
+        transform: rotate(90deg);
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.antcc-seta:hover {
+    cursor: pointer;
+    background-color: var(--cinza-claro1);
 }

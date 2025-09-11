@@ -4,7 +4,7 @@
     font-family: 'Questrial', sans-serif;
     font-size: 16px;
     height: 100vh;
-    width: 550px;
+    width: 400px;
     position: fixed;
     right: 0;
     top: 0;
@@ -15,7 +15,7 @@
 }
 
 #sdbc-container2 { 
-    width: 500px;
+    width: calc(100% - 50px);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -49,13 +49,13 @@
     background-color: var(--cinza-escuro2);
 }
 
-.sdbc-bloco-selecionado {
-  background: var(--roxo1) !important;
+.sdbc-bloco:hover, #sdbc-imagem:hover, #sdbc-pdf:hover {
+    background-color: var(--cinza-claro1) !important;
+    cursor: pointer;
 }
 
-.sdbc-bloco:hover, #sdbc-imagem:hover, #sdbc-pdf:hover {
-    background-color: var(--branco);
-    cursor: pointer;
+.sdbc-bloco-selecionado {
+  background: var(--roxo1) !important;
 }
 
 #sdbc-imagem {
@@ -69,6 +69,15 @@
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
+
+    div {
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin-right: 10px;
+        }
+    }
 }
 
 #sdbc-pdf {
