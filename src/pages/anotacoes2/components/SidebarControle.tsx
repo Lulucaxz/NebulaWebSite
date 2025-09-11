@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./SidebarControle.css";
 
 type SidebarControleProps = {
-  onEnviar?: (anotacao: { imagem: string|null, pdfNome: string|null, texto: string }) => void;
+  onEnviar?: (anotacao: { imagem: string|null, pdfNome: string|null, pdfBase64?: string|null, texto: string, coluna: number }) => void;
 };
 
 function SidebarControle({ onEnviar }: SidebarControleProps) {
@@ -11,12 +11,17 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
   const [pdfNome, setPdfNome] = useState<string | null>(null);
   const [texto, setTexto] = useState<string>("");
 
+  const [imagemNome, setImagemNome] = useState<string | null>(null);
   const handleImagemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
+      setImagemNome(file.name);
       const reader = new FileReader();
       reader.onload = (ev) => {
-        setImagem(ev.target?.result as string);
+        const base64 = ev.target?.result as string;
+        setImagem(base64);
+        // Salva temporariamente no localStorage
+        localStorage.setItem('imagemTemp', base64);
       };
       reader.readAsDataURL(file);
     }
@@ -26,6 +31,12 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
     const file = e.target.files && e.target.files[0];
     if (file) {
       setPdfNome(file.name);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const base64 = ev.target?.result as string;
+        localStorage.setItem('pdfTemp', base64);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -35,14 +46,48 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
     }
   };
 
-  const handleEnviar = () => {
-    if (onEnviar) {
-      onEnviar({ imagem, pdfNome, texto });
-      setImagem(null);
-      setPdfNome(null);
-      setTexto("");
-      setBlocoSelecionado(null);
+  const handleEnviar = async () => {
+    // Só permite enviar se pelo menos um dos campos estiver preenchido
+    if (!imagemNome && !pdfNome && texto.trim() === "") {
+      alert("Preencha pelo menos imagem, PDF ou texto para enviar.");
+      return;
     }
+    if (!blocoSelecionado) {
+      alert("Selecione uma coluna para sua anotação.");
+      return;
+    }
+    // Recupera imagem/pdf do localStorage se existir
+    const imagemBase64 = imagem || localStorage.getItem('imagemTemp');
+    const pdfBase64 = localStorage.getItem('pdfTemp');
+    const novaAnotacao = {
+      imagem: imagemBase64,
+      pdfNome: pdfNome,
+      pdfBase64: pdfBase64,
+      texto: texto.trim(),
+      coluna: blocoSelecionado
+    };
+    try {
+      await fetch("/api/anotacoes2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(novaAnotacao)
+      });
+    } catch (err) {
+      alert("Erro ao salvar anotação!");
+      return;
+    }
+    if (onEnviar) {
+      onEnviar(novaAnotacao);
+    }
+  setImagem(null);
+  setImagemNome(null);
+  setPdfNome(null);
+  setTexto("");
+  setBlocoSelecionado(null);
+  localStorage.removeItem('imagemTemp');
+  localStorage.removeItem('pdfTemp');
   };
 
   return (
@@ -101,6 +146,9 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
                   <path d="M480-480ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h320v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm40-160h480L570-480 450-320l-90-120-120 160Zm480-280v-167l-64 63-56-56 160-160 160 160-56 56-64-63v167h-80Z" />
                 </svg>
                 <span>Selecione sua imagem</span>
+                {imagemNome && (
+                  <span style={{ marginLeft: 8, color: 'var(--branco)', fontWeight: 500 }}>{imagemNome}</span>
+                )}
               </div>
             )}
           </div>

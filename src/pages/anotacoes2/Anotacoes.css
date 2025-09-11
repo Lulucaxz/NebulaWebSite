@@ -1,3 +1,7 @@
+body {
+    background-color: var(--cinza-escuro2);
+}
+
 .ant-container {
     width: 90%;
     display: flex;
