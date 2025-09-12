@@ -88,6 +88,9 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
   setBlocoSelecionado(null);
   localStorage.removeItem('imagemTemp');
   localStorage.removeItem('pdfTemp');
+  // Limpa o input para permitir selecionar a mesma imagem novamente
+  const inputImg = document.getElementById('input-imagem') as HTMLInputElement | null;
+  if (inputImg) inputImg.value = '';
   };
 
   return (
