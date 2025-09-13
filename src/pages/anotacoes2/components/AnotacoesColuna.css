@@ -108,3 +108,18 @@
     gap: 10px;
     margin-top: 10px;
 }
+
+#antcc-anotacao-deletar:hover {
+    background-color: var(--cinza-claro1);
+    cursor: pointer;
+}
+
+#antcc-anotacao-editar:hover {
+    background-color: var(--cinza-claro1);
+    cursor: pointer;
+}
+
+.antcc-pdf-nome svg {
+    min-height: 30px;
+    min-width: 30px;
+}

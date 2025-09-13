@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AlertProvider } from './Alert';
 
 import Perfil from './pages/perfil/Perfil';
 import Home from './pages/home/paginaInicial';
@@ -15,46 +16,24 @@ import Forum from './pages/forum/forum';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={
-          <Home />
-        } />
-        <Route path="/perfil" element={
-          <Perfil />
-        } />
-        <Route path="/anotacoes" element={
-          <Anotacoes />
-        } />
-        <Route path="/anotacoes2" element={
-          <Anotacoes2 />
-        } />
-        <Route path="/cursos" element={
-          <Cursos />
-        } />
-        <Route path="/modulos/:assinatura/:moduloId" element={
-          <Modulos />
-        } />
-        <Route path="/modulos/:assinatura/:moduloId/atividades/:atividadeInd" element={
-          <Atividades />
-        } />
-        <Route path="/forum" element={
-          <Forum />
-        } />
-        <Route path="/planos" element={
-          <Planos />
-        } />
-        <Route path="/configuracoes" element={
-          <Configuracoes />
-        } />
-        <Route path="/cadastrar" element={
-          <Login />
-        } />
-        <Route path="*" element={
-          <Page404 />
-        } />
-      </Routes>
-    </Router>
+    <AlertProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/anotacoes" element={<Anotacoes />} />
+          <Route path="/anotacoes2" element={<Anotacoes2 />} />
+          <Route path="/cursos" element={<Cursos />} />
+          <Route path="/modulos/:assinatura/:moduloId" element={<Modulos />} />
+          <Route path="/modulos/:assinatura/:moduloId/atividades/:atividadeInd" element={<Atividades />} />
+          <Route path="/forum" element={<Forum />} />
+          <Route path="/planos" element={<Planos />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
+          <Route path="/cadastrar" element={<Login />} />
+          <Route path="*" element={<Page404 />} />
+        </Routes>
+      </Router>
+    </AlertProvider>
   );
 }
 

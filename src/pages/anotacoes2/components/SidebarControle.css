@@ -128,6 +128,15 @@
     outline: none;
 }
 
+.sdbc-partes textarea::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--cinza-escuro3);
+}
+
+.sdbc-partes textarea::-webkit-scrollbar-thumb {
+    background: var(--roxo1);
+}
+
 #sdbc-botoes {
     width: 100%;
     display: flex;

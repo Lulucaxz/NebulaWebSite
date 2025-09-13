@@ -13,9 +13,12 @@ interface Props {
   anotacoes: Anotacao[];
   onSwapUp?: (colIdx: number, idx: number) => void;
   onSwapDown?: (colIdx: number, idx: number) => void;
+  onDelete?: (colIdx: number, idx: number) => void;
+  onEditar?: (colIdx: number, idx: number) => void;
+  editando?: { anotacao: Anotacao, colIdx: number, idx: number } | null;
 }
 
-function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown }: Props) {
+function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar, editando }: Props) {
   // Separa as anotações por coluna, sempre a partir da prop
   const colunas = [[], [], []] as Anotacao[][];
   anotacoes.forEach((anot) => {
@@ -66,7 +69,7 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown }: Props) {
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            gap: 100,
+                            gap: "10px",
                           }}
                         >
                           <svg
@@ -123,10 +126,7 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown }: Props) {
                           if (typeof onSwapUp === 'function') onSwapUp(colIdx, i);
                         }}
                       >
-                        {/* const [activeIdx, setActiveIdx] = useState<{
-                        col: number;
-                        idx: number;
-                        } | null>(null); */}
+
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           height="24px"
@@ -157,7 +157,24 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown }: Props) {
                         </svg>
                       </div>
                     </div>
-                    <div className="antcc-anotacao-opcao">
+                    <div
+                      className="antcc-anotacao-opcao"
+                      id="antcc-anotacao-editar"
+                      style={{
+                        backgroundColor:
+                          editando && editando.colIdx === colIdx && editando.idx === i
+                            ? 'var(--roxo1)'
+                            : '',
+                        color:
+                          editando && editando.colIdx === colIdx && editando.idx === i
+                            ? '#fff'
+                            : undefined,
+                        cursor: typeof onEditar === 'function' ? 'pointer' : 'not-allowed',
+                      }}
+                      onClick={() => {
+                        if (typeof onEditar === 'function') onEditar(colIdx, i);
+                      }}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24px"
@@ -169,7 +186,10 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown }: Props) {
                       </svg>
                       <span>Editar</span>
                     </div>
-                    <div className="antcc-anotacao-opcao">
+                    <div className="antcc-anotacao-opcao" id="antcc-anotacao-deletar"
+                    onClick={() => {
+                          if (typeof onDelete === 'function') onDelete(colIdx, i);
+                        }}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24px"

@@ -1,17 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SidebarControle.css";
+import { showAlert } from "../../../Alert";
 
 type SidebarControleProps = {
   onEnviar?: (anotacao: { imagem: string|null, pdfNome: string|null, pdfBase64?: string|null, texto: string, coluna: number }) => void;
+  editando?: { anotacao: any, colIdx: number, idx: number } | null;
+  onCancelarEdicao?: () => void;
 };
 
-function SidebarControle({ onEnviar }: SidebarControleProps) {
+function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarControleProps) {
   const [blocoSelecionado, setBlocoSelecionado] = useState<number | null>(null);
   const [imagem, setImagem] = useState<string | null>(null);
   const [pdfNome, setPdfNome] = useState<string | null>(null);
   const [texto, setTexto] = useState<string>("");
-
   const [imagemNome, setImagemNome] = useState<string | null>(null);
+
+  // Preenche campos ao iniciar edição
+  useEffect(() => {
+    if (editando) {
+      setBlocoSelecionado(editando.anotacao.coluna);
+      setImagem(editando.anotacao.imagem || null);
+      setImagemNome(null); // Não mostra nome do arquivo
+      setPdfNome(editando.anotacao.pdfNome || null);
+      setTexto(editando.anotacao.texto || "");
+    } else {
+      setBlocoSelecionado(null);
+      setImagem(null);
+      setImagemNome(null);
+      setPdfNome(null);
+      setTexto("");
+    }
+  }, [editando]);
   const handleImagemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
@@ -49,11 +68,11 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
   const handleEnviar = async () => {
     // Só permite enviar se pelo menos um dos campos estiver preenchido
     if (!imagemNome && !pdfNome && texto.trim() === "") {
-      alert("Preencha pelo menos imagem, PDF ou texto para enviar.");
+      showAlert("Preencha pelo menos imagem, PDF ou texto para enviar.");
       return;
     }
     if (!blocoSelecionado) {
-      alert("Selecione uma coluna para sua anotação.");
+      showAlert("Selecione uma coluna para sua anotação.");
       return;
     }
     // Recupera imagem/pdf do localStorage se existir
@@ -75,7 +94,7 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
         body: JSON.stringify(novaAnotacao)
       });
     } catch (err) {
-      alert("Erro ao salvar anotação!");
+      showAlert("Erro ao salvar anotação!");
       return;
     }
     if (onEnviar) {
@@ -97,15 +116,24 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
     <div id="sdbc-container">
       <div id="sdbc-container2">
         <div className="sdbc-partes">
-          <span className="controle-titulo">Crie sua anotação aqui</span>
-          <span>Escolha uma para sua anotação ser criada</span>
+          <span className="controle-titulo">{editando ? "Editando" : "Crie sua anotação aqui"}</span>
+          <span>{editando ? "Você não pode alterar a coluna" : "Escolha uma coluna para sua anotação"}</span>
           <div id="sdbc-blocos-anotacao">
             {[1, 2, 3].map((num) => (
               <div
                 key={num}
                 className={`sdbc-bloco${blocoSelecionado === num ? " sdbc-bloco-selecionado" : ""}`}
                 id={`sdbc-bloco${num}`}
-                onClick={() => setBlocoSelecionado(blocoSelecionado === num ? null : num)}
+                style={editando ? {
+                  backgroundColor: blocoSelecionado === num ? 'var(--roxo1)' : 'var(--cinza-escuro2)',
+                  cursor: blocoSelecionado === num ? 'default' : 'not-allowed',
+                  opacity: blocoSelecionado === num ? 1 : 0.6
+                } : {}}
+                onClick={() => {
+                  if (editando) return;
+                  setBlocoSelecionado(blocoSelecionado === num ? null : num);
+                }}
+                title={editando && blocoSelecionado !== num ? "Coluna bloqueada durante edição" : ""}
               ></div>
             ))}
           </div>
@@ -194,7 +222,7 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
                 <span>Selecione seu PDF</span>
               </div>
             ) : (
-              <span style={{ color: 'var(--branco)', fontWeight: 500 }}>{pdfNome}</span>
+              <span style={{ width: 'calc(100% - 20px)', color: 'var(--branco)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfNome}</span>
             )}
           </div>
         </div>
@@ -218,12 +246,16 @@ function SidebarControle({ onEnviar }: SidebarControleProps) {
 
         <div id="sdbc-botoes">
             <span className="sdbc-botao" id="sdbc-botao-cancelar" onClick={() => {
-              setImagem(null);
-              setPdfNome(null);
-              setTexto("");
-              setBlocoSelecionado(null);
-            }}>Cancelar</span>
-            <span className="sdbc-botao" id="sdbc-botao-enviar" onClick={handleEnviar}>Enviar</span>
+              if (editando && typeof onCancelarEdicao === 'function') {
+                onCancelarEdicao();
+              } else {
+                setImagem(null);
+                setPdfNome(null);
+                setTexto("");
+                setBlocoSelecionado(null);
+              }
+            }}>{editando ? "Cancelar" : "Cancelar"}</span>
+            <span className="sdbc-botao" id="sdbc-botao-enviar" onClick={handleEnviar}>{editando ? "Salvar" : "Enviar"}</span>
         </div>
       </div>
     </div>
