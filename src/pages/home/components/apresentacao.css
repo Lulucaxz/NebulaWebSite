@@ -59,3 +59,60 @@
     color: var(--roxo1);
     cursor: pointer;
 }
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .apr-cards {
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 20px;
+    }
+
+    .apr-descricao-card {
+        padding: 22px;
+        gap: 22px;
+    }
+
+    .apr-imagem-card {
+        width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .apr-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .apr-card {
+        flex-direction: column;
+    }
+
+    .apr-imagem-card {
+        width: 100%;
+        height: 200px;
+    }
+
+    .apr-descricao-card {
+        padding: 20px;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .apr-container {
+        width: 95%;
+    }
+
+    .apr-descricao-card {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .apr-imagem-card {
+        height: 150px;
+    }
+
+    .apr-botao-card {
+        padding: 12px 0;
+    }
+}

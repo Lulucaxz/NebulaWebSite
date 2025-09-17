@@ -91,14 +91,20 @@ body::-webkit-scrollbar-thumb {
     background-color: #F8EFFF;
 }
 
-@media screen and (max-width: 425px) {
-    #container {
-        width: 100%;
+@media screen and (max-width: 1024px) {
+    .container {
+        width: calc(100% - 200px);
     }
 }
 
 @media screen and (max-width: 768px) {
     .container {
         width: calc(100% - 150px);
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .container {
+        width: 100%;
     }
 }

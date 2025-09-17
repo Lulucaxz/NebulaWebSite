@@ -302,3 +302,191 @@
         fill: var(--cinza-escuro3);
     }
 }
+
+@media (max-width: 1440px) {
+    .container-nav-estrelas nav {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 1380px) {
+    .container-nav-estrelas nav {
+        font-size: 11px !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .nav-estrelas-demo {
+        gap: 20px;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .nav-filtros-extras-cursos {
+        gap: 20px;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .filtros-extra {
+        padding: 0 20px;
+        font-size: 20px;
+    }
+
+    .nav-estrelas-demo div {
+        padding: 8px 15px;
+    }
+
+    .nav-estrelas-demo div p {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-avaliações {
+        width: 100%;
+        padding: 0 20px;
+        margin: 80px 0 100px 0;
+    }
+
+    .container-nav-comentarios {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .button-filtros-div-extra {
+        width: 100%;
+        height: auto;
+        padding: 10px 0;
+        overflow: visible;
+    }
+
+    .filtros-extra {
+        padding: 10px 15px;
+        font-size: 18px;
+    }
+
+    .nav-estrelas-demo {
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .nav-estrelas-demo div {
+        padding: 8px 15px;
+        gap: 3px;
+    }
+
+    .nav-estrelas-demo div p {
+        font-size: 16px;
+    }
+
+    .estrela-item {
+        font-size: 16px;
+    }
+
+    .nav-filtros-extras-cursos {
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .button-mais-menos {
+        height: 50px;
+    }
+
+    .button-mais-menos svg {
+        height: 50px;
+        width: 50px;
+    }
+}
+
+@media (max-width: 600px) {
+    .nav-estrelas-demo {
+        justify-content: space-around;
+        gap: 10px;
+    }
+
+    .nav-filtros-extras-cursos {
+        justify-content: space-around;
+        gap: 10px;
+    }
+
+    .filtros-extra {
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container-avaliacoes {
+        width: 95%;
+    }
+
+    .container-nav-estrelas {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .nav-estrelas-demo {
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .nav-estrelas-demo div {
+        padding: 6px 10px;
+        min-width: 40px;
+    }
+
+    .nav-estrelas-demo div p {
+        font-size: 14px;
+    }
+
+    .estrela-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .nav-filtros-extras-cursos {
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filtros-extra {
+        padding: 8px 12px;
+        font-size: 16px;
+        min-width: 80px;
+    }
+
+    .comentario {
+        padding: 15px;
+    }
+
+    .comentario-usuario-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .comentario-usuario-titulo h3 {
+        font-size: 18px;
+    }
+
+    .comentario-usuario-titulo h4 {
+        font-size: 14px;
+    }
+
+    .comentario-conteudo {
+        font-size: 14px;
+    }
+
+    .button-mais-menos {
+        height: 45px;
+    }
+
+    .button-mais-menos svg {
+        height: 40px;
+        width: 40px;
+    }
+}
