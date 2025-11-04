@@ -14,6 +14,8 @@ import { v2 as cloudinary, UploadStream } from "cloudinary";
 import { pool } from "./db";
 
 import rankRoutes from "./rankRoutes";
+import anotacoesRoutes from "./anotacoesRoutes";
+import { asyncHandler } from './utils';
 
 dotenv.config();
 
@@ -34,12 +36,10 @@ const USERS_FILE = path.join(__dirname, 'users.json');
 
 
 
-// Async handler para tratar erros em async routes
-export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
-): RequestHandler => (req, res, next) => {
-  fn(req, res, next).catch(next);
-};
+
+// index.ts
+
+// Defina o tipo da função async
 
 // Middlewares
 app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
@@ -73,6 +73,8 @@ app.use(passport.session());
 
 // Rotas de ranking
 app.use("/api", rankRoutes);
+
+app.use("/api/anotacoes", anotacoesRoutes);
 
 // Config Google Strategy
 passport.use(new GoogleStrategy({
@@ -346,6 +348,16 @@ app.put(
     }
   })
 );
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  // Loga o erro completo no console do *servidor* para você depurar
+  console.error("--- ERRO INESPERADO NO BACKEND ---");
+  console.error(err.stack);
+  console.error("---------------------------------");
+  
+  // Envia uma resposta JSON padronizada para o frontend
+  res.status(500).json({ error: "Erro interno do servidor", details: err.message });
+});
 
 // Start server
 app.listen(PORT, () => {

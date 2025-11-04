@@ -61,6 +61,10 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`anotacoes` (
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
+ALTER TABLE `NEBULA`.`anotacoes`
+ADD COLUMN `coluna` INT NOT NULL DEFAULT 1 AFTER `usuario_id`,
+ADD COLUMN `pdfNome` VARCHAR(255) NULL DEFAULT NULL AFTER `pdf`;
+
 -- -----------------------------------------------------
 -- Table `NEBULA`.`comentario`
 -- -----------------------------------------------------

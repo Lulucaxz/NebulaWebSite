@@ -1,51 +1,85 @@
+// Anotacoes.tsx
 import { Menu } from "../../components/Menu";
 import "./Anotacoes.css"
-import { useState } from "react";
+// 1. Importe useState E useEffect
+import { useState, useEffect } from "react"; 
 
 import SidebarControle from "./components/SidebarControle";
 import AnotacoesColunas from "./components/AnotacoesColunas";
+// import { showAlert } from "../../../Alert"; // Descomente se for usar
 
-type Anotacao = {
-  imagem: string | null;
-  pdfNome: string | null;
-  pdfBase64?: string | null; // <-- O campo que faltava
-  texto: string;
+
+// MUDE AQUI: Adicione "export"
+export type Anotacao = {
+  id: string; 
+  usuario_id: number;
+  conteudo: string; 
+  img: string | null;     
+  pdf: string | null;     
+  pdfNome: string | null; 
   coluna: number;
 };
 
 function Anotacoes2() {
-  // 2. USE O TIPO NO SEU ESTADO
-  const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);// Mude de any[]
+  // 3. USE O NOVO TIPO NO ESTADO
+  const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);
   const [editando, setEditando] = useState<{ anotacao: Anotacao, colIdx: number, idx: number } | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<{ colIdx: number, idx: number } | null>(null);
+  // Mude confirmDelete para salvar a anotação inteira
+  const [confirmDelete, setConfirmDelete] = useState<{ anotacao: Anotacao } | null>(null);
   const [skipDeleteConfirm, setSkipDeleteConfirm] = useState(() => localStorage.getItem('skipDeleteConfirm') === 'true');
+  const [carregando, setCarregando] = useState(true); // Estado de loading
 
-  // 3. USE O TIPO NA SUA FUNÇÃO
-  const adicionarAnotacao = (anotacao: Anotacao) => { // Mude o tipo aqui
+  // 4. CARREGAR DADOS DO BACKEND NA INICIALIZAÇÃO
+  useEffect(() => {
+    const carregarAnotacoes = async () => {
+      try {
+        setCarregando(true);
+        const response = await fetch("/api/anotacoes"); // Rota GET da sua API
+        
+        if (response.status === 401) {
+          // Usuário não logado, talvez redirecionar?
+          console.error("Usuário não autenticado.");
+          // showAlert("Você precisa estar logado para ver suas anotações.");
+          return; // Para de carregar
+        }
+        
+        if (!response.ok) {
+           throw new Error("Erro ao buscar dados");
+        }
+
+        const data: Anotacao[] = await response.json();
+        setAnotacoes(data);
+      } catch (err) {
+        console.error(err);
+        // showAlert("Falha ao carregar suas anotações.");
+      } finally {
+        setCarregando(false);
+      }
+    };
+    carregarAnotacoes();
+  }, []); // O array vazio [] garante que isso rode só uma vez
+
+  // 5. FUNÇÃO ATUALIZADA (agora recebe a anotação salva do backend)
+  const adicionarAnotacao = (anotacaoSalva: Anotacao) => {
     if (editando) {
-      // Editando existente
-      setAnotacoes(prev => {
-        const colunas: Anotacao[][] = [[], [], []];
-        prev.forEach((anot) => {
-          if (anot.coluna === 1) colunas[0].push(anot);
-          if (anot.coluna === 2) colunas[1].push(anot);
-          if (anot.coluna === 3) colunas[2].push(anot);
-        });
-        const coluna = colunas[editando.colIdx];
-        // Garante que o pdfBase64 da edição seja mantido ou atualizado
-        coluna[editando.idx] = { ...anotacao, coluna: editando.anotacao.coluna };
-        return [...colunas[0], ...colunas[1], ...colunas[2]];
-      });
+      // Editando existente: substitui a anotação antiga pela nova
+      setAnotacoes(prev =>
+        prev.map(anot =>
+          anot.id === editando.anotacao.id ? anotacaoSalva : anot
+        )
+      );
       setEditando(null);
     } else {
-      setAnotacoes(prev => [anotacao, ...prev]);
+      // Nova anotação: adiciona no início
+      setAnotacoes(prev => [anotacaoSalva, ...prev]);
     }
   };
 
-  // Função para trocar anotação de posição na coluna (cima)
+  // Funções de Swap (AVISO: Não persiste no banco ainda)
+  // Para salvar a ordem, você precisaria de uma lógica de API
   const handleSwapUp = (colIdx: number, idx: number) => {
     setAnotacoes(prev => {
-      const colunas = [[], [], []] as any[][];
+      const colunas = [[], [], []] as Anotacao[][];
       prev.forEach((anot) => {
         if (anot.coluna === 1) colunas[0].push(anot);
         if (anot.coluna === 2) colunas[1].push(anot);
@@ -58,10 +92,9 @@ function Anotacoes2() {
     });
   };
 
-  // Função para trocar anotação de posição na coluna (baixo)
   const handleSwapDown = (colIdx: number, idx: number) => {
     setAnotacoes(prev => {
-      const colunas = [[], [], []] as any[][];
+      const colunas = [[], [], []] as Anotacao[][];
       prev.forEach((anot) => {
         if (anot.coluna === 1) colunas[0].push(anot);
         if (anot.coluna === 2) colunas[1].push(anot);
@@ -74,31 +107,45 @@ function Anotacoes2() {
     });
   };
   
+  // 6. ATUALIZAR FUNÇÃO DE DELETAR (PARA USAR O ID)
   const handleDelete = (colIdx: number, idx: number) => {
+    // Encontra a anotação correta para deletar
+    const colunas = [[], [], []] as Anotacao[][];
+    anotacoes.forEach((anot) => {
+      if (anot.coluna === 1) colunas[0].push(anot);
+      if (anot.coluna === 2) colunas[1].push(anot);
+      if (anot.coluna === 3) colunas[2].push(anot);
+    });
+    const anotacaoParaDeletar = colunas[colIdx][idx];
+    if (!anotacaoParaDeletar) return;
+
     if (skipDeleteConfirm) {
-      executeDelete(colIdx, idx);
+      executeDelete(anotacaoParaDeletar);
     } else {
-      setConfirmDelete({ colIdx, idx });
+      setConfirmDelete({ anotacao: anotacaoParaDeletar });
     }
   };
 
-  const executeDelete = (colIdx: number, idx: number) => {
-    setAnotacoes(prev => {
-      const colunas = [[], [], []] as any[][];
-      prev.forEach((anot) => {
-        if (anot.coluna === 1) colunas[0].push(anot);
-        if (anot.coluna === 2) colunas[1].push(anot);
-        if (anot.coluna === 3) colunas[2].push(anot);
+  // 7. FUNÇÃO EXECUTE DELETE (FALA COM A API)
+  const executeDelete = async (anotacao: Anotacao) => {
+    try {
+      const response = await fetch(`/api/anotacoes/${anotacao.id}`, { // Use .id
+        method: 'DELETE',
       });
-      const coluna = colunas[colIdx];
-      coluna.splice(idx, 1);
-      return [...colunas[0], ...colunas[1], ...colunas[2]];
-    });
-    setConfirmDelete(null);
+      if (!response.ok) throw new Error('Falha ao deletar');
+      
+      // Sucesso: remove do estado local
+      setAnotacoes(prev => prev.filter(anot => anot.id !== anotacao.id)); // Use .id
+      setConfirmDelete(null);
+
+    } catch (err) {
+      console.error(err);
+      // showAlert("Erro ao deletar anotação.");
+    }
   };
 
   const handleEditar = (colIdx: number, idx: number) => {
-    const colunas = [[], [], []] as any[][];
+    const colunas = [[], [], []] as Anotacao[][];
     anotacoes.forEach((anot) => {
       if (anot.coluna === 1) colunas[0].push(anot);
       if (anot.coluna === 2) colunas[1].push(anot);
@@ -114,16 +161,22 @@ function Anotacoes2() {
   return (
     <>
       <Menu />
-      <AnotacoesColunas
-        anotacoes={anotacoes}
-        onSwapUp={handleSwapUp}
-        onSwapDown={handleSwapDown}
-        onDelete={handleDelete}
-        onEditar={handleEditar}
-        editando={editando}
-      />
+      {carregando ? (
+        <div style={{ color: 'white', textAlign: 'center', paddingTop: '100px', fontSize: '24px' }}>
+          Carregando anotações...
+        </div>
+      ) : (
+        <AnotacoesColunas
+          anotacoes={anotacoes} // Passa o estado
+          onSwapUp={handleSwapUp}
+          onSwapDown={handleSwapDown}
+          onDelete={handleDelete}
+          onEditar={handleEditar}
+          editando={editando}
+        />
+      )}
       <SidebarControle
-        onEnviar={adicionarAnotacao}
+        onEnviar={adicionarAnotacao} // Passa a função de callback
         editando={editando}
         onCancelarEdicao={handleCancelarEdicao}
       />
@@ -154,8 +207,9 @@ function Anotacoes2() {
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
               <button
                 onClick={() => {
-                  setSkipDeleteConfirm(!skipDeleteConfirm);
-                  localStorage.setItem('skipDeleteConfirm', (!skipDeleteConfirm).toString());
+                  const novoValor = !skipDeleteConfirm;
+                  setSkipDeleteConfirm(novoValor);
+                  localStorage.setItem('skipDeleteConfirm', novoValor.toString());
                 }}
                 style={{
                   width: "20px",
@@ -182,8 +236,9 @@ function Anotacoes2() {
               <button className="antc-btn-cancelar"
                 onClick={() => setConfirmDelete(null)}
               >Cancelar</button>
+              {/* 8. ATUALIZE O ONCLICK AQUI */}
               <button className="antc-btn-deletar"
-                onClick={() => executeDelete(confirmDelete.colIdx, confirmDelete.idx)}
+                onClick={() => executeDelete(confirmDelete.anotacao)}
               >Deletar</button>
             </div>
           </div>

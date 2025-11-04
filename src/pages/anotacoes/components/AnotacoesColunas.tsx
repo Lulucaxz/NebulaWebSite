@@ -1,21 +1,18 @@
+// components/AnotacoesColunas.tsx
+
 import { useState } from "react";
 import "./AnotacoesColuna.css";
+// 1. IMPORTE O TIPO UNIFICADO
+import type { Anotacao } from "../Anotacoes"; // Ajuste o caminho se necessário
 
-type Anotacao = {
-  imagem: string | null;
-  pdfNome: string | null;
-  pdfBase64?: string | null;
-  texto: string;
-  coluna: number;
-};
-
+// 2. REMOVA O TIPO ANTIGO E ATUALIZE A INTERFACE
 interface Props {
-  anotacoes: Anotacao[];
+  anotacoes: Anotacao[]; // Use o tipo importado
   onSwapUp?: (colIdx: number, idx: number) => void;
   onSwapDown?: (colIdx: number, idx: number) => void;
   onDelete?: (colIdx: number, idx: number) => void;
   onEditar?: (colIdx: number, idx: number) => void;
-  editando?: { anotacao: Anotacao, colIdx: number, idx: number } | null;
+  editando?: { anotacao: Anotacao, colIdx: number, idx: number } | null; // Use o tipo importado
 }
 
 function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar, editando }: Props) {
@@ -53,15 +50,16 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar,
                     if (isActive) setActiveIdx(null);
                   }}
                 >
-                  {anot.imagem && (
+                  {/* 3. ATUALIZE AS PROPRIEDADES */}
+                  {anot.img && ( // mudou de anot.imagem
                     <img
-                      src={anot.imagem}
+                      src={anot.img} // mudou de anot.imagem
                       alt="Imagem anotação"
                       className="antcc-img-preview"
                       style={{ width: "100%", backgroundColor: "var(--cinza-escuro1)" }}
                     />
                   )}
-                  {(anot.pdfNome || anot.texto) && (
+                  {(anot.pdfNome || anot.conteudo) && ( // mudou de anot.texto
                     <div className="antcc-anotacao-textos">
                       {anot.pdfNome && (
                         <div
@@ -82,8 +80,8 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar,
                             <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5-23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z" />
                           </svg>
                           <a
-                            href={anot.pdfBase64 ? anot.pdfBase64 : "#"}
-                            download={anot.pdfNome} // <-- ADICIONE ESTA LINHA
+                            href={anot.pdf ? anot.pdf : "#"} // mudou de anot.pdfBase64
+                            download={anot.pdfNome}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
@@ -91,7 +89,7 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar,
                               fontWeight: 600,
                               fontSize: 16,
                               textDecoration: "underline",
-                              cursor: anot.pdfBase64
+                              cursor: anot.pdf // mudou de anot.pdfBase64
                                 ? "pointer"
                                 : "not-allowed",
                             }}
@@ -100,12 +98,12 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar,
                           </a>
                         </div>
                       )}
-                      {anot.texto && (
-                        <div className="antcc-texto">{anot.texto}</div>
+                      {anot.conteudo && ( // mudou de anot.texto
+                        <div className="antcc-texto">{anot.conteudo}</div> // mudou de anot.texto
                       )}
                     </div>
                   )}
-                  {/* Linhas aparecem sempre, mas com classe para transição */}
+                  {/* O resto do código (opções, setas, etc.) não precisa mudar */}
                   <div
                     className="antcc-anotacao-opcoes"
                   >

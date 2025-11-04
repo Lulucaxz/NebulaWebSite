@@ -1,61 +1,65 @@
+// components/SidebarControle.tsx
+
 import { useState, useEffect } from "react";
 import "./SidebarControle.css";
-import { showAlert } from "../../../Alert";
+import { showAlert } from "../../../Alert"; // Certifique-se que o caminho está correto
+import type { Anotacao } from "../Anotacoes"; // Importe o tipo unificado
 
 type SidebarControleProps = {
-  onEnviar?: (anotacao: { imagem: string|null, pdfNome: string|null, pdfBase64?: string|null, texto: string, coluna: number }) => void;
-  editando?: { anotacao: any, colIdx: number, idx: number } | null;
+  onEnviar?: (anotacaoSalva: Anotacao) => void;
+  editando?: { anotacao: Anotacao, colIdx: number, idx: number } | null;
   onCancelarEdicao?: () => void;
 };
 
 function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarControleProps) {
   const [blocoSelecionado, setBlocoSelecionado] = useState<number | null>(null);
-  const [imagem, setImagem] = useState<string | null>(null);
-  const [pdfNome, setPdfNome] = useState<string | null>(null);
   const [texto, setTexto] = useState<string>("");
-  const [imagemNome, setImagemNome] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
 
-  // Preenche campos ao iniciar edição
+  // Armazena os ARQUIVOS (File)
+  const [imagemFile, setImagemFile] = useState<File | null>(null);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+
+  // Armazena as URLs de PREVIEW
+  const [previewImagem, setPreviewImagem] = useState<string | null>(null);
+  const [previewPdfNome, setPreviewPdfNome] = useState<string | null>(null);
+
   useEffect(() => {
     if (editando) {
       setBlocoSelecionado(editando.anotacao.coluna);
-      setImagem(editando.anotacao.imagem || null);
-      setImagemNome(null); // Não mostra nome do arquivo
-      setPdfNome(editando.anotacao.pdfNome || null);
-      setTexto(editando.anotacao.texto || "");
+      setTexto(editando.anotacao.conteudo || "");
+      setPreviewImagem(editando.anotacao.img || null);
+      setPreviewPdfNome(editando.anotacao.pdfNome || null);
+      
+      // Limpa seleção de novos arquivos
+      setImagemFile(null);
+      setPdfFile(null);
     } else {
+      // Limpa tudo
       setBlocoSelecionado(null);
-      setImagem(null);
-      setImagemNome(null);
-      setPdfNome(null);
       setTexto("");
+      setImagemFile(null);
+      setPdfFile(null);
+      setPreviewImagem(null);
+      setPreviewPdfNome(null);
     }
   }, [editando]);
+
+  // Handler de Imagem (cria URL local)
   const handleImagemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
-      setImagemNome(file.name);
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const base64 = ev.target?.result as string;
-        setImagem(base64);
-        // Salva temporariamente no localStorage
-        localStorage.setItem('imagemTemp', base64);
-      };
-      reader.readAsDataURL(file);
+      setImagemFile(file); // Salva o ARQUIVO
+      setPreviewImagem(URL.createObjectURL(file)); // Gera URL local para preview
     }
   };
 
+  // Handler de PDF (salva nome)
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
-      setPdfNome(file.name);
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const base64 = ev.target?.result as string;
-        localStorage.setItem('pdfTemp', base64);
-      };
-      reader.readAsDataURL(file);
+      setPdfFile(file); // Salva o ARQUIVO
+      setPreviewPdfNome(file.name); // Salva o NOME para preview
     }
   };
 
@@ -65,53 +69,94 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
     }
   };
 
+  // Handler de Envio (usa FormData)
   const handleEnviar = async () => {
-    // Só permite enviar se pelo menos um dos campos estiver preenchido
-    if (!imagemNome && !pdfNome && texto.trim() === "") {
+    if (enviando) return;
+    
+    // --- LÓGICA DE VALIDAÇÃO CORRIGIDA ---
+    // A lógica é: "está tudo vazio?"
+    // Se não há preview de imagem, nem de pdf, e nem texto, a anotação está vazia.
+    if (!previewImagem && !previewPdfNome && texto.trim() === "") {
       showAlert("Preencha pelo menos imagem, PDF ou texto para enviar.");
-      return;
+      return; // Para a execução
     }
+    // --- FIM DA CORREÇÃO ---
+
     if (!blocoSelecionado) {
       showAlert("Selecione uma coluna para sua anotação.");
-      return;
+      return; // Para a execução
     }
-    // Recupera imagem/pdf do localStorage se existir
-    const imagemBase64 = imagem || localStorage.getItem('imagemTemp');
-    const pdfBase64 = localStorage.getItem('pdfTemp');
-    const novaAnotacao = {
-      imagem: imagemBase64,
-      pdfNome: pdfNome,
-      pdfBase64: pdfBase64,
-      texto: texto.trim(),
-      coluna: blocoSelecionado
-    };
-    try {
-      await fetch("/api/anotacoes2", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(novaAnotacao)
-      });
-    } catch (err) {
-      showAlert("Erro ao salvar anotação!");
-      return;
-    }
-    if (onEnviar) {
-      onEnviar(novaAnotacao);
-    }
-  setImagem(null);
-  setImagemNome(null);
-  setPdfNome(null);
-  setTexto("");
-  setBlocoSelecionado(null);
-  localStorage.removeItem('imagemTemp');
-  localStorage.removeItem('pdfTemp');
-  // Limpa o input para permitir selecionar a mesma imagem novamente
-  const inputImg = document.getElementById('input-imagem') as HTMLInputElement | null;
-  if (inputImg) inputImg.value = '';
-  };
 
+    setEnviando(true);
+
+    const formData = new FormData();
+    formData.append('conteudo', texto.trim());
+    formData.append('coluna', String(blocoSelecionado));
+
+    if (imagemFile) {
+      formData.append('imagem', imagemFile);
+    }
+    if (pdfFile) {
+      formData.append('pdf', pdfFile);
+    }
+    
+    if (editando && !pdfFile) {
+      formData.append('pdfNome', previewPdfNome || '');
+    }
+
+    try {
+      const isEditing = !!editando;
+      const method = isEditing ? "PUT" : "POST";
+      const endpoint = isEditing ? `/api/anotacoes/${editando.anotacao.id}` : "/api/anotacoes";
+
+      const response = await fetch(endpoint, {
+        method: method,
+        body: formData,
+      });
+
+      // --- BLOCO DE ERRO MAIS ROBUSTO ---
+      if (!response.ok) {
+        let errorMessage = `Erro: ${response.status} ${response.statusText}`;
+        try {
+          // Tenta ler o erro como JSON (que o backend agora envia)
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.details || "Falha ao salvar anotação";
+        } catch (jsonError) {
+          // Se falhar (ex: o backend não enviou JSON), usa o status text
+          console.error("A resposta de erro não era JSON:", jsonError);
+        }
+        throw new Error(errorMessage);
+      }
+      // --- FIM DA CORREÇÃO ---
+
+      const anotacaoSalva = await response.json(); // Se response.ok, deve ser JSON
+
+      if (onEnviar) {
+        onEnviar(anotacaoSalva);
+      }
+
+
+      // Limpa o formulário
+      setBlocoSelecionado(null);
+      setTexto("");
+      setImagemFile(null);
+      setPdfFile(null);
+      setPreviewImagem(null);
+      setPreviewPdfNome(null);
+      
+      const inputImg = document.getElementById('input-imagem') as HTMLInputElement | null;
+      if (inputImg) inputImg.value = '';
+      const inputPdf = document.getElementById('input-pdf') as HTMLInputElement | null;
+      if (inputPdf) inputPdf.value = '';
+
+    } catch (err: any) {
+      console.error(err);
+      showAlert(err.message || "Erro ao salvar anotação!");
+    } finally {
+      setEnviando(false);
+    }
+  };
+  
   return (
     <div id="sdbc-container">
       <div id="sdbc-container2">
@@ -143,18 +188,13 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
           <span>Escolha uma imagem</span>
           <div
             id="sdbc-imagem"
-            style={imagem ? {
-              backgroundImage: `url(${imagem})`,
+            style={previewImagem ? {
+              backgroundImage: `url(${previewImagem})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
             } : {}}
             onClick={() => {
-              // dispara o input file ao clicar na div
               document.getElementById('input-imagem')?.click();
             }}
           >
@@ -165,7 +205,7 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
               style={{ display: 'none' }}
               onChange={handleImagemChange}
             />
-            {!imagem && (
+            {!previewImagem && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -177,9 +217,6 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
                   <path d="M480-480ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h320v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm40-160h480L570-480 450-320l-90-120-120 160Zm480-280v-167l-64 63-56-56 160-160 160 160-56 56-64-63v167h-80Z" />
                 </svg>
                 <span>Selecione sua imagem</span>
-                {imagemNome && (
-                  <span style={{ marginLeft: 8, color: 'var(--branco)', fontWeight: 500 }}>{imagemNome}</span>
-                )}
               </div>
             )}
           </div>
@@ -194,7 +231,7 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: pdfNome ? 'var(--roxo1)' : 'var(--cinza-escuro2)',
+              backgroundColor: previewPdfNome ? 'var(--roxo1)' : 'var(--cinza-escuro2)',
               color: 'var(--branco)'
             }}
             onClick={() => {
@@ -208,7 +245,7 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
               style={{ display: 'none' }}
               onChange={handlePdfChange}
             />
-            {!pdfNome ? (
+            {!previewPdfNome ? (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -222,7 +259,7 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
                 <span>Selecione seu PDF</span>
               </div>
             ) : (
-              <span style={{ width: 'calc(100% - 20px)', color: 'var(--branco)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfNome}</span>
+              <span style={{ width: 'calc(100% - 20px)', color: 'var(--branco)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{previewPdfNome}</span>
             )}
           </div>
         </div>
@@ -247,15 +284,23 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
         <div id="sdbc-botoes">
             <span className="sdbc-botao" id="sdbc-botao-cancelar" onClick={() => {
               if (editando && typeof onCancelarEdicao === 'function') {
-                onCancelarEdicao();
+                onCancelarEdicao(); // Dispara o useEffect
               } else {
-                setImagem(null);
-                setPdfNome(null);
-                setTexto("");
+                // Limpa manualmente
                 setBlocoSelecionado(null);
+                setTexto("");
+                setImagemFile(null);
+                setPdfFile(null);
+                setPreviewImagem(null);
+                setPreviewPdfNome(null);
               }
-            }}>{editando ? "Cancelar" : "Cancelar"}</span>
-            <span className="sdbc-botao" id="sdbc-botao-enviar" onClick={handleEnviar}>{editando ? "Salvar" : "Enviar"}</span>
+            }}>{editando ? "Cancelar" : "Limpar"}</span>
+            
+            <span className="sdbc-botao" id="sdbc-botao-enviar" onClick={handleEnviar}
+              style={{ opacity: enviando ? 0.7 : 1, cursor: enviando ? 'wait' : 'pointer' }}
+            >
+              {enviando ? "Salvando..." : (editando ? "Salvar" : "Enviar")}
+            </span>
         </div>
       </div>
     </div>
