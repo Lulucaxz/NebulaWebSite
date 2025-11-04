@@ -83,6 +83,7 @@ function AnotacoesColunas({ anotacoes, onSwapUp, onSwapDown, onDelete, onEditar,
                           </svg>
                           <a
                             href={anot.pdfBase64 ? anot.pdfBase64 : "#"}
+                            download={anot.pdfNome} // <-- ADICIONE ESTA LINHA
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{

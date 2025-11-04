@@ -5,24 +5,34 @@ import { useState } from "react";
 import SidebarControle from "./components/SidebarControle";
 import AnotacoesColunas from "./components/AnotacoesColunas";
 
+type Anotacao = {
+  imagem: string | null;
+  pdfNome: string | null;
+  pdfBase64?: string | null; // <-- O campo que faltava
+  texto: string;
+  coluna: number;
+};
+
 function Anotacoes2() {
-  const [anotacoes, setAnotacoes] = useState<any[]>([]);
-  const [editando, setEditando] = useState<{ anotacao: any, colIdx: number, idx: number } | null>(null);
+  // 2. USE O TIPO NO SEU ESTADO
+  const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);// Mude de any[]
+  const [editando, setEditando] = useState<{ anotacao: Anotacao, colIdx: number, idx: number } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ colIdx: number, idx: number } | null>(null);
   const [skipDeleteConfirm, setSkipDeleteConfirm] = useState(() => localStorage.getItem('skipDeleteConfirm') === 'true');
 
-  // Função para adicionar anotação (agora inclui coluna)
-  const adicionarAnotacao = (anotacao: { imagem: string|null, pdfNome: string|null, texto: string, coluna: number }) => {
+  // 3. USE O TIPO NA SUA FUNÇÃO
+  const adicionarAnotacao = (anotacao: Anotacao) => { // Mude o tipo aqui
     if (editando) {
       // Editando existente
       setAnotacoes(prev => {
-        const colunas = [[], [], []] as any[][];
+        const colunas: Anotacao[][] = [[], [], []];
         prev.forEach((anot) => {
           if (anot.coluna === 1) colunas[0].push(anot);
           if (anot.coluna === 2) colunas[1].push(anot);
           if (anot.coluna === 3) colunas[2].push(anot);
         });
         const coluna = colunas[editando.colIdx];
+        // Garante que o pdfBase64 da edição seja mantido ou atualizado
         coluna[editando.idx] = { ...anotacao, coluna: editando.anotacao.coluna };
         return [...colunas[0], ...colunas[1], ...colunas[2]];
       });
