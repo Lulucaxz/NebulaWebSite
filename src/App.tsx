@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AlertProvider } from './Alert';
 
 import Perfil from './pages/perfil/Perfil';
 import Home from './pages/home/paginaInicial';
@@ -14,6 +15,7 @@ import Forum from './pages/forum/forum';
 
 function App() {
   return (
+    <AlertProvider>
     <Router>
       <Routes>
         <Route path="/" element={
@@ -51,6 +53,7 @@ function App() {
         } />
       </Routes>
     </Router>
+    </AlertProvider>
   );
 }
 

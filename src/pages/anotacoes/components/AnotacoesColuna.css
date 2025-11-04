@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Questrial&display=swap');
+
+.antcc-img-preview {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.antcc-texto {
+    max-width: 100%;
+    word-break: break-word;
+    white-space: pre-line;
+    font-size: 16px;
+    font-family: 'Questrial', sans-serif;
+}
+
+.antcc-pdf-nome {
+    font-family: 'Questrial', sans-serif;
+}
+
+.antcc-container {
+    position: absolute;
+    left: 220px;
+    right: 400px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+.antcc-container::-webkit-scrollbar {
+  width: 10px;
+  background-color: var(--cinza-escuro3);
+}
+
+.antcc-container::-webkit-scrollbar-thumb {
+  background: var(--roxo1);
+}
+
+.antcc-container2 {
+    width: 70%;
+    display: flex;
+    gap: 25px;
+    padding: 80px 0px 80px 0px;
+}
+
+.antcc-coluna {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.antcc-anotacao {
+    max-width: 100%;
+}
+
+.antcc-anotacao-textos {
+    background-color: var(--cinza-escuro1);
+    color: var(--branco);
+    padding: 25px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.antcc-seta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--cinza-escuro1);
+
+    svg {
+        transform: rotate(-90deg);
+        height: 40px;
+        width: 40px;
+    }
+}
+
+.antcc-seta:hover {
+    cursor: pointer;
+    background-color: var(--cinza-claro1);
+}
+
+.antcc-anotacao-opcoes {
+    display: flex;
+    flex-direction: column;
+    height: 0;
+    overflow: hidden;
+    transition: 1s;
+}
+
+.antcc-anotacao:hover .antcc-anotacao-opcoes {
+    height: 180px;
+}
+
+.antcc-anotacao-opcao {
+    height: 50px;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--cinza-escuro1);
+    font-family: 'Questrial', sans-serif;
+    color: var(--branco);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#antcc-anotacao-deletar:hover {
+    background-color: var(--cinza-claro1);
+    cursor: pointer;
+}
+
+#antcc-anotacao-editar:hover {
+    background-color: var(--cinza-claro1);
+    cursor: pointer;
+}
+
+.antcc-pdf-nome svg {
+    min-height: 30px;
+    min-width: 30px;
+}

@@ -1,14 +1,30 @@
-.ant-container {
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    gap: 60px;
-    margin: 60px 0;
+body {
+  background-color: var(--cinza-escuro2);
 }
 
-.ant-container-part {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+.antc-btn-deletar, .antc-btn-cancelar {
+  padding: 10px 25px;
+  background: var(--roxo1);
+  color: var(--branco);
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  font-family: "Questrial", sans-serif;
+}
+
+.antc-btn-cancelar {
+  background: var(--cinza-escuro2);
+  color: var(--branco);
+}
+
+.antc-btn-deletar:hover {
+  background-color: var(--branco);
+  color: var(--roxo1);
+  cursor: pointer;
+}
+
+.antc-btn-cancelar:hover {
+  background-color: var(--branco);
+  color: var(--cinza-escuro2);
+  cursor: pointer;
 }
