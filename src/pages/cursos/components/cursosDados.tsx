@@ -2,7 +2,7 @@ export const initial_cursos = {
     universo: [
         {
             id: 4526672,
-            terminado: true,
+            terminado: false,
             template: {
                 titulo: 'Módulo 1 - Título Genérico',
                 descricao: `Pequena descricao do que o aluno irá aprender neste modulo do curso.`
@@ -46,7 +46,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 3514529,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'Atividade 2 - Título Genérico',
                         descricao: `A segunda atividade aprofunda os temas estudados, propondo desafios que exigem análise detalhada dos conceitos e a capacidade de conectar diferentes ideias para resolver problemas. 
@@ -127,7 +127,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 6393456,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'Atividade 5 - Título Genérico',
                         descricao: `Aqui você irá explorar diferentes perspectivas e aprofundar seu entendimento, utilizando técnicas e conceitos apresentados nas videoaulas anteriores. 
@@ -154,7 +154,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 8354434,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'Atividade 6 - Título Genérico',
                         descricao: `Nesta última atividade do módulo, será feita uma revisão geral com exercícios integradores, preparando você para os próximos módulos e consolidando os conhecimentos adquiridos. 
@@ -242,7 +242,7 @@ export const initial_cursos = {
             atividades: [
                 {
                     id: 5141589,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'Atividade 1 - Título Genérico',
                         descricao: `Nesta atividade, você será convidado a aplicar os conceitos intermediários em situações práticas, fortalecendo a capacidade de análise e solução de problemas. 
@@ -269,7 +269,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 2557356,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'Atividade 4 - Título Genérico',
                         descricao: `Nesta etapa, o foco é o desenvolvimento da autonomia na resolução de problemas, incentivando o uso crítico das informações para tomada de decisão. 
@@ -375,7 +375,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 5699283,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'Atividade 3 - Título Genérico',
                         descricao: `Exercícios que combinam teoria e prática, proporcionando uma experiência rica para o desenvolvimento de competências avançadas. 
@@ -475,7 +475,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 3514529,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'MOD1 - ATIDADE 8',
                         descricao: 'Introdução ao tema Este modulo vai tratar de Lorem ipsum dolor sit amet. Id laudantium nesciunt ea soluta odit sed blanditiis repellendus.'
@@ -483,7 +483,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 5679283,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'MOD1 - ATIDADE 8',
                         descricao: 'Introdução ao tema Este modulo vai tratar de Lorem ipsum dolor sit amet. Id laudantium nesciunt ea soluta odit sed blanditiis repellendus.'
@@ -491,7 +491,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 2567356,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'MOD1 - ATIDADE 8',
                         descricao: 'Introdução ao tema Este modulo vai tratar de Lorem ipsum dolor sit amet. Id laudantium nesciunt ea soluta odit sed blanditiis repellendus.'
@@ -575,7 +575,7 @@ export const initial_cursos = {
             atividades: [
                 {
                     id: 6134589,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'MOD1 - ATIDADE 8',
                         descricao: 'Introdução ao tema Este modulo vai tratar de Lorem ipsum dolor sit amet. Id laudantium nesciunt ea soluta odit sed blanditiis repellendus.'
@@ -599,7 +599,7 @@ export const initial_cursos = {
                 },
                 {
                     id: 2567356,
-                    terminado: true,
+                    terminado: false,
                     template: {
                         titulo: 'MOD1 - ATIDADE 8',
                         descricao: 'Introdução ao tema Este modulo vai tratar de Lorem ipsum dolor sit amet. Id laudantium nesciunt ea soluta odit sed blanditiis repellendus.'
@@ -779,7 +779,7 @@ export const initial_cursos = {
     galaxia: [
         {
             id: 4526672,
-            terminado: true,
+            terminado: false,
             template: {
                 titulo: 'Titulo01',
                 descricao: 'Pequena descricao do que o aluno irá aprender neste modulo do curso.'
@@ -1429,7 +1429,7 @@ export const initial_cursos = {
     orbita: [
         {
             id: 4526672,
-            terminado: true,
+            terminado: false,
             template: {
                 titulo: 'Titulo01',
                 descricao: 'Pequena descricao do que o aluno irá aprender neste modulo do curso.'

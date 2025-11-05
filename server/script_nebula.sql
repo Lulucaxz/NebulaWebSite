@@ -199,3 +199,27 @@ VALUES
 ('Thiago Gomes', '@thiagogomes', 140, 20, 'https://randomuser.me/api/portraits/men/20.jpg', 'Amante do céu noturno', 0, 0, 0, 'thiago@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0);
 
 -- Repita/adapte para até 50 usuários se desejar mais exemplos
+
+-- -----------------------------------------------------
+-- Progress tables: modules and activities completed by users
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `NEBULA`.`modulos_concluidos` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `usuario_id` INT NOT NULL,
+  `assinatura` VARCHAR(255) NOT NULL,
+  `modulo_id` INT NOT NULL,
+  `completed_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_mod` (`usuario_id`, `assinatura`, `modulo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`atividades_concluidas` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `usuario_id` INT NOT NULL,
+  `assinatura` VARCHAR(255) NOT NULL,
+  `modulo_id` INT NOT NULL,
+  `atividade_id` INT NOT NULL,
+  `completed_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_act` (`usuario_id`, `assinatura`, `modulo_id`, `atividade_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

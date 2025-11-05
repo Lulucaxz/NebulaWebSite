@@ -2,50 +2,93 @@ import { useParams } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import { initial_cursos } from './components/cursosDados';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { VideoCard } from './videos';
+import { API_BASE, fetchWithCredentials } from '../../api';
 import { Link } from "react-router-dom";
 
 function Modulos() {
   const { assinatura, moduloId } = useParams<{ assinatura: string; moduloId: string }>();
 
-  const curso = initial_cursos[assinatura ?? ''];
-  const modulo = curso?.find((mod) => mod.id === Number(moduloId));
+  // Minimal local types for this component to avoid `any` lint errors
+  type Video = { id: number; titulo?: string; video?: string; subtitulo?: string; descricao?: string };
+  type Atividade = { id: number; template?: { titulo?: string; descricao?: string }; terminado?: boolean };
+  type ModuloType = { id: number; introducao: { id: number; descricao: string; videoBackground: string; video: string }; atividades: Atividade[]; videoAulas: Video[] };
 
-  if (!modulo) {
-    return <div>Módulo não encontrado.</div>;
-  }
+  const curso = (initial_cursos as unknown as Record<string, ModuloType[]>)[assinatura ?? ''];
+  const modulo = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
+
+  // Local copy to overlay per-user completion from /api/progress
+  const [moduloData, setModuloData] = useState<ModuloType | null>(modulo ?? null);
+
+  // Avoid calling hooks conditionally: compute counts first and provide safe defaults
+  const videoCount = modulo?.videoAulas?.length ?? 0;
+  // atividadeCount removed (not needed)
 
   // Matriz para controlar destaque do carrossel
-  const [matrizVideos, setMatrizVideos] = useState(Array.from({ length: modulo.videoAulas.length }, (_, i) => i === 0));
-  const [matrizVideoIndex, setMatrizVideoIndex] = useState(0);
+  const [matrizVideos, setMatrizVideos] = useState<boolean[]>(() => Array.from({ length: Math.max(0, videoCount) }, (_, i) => i === 0));
+  const [matrizVideoIndex, setMatrizVideoIndex] = useState<number>(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
+
+  const [matrizAtividadesIndex, setMatrizAtividadesIndex] = useState<number>(1);
 
   function updateMatrizVideos(index: number) {
     setMatrizVideos(prev => prev.map((_, i) => i === index));
     setMatrizVideoIndex(index);
   }
 
-  const [itemsPerView, setItemsPerView] = useState<number>(
+  const [itemsPerView, setItemsPerView] = useState<number>(() =>
     typeof window !== 'undefined' && window.innerWidth > 1500 ? 3 : window.innerWidth > 1250 ? 2 : 1
   );
 
-  const updateItemsPerView = setInterval(() => {
-    setItemsPerView(
-      typeof window !== 'undefined' && window.innerWidth > 1500 ?
-      3 : window.innerWidth > 1250 ?
-      2 : window.innerWidth > 768 ?
-      1 :
-      0
-    )
-  }, 100);
+  // Update itemsPerView on resize. Use resize listener and cleanup.
+  useEffect(() => {
+    const update = () => {
+      setItemsPerView(
+        typeof window !== 'undefined' && window.innerWidth > 1500 ?
+          3 : window.innerWidth > 1250 ?
+          2 : window.innerWidth > 768 ?
+          1 :
+          0
+      );
+    };
 
-  const [matrizAtividades, setMatrizAtividades] = useState(Array.from({ length: modulo.atividades.length }, (_, i) => i === 0));
-  const [matrizAtividadesIndex, setMatrizAtividadesIndex] = useState(1);
+    // set initial
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
+  // Load per-user progress and overlay terminado for activities and module
+  useEffect(() => {
+    const load = async () => {
+      if (!modulo) return;
+      try {
+        const res = await fetchWithCredentials(`${API_BASE}/api/progress`);
+        if (!res.ok) { setModuloData(modulo); return; }
+        const data: { modules: Array<{ assinatura: string; modulo_id: number }>, activities: Array<{ assinatura: string; modulo_id: number; atividade_id: number }> } = await res.json();
+        const activitySet = new Set(data.activities.map(a => `${a.assinatura}:${a.modulo_id}:${a.atividade_id}`));
+        const updatedAtividades: Atividade[] = Array.isArray(modulo.atividades) ? modulo.atividades.map(a => ({
+          ...a,
+          terminado: activitySet.has(`${assinatura}:${modulo.id}:${a.id}`) || !!a.terminado
+        })) : [];
+        setModuloData({ ...modulo, atividades: updatedAtividades });
+      } catch {
+        setModuloData(modulo);
+      }
+    };
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assinatura, moduloId]);
+
+  // If modulo is not found, render a friendly message. Hooks above ensure consistent hook order.
+  if (!modulo) {
+    return <div>Módulo não encontrado.</div>;
+  }
+
+  const m = moduloData ?? modulo;
 
   function updateMatrizAtividades(index: number) {
-    setMatrizAtividades(prev => prev.map((_, i) => i === index));
     setMatrizAtividadesIndex(index);
   }
 
@@ -59,16 +102,16 @@ function Modulos() {
             <h1>INTRODUÇÃO</h1>
             <hr />
           </div>
-          <p>{modulo.introducao.descricao}</p>
-          <div key={modulo.introducao.id} className='cursos-video-sessao'>
+          <p>{m.introducao.descricao}</p>
+          <div key={m.introducao.id} className='cursos-video-sessao'>
             <VideoCard
-              src={modulo.introducao.video}
-              backgroundImage={modulo.introducao.videoBackground}
+              src={m.introducao.video}
+              backgroundImage={m.introducao.videoBackground}
               width="100%"
               height="300px"
               showPlayIcon={true}
-              isActive={activeVideoIndex === modulo.introducao.id}
-              onActivate={() => setActiveVideoIndex(modulo.introducao.id)}
+              isActive={activeVideoIndex === m.introducao.id}
+              onActivate={() => setActiveVideoIndex(m.introducao.id)}
               onDeactivate={() => setActiveVideoIndex(null)}
             />
             <img src="/arrow-video.png" alt="" />
@@ -82,7 +125,7 @@ function Modulos() {
           </div>
           <hr />
           <div className="carrocel-atividades">
-            {modulo.atividades.map((atividade, index) => {
+            {m.atividades.map((atividade: Atividade, index: number) => {
               return (
                 <div key={`atividades${atividade.id}`} className='carrocel-atividades-card-cont' style={{
                   width: `${itemsPerView < 3 ? itemsPerView < 2 ? 'calc(100% / 2)' : 'calc(100% / 3)' : 'calc(100% / 4)'}`,
@@ -96,7 +139,7 @@ function Modulos() {
                   scale: index < matrizAtividadesIndex - 1 || index > (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex - 1 : matrizAtividadesIndex : matrizAtividadesIndex + 1) ? '0.8' : '1',
                   filter: index < matrizAtividadesIndex - 1 || index > (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex - 1 : matrizAtividadesIndex : matrizAtividadesIndex + 1) ? 'brightness(0.7)' : 'none',
                 }} onClick={() => {
-                  if (index - 1 >= 0 && index < matrizVideos.length) {
+                  if (index - 1 >= 0 && index < modulo.atividades.length) {
                     updateMatrizAtividades(index)
                   }
                 }}>
@@ -112,17 +155,17 @@ function Modulos() {
                     <div className="carrocel-atividades-card-cima" style={{
                       backgroundColor: atividade.terminado ? '#9A30EB' : '#4E4E4E'
                     }}>
-                      <div className="carrocel-atividades-card-titulo">{atividade.template.titulo}</div>
-                      <div className="carrocel-atividades-card-descricao">{atividade.template.descricao}</div>
+                      <div className="carrocel-atividades-card-titulo">{atividade.template?.titulo ?? ''}</div>
+                      <div className="carrocel-atividades-card-descricao">{atividade.template?.descricao ?? ''}</div>
                     </div>
 
-                    <Link to={`/modulos/${assinatura}/${modulo.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
+                    <Link to={`/modulos/${assinatura}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
                       backgroundColor: atividade.terminado ? '#F8EFFF' : '#323232',
                       cursor: 'pointer'
                     }}>
                       <div className="carrocel-atividades-card-butao" style={{
                         color: atividade.terminado ? '#323232' : '#ffffff',
-                      }}>ABRIR ATIVIDADE{itemsPerView}</div>
+                      }}>ABRIR ATIVIDADE {index + 1}</div>
                     </Link>
                   </div>
                 </div>
@@ -134,7 +177,7 @@ function Modulos() {
               }
             }}></div>
             <div className="videos-sessao-arrow-rigth" onClick={() => {
-              if (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex < matrizVideos.length + 1 : matrizAtividadesIndex < matrizVideos.length : matrizAtividadesIndex + 1 < matrizVideos.length) {
+              if (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex < modulo.atividades.length + 1 : matrizAtividadesIndex < modulo.atividades.length : matrizAtividadesIndex + 1 < modulo.atividades.length) {
                 updateMatrizAtividades(matrizAtividadesIndex + 1)
               }
             }}></div>
@@ -148,7 +191,7 @@ function Modulos() {
           <div className="sessao">
             <div className="videos-sessao-container">
               <div className="videos-sessao-container-int">
-                {modulo.videoAulas.map((videoCard, videoCargIndex) => (
+                {m.videoAulas.map((videoCard: Video, videoCargIndex: number) => (
                   <div
                     key={videoCard.id}
                     className="videos-sessao-card"
@@ -187,7 +230,7 @@ function Modulos() {
                     }}
                   >
                     <VideoCard
-                      src={videoCard.video}
+                      src={videoCard.video ?? ''}
                       width="100%"
                       height="100%"
                       showPlayIcon={true}
@@ -217,8 +260,8 @@ function Modulos() {
                   }
                 }}></div>
               </div>
-              <div className="videos-sessao-subtitulo">{modulo.videoAulas[matrizVideoIndex].subtitulo}</div>
-              <div className="videos-sessao-descricao">{modulo.videoAulas[matrizVideoIndex].descricao}</div>
+              <div className="videos-sessao-subtitulo">{m.videoAulas[matrizVideoIndex]?.subtitulo ?? ''}</div>
+              <div className="videos-sessao-descricao">{m.videoAulas[matrizVideoIndex]?.descricao ?? ''}</div>
             </div>
           </div>
         </div>
