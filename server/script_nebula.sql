@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`anotacoes` (
   `conteudo` VARCHAR(2000) NOT NULL,
   `img` TEXT NULL,
   `pdf` TEXT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `posicao` INT NOT NULL DEFAULT 0,
   `id` VARCHAR(45) NOT NULL,
   INDEX `fk_anotacoes_usuario_idx` (`usuario_id` ASC) VISIBLE,
   PRIMARY KEY (`id`),
@@ -64,6 +66,35 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`anotacoes` (
 ALTER TABLE `NEBULA`.`anotacoes`
 ADD COLUMN `coluna` INT NOT NULL DEFAULT 1 AFTER `usuario_id`,
 ADD COLUMN `pdfNome` VARCHAR(255) NULL DEFAULT NULL AFTER `pdf`;
+-- Add created_at timestamp to track insertion time. New table creation
+-- already includes `created_at`. For existing databases that don't have
+-- the column, run an ALTER TABLE conditionally using information_schema.
+-- This is compatible with older MySQL versions that don't support
+-- "ADD COLUMN IF NOT EXISTS".
+SET @created_exists = (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = 'NEBULA' AND TABLE_NAME = 'anotacoes' AND COLUMN_NAME = 'created_at'
+);
+SET @sql = IF(@created_exists = 0,
+  'ALTER TABLE `NEBULA`.`anotacoes` ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `pdfNome`',
+  'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Add posicao column for ordering (higher posicao => appears first in column).
+SET @pos_exists = (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = 'NEBULA' AND TABLE_NAME = 'anotacoes' AND COLUMN_NAME = 'posicao'
+);
+SET @sql2 = IF(@pos_exists = 0,
+  'ALTER TABLE `NEBULA`.`anotacoes` ADD COLUMN `posicao` INT NOT NULL DEFAULT 0 AFTER `created_at`',
+  'SELECT 1'
+);
+PREPARE stmt2 FROM @sql2;
+EXECUTE stmt2;
+DEALLOCATE PREPARE stmt2;
 
 -- -----------------------------------------------------
 -- Table `NEBULA`.`comentario`

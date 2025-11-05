@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import SidebarControle from "./components/SidebarControle";
 import AnotacoesColunas from "./components/AnotacoesColunas";
 // import { showAlert } from "../../../Alert"; // Descomente se for usar
+import { API_BASE, fetchWithCredentials } from '../../api';
 
 
 // MUDE AQUI: Adicione "export"
@@ -18,6 +19,7 @@ export type Anotacao = {
   pdf: string | null;     
   pdfNome: string | null; 
   coluna: number;
+  posicao?: number;
 };
 
 function Anotacoes2() {
@@ -30,32 +32,31 @@ function Anotacoes2() {
   const [carregando, setCarregando] = useState(true); // Estado de loading
 
   // 4. CARREGAR DADOS DO BACKEND NA INICIALIZAÇÃO
-  useEffect(() => {
-    const carregarAnotacoes = async () => {
-      try {
-        setCarregando(true);
-        const response = await fetch("/api/anotacoes"); // Rota GET da sua API
-        
-        if (response.status === 401) {
-          // Usuário não logado, talvez redirecionar?
-          console.error("Usuário não autenticado.");
-          // showAlert("Você precisa estar logado para ver suas anotações.");
-          return; // Para de carregar
-        }
-        
-        if (!response.ok) {
-           throw new Error("Erro ao buscar dados");
-        }
+  const carregarAnotacoes = async () => {
+    try {
+      setCarregando(true);
+      const response = await fetchWithCredentials(`${API_BASE}/api/anotacoes`); // Rota GET da sua API (usa backend)
 
-        const data: Anotacao[] = await response.json();
-        setAnotacoes(data);
-      } catch (err) {
-        console.error(err);
-        // showAlert("Falha ao carregar suas anotações.");
-      } finally {
-        setCarregando(false);
+      if (response.status === 401) {
+        // Usuário não logado, talvez redirecionar?
+        console.error("Usuário não autenticado.");
+        return; // Para de carregar
       }
-    };
+
+      if (!response.ok) {
+        throw new Error("Erro ao buscar dados");
+      }
+
+      const data: Anotacao[] = await response.json();
+      setAnotacoes(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  useEffect(() => {
     carregarAnotacoes();
   }, []); // O array vazio [] garante que isso rode só uma vez
 
@@ -77,34 +78,61 @@ function Anotacoes2() {
 
   // Funções de Swap (AVISO: Não persiste no banco ainda)
   // Para salvar a ordem, você precisaria de uma lógica de API
-  const handleSwapUp = (colIdx: number, idx: number) => {
-    setAnotacoes(prev => {
-      const colunas = [[], [], []] as Anotacao[][];
-      prev.forEach((anot) => {
-        if (anot.coluna === 1) colunas[0].push(anot);
-        if (anot.coluna === 2) colunas[1].push(anot);
-        if (anot.coluna === 3) colunas[2].push(anot);
-      });
-      if (idx === 0) return prev;
-      const coluna = colunas[colIdx];
-      [coluna[idx - 1], coluna[idx]] = [coluna[idx], coluna[idx - 1]];
-      return [...colunas[0], ...colunas[1], ...colunas[2]];
+  const handleSwapUp = async (colIdx: number, idx: number) => {
+    // Find the item id
+    const colunas = [[], [], []] as Anotacao[][];
+    anotacoes.forEach((anot) => {
+      if (anot.coluna === 1) colunas[0].push(anot);
+      if (anot.coluna === 2) colunas[1].push(anot);
+      if (anot.coluna === 3) colunas[2].push(anot);
     });
+    if (!colunas[colIdx] || idx === 0) return;
+    const anotacao = colunas[colIdx][idx];
+    if (!anotacao) return;
+
+    try {
+      setCarregando(true);
+      const res = await fetchWithCredentials(`${API_BASE}/api/anotacoes/${anotacao.id}/move`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ direction: 'up' }),
+      });
+      if (!res.ok) throw new Error('Falha ao mover anotação');
+      // reload annotations
+      await carregarAnotacoes();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCarregando(false);
+    }
   };
 
-  const handleSwapDown = (colIdx: number, idx: number) => {
-    setAnotacoes(prev => {
-      const colunas = [[], [], []] as Anotacao[][];
-      prev.forEach((anot) => {
-        if (anot.coluna === 1) colunas[0].push(anot);
-        if (anot.coluna === 2) colunas[1].push(anot);
-        if (anot.coluna === 3) colunas[2].push(anot);
-      });
-      const coluna = colunas[colIdx];
-      if (idx === coluna.length - 1) return prev;
-      [coluna[idx], coluna[idx + 1]] = [coluna[idx + 1], coluna[idx]];
-      return [...colunas[0], ...colunas[1], ...colunas[2]];
+  const handleSwapDown = async (colIdx: number, idx: number) => {
+    const colunas = [[], [], []] as Anotacao[][];
+    anotacoes.forEach((anot) => {
+      if (anot.coluna === 1) colunas[0].push(anot);
+      if (anot.coluna === 2) colunas[1].push(anot);
+      if (anot.coluna === 3) colunas[2].push(anot);
     });
+    const coluna = colunas[colIdx];
+    if (!coluna || idx === coluna.length - 1) return;
+    const anotacao = coluna[idx];
+    if (!anotacao) return;
+
+    try {
+      setCarregando(true);
+      const res = await fetchWithCredentials(`${API_BASE}/api/anotacoes/${anotacao.id}/move`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ direction: 'down' }),
+      });
+      if (!res.ok) throw new Error('Falha ao mover anotação');
+      await carregarAnotacoes();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCarregando(false);
+    }
   };
   
   // 6. ATUALIZAR FUNÇÃO DE DELETAR (PARA USAR O ID)
@@ -129,7 +157,7 @@ function Anotacoes2() {
   // 7. FUNÇÃO EXECUTE DELETE (FALA COM A API)
   const executeDelete = async (anotacao: Anotacao) => {
     try {
-      const response = await fetch(`/api/anotacoes/${anotacao.id}`, { // Use .id
+      const response = await fetchWithCredentials(`${API_BASE}/api/anotacoes/${anotacao.id}`, { // Use .id
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Falha ao deletar');

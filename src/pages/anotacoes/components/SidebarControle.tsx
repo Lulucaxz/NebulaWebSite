@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import "./SidebarControle.css";
 import { showAlert } from "../../../Alert"; // Certifique-se que o caminho está correto
 import type { Anotacao } from "../Anotacoes"; // Importe o tipo unificado
+import { API_BASE, fetchWithCredentials } from '../../../api';
 
 type SidebarControleProps = {
   onEnviar?: (anotacaoSalva: Anotacao) => void;
@@ -107,9 +108,9 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
     try {
       const isEditing = !!editando;
       const method = isEditing ? "PUT" : "POST";
-      const endpoint = isEditing ? `/api/anotacoes/${editando.anotacao.id}` : "/api/anotacoes";
+      const endpoint = isEditing ? `${API_BASE}/api/anotacoes/${editando!.anotacao.id}` : `${API_BASE}/api/anotacoes`;
 
-      const response = await fetch(endpoint, {
+      const response = await fetchWithCredentials(endpoint, {
         method: method,
         body: formData,
       });
