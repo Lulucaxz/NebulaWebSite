@@ -33,14 +33,33 @@ router.get('/', ensureAuth, asyncHandler(async (req: Request, res: Response) => 
                activities: actRows.map(a => ({ assinatura: a.assinatura, modulo_id: Number(a.modulo_id), atividade_id: Number(a.atividade_id) })) });
 }));
 
+// Helpers to map assinatura to progresso column and points per activity
+const getProgressoCol = (assinatura: string) => {
+  const lower = (assinatura || '').toLowerCase();
+  if (lower.includes('galax')) return 'progresso2';
+  if (lower.includes('univers')) return 'progresso3';
+  return 'progresso1'; // default: órbita
+};
+
+const getPointsPerActivity = (assinatura: string) => {
+  const lower = (assinatura || '').toLowerCase();
+  if (lower.includes('galax')) return 10; // galáxia
+  if (lower.includes('univers')) return 20; // universo
+  return 5; // órbita
+};
+
 // Module completion
 router.post('/module/:assinatura/:moduloId', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
   const r = req as AuthenticatedRequest;
   const userId = r.user!.id;
   const { assinatura, moduloId } = req.params;
   const mod = Number(moduloId);
-  await pool.query<ResultSetHeader>('INSERT IGNORE INTO modulos_concluidos (usuario_id, assinatura, modulo_id) VALUES (?, ?, ?)', [userId, assinatura, mod]);
-  res.status(201).json({ success: true });
+  const [ins] = await pool.query<ResultSetHeader>('INSERT IGNORE INTO modulos_concluidos (usuario_id, assinatura, modulo_id) VALUES (?, ?, ?)', [userId, assinatura, mod]);
+  if (ins.affectedRows && ins.affectedRows > 0) {
+    const progressoCol = getProgressoCol(assinatura);
+    await pool.query<ResultSetHeader>(`UPDATE usuario SET ${progressoCol} = ${progressoCol} + 1 WHERE id = ?`, [userId]);
+  }
+  res.status(201).json({ success: true, moduleInserted: Boolean(ins.affectedRows && ins.affectedRows > 0) });
 }));
 
 router.delete('/module/:assinatura/:moduloId', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
@@ -48,8 +67,12 @@ router.delete('/module/:assinatura/:moduloId', ensureAuth, asyncHandler(async (r
   const userId = r.user!.id;
   const { assinatura, moduloId } = req.params;
   const mod = Number(moduloId);
-  await pool.query<ResultSetHeader>('DELETE FROM modulos_concluidos WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ?', [userId, assinatura, mod]);
-  res.json({ success: true });
+  const [del] = await pool.query<ResultSetHeader>('DELETE FROM modulos_concluidos WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ?', [userId, assinatura, mod]);
+  if (del.affectedRows && del.affectedRows > 0) {
+    const progressoCol = getProgressoCol(assinatura);
+    await pool.query<ResultSetHeader>(`UPDATE usuario SET ${progressoCol} = CASE WHEN ${progressoCol} > 0 THEN ${progressoCol} - 1 ELSE 0 END WHERE id = ?`, [userId]);
+  }
+  res.json({ success: true, moduleDeleted: Boolean(del.affectedRows && del.affectedRows > 0) });
 }));
 
 // Activity completion
@@ -65,17 +88,11 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
   let addedPoints = false;
   if (result.affectedRows && result.affectedRows > 0) {
     addedPoints = true;
-    const pointsToAdd = 5;
-    // Map assinatura to progresso column
-    let progressoCol = 'progresso1';
-    const lower = (assinatura || '').toLowerCase();
-    if (lower.includes('galax')) progressoCol = 'progresso2';
-    else if (lower.includes('univers')) progressoCol = 'progresso3';
-
-    // Update user's total points and the specific progresso column
+    const pointsToAdd = getPointsPerActivity(assinatura);
+    // Only update pontos on activity completion
     await pool.query<ResultSetHeader>(
-      `UPDATE usuario SET pontos = pontos + ?, ${progressoCol} = ${progressoCol} + ? WHERE id = ?`,
-      [pointsToAdd, pointsToAdd, userId]
+      `UPDATE usuario SET pontos = pontos + ? WHERE id = ?`,
+      [pointsToAdd, userId]
     );
   }
 
@@ -86,7 +103,11 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
     const cnt = rows && rows[0] ? Number(rows[0].cnt) : 0;
     if (cnt >= totalActivities) {
       // mark module completed
-      await pool.query<ResultSetHeader>('INSERT IGNORE INTO modulos_concluidos (usuario_id, assinatura, modulo_id) VALUES (?, ?, ?)', [userId, assinatura, Number(moduloId)]);
+      const [ins] = await pool.query<ResultSetHeader>('INSERT IGNORE INTO modulos_concluidos (usuario_id, assinatura, modulo_id) VALUES (?, ?, ?)', [userId, assinatura, Number(moduloId)]);
+      if (ins.affectedRows && ins.affectedRows > 0) {
+        const progressoCol = getProgressoCol(assinatura);
+        await pool.query<ResultSetHeader>(`UPDATE usuario SET ${progressoCol} = ${progressoCol} + 1 WHERE id = ?`, [userId]);
+      }
       moduleCompleted = true;
     }
   }
@@ -106,7 +127,11 @@ router.delete('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncH
     const [rows] = await pool.query<RowDataPacket[]>('SELECT COUNT(DISTINCT atividade_id) AS cnt FROM atividades_concluidas WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ?', [userId, assinatura, Number(moduloId)]);
     const cnt = rows && rows[0] ? Number(rows[0].cnt) : 0;
     if (cnt < totalActivities) {
-      await pool.query<ResultSetHeader>('DELETE FROM modulos_concluidos WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ?', [userId, assinatura, Number(moduloId)]);
+      const [del] = await pool.query<ResultSetHeader>('DELETE FROM modulos_concluidos WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ?', [userId, assinatura, Number(moduloId)]);
+      if (del.affectedRows && del.affectedRows > 0) {
+        const progressoCol = getProgressoCol(assinatura);
+        await pool.query<ResultSetHeader>(`UPDATE usuario SET ${progressoCol} = CASE WHEN ${progressoCol} > 0 THEN ${progressoCol} - 1 ELSE 0 END WHERE id = ?`, [userId]);
+      }
     }
   }
 

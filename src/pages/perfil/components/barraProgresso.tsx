@@ -11,7 +11,7 @@ const BarraProgresso = ({ tituloEstatistica, pontosEstatistica, maximoEstatistic
         <div className="prf-curso-estatistica">
             <div className="prf-titulo-estatistica"><span>{t(tituloEstatistica)}</span></div>
             <progress className="prf-barra-estatistica" value={pontosEstatistica} max={maximoEstatistica}></progress>
-            <div className="prf-descricao-estatistica"><span>{pontosEstatistica}/{maximoEstatistica} {t('pts')}</span></div>
+            <div className="prf-descricao-estatistica"><span>{pontosEstatistica}/{maximoEstatistica}</span></div>
         </div>
     )
 }
@@ -25,9 +25,9 @@ interface BarraDeProgressoProps {
 export function BarraDeProgresso({ progresso1, progresso2, progresso3 }: BarraDeProgressoProps) {
     return (
         <>
-            <BarraProgresso tituloEstatistica={"ÓRBITA"} pontosEstatistica={progresso1} maximoEstatistica={10} />
-            <BarraProgresso tituloEstatistica={"GALÁXIA"} pontosEstatistica={progresso2} maximoEstatistica={15} />
-            <BarraProgresso tituloEstatistica={"UNIVERSO"} pontosEstatistica={progresso3} maximoEstatistica={20} />
+            <BarraProgresso tituloEstatistica={"ÓRBITA"} pontosEstatistica={progresso1} maximoEstatistica={6} />
+            <BarraProgresso tituloEstatistica={"GALÁXIA"} pontosEstatistica={progresso2} maximoEstatistica={6} />
+            <BarraProgresso tituloEstatistica={"UNIVERSO"} pontosEstatistica={progresso3} maximoEstatistica={6} />
         </>
     );
 }
