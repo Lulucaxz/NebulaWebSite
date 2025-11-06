@@ -162,7 +162,7 @@
 .prf-banner {
   width: 100%;
   height: 200px;
-  background-image: url(nebulosaBanner.jpg);
+  background-image: url(/img/nebulosaBanner.jpg);
 }
 
 .prf-usuario-barra {

@@ -54,7 +54,7 @@ export function Menu() {
             {isAuthenticated ? (
               <img
                 id="imgperfil_menu"
-                src={user?.icon || "../c/assets/iconeUsuario.svg"}
+                src={user?.icon || "/img/fotoUsuario.png"}
                 alt="perfil"
               />
             ) : (

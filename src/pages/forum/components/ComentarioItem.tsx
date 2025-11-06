@@ -62,11 +62,11 @@ export function ComentarioItem({
         <div className="frm-comentario-lateral-esquerda">
           <div className="frm-comentario-foto-perfil" style={{ backgroundImage: `url(${fotoPerfil})` }}></div>
           <div>
-            <img src="/setaDeAvaliacao.svg" alt="" />
+            <img src="/icons/setaDeAvaliacao.svg" alt="" />
             <p>{numeroAvaliacao}</p>
           </div>
           <nav className={avaliacaoDoUsuario}>
-            <img src="/pencil.svg" alt="" onClick={() => {
+            <img src="/icons/pencil.svg" alt="" onClick={() => {
               if (editar) {
                 if (comteudoEditado.trim() !== '') {
                   onEdit(idComentario, comteudoEditado)
@@ -77,7 +77,7 @@ export function ComentarioItem({
                 setEditar(true)
               }
             }} />
-            <img src="/delete.svg" alt="" onClick={() => onDelete(idComentario)} />
+            <img src="/icons/delete.svg" alt="" onClick={() => onDelete(idComentario)} />
           </nav>
         </div>
         <div className="frm-comentario-lateral-direita">
@@ -122,7 +122,7 @@ export function ComentarioItem({
                     ...prev,
                     {
                       idResposta: prev.length + 1,
-                      rfotoPerfil: "/icones-usuarios/kurbie.jpg",
+                      rfotoPerfil: "/img/users/kurbie.jpg",
                       rnomeUsuario: "Luiz",
                       rdataHora: new Date().toLocaleString(),
                       rconteudoComentario: resposta
@@ -138,7 +138,7 @@ export function ComentarioItem({
                   ...prev,
                   {
                     idResposta: prev.length + 1,
-                    rfotoPerfil: "/icones-usuarios/kurbie.jpg",
+                    rfotoPerfil: "/img/users/kurbie.jpg",
                     rnomeUsuario: "Luiz",
                     rdataHora: new Date().toLocaleString(),
                     rconteudoComentario: resposta
@@ -147,7 +147,7 @@ export function ComentarioItem({
                 setResposta('')
               }
             }}>
-              <img src="/submit.svg" alt="enviar" />
+              <img src="/icons/submit.svg" alt="enviar" />
             </button>
           </div>
         </div>

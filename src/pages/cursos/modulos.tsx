@@ -114,7 +114,7 @@ function Modulos() {
               onActivate={() => setActiveVideoIndex(m.introducao.id)}
               onDeactivate={() => setActiveVideoIndex(null)}
             />
-            <img src="/arrow-video.png" alt="" />
+            <img src="/icons/arrow-video.png" alt="" />
           </div>
 
           <div className="curso-download">Baixar PDF</div>

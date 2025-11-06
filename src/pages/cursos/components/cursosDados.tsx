@@ -141,7 +141,7 @@ export const initial_cursos = {
         Ela serve para contextualizar o aprendizado e preparar o aluno para os desafios que virão, mostrando a relevância dos conteúdos para sua formação e aplicação futura. 
         Também apresentamos um panorama dos recursos que estarão disponíveis para auxiliar no estudo.`,
                 pdf: '',
-                videoBackground: '/ceu-estrelado.jpg',
+                videoBackground: '/img/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1236478
             },
@@ -257,7 +257,7 @@ export const initial_cursos = {
         Também são apresentados os objetivos específicos do módulo e as competências que serão desenvolvidas, para orientar seus estudos.`
                 ,
                 pdf: '',
-                videoBackground: '/ceu-estrelado.jpg',
+                videoBackground: '/img/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1243678
             },
@@ -373,7 +373,7 @@ export const initial_cursos = {
         Também apresenta os objetivos do módulo e as expectativas para seu desempenho, preparando para um aprendizado intensivo e focado.`
                 ,
                 pdf: '',
-                videoBackground: '/ceu-estrelado.jpg',
+                videoBackground: '/img/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1246878
             },

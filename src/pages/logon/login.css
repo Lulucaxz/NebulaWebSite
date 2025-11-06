@@ -7,7 +7,7 @@
 }
 
 .bgc-login {
-    background-image: url(../../assets/background-padrao.webp);
+    background-image: url(/img/background-padrao.webp);
     width: 70vw;
     height: 100vh;
     background-size: cover;

@@ -157,7 +157,7 @@
     width: 75px;
     height: 75px;
     position: absolute;
-    background-image: url(/seta-carrocel-esquerda.svg);
+    background-image: url(/icons/seta-carrocel-esquerda.svg);
     background-size: cover;
     cursor: pointer;
     left: 30px;
@@ -167,7 +167,7 @@
     width: 75px;
     height: 75px;
     position: absolute;
-    background-image: url(/seta-carrocel-direita.svg);
+    background-image: url(/icons/seta-carrocel-direita.svg);
     background-size: cover;
     cursor: pointer;
     right: 30px;
