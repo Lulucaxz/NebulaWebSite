@@ -127,6 +127,33 @@ const questoesCosmografia = [
     { questao: 'Cefeidas são importantes porque:', dissertativa: false, alternativas: ['Mede-se sua temperatura com precisão', 'São velas padrão para distâncias extragalácticas', 'São sempre parte de galáxias anãs', 'Têm brilho absolutamente constante'] }
 ];
 
+
+const questoesObjetosCompactos = [
+    { questao: 'Explique o conceito de pressão de degenerescência eletrônica e o limite de Chandrasekhar.', dissertativa: true },
+    { questao: 'Descreva a estrutura interna de uma estrela de nêutrons (crosta, núcleo) e a equação de estado (EoS) da matéria nuclear.', dissertativa: true },
+    { questao: 'O que é um pulsar? Explique o modelo do "farol" (lighthouse model) e a física da magnetosfera do pulsar.', dissertativa: true },
+    { questao: 'Compare os processos de resfriamento de uma anã branca e de uma estrela de nêutrons.', dissertativa: true },
+    { questao: 'A massa máxima de uma estrela de nêutrons (limite TOV) é determinada principalmente por:', dissertativa: false, alternativas: ['Pressão de degenerescência eletrônica', 'Equação de Estado da matéria nuclear', 'Taxa de rotação', 'Campo magnético'] }
+];
+
+
+const questoesFisicaBN = [
+    { questao: 'Discuta o Teorema "No-Hair" (Sem Cabelo) e seus três parâmetros (Massa, Carga, Spin).', dissertativa: true },
+    { questao: 'Explique o que é a Radiação Hawking e o processo físico de criação de pares no horizonte de eventos.', dissertativa: true },
+    { questao: 'Descreva o Paradoxo da Informação do Buraco Negro. Por que ele representa um conflito entre a Relatividade Geral e a Mecânica Quântica?', dissertativa: true },
+    { questao: 'Diferencie a singularidade de um buraco negro de Schwarzschild (ponto) da singularidade de um buraco negro de Kerr (anel).', dissertativa: true },
+    { questao: 'A "Termodinâmica do Buraco Negro" relaciona a área do horizonte de eventos com qual propriedade física?', dissertativa: false, alternativas: ['Carga', 'Entropia', 'Massa', 'Momento Angular'] }
+];
+
+
+const questoesFormacaoGalaxias = [
+    { questao: 'Explique o conceito de "fricção dinâmica" (dynamical friction) de Chandrasekhar e seu papel em fusões de galáxias.', dissertativa: true },
+    { questao: 'Compare "feedback estelar" (supernovas) e "feedback de AGN". Qual é mais eficaz em "apagar" (quenching) a formação estelar em galáxias massivas?', dissertativa: true },
+    { questao: 'O que é o "downsizing" cosmológico e como ele desafia modelos simples de formação hierárquica?', dissertativa: true },
+    { questao: 'Descreva o formalismo de Press-Schechter e como ele estima a função de massa de halos de matéria escura.', dissertativa: true },
+    { questao: 'O processo que impede o gás de se resfriar e formar estrelas em halos muito massivos (M > 10^12 Msol) é dominado por:', dissertativa: false, alternativas: ['Feedback de supernovas', 'Aquecimento por choque (shock heating) e feedback de AGN', 'Radiação UV de fundo', 'Decaimento da matéria escura'] }
+];
+
 export const initial_cursos = {
     universo: [
         {
@@ -134,12 +161,10 @@ export const initial_cursos = {
             terminado: false,
             template: {
                 titulo: 'Cosmologia do Big Bang',
-                descricao: 'Modelos de expansão, radiação cósmica de fundo e nucleossíntese primordial: como sabemos que o Universo está se expandindo.'
+                descricao: 'A física da métrica FLRW, termodinâmica primordial e nucleossíntese de partículas.'
             },
             introducao: {
-                descricao: `Esta introdução oferece uma visão geral detalhada sobre o tema do módulo, destacando os principais pontos que serão aprofundados nas videoaulas e atividades. 
-        Ela serve para contextualizar o aprendizado e preparar o aluno para os desafios que virão, mostrando a relevância dos conteúdos para sua formação e aplicação futura. 
-        Também apresentamos um panorama dos recursos que estarão disponíveis para auxiliar no estudo.`,
+                descricao: 'Uma introdução à cosmologia moderna, focando na derivação da expansão do espaço, na termodinâmica do plasma primordial que gerou o CMB e na física de partículas por trás da Nucleossíntese Primordial.',
                 pdf: '',
                 videoBackground: '/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
@@ -150,9 +175,8 @@ export const initial_cursos = {
                     id: 6134589,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 1 - Título Genérico',
-                        descricao: `Nesta atividade inicial, você será convidado a aplicar os conceitos básicos abordados até agora por meio de exercícios práticos que reforçam o aprendizado. 
-            Os desafios propostos visam estimular a reflexão crítica sobre o conteúdo e a capacidade de relacionar teoria e prática.`
+                        titulo: 'Atividade 1: Geometria da Expansão',
+                        descricao: 'Aplique a métrica FLRW (Aula 1) para explicar o conceito de "desvio para o vermelho cosmológico" em oposição ao Doppler.'
                     },
                     questoes: questoesBBang
                 },
@@ -160,9 +184,8 @@ export const initial_cursos = {
                     id: 3514529,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 2 - Título Genérico',
-                        descricao: `A segunda atividade aprofunda os temas estudados, propondo desafios que exigem análise detalhada dos conceitos e a capacidade de conectar diferentes ideias para resolver problemas. 
-            Essa etapa incentiva o desenvolvimento do raciocínio lógico.`
+                        titulo: 'Atividade 2: Física do Desacoplamento',
+                        descricao: 'Com base na Aula 2, explique o processo termodinâmico que tornou o Universo transparente e deu origem ao CMB.'
                     },
                     questoes: questoesBBang
                 },
@@ -170,9 +193,8 @@ export const initial_cursos = {
                     id: 5679283,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 3 - Título Genérico',
-                        descricao: `Esta atividade consiste em exercícios que estimulam a aplicação prática dos conhecimentos em situações simuladas, promovendo o desenvolvimento de habilidades específicas. 
-            Ela tem como objetivo proporcionar uma experiência de.`
+                        titulo: 'Atividade 3: Prevendo os Elementos Leves',
+                        descricao: 'Discuta o processo da BBN (Aula 3). Por que a nucleossíntese parou no Lítio e não produziu elementos mais pesados?'
                     },
                     questoes: questoesBBang
                 },
@@ -180,9 +202,8 @@ export const initial_cursos = {
                     id: 2567356,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 4 - Título Genérico',
-                        descricao: `O objetivo desta atividade é consolidar o aprendizado por meio da resolução de casos práticos, incentivando a análise crítica e a criatividade na solução de problemas. 
-            Você será desafiado a utilizar o conhecimento adquirido.`
+                        titulo: 'Atividade 4: Testes de Consistência',
+                        descricao: 'Resolva problemas comparando as idades e abundâncias previstas pelo modelo padrão com dados observacionais (Aula 4).'
                     },
                     questoes: questoesBBang
                 },
@@ -190,9 +211,8 @@ export const initial_cursos = {
                     id: 6393456,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 5 - Título Genérico',
-                        descricao: `Aqui você irá explorar diferentes perspectivas e aprofundar seu entendimento, utilizando técnicas e conceitos apresentados nas videoaulas anteriores. 
-            Essa etapa visa desenvolver a capacidade de avaliação.`
+                        titulo: 'Atividade 5: Análise dos Pilares',
+                        descricao: 'Discuta por que a Radiação Cósmica de Fundo é considerada a evidência mais forte do Big Bang.'
                     },
                     questoes: questoesBBang
                 },
@@ -200,9 +220,8 @@ export const initial_cursos = {
                     id: 8354434,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 6 - Título Genérico',
-                        descricao: `Nesta última atividade do módulo, será feita uma revisão geral com exercícios integradores, preparando você para os próximos módulos e consolidando os conhecimentos adquiridos. 
-            O foco é a aplicação integrada dos conceitos para.`
+                        titulo: 'Atividade 6: Revisão de Cosmologia Primordial',
+                        descricao: 'Uma avaliação integradora (Aula 5) que conecta a Relatividade Geral à termodinâmica e física nuclear.'
                     },
                     questoes: questoesBBang
                 }
@@ -211,37 +230,37 @@ export const initial_cursos = {
                 {
                     id: 5138943,
                     video: '/videos/Aula_1.mp4',
-                    titulo: 'Aula 1 — Expansão e Lei de Hubble',
+                    titulo: 'Aula 1 — Métricas de Expansão (FLRW) e a Lei de Hubble',
                     subtitulo: 'Aula 1',
-                    descricao: `Como o redshift e a lei de Hubble evidenciam a expansão do Universo. Medidas, incertezas e limites observacionais.`
+                    descricao: 'Derivando a expansão do espaço a partir da Relatividade Geral. A métrica de Friedmann-Lemaître-Robertson-Walker.'
                 },
                 {
                     id: 5623943,
                     video: '/videos/Aula_2.mp4',
-                    titulo: 'Aula 2 — Radiação Cósmica de Fundo (CMB)',
+                    titulo: 'Aula 2 — Termodinâmica do Universo Primordial e o CMB',
                     subtitulo: 'Aula 2',
-                    descricao: `Origem do CMB, isotropias e anisotropias, e o que aprendemos sobre as fases iniciais do cosmos.`
+                    descricao: 'O plasma primordial, equilíbrio térmico, desacoplamento de fótons e a física do espectro de corpo negro do CMB.'
                 },
                 {
                     id: 5532743,
                     video: '/videos/Aula_3.mp4',
-                    titulo: 'Aula 3 — Nucleossíntese Primordial',
+                    titulo: 'Aula 3 — Nucleossíntese Primordial (BBN) e Física de Partículas',
                     subtitulo: 'Aula 3',
-                    descricao: `Formação dos primeiros elementos leves, previsões do modelo e comparações com dados observacionais.`
+                    descricao: 'As reações nucleares nos primeiros minutos. Como as abundâncias de H, He, Li dependem da física de partículas (ex: N_eff).'
                 },
                 {
                     id: 8528237,
                     video: '/videos/Aula_4.mp4',
-                    titulo: 'Aula 4 — Evidências Complementares',
+                    titulo: 'Aula 4 — Consistência de Idades e Abundâncias',
                     subtitulo: 'Aula 4',
-                    descricao: `Idades estelares, distribuição de galáxias e outras linhas de evidência para o modelo do Big Bang.`
+                    descricao: 'Testando o modelo: comparando a idade do Universo (derivada de H0) com idades estelares e dados de abundâncias.'
                 },
                 {
                     id: 5323723,
                     video: '/videos/Aula_5.mp4',
-                    titulo: 'Aula 5 — Síntese e Implicações',
+                    titulo: 'Aula 5 — Pilares do Modelo ΛCDM: Síntese',
                     subtitulo: 'Aula 5',
-                    descricao: `Revisão do módulo, principais implicações cosmológicas e perspectivas de pesquisa.`
+                    descricao: 'Revisão dos três pilares observacionais (Expansão, CMB, BBN) e como eles se encaixam no modelo cosmológico padrão.'
                 }
             ]
         },
@@ -250,12 +269,10 @@ export const initial_cursos = {
             terminado: false,
             template: {
                 titulo: 'Matéria Escura e Energia Escura',
-                descricao: 'Evidências observacionais (curvas de rotação, lentes gravitacionais) e a aceleração cósmica; impactos na dinâmica do cosmos.'
+                descricao: 'Dinâmica Galáctica, Lentes Gravitacionais e as Equações de Friedmann para o Setor Escuro.'
             },
             introducao: {
-                descricao: `A introdução do segundo módulo traz uma visão geral dos temas que serão abordados, destacando a importância de cada tópico para o desenvolvimento do aprendizado contínuo. 
-        Também são apresentados os objetivos específicos do módulo e as competências que serão desenvolvidas, para orientar seus estudos.`
-                ,
+                descricao: 'Uma investigação sobre os 95% do universo que não entendemos. Este módulo aborda as evidências dinâmicas (curvas de rotação), geométricas (lentes) e de expansão (SNe Ia) para o setor escuro, e explora os candidatos teóricos.',
                 pdf: '',
                 videoBackground: '/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
@@ -266,9 +283,8 @@ export const initial_cursos = {
                     id: 5141589,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 1 - Título Genérico',
-                        descricao: `Nesta atividade, você será convidado a aplicar os conceitos intermediários em situações práticas, fortalecendo a capacidade de análise e solução de problemas. 
-            Os exercícios são elaborados para incentivar a criatividade e a autonomia na busca por respostas fundamentadas.`
+                        titulo: 'Atividade 1: Dinâmica de Galáxias',
+                        descricao: 'Use o Teorema do Virial (Aula 1) para estimar a massa de um aglomerado de galáxias. Compare com a massa luminosa.'
                     },
                     questoes: questoesMateriaEnergiaEscura
                 },
@@ -276,9 +292,8 @@ export const initial_cursos = {
                     id: 3534529,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 2 - Título Genérico',
-                        descricao: `A segunda atividade traz desafios mais elaborados, que exigem uma compreensão aprofundada e a habilidade de integrar conhecimentos para alcançar resultados eficazes. 
-            A proposta estimula o pensamento crítico e a capacidade de avaliação detalhada das situações apresentadas.`
+                        titulo: 'Atividade 2: Mapeando Massa com Lentes',
+                        descricao: 'Explique como o "cisalhamento" (shear) de lentes fracas (Aula 2) permite mapear a matéria escura, independentemente da dinâmica.'
                     },
                     questoes: questoesMateriaEnergiaEscura
                 },
@@ -286,9 +301,8 @@ export const initial_cursos = {
                     id: 5639283,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 3 - Título Genérico',
-                        descricao: `Exercícios práticos que estimulam o raciocínio lógico e a aplicação dos conteúdos intermediários em contextos variados, ampliando o repertório do aluno. 
-            Essa etapa tem como objetivo a consolidação do conhecimento em diferentes cenários.`
+                        titulo: 'Atividade 3: O Diagrama de Hubble de SNe Ia',
+                        descricao: 'Interprete o diagrama de Hubble (Aula 3) e explique por que a aceleração é a conclusão preferida.'
                     },
                     questoes: questoesMateriaEnergiaEscura
                 },
@@ -296,9 +310,8 @@ export const initial_cursos = {
                     id: 2557356,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 4 - Título Genérico',
-                        descricao: `Nesta etapa, o foco é o desenvolvimento da autonomia na resolução de problemas, incentivando o uso crítico das informações para tomada de decisão. 
-            Você será desafiado a pensar de forma estratégica e avaliar múltiplas possibilidades antes de escolher a melhor solução.`
+                        titulo: 'Atividade 4: Resolvendo as Equações de Friedmann',
+                        descricao: 'Discuta o papel do parâmetro de equação de estado (w) (Aula 4). O que acontece se w < -1/3?'
                     },
                     questoes: questoesMateriaEnergiaEscura
                 },
@@ -306,9 +319,8 @@ export const initial_cursos = {
                     id: 6353456,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 5 - Título Genérico',
-                        descricao: `Atividade que promove a reflexão sobre os conceitos aprendidos e a sua aplicação prática, conectando teoria e prática de forma integrada. 
-            A meta é estimular a capacidade de comunicação e argumentação fundamentadas nos conteúdos estudados.`
+                        titulo: 'Atividade 5: Debate: CDM vs. MOND',
+                        descricao: 'Cite duas evidências independentes para Matéria Escura Fria (CDM) que são difíceis de explicar com gravidade modificada (MOND).'
                     },
                     questoes: questoesMateriaEnergiaEscura
                 },
@@ -316,9 +328,8 @@ export const initial_cursos = {
                     id: 8374434,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 6 - Título Genérico',
-                        descricao: `Exercícios finais para revisão e fixação dos conteúdos intermediários, preparando o aluno para os próximos desafios do curso. 
-            Esta etapa serve para consolidar a aprendizagem e identificar pontos que merecem maior atenção.`
+                        titulo: 'Atividade 6: Revisão do Setor Escuro',
+                        descricao: 'Avaliação final (Aula 5) sobre os modelos teóricos para a matéria escura e a energia escura.'
                     },
                     questoes: questoesMateriaEnergiaEscura
                 }
@@ -327,37 +338,37 @@ export const initial_cursos = {
                 {
                     id: 5148943,
                     video: '/VideosNebula/Video1ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 1 — Curvas de Rotação e Matéria Escura',
+                    titulo: 'Aula 1 — Dinâmica Galáctica e Evidências de Matéria Escura',
                     subtitulo: 'Aula 1',
-                    descricao: `O enigma das curvas de rotação e a evidência dinâmica para matéria escura em galáxias.`
+                    descricao: 'O problema da massa faltante: curvas de rotação e o Teorema do Virial em aglomerados. Dinâmica Newtoniana vs. GR.'
                 },
                 {
                     id: 5633943,
                     video: '/VideosNebula/Video2ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 2 — Lentes Gravitacionais',
+                    titulo: 'Aula 2 — Lentes Gravitacionais: Teoria e Observáveis',
                     subtitulo: 'Aula 2',
-                    descricao: `Como lentes gravitacionais revelam a distribuição de massa e ajudam a mapear matéria escura.`
+                    descricao: 'A deflexão da luz pela Relatividade Geral. Lentes fortes, fracas (weak lensing shear) e micro-lentes como sondas de massa.'
                 },
                 {
                     id: 5542743,
                     video: '/VideosNebula/Video3ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 3 — Aceleração Cósmica e Energia Escura',
+                    titulo: 'Aula 3 — Supernovas (SNe Ia) como Velas Padrão',
                     subtitulo: 'Aula 3',
-                    descricao: `Supernovas do Tipo Ia e as evidências de aceleração da expansão do Universo.`
+                    descricao: 'A física das SNe Tipo Ia e sua calibração (relação de Phillips). Evidências para a aceleração cósmica.'
                 },
                 {
                     id: 8538237,
                     video: '/VideosNebula/Video4ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 4 — Modelagem Cosmológica',
+                    titulo: 'Aula 4 — As Equações de Friedmann e o Conteúdo de Energia',
                     subtitulo: 'Aula 4',
-                    descricao: `Parâmetros cosmológicos, equações de Friedmann e implicações dinâmicas.`
+                    descricao: 'Resolvendo as equações de Friedmann para diferentes componentes (matéria, radiação, Λ) e o parâmetro de equação de estado (w).'
                 },
                 {
                     id: 5333723,
                     video: '/VideosNebula/Video5ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 5 — Questões em Aberto',
+                    titulo: 'Aula 5 — A Natureza do Setor Escuro (Candidatos e Modelos)',
                     subtitulo: 'Aula 5',
-                    descricao: `O que ainda não entendemos sobre matéria e energia escuras e os desafios observacionais.`
+                    descricao: 'Candidatos a CDM (WIMPs, Áxions) e modelos de Energia Escura (Constante Cosmológica, Quintessência, Gravidade Modificada).'
                 }
             ]
         },
@@ -366,66 +377,106 @@ export const initial_cursos = {
             terminado: false,
             template: {
                 titulo: 'Estrutura em Grande Escala do Universo',
-                descricao: 'Redes cósmicas, filamentos e aglomerados; crescimento de estruturas a partir de flutuações primordiais e o papel da gravidade.'
+                descricao: 'Teoria de perturbações, colapso gravitacional e a física da Teia Cósmica.'
             },
             introducao: {
-                descricao: `A introdução do módulo 3 contextualiza os assuntos a serem tratados, destacando a relevância dos tópicos avançados para o desenvolvimento do conhecimento e habilidades específicas. 
-        Também apresenta os objetivos do módulo e as expectativas para seu desempenho, preparando para um aprendizado intensivo e focado.`
-                ,
+                descricao: 'Da suavidade do CMB à complexa Teia Cósmica. Este módulo explora a Teoria de Perturbações Cosmológicas, o colapso gravitacional, a física de fluidos em aglomerados (Efeito SZ) e a estatística (P(k)) que descreve a rede de filamentos e vazios.',
                 pdf: '',
                 videoBackground: '/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1246878
             },
             atividades: [
-                { id: 6164589, terminado: false, template: { titulo: 'Atividade 1 - Título Genérico', descricao: `Esta atividade inicial do módulo avançado visa a aplicação de conceitos complexos por meio de exercícios que exigem análise crítica e raciocínio aprofundado. 
-            Os desafios são pensados para estimular a criatividade, a inovação e o pensamento estratégico diante de problemas reais.` }, questoes: questoesEstruturaUniverso },
-                { id: 3554529, terminado: false, template: { titulo: 'Atividade 2 - Título Genérico', descricao: `Desafios práticos que estimulam a capacidade de resolução de problemas complexos, incentivando o pensamento estratégico e inovador. 
-            Você será encorajado a propor soluções originais e eficazes, fundamentadas em conhecimento técnico sólido.` }, questoes: questoesEstruturaUniverso },
-                { id: 5699283, terminado: false, template: { titulo: 'Atividade 3 - Título Genérico', descricao: `Exercícios que combinam teoria e prática, proporcionando uma experiência rica para o desenvolvimento de competências avançadas. 
-            A atividade estimula o pensamento interdisciplinar e a capacidade de adaptação a diferentes cenários.` }, questoes: questoesEstruturaUniverso },
-                { id: 2577356, terminado: false, template: { titulo: 'Atividade 4 - Título Genérico', descricao: `Atividades que incentivam a reflexão crítica sobre os conteúdos estudados, promovendo o debate e a troca de ideias entre os participantes. 
-            Essa etapa busca fortalecer a capacidade argumentativa e o entendimento aprofundado dos temas.` }, questoes: questoesEstruturaUniverso },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5 - Título Genérico', descricao: `Neste momento, você será desafiado a aplicar os conhecimentos em projetos que simulam situações reais, promovendo a integração dos conceitos e habilidades adquiridos. 
-            O objetivo é preparar para a prática profissional com segurança e eficácia.` }, questoes: questoesEstruturaUniverso },
-                { id: 8384434, terminado: false, template: { titulo: 'Atividade 6 - Título Genérico', descricao: `Atividade final do módulo que revisa e consolida o aprendizado, incentivando o planejamento e a organização dos estudos para continuidade no curso. 
-            Também promove a autoavaliação e o reconhecimento das áreas que necessitam de maior atenção.` }, questoes: questoesEstruturaUniverso }
+                {
+                    id: 6164589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Crescimento Linear de Estruturas',
+                        descricao: 'Explique por que a matéria escura é essencial para o crescimento de estruturas (Aula 1). O que aconteceria em um universo só de bários?'
+                    },
+                    questoes: questoesEstruturaUniverso
+                },
+                {
+                    id: 3554529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Colapso e Viralização',
+                        descricao: 'Descreva o modelo de colapso "top-hat" (Aula 2) e como ele prevê a densidade de halos viralizados.'
+                    },
+                    questoes: questoesEstruturaUniverso
+                },
+                {
+                    id: 5699283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Física de Aglomerados (Observáveis)',
+                        descricao: 'Compare como a massa de um aglomerado pode ser medida usando Lentes (Aula 3), Raio-X e o Efeito SZ.'
+                    },
+                    questoes: questoesEstruturaUniverso
+                },
+                {
+                    id: 2577356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Interpretando o Espectro de Potência',
+                        descricao: 'O que o P(k) (Aula 4) nos informa? O que é o "turnover" no espectro de potência e o que o causa?'
+                    },
+                    questoes: questoesEstruturaUniverso
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: O Papel das Simulações',
+                        descricao: 'Por que simulações de N-Corpos (Aula 5) são necessárias? Por que não podemos resolver o crescimento não-linear analiticamente?'
+                    },
+                    questoes: questoesEstruturaUniverso
+                },
+                {
+                    id: 8384434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão de Formação de Estruturas',
+                        descricao: 'Teste final integrando a teoria de perturbações com a física de fluidos e a estatística de grande escala.'
+                    },
+                    questoes: questoesEstruturaUniverso
+                }
             ],
             videoAulas: [
                 {
                     id: 5168943,
                     video: '/VideosNebula/Video1ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 1 — Rede Cósmica',
+                    titulo: 'Aula 1 — Teoria de Perturbações Cosmológicas (Linear)',
                     subtitulo: 'Aula 1',
-                    descricao: `Filamentos, nós e vazios: a teia de grande escala que estrutura o Universo.`
+                    descricao: 'A física do crescimento de perturbações de densidade no regime linear. O papel da matéria escura na formação de estruturas.'
                 },
                 {
                     id: 5653943,
                     video: '/VideosNebula/Video2ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 2 — Crescimento de Estruturas',
+                    titulo: 'Aula 2 — Colapso Gravitacional e Crescimento Não-Linear',
                     subtitulo: 'Aula 2',
-                    descricao: `De flutuações primordiais a aglomerados: o papel da gravidade e da matéria escura.`
+                    descricao: 'O modelo de "top-hat collapse". Como as estruturas se formam e se desacoplam da expansão de Hubble (viralização).'
                 },
                 {
                     id: 5562743,
                     video: '/VideosNebula/Video3ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 3 — Aglomerados e Halos',
+                    titulo: 'Aula 3 — Física de Aglomerados (Gás, Lentes e Efeito SZ)',
                     subtitulo: 'Aula 3',
-                    descricao: `Dinâmica de halos, perfis de densidade e observáveis (X, SZ, lentes).`
+                    descricao: 'O Meio Intracluster (ICM) como um fluido. Emissão em Raio-X (Bremsstrahlung) e o Efeito Sunyaev-Zeldovich (SZ).'
                 },
                 {
                     id: 8558237,
                     video: '/VideosNebula/Video4ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 4 — Mapeamentos 3D do Universo',
+                    titulo: 'Aula 4 — Estatística de Grande Escala (Espectro de Potência)',
                     subtitulo: 'Aula 4',
-                    descricao: `Levantamentos espectroscópicos e fotométricos e a reconstrução da distribuição de matéria.`
+                    descricao: 'Quantificando a teia cósmica: A função de correlação de 2 pontos e o Espectro de Potência da matéria (P(k)).'
                 },
                 {
                     id: 5353723,
                     video: '/VideosNebula/Video5ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 5 — Síntese e Perspectivas',
+                    titulo: 'Aula 5 — Simulações de N-Corpos e Hidrodinâmicas',
                     subtitulo: 'Aula 5',
-                    descricao: `Onde estão as maiores incertezas e como novos levantamentos podem resolvê-las.`
+                    descricao: 'Como testamos a teoria: A física por trás das simulações cosmológicas (ex: Illustris, Millennium).'
                 }
             ]
         },
@@ -433,65 +484,113 @@ export const initial_cursos = {
             terminado: false,
             id: 2345567,
             template: {
-                titulo: 'Relatividade Geral e Buracos Negros',
-                descricao: 'Conceitos de espaço-tempo, horizonte de eventos e ondas gravitacionais aplicados a objetos compactos extremos.'
+                titulo: 'Relatividade Geral e Astrofísica de Buracos Negros',
+                descricao: 'Geometria Diferencial, soluções de Einstein (Kerr) e a física de acreção e jatos relativísticos.'
             },
             introducao: {
-                descricao: 'Uma jornada pelos princípios da Relatividade Geral, horizontes de eventos e a física extrema dos buracos negros, incluindo a detecção de ondas gravitacionais.',
+                descricao: 'Uma jornada pelos princípios da Relatividade Geral, as soluções de Schwarzschild e Kerr, a detecção de Ondas Gravitacionais e a física de plasmas extremos em discos de acreção e jatos.',
                 pdf: '',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Relatividade e curvatura do espaço-tempo.' }, questoes: questoesRelatividadeBuracosNegros },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Horizonte de eventos e sinais observáveis.' }, questoes: questoesRelatividadeBuracosNegros },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Ondas gravitacionais e fontes.' }, questoes: questoesRelatividadeBuracosNegros },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Buracos negros: detecções indiretas.' }, questoes: questoesRelatividadeBuracosNegros },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Teste gerais da Relatividade.' }, questoes: questoesRelatividadeBuracosNegros },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesRelatividadeBuracosNegros }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Curvatura e Movimento',
+                        descricao: 'Explique o ditado "matéria diz ao espaço como se curvar, espaço diz à matéria como se mover" (Aula 1) usando um dos testes clássicos (Aula 2).'
+                    },
+                    questoes: questoesRelatividadeBuracosNegros
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: A Métrica de Kerr',
+                        descricao: 'Diferencie a métrica de Kerr da de Schwarzschild (Aula 3). O que é a ergoesfera e como ela permite a extração de energia?'
+                    },
+                    questoes: questoesRelatividadeBuracosNegros
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Fontes de Ondas Gravitacionais',
+                        descricao: 'Comente sobre a detecção de ondas gravitacionais (Aula 4). O que o "chirp" de uma fusão nos diz sobre as massas dos objetos?'
+                    },
+                    questoes: questoesRelatividadeBuracosNegros
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Física da Acreção',
+                        descricao: 'Descreva como um buraco negro (que não emite luz) pode ser a fonte dos objetos mais luminosos do universo (Quasares) (Aula 5).'
+                    },
+                    questoes: questoesRelatividadeBuracosNegros
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Problemas Abertos',
+                        descricao: 'Discuta o conceito de singularidade e o paradoxo da informação (Aula 6).'
+                    },
+                    questoes: questoesRelatividadeBuracosNegros
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 4',
+                        descricao: 'Avaliação final sobre as soluções e implicações astrofísicas das Equações de Campo de Einstein.'
+                    },
+                    questoes: questoesRelatividadeBuracosNegros
+                }
             ],
             videoAulas: [
                 {
                     id: 5138943,
                     video: '/VideosNebula/Video1ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 1 — Espaço-tempo e Curvatura',
+                    titulo: 'Aula 1 — O Princípio da Equivalência e a Geometria do Espaço-Tempo',
                     subtitulo: 'Aula 1',
-                    descricao: 'Geometria do espaço-tempo e como a matéria curva o Universo segundo Einstein.'
+                    descricao: 'As equações de campo de Einstein. Como a matéria/energia curva o espaço-tempo e como o espaço-tempo dita o movimento.'
                 },
                 {
                     id: 9196352,
                     video: '/VideosNebula/Video2ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 2 — Testes Clássicos da Relatividade',
+                    titulo: 'Aula 2 — Testes Clássicos da Relatividade Geral',
                     subtitulo: 'Aula 2',
-                    descricao: 'Periélio de Mercúrio, deflexão da luz e dilatação gravitacional do tempo.'
+                    descricao: 'Periélio de Mercúrio, deflexão da luz e redshift gravitacional como testes experimentais da teoria.'
                 },
                 {
                     id: 2456935,
                     video: '/VideosNebula/Video3ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 3 — Buracos Negros e Horizonte de Eventos',
+                    titulo: 'Aula 3 — Soluções de Schwarzschild e Kerr (Horizontes)',
                     subtitulo: 'Aula 3',
-                    descricao: 'Soluções de Schwarzschild e Kerr e sinais observacionais.'
+                    descricao: 'A física do horizonte de eventos. A métrica de Schwarzschild (estático) vs. a métrica de Kerr (rotacional) e a ergoesfera.'
                 },
                 {
                     id: 2625441,
                     video: '/VideosNebula/Video4ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 4 — Ondas Gravitacionais',
+                    titulo: 'Aula 4 — Ondas Gravitacionais: Teoria e Detecção',
                     subtitulo: 'Aula 4',
-                    descricao: 'Fontes, detecção (LIGO/Virgo) e o que aprendemos com esses sinais.'
+                    descricao: 'A física das ondas gravitacionais como perturbações na métrica. Fontes (binárias compactas) e detecção (LIGO/Virgo).'
                 },
                 {
                     id: 1584362,
                     video: '/VideosNebula/Video5ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 5 — Assinaturas Observacionais',
+                    titulo: 'Aula 5 — Astrofísica de Buracos Negros: Acreção e Jatos',
                     subtitulo: 'Aula 5',
-                    descricao: 'Discos de acreção, jatos, sombras de buracos negros e medições indiretas.'
+                    descricao: 'Física de plasmas em discos de acreção (modelo de Shakura-Sunyaev) e a produção de jatos relativísticos (Mecanismo B-Z).'
                 },
                 {
                     id: 2478533,
                     video: '/VideosNebula/Video1ModuloCursoUniverso.mp4',
-                    titulo: 'Aula 6 — Revisão e Síntese',
+                    titulo: 'Aula 6 — Revisão e Síntese da Gravidade Extrema',
                     subtitulo: 'Aula 6',
-                    descricao: 'Amarração dos conceitos do módulo e problemas abertos da área.'
+                    descricao: 'Amarração dos conceitos do módulo e problemas abertos (singularidades, informação do buraco negro).'
                 }
             ]
         },
@@ -500,64 +599,112 @@ export const initial_cursos = {
             id: 7453453,
             template: {
                 titulo: 'Cosmologia Observacional e Parâmetros',
-                descricao: 'Como medimos H0, Ωm e ΩΛ; velas padrão, lentes gravitacionais e o tensionamento entre métodos locais e cosmológicos.'
+                descricao: 'A física das Sondas (SNe, BAO, CMB), Estatística Bayesiana e a Tensão de Hubble.'
             },
             introducao: {
-                descricao: 'Como medimos parâmetros cosmológicos na prática: H0, Ωm e ΩΛ por meio de velas padrão, lentes gravitacionais e outros métodos, e por que há tensões entre técnicas.',
+                descricao: 'Como medimos os parâmetros do universo (H0, Ωm, σ8). Este módulo foca na física de cada sonda (SNe, BAO, Lensing), nos métodos estatísticos (Bayes, MCMC) e no maior problema da cosmologia moderna: a Tensão de Hubble.',
                 pdf: '',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Medindo o Universo: H0 e velas padrão.' }, questoes: questoesCosmologiaObservacional },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Lentes gravitacionais e parâmetros cosmológicos.' }, questoes: questoesCosmologiaObservacional },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Tensões entre métodos locais e globais.' }, questoes: questoesCosmologiaObservacional },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Ωm, ΩΛ e curvatura: interpretações.' }, questoes: questoesCosmologiaObservacional },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Dados observacionais e incertezas.' }, questoes: questoesCosmologiaObservacional },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão e síntese do módulo.' }, questoes: questoesCosmologiaObservacional }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: A Física das BAO',
+                        descricao: 'Explique a origem física das Oscilações Acústicas de Bárions (BAO) (Aula 2) e por que ela atua como uma "régua padrão".'
+                    },
+                    questoes: questoesCosmologiaObservacional
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: A Tensão em H0',
+                        descricao: 'Descreva a tensão de Hubble (Aula 3). Por que ela é um problema tão sério para o modelo ΛCDM?'
+                    },
+                    questoes: questoesCosmologiaObservacional
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Geometria vs. Crescimento',
+                        descricao: 'Diferencie sondas de "geometria" (como BAO/SNe) de sondas de "crescimento de estrutura" (como RSD/Lensing) (Aula 5).'
+                    },
+                    questoes: questoesCosmologiaObservacional
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Estatística Cosmológica',
+                        descricao: 'O que é "Likelihood" (Aula 4)? Explique por que a análise combinada (Aula 6) é tão poderosa para quebrar degenerescências de parâmetros.'
+                    },
+                    questoes: questoesCosmologiaObservacional
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Erros Sistemáticos',
+                        descricao: 'Discuta possíveis fontes de erro sistemático (Aula 1, Aula 3) na calibração de SNe Ia que poderiam impactar a medida de H0.'
+                    },
+                    questoes: questoesCosmologiaObservacional
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 5',
+                        descricao: 'Avaliação final sobre o arsenal de sondas observacionais e os métodos estatísticos usados para definir o modelo cosmológico.'
+                    },
+                    questoes: questoesCosmologiaObservacional
+                }
             ],
             videoAulas: [
                 {
                     id: 5138943,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 1 — H0 e Velas Padrão',
+                    titulo: 'Aula 1 — A Escada de Distâncias Cósmicas e H0',
                     subtitulo: 'Aula 1',
-                    descricao: 'Cefeidas, supernovas Ia e a escada de distâncias.'
+                    descricao: 'A física dos calibradores (Cefeidas, TRGB) e a ancoragem da escala de distância para medir H0.'
                 },
                 {
                     id: 9196352,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 2 — Lentes e Parâmetros',
+                    titulo: 'Aula 2 — Sondas de Geometria: BAO e SNe Ia',
                     subtitulo: 'Aula 2',
-                    descricao: 'Uso de lentes fortes e fracas na inferência cosmológica.'
+                    descricao: 'A física das Oscilações Acústicas de Bárions (BAO) como régua padrão. Combinando com SNe Ia (velas padrão).'
                 },
                 {
                     id: 2456935,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 3 — Tensões Cosmológicas',
+                    titulo: 'Aula 3 — A Tensão de Hubble: Sistemáticos vs. Nova Física',
                     subtitulo: 'Aula 3',
-                    descricao: 'Por que medidas locais e de CMB não concordam e possíveis soluções.'
+                    descricao: 'Análise detalhada da discrepância (4-6σ) entre medidas locais (Aula 1) e primordiais (CMB). Erros sistemáticos ou falha do ΛCDM?'
                 },
                 {
                     id: 2625441,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 4 — Ωm, ΩΛ e Curvatura',
+                    titulo: 'Aula 4 — Análise Bayesiana e Ajuste de Parâmetros (MCMC)',
                     subtitulo: 'Aula 4',
-                    descricao: 'Como diferentes sondas restringem os parâmetros e a curvatura do Universo.'
+                    descricao: 'A estatística por trás da cosmologia. Teorema de Bayes, Likelihood e métodos de Monte Carlo (MCMC) para restringir parâmetros.'
                 },
                 {
                     id: 1584362,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 5 — Incertezas e Sistemáticos',
+                    titulo: 'Aula 5 — Sondas de Crescimento de Estrutura',
                     subtitulo: 'Aula 5',
-                    descricao: 'Fontes de erro, calibração e tratamento de incertezas.'
+                    descricao: 'Usando Lentes Fracas, Efeito SZ e Redshift-Space Distortions (RSD) para medir Ωm e σ8.'
                 },
                 {
                     id: 2478533,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 6 — Revisão e Síntese',
+                    titulo: 'Aula 6 — O Estado da Arte: Análise Combinada',
                     subtitulo: 'Aula 6',
-                    descricao: 'Resumo dos métodos observacionais e estado da arte.'
+                    descricao: 'Combinando todas as sondas (CMB+BAO+SNe+Lensing) para obter as restrições mais fortes sobre os 6 parâmetros do ΛCDM.'
                 }
             ]
         },
@@ -566,64 +713,447 @@ export const initial_cursos = {
             id: 2345253,
             template: {
                 titulo: 'Inflação Cósmica e Flutuações Primordiais',
-                descricao: 'Problemas do horizonte e da planitude, geradores quânticos de anisotropias no CMB e o espectro de potência.'
+                descricao: 'Teoria Quântica de Campos em Espaço Curvo, Campos Escalares e a origem quântica das estruturas.'
             },
             introducao: {
-                descricao: 'Entenda por que a inflação é proposta para resolver o problema do horizonte e da planitude, e como flutuações quânticas geram anisotropias no CMB.',
+                descricao: 'Por que o universo é tão grande, plano e homogêneo? Este módulo explora a Teoria da Inflação, o campo "inflaton", e como flutuações quânticas microscópicas foram esticadas para escalas cosmológicas, semeando todas as estruturas que vemos hoje.',
                 pdf: '',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Problema do horizonte e inflação.' }, questoes: questoesInflacao },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Planitude e solução inflacionária.' }, questoes: questoesInflacao },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Flutuações quânticas e anisotropias.' }, questoes: questoesInflacao },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'CMB e espectro de potência.' }, questoes: questoesInflacao },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Observáveis e limitações.' }, questoes: questoesInflacao },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesInflacao }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Os Problemas do Big Bang Padrão',
+                        descricao: 'Explique detalhadamente o problema do horizonte (Aula 1). Por que a uniformidade do CMB é um problema?'
+                    },
+                    questoes: questoesInflacao
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: O Campo "Inflaton"',
+                        descricao: 'Descreva as condições de "slow-roll" (Aula 2) e como elas garantem um período de inflação e uma saída "graciosa".'
+                    },
+                    questoes: questoesInflacao
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Das Flutuações Quânticas às Galáxias',
+                        descricao: 'Explique a conexão entre flutuações quânticas microscópicas (Aula 3) e a estrutura em grande escala do universo (Módulo 3).'
+                    },
+                    questoes: questoesInflacao
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Modos B Primordiais',
+                        descricao: 'O que são Modos-B (Aula 5) no CMB? Por que sua detecção (associada a ondas gravitacionais primordiais) seria a "bala de prata" da inflação?'
+                    },
+                    questoes: questoesInflacao
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Restringindo Modelos de Inflação',
+                        descricao: 'Como os observáveis ns e r (Aula 5) nos ajudam a diferenciar entre diferentes "potenciais" inflacionários (ex: m²Φ², Φ⁴)?'
+                    },
+                    questoes: questoesInflacao
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão da Inflação e TQC',
+                        descricao: 'Avaliação final sobre a aplicação da Teoria Quântica de Campos para resolver os problemas fundamentais da cosmologia (Aula 6).'
+                    },
+                    questoes: questoesInflacao
+                }
             ],
             videoAulas: [
                 {
                     id: 5138943,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 1 — Problema do Horizonte',
+                    titulo: 'Aula 1 — Problemas Clássicos do Big Bang',
                     subtitulo: 'Aula 1',
-                    descricao: 'Uniformidade do CMB e a necessidade de uma fase inflacionária.'
+                    descricao: 'A física detalhada dos problemas do horizonte, planitude e monopolos magnéticos no modelo padrão.'
                 },
                 {
                     id: 9196352,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 2 — Planitude e Curvatura',
+                    titulo: 'Aula 2 — A Física da Inflação: Campos Escalares e "Slow-Roll"',
                     subtitulo: 'Aula 2',
-                    descricao: 'Como a inflação resolve o ajuste fino da densidade crítica.'
+                    descricao: 'O "Inflaton" como um campo escalar. Condições de "slow-roll" e como a inflação resolve os problemas da Aula 1.'
                 },
                 {
                     id: 2456935,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 3 — Flutuações Quânticas',
+                    titulo: 'Aula 3 — A Origem Quântica das Estruturas',
                     subtitulo: 'Aula 3',
-                    descricao: 'Sementes das estruturas e o espectro de potência.'
+                    descricao: 'Flutuações quânticas do Inflaton esticadas para escalas cosmológicas, gerando o espectro de potência primordial.'
                 },
                 {
                     id: 2625441,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 4 — Assinaturas no CMB',
+                    titulo: 'Aula 4 — Anisotropias do CMB: Modos Escalares e Tensoriais',
                     subtitulo: 'Aula 4',
-                    descricao: 'Modos escalares e tensoriais e buscas por B-modes.'
+                    descricao: 'Como as flutuações primordiais (Aula 3) se imprimem no CMB. Perturbações escalares (densidade) e tensoriais (ondas gravitacionais).'
                 },
                 {
                     id: 1584362,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 5 — Modelos de Inflação',
+                    titulo: 'Aula 5 — Observáveis Inflacionários (ns, r) e Modos B',
                     subtitulo: 'Aula 5',
-                    descricao: 'Cenários simples e suas previsões observacionais.'
+                    descricao: 'O índice espectral (ns) e a razão tensor-escalar (r). A busca por Modos-B primordiais como prova da inflação.'
                 },
                 {
                     id: 2478533,
                     video: '/cursos/mod1-intro.mp4',
-                    titulo: 'Aula 6 — Limitações e Testes Futuros',
+                    titulo: 'Aula 6 — Modelos de Inflação e o Multiverso',
                     subtitulo: 'Aula 6',
-                    descricao: 'O que ainda falta confirmar e propostas de novas observações.'
+                    descricao: 'Caos inflacionário, inflação eterna e a conexão teórica com a hipótese do Multiverso.'
+                }
+            ]
+        },
+        {
+            terminado: false,
+            id: 8000001,
+            template: {
+                titulo: 'Astrofísica de Objetos Compactos',
+                descricao: 'A física da matéria degenerada: Anãs Brancas (limite de Chandrasekhar) e Estrelas de Nêutrons (limite TOV, pulsares e magnetares).'
+            },
+            introducao: {
+                descricao: 'Mergulhe na física extrema da matéria degenerada. Este módulo explora o equilíbrio hidrostático em Anãs Brancas, o Limite de Chandrasekhar, e a física nuclear por trás das Estrelas de Nêutrons, incluindo suas Equações de Estado (EoS), pulsares e campos magnéticos extremos.',
+                pdf: '',
+                video: '/VideosNebula/IntroducaoUniverso.mp4',
+                id: 1236478
+            },
+            atividades: [
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Pressão de Degenerescência Eletrônica',
+                        descricao: 'Analise a física da pressão de degenerescência (Aula 1) e derive (qualitativamente) o Limite de Chandrasekhar.'
+                    },
+                    questoes: questoesObjetosCompactos
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: A Equação de Estado (EoS) Nuclear',
+                        descricao: 'Discuta a estrutura interna de uma Estrela de Nêutrons (Aula 2) e a incerteza na EoS da matéria nuclear.'
+                    },
+                    questoes: questoesObjetosCompactos
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: O Limite TOV',
+                        descricao: 'Explique como o limite de Tolman-Oppenheimer-Volkoff (Aula 2) estabelece a massa máxima para uma estrela de nêutrons.'
+                    },
+                    questoes: questoesObjetosCompactos
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Eletrodinâmica de Pulsares',
+                        descricao: 'Descreva o modelo do "farol" (Aula 3) e a física da magnetosfera que gera a emissão coerente de rádio.'
+                    },
+                    questoes: questoesObjetosCompactos
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Magnetares e Surtos de Raios Gama',
+                        descricao: 'Investigue a física dos Magnetares (Aula 4), objetos com os campos magnéticos mais intensos do universo.'
+                    },
+                    questoes: questoesObjetosCompactos
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão da Matéria Extrema',
+                        descricao: 'Avaliação final (Aula 5) comparando os processos físicos que sustentam Anãs Brancas e Estrelas de Nêutrons.'
+                    },
+                    questoes: questoesObjetosCompactos
+                }
+            ],
+            videoAulas: [
+                {
+                    id: 5138943,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 1 — Matéria Degenerada: Anãs Brancas e o Limite de Chandrasekhar',
+                    subtitulo: 'Aula 1',
+                    descricao: 'A física estatística da pressão de degenerescência eletrônica (relativística e não-relativística).'
+                },
+                {
+                    id: 9196352,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 2 — Estrelas de Nêutrons: EoS Nuclear e o Limite TOV',
+                    subtitulo: 'Aula 2',
+                    descricao: 'A Equação de Estado (EoS) da matéria nuclear densa e o limite de massa Tolman-Oppenheimer-Volkoff.'
+                },
+                {
+                    id: 2456935,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 3 — Pulsares e o Modelo do "Farol"',
+                    subtitulo: 'Aula 3',
+                    descricao: 'Eletrodinâmica de um dipolo magnético rotativo. A física da magnetosfera e mecanismos de emissão.'
+                },
+                {
+                    id: 2625441,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 4 — Magnetares e Surtos de Raios Gama (SGRs)',
+                    subtitulo: 'Aula 4',
+                    descricao: 'A física de campos magnéticos extremos (B > 10^14 G), "starquakes" e rajadas gama suaves.'
+                },
+                {
+                    id: 1584362,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 5 — Revisão Comparativa: Anãs Brancas vs. Estrelas de Nêutrons',
+                    subtitulo: 'Aula 5',
+                    descricao: 'Comparando mecanismos de formação, sustentação (degenerescência) e resfriamento (neutrinos vs. fótons).'
+                }
+            ]
+        },
+        {
+            terminado: false,
+            id: 8000002,
+            template: {
+                titulo: 'Física Avançada de Buracos Negros',
+                descricao: 'A fronteira da física teórica: Teorema No-Hair, Termodinâmica, Radiação Hawking, Singularidades e o Paradoxo da Informação.'
+            },
+            introducao: {
+                descricao: 'Este módulo avança além da astrofísica para explorar os buracos negros como laboratórios teóricos. Investigamos o que a RG diz sobre suas propriedades (Teorema No-Hair), a conexão surpreendente com a termodinâmica, e o conflito com a Mecânica Quântica (Radiação Hawking e Paradoxo da Informação).',
+                pdf: '',
+                video: '/VideosNebula/IntroducaoUniverso.mp4',
+                id: 1236478
+            },
+            atividades: [
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: O Teorema "No-Hair" (Sem Cabelo)',
+                        descricao: 'Discuta as implicações do Teorema No-Hair (Aula 1). Por que um buraco negro é definido apenas por M, Q e J?'
+                    },
+                    questoes: questoesFisicaBN
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: As Leis da Termodinâmica de BN',
+                        descricao: 'Explique as quatro leis da termodinâmica de buracos negros (Aula 2), focando na relação entre área do horizonte e entropia.'
+                    },
+                    questoes: questoesFisicaBN
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: A Evaporação Quântica (Radiação Hawking)',
+                        descricao: 'Descreva o processo de criação de pares (Aula 3) que leva à Radiação Hawking. Qual a temperatura de um BN?'
+                    },
+                    questoes: questoesFisicaBN
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: O Paradoxo da Informação',
+                        descricao: 'Explique por que a evaporação de buracos negros (Aula 4) viola a unitariedade da Mecânica Quântica.'
+                    },
+                    questoes: questoesFisicaBN
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: A Natureza da Singularidade',
+                        descricao: 'Compare a singularidade de ponto (Schwarzschild) com a singularidade de anel (Kerr) (Aula 5). O que é a Hipótese da Censura Cósmica?'
+                    },
+                    questoes: questoesFisicaBN
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão: RG vs. MQ',
+                        descricao: 'Avaliação final (Aula 6) sobre os pontos de conflito e sinergia entre a Relatividade Geral e a Mecânica Quântica na física de buracos negros.'
+                    },
+                    questoes: questoesFisicaBN
+                }
+            ],
+            videoAulas: [
+                {
+                    id: 5138943,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 1 — O Teorema "No-Hair": Classificando Buracos Negros',
+                    subtitulo: 'Aula 1',
+                    descricao: 'As soluções de Schwarzschild, Reissner-Nordström e Kerr. O que a RG permite que um buraco negro "seja".'
+                },
+                {
+                    id: 9196352,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 2 — Termodinâmica de Buracos Negros (Bekenstein-Hawking)',
+                    subtitulo: 'Aula 2',
+                    descricao: 'As leis da mecânica de buracos negros e sua analogia com a termodinâmica. Entropia como área do horizonte.'
+                },
+                {
+                    id: 2456935,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 3 — Radiação Hawking e Evaporação de Buracos Negros',
+                    subtitulo: 'Aula 3',
+                    descricao: 'Teoria Quântica de Campos em espaço-tempo curvo. O processo de criação de pares e a temperatura do horizonte.'
+                },
+                {
+                    id: 2625441,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 4 — O Paradoxo da Informação e o "Firewall"',
+                    subtitulo: 'Aula 4',
+                    descricao: 'O conflito between unitariedade (MQ) e o princípio da equivalência (RG). Possíveis soluções (ex: Holografia, Firewalls).'
+                },
+                {
+                    id: 1584362,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 5 — A Estrutura Interna: Singularidades e Censura Cósmica',
+                    subtitulo: 'Aula 5',
+                    descricao: 'A natureza da singularidade (ponto vs. anel). A Hipótese da Censura Cósmica de Penrose.'
+                },
+                {
+                    id: 2478533,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 6 — Fronteiras: Gravidade Quântica e Holografia (AdS/CFT)',
+                    subtitulo: 'Aula 6',
+                    descricao: 'Uma visão geral das tentativas de resolver os paradoxos (Teoria de Cordas, Gravidade Quântica em Loop) e o Princípio Holográfico.'
+                }
+            ]
+        },
+        {
+            terminado: false,
+            id: 8000003,
+            template: {
+                titulo: 'Física da Formação de Galáxias',
+                descricao: 'A física de fusões (mergers), fricção dinâmica e os mecanismos de "feedback" de Supernovas e AGNs.'
+            },
+            introducao: {
+                descricao: 'Como galáxias como a Via Láctea se formam? Este módulo foca na física da formação de galáxias: o modelo hierárquico, a fricção dinâmica que guia fusões, e a batalha crucial entre o resfriamento do gás e os mecanismos de "feedback" (Supernovas e AGNs) que regulam o crescimento.',
+                pdf: '',
+                video: '/VideosNebula/IntroducaoUniverso.mp4',
+                id: 1236478
+            },
+            atividades: [
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: A Função de Massa de Halos',
+                        descricao: 'Discuta o formalismo de Press-Schechter (Aula 1) e como ele prevê a abundância de halos de matéria escura em diferentes massas e redshifts.'
+                    },
+                    questoes: questoesFormacaoGalaxias
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: A Física das Fusões (Mergers)',
+                        descricao: 'Explique o conceito de "fricção dinâmica" (Aula 2) e como ela determina o tempo de escala para a fusão de galáxias satélites.'
+                    },
+                    questoes: questoesFormacaoGalaxias
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: A Batalha do Gás (Resfriamento vs. Aquecimento)',
+                        descricao: 'Descreva a "função de resfriamento" (cooling function) do gás (Aula 3) e por que ela leva a uma formação de estrelas ineficiente em halos massivos.'
+                    },
+                    questoes: questoesFormacaoGalaxias
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Feedback Estelar (Supernovas)',
+                        descricao: 'Como o "feedback" de supernovas (Aula 4) regula a formação estelar, especialmente em galáxias de baixa massa?'
+                    },
+                    questoes: questoesFormacaoGalaxias
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Feedback de AGN e "Quenching"',
+                        descricao: 'Compare o modo "Quasar" e o modo "Rádio/Jet" (Aula 5). Por que o feedback de AGN (Aula 6) é essencial para explicar o "quenching" de galáxias massivas?'
+                    },
+                    questoes: questoesFormacaoGalaxias
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão da Evolução de Galáxias',
+                        descricao: 'Avaliação final sobre o modelo hierárquico e os processos físicos (fusões, feedback) que definem a evolução das galáxias.'
+                    },
+                    questoes: questoesFormacaoGalaxias
+                }
+            ],
+            videoAulas: [
+                {
+                    id: 5138943,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 1 — Modelo Hierárquico e a Função de Massa do Halo',
+                    subtitulo: 'Aula 1',
+                    descricao: 'A base do ΛCDM: O formalismo de Press-Schechter e o crescimento hierárquico de halos de matéria escura.'
+                },
+                {
+                    id: 9196352,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 2 — Fricção Dinâmica e Fusões de Galáxias',
+                    subtitulo: 'Aula 2',
+                    descricao: 'A física da "fricção dinâmica" de Chandrasekhar e o "timing" de fusões (mergers) e interações.'
+                },
+                {
+                    id: 2456935,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 3 — A Física do Gás: Resfriamento vs. Aquecimento',
+                    subtitulo: 'Aula 3',
+                    descricao: 'Resfriamento radiativo (cooling function), aquecimento por choque (shock heating) e o "cooling flow problem" em aglomerados.'
+                },
+                {
+                    id: 2625441,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 4 — Feedback Estelar (Supernovas e Ventos)',
+                    subtitulo: 'Aula 4',
+                    descricao: 'Como a energia de supernovas e ventos estelares impulsiona "ventos galácticos" e regula a formação estelar.'
+                },
+                {
+                    id: 1584362,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 5 — Feedback de AGN (Modo Quasar e Modo Rádio)',
+                    subtitulo: 'Aula 5',
+                    descricao: 'A física do feedback de buracos negros supermassivos: modo "quasar" (alta acreção) e modo "rádio/jet" (baixa acreção).'
+                },
+                {
+                    id: 2478533,
+                    video: '/cursos/mod1-intro.mp4',
+                    titulo: 'Aula 6 — "Quenching" de Galáxias e a Bimodalidade',
+                    subtitulo: 'Aula 6',
+                    descricao: 'Juntando tudo: por que as galáxias são "vermelhas e mortas" ou "azuis e vivas"? O papel do "quenching" na bimodalidade galáctica.'
                 }
             ]
         }
@@ -643,12 +1173,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Espectros e propriedades da luz.' }, questoes: questoesLuzMedidas },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Magnitude, cor e distâncias básicas.' }, questoes: questoesLuzMedidas },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Medidas e incertezas em astronomia.' }, questoes: questoesLuzMedidas },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Aplicações observacionais.' }, questoes: questoesLuzMedidas },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Quiz e revisão.' }, questoes: questoesLuzMedidas },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Síntese do módulo.' }, questoes: questoesLuzMedidas }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Decifrando a Luz',
+                        descricao: 'Com base nas Aulas 1 e 2, explique como a espectroscopia revela a composição e o movimento de um astro.'
+                    },
+                    questoes: questoesLuzMedidas
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Magnitude e Índice de Cor',
+                        descricao: 'Aplique os conceitos da Aula 3. Responda questões sobre a escala de magnitudes e como a cor se relaciona com a temperatura.'
+                    },
+                    questoes: questoesLuzMedidas
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Medindo Distâncias',
+                        descricao: 'Use o que aprendeu na Aula 4 sobre paralaxe e velas padrão para resolver problemas de estimativa de distância.'
+                    },
+                    questoes: questoesLuzMedidas
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: A Lei de Wien',
+                        descricao: 'Concentre-se na relação entre a temperatura de um corpo negro e o pico de seu espectro de emissão.'
+                    },
+                    questoes: questoesLuzMedidas
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Incertezas na Prática',
+                        descricao: 'Discuta os desafios e fontes de erro em medições astronômicas, como visto na Aula 5.'
+                    },
+                    questoes: questoesLuzMedidas
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão de Fotometria e Espectroscopia',
+                        descricao: 'Questionário final do módulo (Aula 6), integrando todos os conceitos sobre como medimos as propriedades dos astros.'
+                    },
+                    questoes: questoesLuzMedidas
+                }
             ],
             videoAulas: [
                 {
@@ -709,12 +1287,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Colapso e protoestrelas.' }, questoes: questoesFormacaoEstelar },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Feedback estelar e ventos.' }, questoes: questoesFormacaoEstelar },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Meio interestelar e poeira.' }, questoes: questoesFormacaoEstelar },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Regiões HII.' }, questoes: questoesFormacaoEstelar },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Observáveis da formação estelar.' }, questoes: questoesFormacaoEstelar },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesFormacaoEstelar }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Do Colapso à Protoestrela',
+                        descricao: 'Resuma o processo de colapso de nuvens moleculares (Aula 1) até a formação de protoestrelas (Aula 2).'
+                    },
+                    questoes: questoesFormacaoEstelar
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Regulando o Nascimento: Feedback',
+                        descricao: 'Explique o que é "feedback estelar" (ventos, radiação) e como ele afeta o meio interestelar (Aula 3).'
+                    },
+                    questoes: questoesFormacaoEstelar
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: O Papel da Poeira e Gás',
+                        descricao: 'Comente o papel da poeira na observação da formação estelar (extinção) e o que são Regiões HII (Aula 4).'
+                    },
+                    questoes: questoesFormacaoEstelar
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Medindo a Formação Estelar',
+                        descricao: 'Quais são os "observáveis" (Aula 5) usados para medir a taxa de formação estelar em galáxias?'
+                    },
+                    questoes: questoesFormacaoEstelar
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Propriedades do ISM',
+                        descricao: 'Descreva os diferentes componentes do Meio Interestelar (gás ionizado, neutro, molecular).'
+                    },
+                    questoes: questoesFormacaoEstelar
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 2',
+                        descricao: 'Questionário final (Aula 6) integrando os processos de formação estelar e a física do ISM.'
+                    },
+                    questoes: questoesFormacaoEstelar
+                }
             ],
             videoAulas: [
                 {
@@ -775,12 +1401,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Componentes da Via Láctea.' }, questoes: questoesViaLactea },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Rotação galáctica.' }, questoes: questoesViaLactea },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Bojo e halo: características.' }, questoes: questoesViaLactea },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Localização do Sol.' }, questoes: questoesViaLactea },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Matéria escura na Via Láctea.' }, questoes: questoesViaLactea },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesViaLactea }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Anatomia da Galáxia',
+                        descricao: 'Descreva as principais componentes da Via Láctea (disco, bojo, halo) e suas populações estelares (Aula 1).'
+                    },
+                    questoes: questoesViaLactea
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: O Enigma da Rotação',
+                        descricao: 'Explique como medimos a rotação galáctica (Aula 2) e o que a curva de rotação indica sobre a matéria escura (Aula 4).'
+                    },
+                    questoes: questoesViaLactea
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Onde Estamos?',
+                        descricao: 'Qual a nossa localização na galáxia (Aula 3) e o que isso implica para as observações (ex: "Zona de Evitamento")?'
+                    },
+                    questoes: questoesViaLactea
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Fósseis Galácticos',
+                        descricao: 'O que são correntes estelares e subestruturas (Aula 5)? O que elas nos dizem sobre o passado da Via Láctea?'
+                    },
+                    questoes: questoesViaLactea
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Propriedades da Vizinhança',
+                        descricao: 'Discuta as características da vizinhança solar e como ela se compara a outras regiões da galáxia.'
+                    },
+                    questoes: questoesViaLactea
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 3',
+                        descricao: 'Consolide seu conhecimento (Aula 6) sobre a estrutura, dinâmica e composição da Via Láctea.'
+                    },
+                    questoes: questoesViaLactea
+                }
             ],
             videoAulas: [
                 {
@@ -841,12 +1515,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Trânsito e velocidade radial.' }, questoes: questoesExoplanetas },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Atmosferas e espectroscopia de trânsito.' }, questoes: questoesExoplanetas },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Habitabilidade: critérios e desafios.' }, questoes: questoesExoplanetas },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Imagem direta: quando é possível?' }, questoes: questoesExoplanetas },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Limitações observacionais.' }, questoes: questoesExoplanetas },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesExoplanetas }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Métodos Indiretos: Trânsito e Velocidade Radial',
+                        descricao: 'Compare os métodos de trânsito (Aula 1) e velocidade radial (Aula 2). O que cada um mede e o que inferimos (raio vs. massa mínima)?'
+                    },
+                    questoes: questoesExoplanetas
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Fotografando Mundos Distantes',
+                        descricao: 'Quais são os desafios e limitações da imagem direta de exoplanetas? (Aula 3)'
+                    },
+                    questoes: questoesExoplanetas
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Analisando Atmosferas',
+                        descricao: 'Explique como a espectroscopia de trânsito (Aula 4) nos permite inferir a composição da atmosfera de um exoplaneta.'
+                    },
+                    questoes: questoesExoplanetas
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: O que é "Habitabilidade"?',
+                        descricao: 'Discuta o conceito de "Zona Habitável" (Aula 5) e comente as limitações observacionais no estudo da habitabilidade.'
+                    },
+                    questoes: questoesExoplanetas
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Viés Observacional',
+                        descricao: 'Discuta por que os primeiros métodos de detecção encontraram tantos "Júpiteres Quentes". O que é viés de seleção?'
+                    },
+                    questoes: questoesExoplanetas
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 4',
+                        descricao: 'Teste final (Aula 6) sobre os métodos de detecção e caracterização de exoplanetas.'
+                    },
+                    questoes: questoesExoplanetas
+                }
             ],
             videoAulas: [
                 {
@@ -907,12 +1629,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Classificação morfológica.' }, questoes: questoesMorfologiaEvolucao },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Interações e fusões.' }, questoes: questoesMorfologiaEvolucao },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Evolução ao longo do tempo cósmico.' }, questoes: questoesMorfologiaEvolucao },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Assinaturas observacionais.' }, questoes: questoesMorfologiaEvolucao },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Quiz do módulo.' }, questoes: questoesMorfologiaEvolucao },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesMorfologiaEvolucao }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: O Zoológico Galáctico de Hubble',
+                        descricao: 'Descreva a classificação morfológica de galáxias (Aula 1), diferenciando espirais, elípticas e irregulares.'
+                    },
+                    questoes: questoesMorfologiaEvolucao
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Estruturas Internas',
+                        descricao: 'Qual o papel de barras, braços espirais e bojos na dinâmica e formação estelar de uma galáxia? (Aula 2)'
+                    },
+                    questoes: questoesMorfologiaEvolucao
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Canibalismo Galáctico',
+                        descricao: 'Explique como interações e fusões (Aula 3) afetam a evolução galáctica e cite evidências observacionais (ex: caudas de maré).'
+                    },
+                    questoes: questoesMorfologiaEvolucao
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: O Universo Jovem',
+                        descricao: 'Como a população de galáxias muda com o redshift (Aula 4)? As galáxias de hoje são iguais às do passado?'
+                    },
+                    questoes: questoesMorfologiaEvolucao
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Galáxias Ativas (Starburst e AGN)',
+                        descricao: 'Diferencie um surto de formação estelar (Starburst) de um Núcleo Ativo de Galáxia (AGN) (Aula 5).'
+                    },
+                    questoes: questoesMorfologiaEvolucao
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 5',
+                        descricao: 'Consolide (Aula 6) a conexão entre morfologia, ambiente e evolução das galáxias.'
+                    },
+                    questoes: questoesMorfologiaEvolucao
+                }
             ],
             videoAulas: [
                 {
@@ -973,12 +1743,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1', descricao: 'Escada de distâncias cósmicas.' }, questoes: questoesCosmografia },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2', descricao: 'Diagrama HR e paralaxe.' }, questoes: questoesCosmografia },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3', descricao: 'Mapas do céu multiespectrais.' }, questoes: questoesCosmografia },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4', descricao: 'Limites e incertezas.' }, questoes: questoesCosmografia },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5', descricao: 'Quiz do módulo.' }, questoes: questoesCosmografia },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6', descricao: 'Revisão do módulo.' }, questoes: questoesCosmografia }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: A Escada de Distâncias Cósmicas',
+                        descricao: 'Explique o conceito da escada de distâncias (Aula 1). Por que precisamos de múltiplos "degraus" (calibradores)?'
+                    },
+                    questoes: questoesCosmografia
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Velas Padrão: Cefeidas',
+                        descricao: 'Por que as Cefeidas (Aula 1) são tão importantes como velas padrão para distâncias extragalácticas?'
+                    },
+                    questoes: questoesCosmografia
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: O Diagrama HR como Ferramenta',
+                        descricao: 'Descreva como o Diagrama HR (Aula 2) pode ser usado para estimar distâncias de aglomerados estelares (main-sequence fitting).'
+                    },
+                    questoes: questoesCosmografia
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: O Céu em Múltiplos Comprimentos',
+                        descricao: 'O que diferentes faixas do espectro (ex: Rádio, Raio-X) revelam sobre o universo que o visível não mostra? (Aula 3)'
+                    },
+                    questoes: questoesCosmografia
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Limites da Observação',
+                        descricao: 'Discuta os desafios da cosmografia, como extinção (reddening) e vieses de seleção (Aula 4).'
+                    },
+                    questoes: questoesCosmografia
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 6',
+                        descricao: 'Teste final (Aula 6) sobre as técnicas de mapeamento e medição de escalas no Universo.'
+                    },
+                    questoes: questoesCosmografia
+                }
             ],
             videoAulas: [
                 {
@@ -1045,8 +1863,8 @@ export const initial_cursos = {
                     id: 6134589,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 1 - Observação do céu a olho nu',
-                        descricao: 'Identificação de movimentos aparentes e primeiras constelações.'
+                        titulo: 'Atividade 1: Se Localizando no Céu',
+                        descricao: 'Com base nas Aulas 1 e 2, aplique seu conhecimento sobre pontos cardeais e o movimento aparente do céu para responder às questões.'
                     },
                     questoes: questoesIniciantes
                 },
@@ -1054,8 +1872,8 @@ export const initial_cursos = {
                     id: 3514529,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 2 - Reconhecimento de constelações',
-                        descricao: 'Prática guiada para localizar padrões no céu noturno.'
+                        titulo: 'Atividade 2: Reconhecimento de Constelações',
+                        descricao: 'Teste sua habilidade de identificar padrões no céu. Use o que aprendeu na Aula 3 para descrever como localizar constelações famosas.'
                     },
                     questoes: questoesIniciantes
                 },
@@ -1063,8 +1881,8 @@ export const initial_cursos = {
                     id: 5679283,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 3 - Poluição luminosa',
-                        descricao: 'Como a iluminação urbana afeta a observação e como contornar.'
+                        titulo: 'Atividade 3: O Desafio da Poluição Luminosa',
+                        descricao: 'A Aula 4 discutiu o céu urbano. Explique os desafios da poluição luminosa e as técnicas para adaptar a visão ao escuro.'
                     },
                     questoes: questoesIniciantes
                 },
@@ -1072,8 +1890,8 @@ export const initial_cursos = {
                     id: 2567356,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 4 - Adaptação da visão',
-                        descricao: 'Técnicas de adaptação ao escuro e registros observacionais.'
+                        titulo: 'Atividade 4: Planejando sua Observação',
+                        descricao: 'Com base na Aula 5, crie um pequeno roteiro de observação. O que você procuraria em sua primeira noite?'
                     },
                     questoes: questoesIniciantes
                 },
@@ -1081,8 +1899,8 @@ export const initial_cursos = {
                     id: 6393456,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 5 - Roteiro de observação',
-                        descricao: 'Planeje um mini-roteiro para uma noite de observação.'
+                        titulo: 'Atividade 5: Prática de Orientação',
+                        descricao: 'Resolva questões dissertativas sobre como a rotação da Terra afeta o que vemos e quando vemos.'
                     },
                     questoes: questoesIniciantes
                 },
@@ -1090,8 +1908,8 @@ export const initial_cursos = {
                     id: 8354434,
                     terminado: false,
                     template: {
-                        titulo: 'Atividade 6 - Revisão do módulo',
-                        descricao: 'Integração dos conceitos observacionais iniciais.'
+                        titulo: 'Atividade 6: Revisão do Módulo 1',
+                        descricao: 'Um questionário final (Aula 6) para consolidar todo o aprendizado sobre observação a olho nu, movimentos e constelações.'
                     },
                     questoes: questoesIniciantes
                 }
@@ -1155,12 +1973,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1 - Sistema Solar', descricao: 'Reconhecendo escalas e corpos do Sistema Solar.' }, questoes: questoesSistemaSolar },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2 - Planetas', descricao: 'Características e curiosidades dos planetas.' }, questoes: questoesSistemaSolar },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3 - Luas e pequenos corpos', descricao: 'Asteroides, cometas e luas notáveis.' }, questoes: questoesSistemaSolar },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4 - Escalas e distâncias', descricao: 'Comparando tamanhos e órbitas.' }, questoes: questoesSistemaSolar },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5 - Quiz do Sistema Solar', descricao: 'Revisão dos principais conceitos.' }, questoes: questoesSistemaSolar },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6 - Revisão do módulo', descricao: 'Integração dos conteúdos essenciais.' }, questoes: questoesSistemaSolar }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: O Sol, Nossa Estrela',
+                        descricao: 'Com base na Aula 1, descreva a estrutura básica do Sol e sua influência no Sistema Solar.'
+                    },
+                    questoes: questoesSistemaSolar
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Vizinhança Rochosa',
+                        descricao: 'Explore os planetas rochosos (Aula 2). Compare as superfícies e atmosferas de Mercúrio, Vênus, Terra e Marte.'
+                    },
+                    questoes: questoesSistemaSolar
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Os Gigantes do Sistema',
+                        descricao: 'Foco nas Aulas 3 e 4. Descreva as características dos gigantes gasosos (Júpiter, Saturno) e de gelo (Urano, Netuno).'
+                    },
+                    questoes: questoesSistemaSolar
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Pequenos Corpos, Grandes Histórias',
+                        descricao: 'O que são asteroides e cometas? (Aula 5). Aponte as diferenças observáveis.'
+                    },
+                    questoes: questoesSistemaSolar
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Colocando em Escala',
+                        descricao: 'Descreva, em escala qualitativa, as diferenças de tamanho e distância entre os corpos do Sistema Solar (Aula 6).'
+                    },
+                    questoes: questoesSistemaSolar
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 2',
+                        descricao: 'Teste final: Verifique seu conhecimento sobre a ordem, características e escalas do Sistema Solar.'
+                    },
+                    questoes: questoesSistemaSolar
+                }
             ],
             videoAulas: [
                 {
@@ -1221,12 +2087,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1 - Cores e temperaturas', descricao: 'Entendendo cores, temperaturas e brilho.' }, questoes: questoesEstrelas },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2 - Mapas celestes', descricao: 'Uso prático de cartas e apps.' }, questoes: questoesEstrelas },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3 - Magnitude aparente', descricao: 'Brilho e distância na prática.' }, questoes: questoesEstrelas },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4 - Buscando constelações', descricao: 'Rotas e referências no céu.' }, questoes: questoesEstrelas },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5 - Quiz de estrelas', descricao: 'Revisão dos conceitos estudados.' }, questoes: questoesEstrelas },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6 - Revisão do módulo', descricao: 'Integração geral do conteúdo.' }, questoes: questoesEstrelas }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Cor e Temperatura Estelar',
+                        descricao: 'Explique a relação entre a cor de uma estrela (ex: azul vs. vermelha) e sua temperatura (Aula 1).'
+                    },
+                    questoes: questoesEstrelas
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Magnitude Aparente vs. Realidade',
+                        descricao: 'Defina magnitude aparente (Aula 2) e comente por que uma estrela mais brilhante nem sempre é a mais próxima.'
+                    },
+                    questoes: questoesEstrelas
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Navegando com Mapas Celestes',
+                        descricao: 'Descreva como usar um planisfério ou app (Aula 3) para localizar uma constelação em uma data específica.'
+                    },
+                    questoes: questoesEstrelas
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: O Céu de Cada Estação',
+                        descricao: 'Cite constelações visíveis em diferentes estações (Aula 4) e como identificá-las.'
+                    },
+                    questoes: questoesEstrelas
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Guia de Observação Inicial',
+                        descricao: 'Liste alguns dos objetos fáceis (Aula 5) para iniciantes e o que esperar ver.'
+                    },
+                    questoes: questoesEstrelas
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 3',
+                        descricao: 'Consolide seu conhecimento (Aula 6) sobre como ler o céu e entender as propriedades básicas das estrelas.'
+                    },
+                    questoes: questoesEstrelas
+                }
             ],
             videoAulas: [
                 {
@@ -1287,12 +2201,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1 - Tipos de telescópio', descricao: 'Refrator x refletor para iniciantes.' }, questoes: questoesTelescopios },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2 - Aumentos e limites', descricao: 'Aumento útil e seeing atmosférico.' }, questoes: questoesTelescopios },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3 - Acessórios e filtros', descricao: 'Filtros, oculares e alinhamento.' }, questoes: questoesTelescopios },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4 - Segurança na observação', descricao: 'Boas práticas e cuidados com o Sol.' }, questoes: questoesTelescopios },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5 - Montagens e alinhamento', descricao: 'Azimutal, equatorial e polar alignment.', }, questoes: questoesTelescopios },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6 - Revisão do módulo', descricao: 'Checklist para primeira sessão prática.' }, questoes: questoesTelescopios }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: Escolhendo seu Instrumento',
+                        descricao: 'Compare telescópios refratores e refletores (Aula 1), listando vantagens e desvantagens para iniciantes.'
+                    },
+                    questoes: questoesTelescopios
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: O Mito do "Aumento Infinito"',
+                        descricao: 'O que é aumento útil (Aula 2)? Por que "mais aumento" nem sempre é melhor?'
+                    },
+                    questoes: questoesTelescopios
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Montagem e Alinhamento',
+                        descricao: 'Descreva os princípios básicos das montagens azimutal e equatorial e a importância do alinhamento (Aulas 3 e 4).'
+                    },
+                    questoes: questoesTelescopios
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Observação Solar: Segurança Primeiro!',
+                        descricao: 'Descreva DUAS boas práticas de segurança ao observar o Sol (Aula 5) e por que são essenciais.'
+                    },
+                    questoes: questoesTelescopios
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Acessórios: Oculares e Filtros',
+                        descricao: 'Explique o papel das oculares e filtros para realçar o contraste e garantir a segurança.'
+                    },
+                    questoes: questoesTelescopios
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 4',
+                        descricao: 'Prepare seu checklist para a primeira sessão prática com um telescópio (Aula 6).'
+                    },
+                    questoes: questoesTelescopios
+                }
             ],
             videoAulas: [
                 {
@@ -1353,12 +2315,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1 - Fases e eclipses', descricao: 'Entendendo fases da Lua e eclipses.' }, questoes: questoesFenomenos },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2 - Chuvas de meteoros', descricao: 'Planejamento e observação segura.' }, questoes: questoesFenomenos },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3 - Previsão de fenômenos', descricao: 'Como usar calendários astronômicos.' }, questoes: questoesFenomenos },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4 - Observação prática', descricao: 'Registro e relato de um fenômeno.' }, questoes: questoesFenomenos },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5 - Quiz do módulo', descricao: 'Revisando conceitos-chave.' }, questoes: questoesFenomenos },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6 - Revisão do módulo', descricao: 'Integração geral dos conteúdos.' }, questoes: questoesFenomenos }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: As Faces da Lua',
+                        descricao: 'Explique por que a Lua tem fases, baseando-se na geometria Sol-Terra-Lua (Aula 1).'
+                    },
+                    questoes: questoesFenomenos
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: Quando a Sombra Cobre o Céu',
+                        descricao: 'Por que não ocorrem eclipses solares e lunares todos os meses? (Aula 2). Diferencie um eclipse total de um anular.'
+                    },
+                    questoes: questoesFenomenos
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: Planejando uma Chuva de Meteoros',
+                        descricao: 'Como se planejar para observar uma chuva de meteoros (Aula 3)? Considere horário, direção e condições.'
+                    },
+                    questoes: questoesFenomenos
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Encontros Cósmicos',
+                        descricao: 'O que são conjunções e ocultações? (Aula 4). Como elas diferem de eclipses?'
+                    },
+                    questoes: questoesFenomenos
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Usando Calendários Astronômicos',
+                        descricao: 'Pratique o uso de efemérides (Aula 5) para prever o próximo fenômeno visível em sua região.'
+                    },
+                    questoes: questoesFenomenos
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 5',
+                        descricao: 'Teste seu conhecimento (Aula 6) sobre os principais fenômenos celestes e sua previsibilidade.'
+                    },
+                    questoes: questoesFenomenos
+                }
             ],
             videoAulas: [
                 {
@@ -1419,12 +2429,60 @@ export const initial_cursos = {
                 id: 1236478
             },
             atividades: [
-                { id: 6134589, terminado: false, template: { titulo: 'Atividade 1 - Ciclo estelar', descricao: 'Panorama do nascimento à morte das estrelas.' }, questoes: questoesCicloEstelar },
-                { id: 3514529, terminado: false, template: { titulo: 'Atividade 2 - Nebulosas e aglomerados', descricao: 'Identificando estágios e objetos.' }, questoes: questoesCicloEstelar },
-                { id: 5679283, terminado: false, template: { titulo: 'Atividade 3 - Estrelas massivas', descricao: 'Por que vivem menos e brilham mais?' }, questoes: questoesCicloEstelar },
-                { id: 2567356, terminado: false, template: { titulo: 'Atividade 4 - Remanescentes', descricao: 'Anãs brancas, pulsares e buracos negros.' }, questoes: questoesCicloEstelar },
-                { id: 6393456, terminado: false, template: { titulo: 'Atividade 5 - Quiz do módulo', descricao: 'Revisão e checagem de entendimento.' }, questoes: questoesCicloEstelar },
-                { id: 8354434, terminado: false, template: { titulo: 'Atividade 6 - Revisão do módulo', descricao: 'Integração dos aprendizados.' }, questoes: questoesCicloEstelar }
+                {
+                    id: 6134589,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 1: O Berçário Estelar',
+                        descricao: 'Resuma como estrelas nascem a partir de nuvens de gás e poeira (Aula 1).'
+                    },
+                    questoes: questoesCicloEstelar
+                },
+                {
+                    id: 3514529,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 2: A Longa Vida na Sequência Principal',
+                        descricao: 'O que define a sequência principal? (Aula 2). Por que estrelas como o Sol são estáveis por bilhões de anos?'
+                    },
+                    questoes: questoesCicloEstelar
+                },
+                {
+                    id: 5679283,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 3: O Fim das Estrelas como o Sol',
+                        descricao: 'Descreva o que é uma nebulosa planetária e uma anã branca (Aula 3).'
+                    },
+                    questoes: questoesCicloEstelar
+                },
+                {
+                    id: 2567356,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 4: Morte Explosiva: Supernovas',
+                        descricao: 'Explique por que estrelas massivas têm vidas curtas e estão associadas a supernovas (Aula 4).'
+                    },
+                    questoes: questoesCicloEstelar
+                },
+                {
+                    id: 6393456,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 5: Vendo o Ciclo no Céu',
+                        descricao: 'Cite exemplos de objetos no céu (Aula 5) que ilustram diferentes estágios da vida estelar (ex: Nebulosa de Órion, Pleiades, etc.).'
+                    },
+                    questoes: questoesCicloEstelar
+                },
+                {
+                    id: 8354434,
+                    terminado: false,
+                    template: {
+                        titulo: 'Atividade 6: Revisão do Módulo 6',
+                        descricao: 'Consolide o panorama geral do ciclo de vida estelar (Aula 6).'
+                    },
+                    questoes: questoesCicloEstelar
+                }
             ],
             videoAulas: [
                 {
