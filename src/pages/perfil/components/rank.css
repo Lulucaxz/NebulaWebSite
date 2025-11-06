@@ -1,15 +1,24 @@
-.prf-coluna2 {
-    width: 45%;
-    font-family: "Questrial", sans-serif;
+#prf-rank-container {
+    font-family: 'Questrial', sans-serif;
+    position: absolute;
+    width: 500px;
+    height: 100vh;
+    background-color: var(--cinza-escuro3);
+    right: 0;
+    box-sizing: border-box;
 }
 
-/* coluna 2 */
+.prf-container-rank {
+    overflow-y: scroll;
+    height: 100vh;
+    background-color: var(--cinza-escuro3);
+}
 
 .prf-rank-header {
     background-color: var(--roxo1);
-    height: 60px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .prf-container3 {
@@ -56,6 +65,10 @@
     right: 0px;
 }
 
+.prf-usuarios-rank {
+    background-color: var(--roxo2);
+}
+
 .prf-usuarios-rank, .prf-sticky-user{
     display: flex;
     height: 60px;
@@ -65,7 +78,7 @@
 }
 
 .prf-usuarios-rank.prf-cor2 {
-    background-color: var(--cinza-escuro1);
+    background-color: var(--roxo3);
 }
 
 .prf-sticky-user .prf-usuarios-rank {
@@ -86,12 +99,6 @@
     background-size: cover;
     background-position: center;
     border-radius: 50%;
-}
-
-.prf-container-rank {
-    overflow-y: scroll;
-    height: 320px;
-    background-color: var(--cinza-escuro3);
 }
 
 .prf-container-rank::-webkit-scrollbar {

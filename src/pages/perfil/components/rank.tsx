@@ -29,6 +29,8 @@ export function Rank() {
 
   return (
     <>
+    <div id="prf-rank-container">
+
       <div className="prf-rank-header">
         <div className="prf-container3">
           <span>{t('ASTRONAUTAS')}</span>
@@ -76,6 +78,7 @@ export function Rank() {
           </div>
         )}
       </div>
+    </div>
     </>
   );
 }

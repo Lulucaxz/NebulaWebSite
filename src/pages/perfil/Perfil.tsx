@@ -263,14 +263,11 @@ function Perfil() {
                   progresso3={progresso3}
                 />
               </div>
-              <div className="prf-coluna2">
-                <Rank />
-              </div>
             </div>
           </div>
         </div>
-        <Footer />
       </div>
+      <Rank />
     </div>
   );
 }
