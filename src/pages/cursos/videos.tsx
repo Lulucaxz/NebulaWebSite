@@ -5,7 +5,6 @@ interface VideoCardProps {
   backgroundImage?: string;
   width?: string;
   height?: string;
-  borderRadius?: string;
   showPlayIcon?: boolean;
   autoPlayBlurred?: boolean;
   isActive: boolean;
@@ -18,7 +17,6 @@ export function VideoCard({
   backgroundImage,
   width = '100%',
   height = '100%',
-  borderRadius = '12px',
   showPlayIcon = true,
   autoPlayBlurred = false,
   isActive,
@@ -121,7 +119,7 @@ export function VideoCard({
       />
       {showPlayIcon && !isActive && !autoPlayBlurred && (
         <img
-          src="/arrow-video.png"
+          src="/icons/arrow-video.png"
           alt="Play"
           style={{
             position: 'absolute',

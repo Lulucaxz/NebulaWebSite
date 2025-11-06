@@ -29,8 +29,9 @@ export function Comentario() {
       conteudoComentario: comentar,
       numeroAvaliacao: "0",
       avaliacaoDoUsuario: "",
-      fotoPerfil: "../../../src/assets/icones-usuarios/kurbie.jpg",
-      arrayRespostas: []
+  fotoPerfil: "/img/users/kurbie.jpg",
+      arrayRespostas: [],
+      contagem: false
     }
 
     setComentarios(prev => [...prev, novoComentario])
@@ -62,7 +63,7 @@ export function Comentario() {
           }}
         />
         <button onClick={adicionarComentario}>
-          <img src="/submit.svg" alt="Enviar comentário" />
+          <img src="/icons/submit.svg" alt="Enviar comentário" />
         </button>
       </div>
     </>

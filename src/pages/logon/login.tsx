@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
                 className="login-google"
                 onClick={loginGoogle}
               >
-                <img src="search.png" width={'25px'} alt="Google" />
+                <img src="/icons/search.png" width={'25px'} alt="Google" />
                 Cadastrar com Google
               </button>
             </form>
@@ -124,7 +124,7 @@ const LoginPage: React.FC = () => {
                 className="login-google"
                 onClick={loginGoogle}
               >
-                <img src="search.png" width={'25px'} alt="Google" />
+                <img src="/icons/search.png" width={'25px'} alt="Google" />
                 Entrar com Google
               </button>
             </form>

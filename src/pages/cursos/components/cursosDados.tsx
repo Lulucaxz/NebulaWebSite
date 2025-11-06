@@ -166,7 +166,7 @@ export const initial_cursos = {
             introducao: {
                 descricao: 'Uma introdução à cosmologia moderna, focando na derivação da expansão do espaço, na termodinâmica do plasma primordial que gerou o CMB e na física de partículas por trás da Nucleossíntese Primordial.',
                 pdf: '',
-                videoBackground: '/ceu-estrelado.jpg',
+                videoBackground: '/img/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1236478
             },
@@ -274,7 +274,7 @@ export const initial_cursos = {
             introducao: {
                 descricao: 'Uma investigação sobre os 95% do universo que não entendemos. Este módulo aborda as evidências dinâmicas (curvas de rotação), geométricas (lentes) e de expansão (SNe Ia) para o setor escuro, e explora os candidatos teóricos.',
                 pdf: '',
-                videoBackground: '/ceu-estrelado.jpg',
+                videoBackground: '/img/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1243678
             },
@@ -382,7 +382,7 @@ export const initial_cursos = {
             introducao: {
                 descricao: 'Da suavidade do CMB à complexa Teia Cósmica. Este módulo explora a Teoria de Perturbações Cosmológicas, o colapso gravitacional, a física de fluidos em aglomerados (Efeito SZ) e a estatística (P(k)) que descreve a rede de filamentos e vazios.',
                 pdf: '',
-                videoBackground: '/ceu-estrelado.jpg',
+                videoBackground: '/img/ceu-estrelado.jpg',
                 video: '/VideosNebula/IntroducaoUniverso.mp4',
                 id: 1246878
             },

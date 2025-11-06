@@ -12,7 +12,7 @@ function CarrosselAulas() {
       <div className="container-carrossel">
         <div className="carrosel-card">
           <div
-            style={{ backgroundImage: "url(/video1.jpg" }}
+            style={{ backgroundImage: "url(/img/videos/video1.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">
@@ -23,7 +23,7 @@ function CarrosselAulas() {
         </div>
         <div className="carrosel-card bloqueado">
           <div
-            style={{ backgroundImage: "url(/video2.jpg)" }}
+            style={{ backgroundImage: "url(/img/videos/video2.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">
@@ -34,7 +34,7 @@ function CarrosselAulas() {
         </div>
         <div className="carrosel-card bloqueado">
           <div
-            style={{ backgroundImage: "url(/video3.jpg)" }}
+            style={{ backgroundImage: "url(/img/videos/video3.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">
@@ -45,7 +45,7 @@ function CarrosselAulas() {
         </div>
         <div className="carrosel-card bloqueado">
           <div
-            style={{ backgroundImage: "url(/video4.jpg)" }}
+            style={{ backgroundImage: "url(/img/videos/video4.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">
@@ -56,7 +56,7 @@ function CarrosselAulas() {
         </div>
         <div className="carrosel-card bloqueado">
           <div
-            style={{ backgroundImage: "url(/video5.jpg)" }}
+            style={{ backgroundImage: "url(/img/videos/video5.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">
@@ -67,7 +67,7 @@ function CarrosselAulas() {
         </div>
         <div className="carrosel-card bloqueado">
           <div
-            style={{ backgroundImage: "url(/video6.jpg)" }}
+            style={{ backgroundImage: "url(/img/videos/video6.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">
@@ -78,7 +78,7 @@ function CarrosselAulas() {
         </div>
         <div className="carrosel-card bloqueado">
           <div
-            style={{ backgroundImage: "url(/video7.jpg)" }}
+            style={{ backgroundImage: "url(/img/videos/video7.jpg)" }}
             className="imagem-card-carrossel"
           ></div>
           <div className="grupo-informacao">

@@ -9,7 +9,7 @@ export default function Perfil() {
   const [biografia, setBiografia] = useState(
     "Sou Luiz Tavares, um garoto apaixonado por física. Desde pequeno, sempre me intrigaram as perguntas sobre como o universo funciona. Gosto de aprender e descobrir os segredos das leis da natureza, e espero usar esse conhecimento para fazer a diferença no mundo. Estou sempre curioso e animado para explorar novos conceitos e desafios no campo da física."
   );
-  const [fotoUrl, setFotoUrl] = useState("/icones-usuarios/FotoPerfil5.jpg");
+  const [fotoUrl, setFotoUrl] = useState("/img/users/icones-usuarios/FotoPerfil5.jpg");
 
   const [novaFoto, setNovaFoto] = useState("");
 

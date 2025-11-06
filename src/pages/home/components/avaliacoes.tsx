@@ -151,8 +151,8 @@ function Avaliacoes() {
                         key={i}
                         src={
                           i < item.estrelas
-                            ? "/estrela-clara.svg"
-                            : "/estrela-escura.svg"
+                            ? "/icons/estrela-clara.svg"
+                            : "/icons/estrela-escura.svg"
                         }
                         alt={`Estrela ${i + 1}`}
                       />
@@ -181,8 +181,8 @@ function Avaliacoes() {
                         key={i}
                         src={
                           i < item.estrelas
-                            ? "/estrela-clara.svg"
-                            : "/estrela-escura.svg"
+                            ? "/icons/estrela-clara.svg"
+                            : "/icons/estrela-escura.svg"
                         }
                         alt={`Estrela ${i + 1}`}
                       />
@@ -211,8 +211,8 @@ function Avaliacoes() {
                         key={i}
                         src={
                           i < item.estrelas
-                            ? "/estrela-clara.svg"
-                            : "/estrela-escura.svg"
+                            ? "/icons/estrela-clara.svg"
+                            : "/icons/estrela-escura.svg"
                         }
                         alt={`Estrela ${i + 1}`}
                       />
@@ -241,8 +241,8 @@ function Avaliacoes() {
                         key={i}
                         src={
                           i < item.estrelas
-                            ? "/estrela-clara.svg"
-                            : "/estrela-escura.svg"
+                            ? "/icons/estrela-clara.svg"
+                            : "/icons/estrela-escura.svg"
                         }
                         alt={`Estrela ${i + 1}`}
                       />

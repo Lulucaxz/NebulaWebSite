@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { createGlobalStyle } from "styled-components";
 import { Menu } from "../../components/Menu";
 import './planos.css'
 
@@ -51,7 +50,7 @@ interface PaymentMethod {
 
 function Planos() {
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
-  const [showToast, setShowToast] = useState(false);
+  // const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const copyPixKey = () => {
@@ -62,7 +61,7 @@ function Planos() {
           setToastMessage("Chave PIX copiada com sucesso!");
           setTimeout(() => setToastMessage(null), 2000); // Some após 2 segundos
         })
-        .catch(err => {
+        .catch(() => {
           setToastMessage("Erro ao copiar a chave!");
           setTimeout(() => setToastMessage(null), 2000);
         });
@@ -78,7 +77,7 @@ function Planos() {
     slidesToScroll: 1,
     centerMode: true,
     centerPadding: "100px",
-    beforeChange: (current: number, next: number) => setSelectedPlanIndex(next),
+  beforeChange: (_current: number, next: number) => setSelectedPlanIndex(next),
     // Personalização completa dos dots
     customPaging: (i: number) => (
       <div
@@ -178,7 +177,7 @@ function Planos() {
     {
       id: "pix",
       name: "PIX",
-      icon: "icons8-pix-50.png",
+  icon: "/icons/icons8-pix-50.png",
       component: (
         <div className="pix-form">
           <h3 style={{ fontWeight: 100 }}>PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span> </h3>
@@ -200,7 +199,7 @@ function Planos() {
                 alignItems: "center",
                 justifyContent: "center",
                 margin: "20px 0",
-                backgroundImage: 'url(UdYkGR.jpg)',
+                backgroundImage: 'url(/img/UdYkGR.jpg)',
                 backgroundSize: 'cover'
 
               }}
@@ -274,7 +273,7 @@ function Planos() {
     {
       id: "credit",
       name: "CARTÃO DE CRÉDITO",
-      icon: "icons8-cartão-50.png",
+  icon: "/icons/icons8-cartão-50.png",
       component: (
         <div className="credit-card-form">
           < h3 style={{ fontWeight: '100' }}>PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span></h3>
@@ -433,7 +432,7 @@ function Planos() {
     {
       id: "debit",
       name: "CARTÃO DE DÉBITO",
-      icon: "icons8-cartão-50.png",
+  icon: "/icons/icons8-cartão-50.png",
       component: (
         <div className="debit-card-form">
           <h3 style={{ fontWeight: '100' }}>PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span></h3>
@@ -565,7 +564,7 @@ function Planos() {
     {
       id: "boleto",
       name: "BOLETO",
-      icon: "icons8-código-de-barras-50.png",
+  icon: "/icons/icons8-código-de-barras-50.png",
       component: (
         <div className="boleto-form">
           <h3 style={{ fontWeight: '100' }} >PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span></h3>
@@ -766,8 +765,8 @@ function Planos() {
                               (index === 0 && i < 2) ||
                                 (index === 1 && i < 3) ||
                                 (index === 2)
-                                ? 'url(./src/assets/check-claro2.svg)'
-                                : 'url(x.png)'
+                                ? 'url(/icons/check-claro2.svg)'
+                                : 'url(/icons/cancel.svg)'
                           }}></div>
                           <span>{benefit}</span>
                         </div>
