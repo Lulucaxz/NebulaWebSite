@@ -27,7 +27,7 @@ export function BarraDeProgresso({ progresso1, progresso2, progresso3 }: BarraDe
         <>
             <BarraProgresso tituloEstatistica={"ÓRBITA"} pontosEstatistica={progresso1} maximoEstatistica={6} />
             <BarraProgresso tituloEstatistica={"GALÁXIA"} pontosEstatistica={progresso2} maximoEstatistica={6} />
-            <BarraProgresso tituloEstatistica={"UNIVERSO"} pontosEstatistica={progresso3} maximoEstatistica={6} />
+            <BarraProgresso tituloEstatistica={"UNIVERSO"} pontosEstatistica={progresso3} maximoEstatistica={9} />
         </>
     );
 }

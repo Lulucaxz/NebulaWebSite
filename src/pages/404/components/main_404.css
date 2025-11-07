@@ -90,8 +90,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 17%;
-    right: 30.4%;
+    top: 20%;
+    right: 31%;
     animation: move 3s infinite linear;
 }
 

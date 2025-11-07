@@ -3,42 +3,72 @@ const questoesIniciantes = [
     { questao: 'Explique, com suas palavras, por que as estrelas parecem “nascer” no leste e “se pôr” no oeste ao longo da noite.', dissertativa: true },
     { questao: 'Cite duas constelações fáceis de reconhecer no céu e descreva um método simples para identificá-las.', dissertativa: true },
     { questao: 'Qual a melhor prática para observar o céu a olho nu em uma cidade grande? Comente sobre poluição luminosa e adaptação da visão ao escuro.', dissertativa: true },
-    { questao: 'O movimento aparente diário do céu é causado principalmente por:', dissertativa: false, alternativas: ['Translação da Terra', 'Rotação da Terra', 'Movimento do Sol ao redor da Terra', 'Precessão dos equinócios'] }
+    { 
+        questao: 'O movimento aparente diário do céu é causado principalmente por:', 
+        dissertativa: false, 
+        alternativas: ['Translação da Terra', 'Rotação da Terra', 'Movimento do Sol ao redor da Terra', 'Precessão dos equinócios'],
+        respostaCorreta: 'Rotação da Terra'
+    }
 ];
 
 const questoesSistemaSolar = [
     { questao: 'Descreva, em escala qualitativa, as diferenças de tamanho entre o Sol, planetas e luas.', dissertativa: true },
     { questao: 'Escolha um planeta do Sistema Solar e escreva três curiosidades sobre ele (rotação, atmosfera, luas, etc.).', dissertativa: true },
     { questao: 'O que são asteroides e cometas? Aponte uma diferença observável entre eles.', dissertativa: true },
-    { questao: 'A ordem correta dos planetas a partir do Sol é:', dissertativa: false, alternativas: ['Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Mercúrio, Terra, Vênus, Marte, Júpiter, Saturno, Urano, Netuno', 'Vênus, Mercúrio, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Terra, Marte, Mercúrio, Vênus, Júpiter, Saturno, Urano, Netuno'] }
+    { 
+        questao: 'A ordem correta dos planetas a partir do Sol é:', 
+        dissertativa: false, 
+        alternativas: ['Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Mercúrio, Terra, Vênus, Marte, Júpiter, Saturno, Urano, Netuno', 'Vênus, Mercúrio, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Terra, Marte, Mercúrio, Vênus, Júpiter, Saturno, Urano, Netuno'],
+        respostaCorreta: 'Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno'
+    }
 ];
 
 const questoesEstrelas = [
     { questao: 'Explique a relação entre cor e temperatura das estrelas (ex.: azul x vermelha).', dissertativa: true },
     { questao: 'Como usar um mapa celeste (planisfério) para localizar uma estrela ou constelação em uma data e horário específicos?', dissertativa: true },
     { questao: 'Defina magnitude aparente e comente por que uma estrela mais brilhante nem sempre é a mais próxima.', dissertativa: true },
-    { questao: 'Cores estelares indicam principalmente:', dissertativa: false, alternativas: ['Idade', 'Temperatura', 'Composição química única', 'Tamanho do sistema planetário'] }
+    { 
+        questao: 'Cores estelares indicam principalmente:', 
+        dissertativa: false, 
+        alternativas: ['Idade', 'Temperatura', 'Composição química única', 'Tamanho do sistema planetário'],
+        respostaCorreta: 'Temperatura'
+    }
 ];
 
 const questoesTelescopios = [
     { questao: 'Compare telescópios refratores e refletores: principais vantagens e desvantagens para iniciantes.', dissertativa: true },
     { questao: 'O que é aumento útil e por que “mais aumento” nem sempre significa “melhor observação”?', dissertativa: true },
     { questao: 'Descreva duas boas práticas de segurança ao observar o Sol e por que elas são essenciais.', dissertativa: true },
-    { questao: 'Filtros e oculares são usados principalmente para:', dissertativa: false, alternativas: ['Aumentar o brilho', 'Alterar a cor do astro', 'Realçar contraste e segurança', 'Focar automaticamente'] }
+    { 
+        questao: 'Filtros e oculares são usados principalmente para:', 
+        dissertativa: false, 
+        alternativas: ['Aumentar o brilho', 'Alterar a cor do astro', 'Realçar contraste e segurança', 'Focar automaticamente'],
+        respostaCorreta: 'Realçar contraste e segurança'
+    }
 ];
 
 const questoesFenomenos = [
     { questao: 'Explique por que a Lua tem fases e por que não ocorre eclipse solar e lunar todos os meses.', dissertativa: true },
     { questao: 'Como se planejar para observar uma chuva de meteoros (horário, direção, condições do céu)?', dissertativa: true },
     { questao: 'O que diferencia um eclipse solar total de um anular? Descreva brevemente.', dissertativa: true },
-    { questao: 'As fases da Lua são causadas principalmente por:', dissertativa: false, alternativas: ['Sombra da Terra', 'Posição relativa Sol–Terra–Lua', 'Rotação da Lua', 'Nuvens na atmosfera'] }
+    { 
+        questao: 'As fases da Lua são causadas principalmente por:', 
+        dissertativa: false, 
+        alternativas: ['Sombra da Terra', 'Posição relativa Sol–Terra–Lua', 'Rotação da Lua', 'Nuvens na atmosfera'],
+        respostaCorreta: 'Posição relativa Sol–Terra–Lua'
+    }
 ];
 
 const questoesCicloEstelar = [
     { questao: 'Resuma as etapas principais do ciclo de vida estelar em linguagem simples.', dissertativa: true },
     { questao: 'O que é uma nebulosa planetária e em que fase de vida estelar ela ocorre?', dissertativa: true },
     { questao: 'Explique por que estrelas muito massivas têm vidas mais curtas do que estrelas como o Sol.', dissertativa: true },
-    { questao: 'Uma supernova está associada geralmente a:', dissertativa: false, alternativas: ['Nascimento de estrelas', 'Morte de estrelas massivas', 'Planetas gigantes', 'Cometas brilhantes'] }
+    { 
+        questao: 'Uma supernova está associada geralmente a:', 
+        dissertativa: false, 
+        alternativas: ['Nascimento de estrelas', 'Morte de estrelas massivas', 'Planetas gigantes', 'Cometas brilhantes'],
+        respostaCorreta: 'Morte de estrelas massivas'
+    }
 ];
 
 // Banco de questões: curso Universo
@@ -46,42 +76,72 @@ const questoesBBang = [
     { questao: 'Explique por que a expansão do Universo é uma conclusão observacional e não apenas teórica.', dissertativa: true },
     { questao: 'Descreva o papel da radiação cósmica de fundo na cosmologia moderna.', dissertativa: true },
     { questao: 'Resuma a nucleossíntese primordial e os elementos leves produzidos.', dissertativa: true },
-    { questao: 'O desvio para o vermelho galáctico é interpretado como:', dissertativa: false, alternativas: ['Efeito Doppler local de estrelas', 'Expansão do espaço entre galáxias', 'Aproximação da Via Láctea', 'Erro sistemático instrumental'] }
+    { 
+        questao: 'O desvio para o vermelho galáctico é interpretado como:', 
+        dissertativa: false, 
+        alternativas: ['Efeito Doppler local de estrelas', 'Expansão do espaço entre galáxias', 'Aproximação da Via Láctea', 'Erro sistemático instrumental'],
+        respostaCorreta: 'Expansão do espaço entre galáxias'
+    }
 ];
 
 const questoesMateriaEnergiaEscura = [
     { questao: 'Cite duas evidências independentes para a existência de matéria escura.', dissertativa: true },
     { questao: 'Explique o que são curvas de rotação galáctica e o que indicam.', dissertativa: true },
     { questao: 'Resuma a evidência da aceleração cósmica obtida com supernovas tipo Ia.', dissertativa: true },
-    { questao: 'Lentes gravitacionais fortes e fracas são úteis para:', dissertativa: false, alternativas: ['Medir temperaturas de estrelas', 'Inferir distribuição de massa (visível e escura)', 'Calibrar espectros', 'Detectar ondas gravitacionais diretamente'] }
+    { 
+        questao: 'Lentes gravitacionais fortes e fracas são úteis para:', 
+        dissertativa: false, 
+        alternativas: ['Medir temperaturas de estrelas', 'Inferir distribuição de massa (visível e escura)', 'Calibrar espectros', 'Detectar ondas gravitacionais diretamente'],
+        respostaCorreta: 'Inferir distribuição de massa (visível e escura)'
+    }
 ];
 
 const questoesEstruturaUniverso = [
     { questao: 'Descreva a teia cósmica e como filamentos e vazios se organizam.', dissertativa: true },
     { questao: 'Qual o papel da gravidade no crescimento de estruturas a partir de flutuações primordiais?', dissertativa: true },
     { questao: 'Como levantamentos de galáxias mapeiam a estrutura em grande escala?', dissertativa: true },
-    { questao: 'O espectro de potência da matéria fornece:', dissertativa: false, alternativas: ['Distribuição de temperaturas estelares', 'Distribuição estatística de flutuações em escalas', 'Histórico químico de galáxias', 'Idades de aglomerados globulares'] }
+    { 
+        questao: 'O espectro de potência da matéria fornece:', 
+        dissertativa: false, 
+        alternativas: ['Distribuição de temperaturas estelares', 'Distribuição estatística de flutuações em escalas', 'Histórico químico de galáxias', 'Idades de aglomerados globulares'],
+        respostaCorreta: 'Distribuição estatística de flutuações em escalas'
+    }
 ];
 
 const questoesRelatividadeBuracosNegros = [
     { questao: 'Explique a curvatura do espaço-tempo e como ela afeta o movimento de corpos.', dissertativa: true },
     { questao: 'Defina horizonte de eventos e sua relevância observacional.', dissertativa: true },
     { questao: 'Comente sobre a detecção de ondas gravitacionais e o que elas nos dizem.', dissertativa: true },
-    { questao: 'Um buraco negro pode ser detectado indiretamente por:', dissertativa: false, alternativas: ['Emissão de luz do interior', 'Efeito gravitacional sobre matéria vizinha', 'Sombra projetada por um planeta', 'Mudanças na cor do céu noturno'] }
+    { 
+        questao: 'Um buraco negro pode ser detectado indiretamente por:', 
+        dissertativa: false, 
+        alternativas: ['Emissão de luz do interior', 'Efeito gravitacional sobre matéria vizinha', 'Sombra projetada por um planeta', 'Mudanças na cor do céu noturno'],
+        respostaCorreta: 'Efeito gravitacional sobre matéria vizinha'
+    }
 ];
 
 const questoesCosmologiaObservacional = [
     { questao: 'Explique o conceito de vela padrão e dê um exemplo.', dissertativa: true },
     { questao: 'Descreva brevemente como se mede H0 e por que há tensões entre métodos.', dissertativa: true },
     { questao: 'Comente o papel de lentes gravitacionais na medição de parâmetros cosmológicos.', dissertativa: true },
-    { questao: 'O parâmetro Ωm representa:', dissertativa: false, alternativas: ['Densidade de energia escura', 'Densidade de matéria (normal + escura)', 'Curvatura espacial', 'Temperatura média do CMB'] }
+    { 
+        questao: 'O parâmetro Ωm representa:', 
+        dissertativa: false, 
+        alternativas: ['Densidade de energia escura', 'Densidade de matéria (normal + escura)', 'Curvatura espacial', 'Temperatura média do CMB'],
+        respostaCorreta: 'Densidade de matéria (normal + escura)'
+    }
 ];
 
 const questoesInflacao = [
     { questao: 'Explique o problema do horizonte e como a inflação o resolve.', dissertativa: true },
     { questao: 'Descreva o problema da planitude e a solução inflacionária.', dissertativa: true },
     { questao: 'Comente como flutuações quânticas geram anisotropias no CMB.', dissertativa: true },
-    { questao: 'O espectro quase invariante de escala observado no CMB é consistente com:', dissertativa: false, alternativas: ['Ausência de inflação', 'Modelos inflacionários', 'Universo estático', 'Apenas matéria bariônica'] }
+    { 
+        questao: 'O espectro quase invariante de escala observado no CMB é consistente com:', 
+        dissertativa: false, 
+        alternativas: ['Ausência de inflação', 'Modelos inflacionários', 'Universo estático', 'Apenas matéria bariônica'],
+        respostaCorreta: 'Modelos inflacionários'
+    }
 ];
 
 // Banco de questões: curso Galáxia
@@ -89,69 +149,117 @@ const questoesLuzMedidas = [
     { questao: 'Explique o que é um espectro e como ele revela composição de um astro.', dissertativa: true },
     { questao: 'Defina magnitude aparente e cor (índice de cor) em astronomia.', dissertativa: true },
     { questao: 'Descreva um método básico para estimar distâncias estelares.', dissertativa: true },
-    { questao: 'A lei de Wien relaciona:', dissertativa: false, alternativas: ['Temperatura e pico do espectro', 'Massa e luminosidade', 'Idade e metalicidade', 'Velocidade radial e distância'] }
+    { 
+        questao: 'A lei de Wien relaciona:', 
+        dissertativa: false, 
+        alternativas: ['Temperatura e pico do espectro', 'Massa e luminosidade', 'Idade e metalicidade', 'Velocidade radial e distância'],
+        respostaCorreta: 'Temperatura e pico do espectro'
+    }
 ];
 
 const questoesFormacaoEstelar = [
     { questao: 'Resuma o processo de colapso de nuvens moleculares até protoestrelas.', dissertativa: true },
     { questao: 'Explique feedback estelar e seus efeitos no meio interestelar.', dissertativa: true },
     { questao: 'Comente o papel da poeira na formação estelar e observações.', dissertativa: true },
-    { questao: 'Regiões HII são:', dissertativa: false, alternativas: ['Nuvens de poeira fria', 'Gás ionizado por estrelas jovens', 'Aglomerados globulares antigos', 'Buracos negros supermassivos'] }
+    { 
+        questao: 'Regiões HII são:', 
+        dissertativa: false, 
+        alternativas: ['Nuvens de poeira fria', 'Gás ionizado por estrelas jovens', 'Aglomerados globulares antigos', 'Buracos negros supermassivos'],
+        respostaCorreta: 'Gás ionizado por estrelas jovens'
+    }
 ];
 
 const questoesViaLactea = [
     { questao: 'Descreva as principais componentes da Via Láctea (disco, bojo, halo).', dissertativa: true },
     { questao: 'Explique como medimos a rotação galáctica.', dissertativa: true },
     { questao: 'Onde estamos localizados na galáxia e o que isso implica para observações?', dissertativa: true },
-    { questao: 'A curva de rotação da Via Láctea indica:', dissertativa: false, alternativas: ['Somente matéria bariônica', 'Presença de matéria escura', 'Universo estático', 'Erro de medição sistemático'] }
+    { 
+        questao: 'A curva de rotação da Via Láctea indica:', 
+        dissertativa: false, 
+        alternativas: ['Somente matéria bariônica', 'Presença de matéria escura', 'Universo estático', 'Erro de medição sistemático'],
+        respostaCorreta: 'Presença de matéria escura'
+    }
 ];
 
 const questoesExoplanetas = [
     { questao: 'Compare os métodos de trânsito e velocidade radial para detectar exoplanetas.', dissertativa: true },
     { questao: 'Explique o que podemos inferir sobre atmosferas de exoplanetas.', dissertativa: true },
     { questao: 'Comente limitações observacionais no estudo de habitabilidade.', dissertativa: true },
-    { questao: 'O método de trânsito mede:', dissertativa: false, alternativas: ['Variações de velocidade da estrela', 'Queda no brilho quando o planeta passa à frente', 'Imagem direta do planeta', 'Emissão térmica do planeta'] }
+    { 
+        questao: 'O método de trânsito mede:', 
+        dissertativa: false, 
+        alternativas: ['Variações de velocidade da estrela', 'Queda no brilho quando o planeta passa à frente', 'Imagem direta do planeta', 'Emissão térmica do planeta'],
+        respostaCorreta: 'Queda no brilho quando o planeta passa à frente'
+    }
 ];
 
 const questoesMorfologiaEvolucao = [
     { questao: 'Descreva a classificação morfológica de galáxias (Hubble).', dissertativa: true },
     { questao: 'Explique como interações e fusões afetam a evolução galáctica.', dissertativa: true },
     { questao: 'Comente evidências observacionais de eventos de fusão.', dissertativa: true },
-    { questao: 'Galáxias elípticas tendem a ser associadas a:', dissertativa: false, alternativas: ['Formação estelar intensa recente', 'Populações estelares mais velhas', 'Discos com braços espirais proeminentes', 'Altas taxas de gás frio'] }
+    { 
+        questao: 'Galáxias elípticas tendem a ser associadas a:', 
+        dissertativa: false, 
+        alternativas: ['Formação estelar intensa recente', 'Populações estelares mais velhas', 'Discos com braços espirais proeminentes', 'Altas taxas de gás frio'],
+        respostaCorreta: 'Populações estelares mais velhas'
+    }
 ];
 
 const questoesCosmografia = [
     { questao: 'Explique o conceito de escada de distâncias cósmicas.', dissertativa: true },
     { questao: 'Descreva o diagrama HR e seu uso em estimar distâncias.', dissertativa: true },
     { questao: 'Comente o uso de múltiplos comprimentos de onda em cosmografia.', dissertativa: true },
-    { questao: 'Cefeidas são importantes porque:', dissertativa: false, alternativas: ['Mede-se sua temperatura com precisão', 'São velas padrão para distâncias extragalácticas', 'São sempre parte de galáxias anãs', 'Têm brilho absolutamente constante'] }
+    { 
+        questao: 'Cefeidas são importantes porque:', 
+        dissertativa: false, 
+        alternativas: ['Mede-se sua temperatura com precisão', 'São velas padrão para distâncias extragalácticas', 'São sempre parte de galáxias anãs', 'Têm brilho absolutamente constante'],
+        respostaCorreta: 'São velas padrão para distâncias extragalácticas'
+    }
 ];
 
 
+// BANCOS DE QUESTÕES PARA OS NOVOS MÓDULOS (7, 8 e 9)
+
+// Banco de questões: Astrofísica de Objetos Compactos (Módulo 7)
 const questoesObjetosCompactos = [
     { questao: 'Explique o conceito de pressão de degenerescência eletrônica e o limite de Chandrasekhar.', dissertativa: true },
     { questao: 'Descreva a estrutura interna de uma estrela de nêutrons (crosta, núcleo) e a equação de estado (EoS) da matéria nuclear.', dissertativa: true },
     { questao: 'O que é um pulsar? Explique o modelo do "farol" (lighthouse model) e a física da magnetosfera do pulsar.', dissertativa: true },
     { questao: 'Compare os processos de resfriamento de uma anã branca e de uma estrela de nêutrons.', dissertativa: true },
-    { questao: 'A massa máxima de uma estrela de nêutrons (limite TOV) é determinada principalmente por:', dissertativa: false, alternativas: ['Pressão de degenerescência eletrônica', 'Equação de Estado da matéria nuclear', 'Taxa de rotação', 'Campo magnético'] }
+    { 
+        questao: 'A massa máxima de uma estrela de nêutrons (limite TOV) é determinada principalmente por:', 
+        dissertativa: false, 
+        alternativas: ['Pressão de degenerescência eletrônica', 'Equação de Estado da matéria nuclear', 'Taxa de rotação', 'Campo magnético'],
+        respostaCorreta: 'Equação de Estado da matéria nuclear'
+    }
 ];
 
-
+// Banco de questões: Física Avançada de Buracos Negros (Módulo 8)
 const questoesFisicaBN = [
     { questao: 'Discuta o Teorema "No-Hair" (Sem Cabelo) e seus três parâmetros (Massa, Carga, Spin).', dissertativa: true },
     { questao: 'Explique o que é a Radiação Hawking e o processo físico de criação de pares no horizonte de eventos.', dissertativa: true },
     { questao: 'Descreva o Paradoxo da Informação do Buraco Negro. Por que ele representa um conflito entre a Relatividade Geral e a Mecânica Quântica?', dissertativa: true },
     { questao: 'Diferencie a singularidade de um buraco negro de Schwarzschild (ponto) da singularidade de um buraco negro de Kerr (anel).', dissertativa: true },
-    { questao: 'A "Termodinâmica do Buraco Negro" relaciona a área do horizonte de eventos com qual propriedade física?', dissertativa: false, alternativas: ['Carga', 'Entropia', 'Massa', 'Momento Angular'] }
+    { 
+        questao: 'A "Termodinâmica do Buraco Negro" relaciona a área do horizonte de eventos com qual propriedade física?', 
+        dissertativa: false, 
+        alternativas: ['Carga', 'Entropia', 'Massa', 'Momento Angular'],
+        respostaCorreta: 'Entropia'
+    }
 ];
 
-
+// Banco de questões: Física da Formação de Galáxias (Módulo 9)
 const questoesFormacaoGalaxias = [
     { questao: 'Explique o conceito de "fricção dinâmica" (dynamical friction) de Chandrasekhar e seu papel em fusões de galáxias.', dissertativa: true },
     { questao: 'Compare "feedback estelar" (supernovas) e "feedback de AGN". Qual é mais eficaz em "apagar" (quenching) a formação estelar em galáxias massivas?', dissertativa: true },
     { questao: 'O que é o "downsizing" cosmológico e como ele desafia modelos simples de formação hierárquica?', dissertativa: true },
     { questao: 'Descreva o formalismo de Press-Schechter e como ele estima a função de massa de halos de matéria escura.', dissertativa: true },
-    { questao: 'O processo que impede o gás de se resfriar e formar estrelas em halos muito massivos (M > 10^12 Msol) é dominado por:', dissertativa: false, alternativas: ['Feedback de supernovas', 'Aquecimento por choque (shock heating) e feedback de AGN', 'Radiação UV de fundo', 'Decaimento da matéria escura'] }
+    { 
+        questao: 'O processo que impede o gás de se resfriar e formar estrelas em halos muito massivos (M > 10^12 Msol) é dominado por:', 
+        dissertativa: false, 
+        alternativas: ['Feedback de supernovas', 'Aquecimento por choque (shock heating) e feedback de AGN', 'Radiação UV de fundo', 'Decaimento da matéria escura'],
+        respostaCorreta: 'Aquecimento por choque (shock heating) e feedback de AGN'
+    }
 ];
 
 export const initial_cursos = {

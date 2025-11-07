@@ -391,3 +391,103 @@
     background-color: #F8EFFF !important;
     color: #323232;
 }
+
+/* --- ADICIONE ESTAS CLASSES AO FINAL DE CURSOS.CSS --- */
+
+/* Keyframes para as animações de "piscar" */
+@keyframes pulse-green {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+    70% { transform: scale(1.01); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}
+
+@keyframes shake-red {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+
+/* --- Classes de Estado para Alternativas --- */
+
+/* Estado CORRETO (pisca verde) */
+.questao-alternativa.correta {
+    background-color: #28a745; /* Verde de fundo */
+    border: 2px solid #d4edda;
+    animation: pulse-green 1s ease-in-out;
+}
+.questao-alternativa.correta .alternativa-letra {
+    background-color: #F8EFFF;
+    color: #28a745; /* Letra verde */
+}
+.questao-alternativa.correta .alternativa-texto {
+    color: #F8EFFF;
+    font-weight: bold;
+}
+
+/* Estado INCORRETO (pisca vermelho) */
+.questao-alternativa.incorreta {
+    background-color: #dc3545; /* Vermelho de fundo */
+    border: 2px solid #f8d7da;
+    animation: shake-red 0.5s ease;
+}
+.questao-alternativa.incorreta .alternativa-letra {
+    background-color: #F8EFFF;
+    color: #dc3545; /* Letra vermelha */
+}
+.questao-alternativa.incorreta .alternativa-texto {
+    color: #F8EFFF;
+    font-weight: bold;
+}
+
+/* Estado para mostrar a correta DEPOIS que o usuário errou */
+.questao-alternativa.correta-depois {
+    background-color: #4E4E4E;
+    border: 2px solid #28a745; /* Apenas uma borda verde, sem piscar */
+}
+.questao-alternativa.correta-depois .alternativa-letra {
+    background-color: #28a745; /* Caixa da letra verde */
+    color: #F8EFFF;
+}
+.questao-alternativa.correta-depois .alternativa-texto {
+    font-weight: bold;
+}
+
+
+/* Ajuste no estado padrão da letra A, B, C */
+.questao-alternativa .alternativa-letra {
+    background-color: #9A30EB;
+    color: #F8EFFF;
+    transition: all 0.3s;
+}
+
+/* Ajuste no hover para não conflitar com respostas dadas */
+.questao-alternativa:hover .alternativa-letra {
+    background-color: #F8EFFF;
+    color: #9A30EB;
+}
+
+/* Não aplicar hover se a resposta já foi dada */
+.questao-alternativa.correta:hover,
+.questao-alternativa.incorreta:hover,
+.questao-alternativa.correta-depois:hover {
+    background-color: #28a745; /* Mantém o verde */
+}
+.questao-alternativa.incorreta:hover {
+    background-color: #dc3545; /* Mantém o vermelho */
+}
+.questao-alternativa.correta-depois:hover {
+    background-color: #4E4E4E; /* Mantém o cinza */
+}
+
+.questao-alternativa.correta:hover .alternativa-letra {
+    background-color: #F8EFFF;
+    color: #28a745;
+}
+.questao-alternativa.incorreta:hover .alternativa-letra {
+    background-color: #F8EFFF;
+    color: #dc3545;
+}
+.questao-alternativa.correta-depois:hover .alternativa-letra {
+    background-color: #28a745;
+    color: #F8EFFF;
+}
