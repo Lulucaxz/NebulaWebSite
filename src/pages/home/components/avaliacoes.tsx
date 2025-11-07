@@ -5,8 +5,10 @@ import { avaliacoes2 } from "./avaliacoesDados";
 import { avaliacoes3 } from "./avaliacoesDados";
 import { avaliacoes4 } from "./avaliacoesDados";
 import { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 
 function Avaliacoes() {
+  const { t } = useTranslation();
 
   const [filtroEstrelaSelecionada, setFiltroEstrelaSelecionada] = useState<number | null>(null);
 
@@ -89,7 +91,7 @@ function Avaliacoes() {
     <>
       <div className="container-avaliacoes">
         <div className="sessao">
-          <h1>AVALIAÇÕES</h1>
+          <h1>{t('AVALIAÇÕES')}</h1>
           <hr />
         </div>
 

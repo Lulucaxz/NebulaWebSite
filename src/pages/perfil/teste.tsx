@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "./Perfil.css"; // Estilos, se você quiser
+import { useTranslation } from 'react-i18next';
 
 export default function Perfil() {
+  const { t } = useTranslation();
   const [editando, setEditando] = useState(false);
   const [nome, setNome] = useState("Luiz Tavares");
   const [usuario, setUsuario] = useState("luiztavares");
@@ -15,7 +17,7 @@ export default function Perfil() {
 
   return (
     <div className="perfil">
-      <img className="prf-foto" src={fotoUrl} alt="Foto de perfil" />
+      <img className="prf-foto" src={fotoUrl} alt={t('Foto de perfil')} />
 
       <div className="prf-informacoes">
         <div className="prf-nome-usuario">
@@ -37,7 +39,7 @@ export default function Perfil() {
       </div>
 
       <button onClick={() => setEditando(!editando)}>
-        {editando ? "Salvar" : "Editar"}
+        {editando ? t('Salvar') : t('Editar')}
       </button>
 
       {editando && (
@@ -46,24 +48,24 @@ export default function Perfil() {
             type="text"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            placeholder="Nome"
+            placeholder={t('Nome')}
           />
           <input
             type="text"
             value={usuario}
             onChange={(e) => setUsuario(e.target.value)}
-            placeholder="Usuário"
+            placeholder={t('Usuário')}
           />
           <input
             type="text"
             value={rank}
             onChange={(e) => setRank(e.target.value)}
-            placeholder="Rank"
+            placeholder={t('Rank')}
           />
           <textarea
             value={biografia}
             onChange={(e) => setBiografia(e.target.value)}
-            placeholder="Biografia"
+            placeholder={t('Biografia')}
             rows={5}
           />
           <input

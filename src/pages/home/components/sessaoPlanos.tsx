@@ -1,25 +1,28 @@
 import "./sessaoPlanos.css"
 import "../../../index.css"
 import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 function SessaoPlanos() {
+    const { t } = useTranslation();
+    
     return (
         <>
             <div id="ssp-container">
                 <div className="sessao">
-                    <h1>ENCONTRE O MELHOR PLANO PARA VOCÊ</h1>
+                    <h1>{t('ENCONTRE O MELHOR PLANO PARA VOCÊ')}</h1>
                     <hr />
                 </div>
 
                 <div className="video-planos">
                     <div>
                         <div className="video-planos-background"></div>
-                        <img alt="Iniciar video sobre planos" src="/icons/play.svg" />
+                        <img alt={t('Iniciar video sobre planos')} src="/icons/play.svg" />
                     </div>
                 </div>
                 <div className="planos-mini-texto">
                     <span>
-                        Após assistir o vídeo acima e entender como os nossos cursos funcionam, agora você poderá escolher qual o melhor plano para você.
+                        {t('Após assistir o vídeo acima e entender como os nossos cursos funcionam, agora você poderá escolher qual o melhor plano para você.')}
                     </span>
                 </div>
                 <div className="container-planos-pagIni">

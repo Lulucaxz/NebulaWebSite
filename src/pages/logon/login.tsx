@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 axios.defaults.withCredentials = true;
 const API_URL = "http://localhost:4000";
 
 const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,10 +51,10 @@ const LoginPage: React.FC = () => {
     <div className="login-page">
       {user ? (
         <div className="user-logged-in">
-          <h1>Bem-vindo, {user.name}!</h1>
-          <p>Você está logado com o email: {user.email}</p>
+          <h1>{t('Bem-vindo, {name}!', { name: user.name })}</h1>
+          <p>{t('Você está logado com o email: {email}', { email: user.email })}</p>
           <Link to="/">
-                  <button>Voltar</button>
+                  <button>{t('Voltar')}</button>
             </Link>
         </div>
       ) : (
@@ -60,36 +62,36 @@ const LoginPage: React.FC = () => {
           {/* Formulário de Cadastro */}
           <div className="form-container sign-up">
             <form onSubmit={(e) => { e.preventDefault(); register(); }}>
-              <h1>Criar conta</h1>
+              <h1>{t('Criar conta')}</h1>
               <input
                 type="text"
-                placeholder="Nome"
+                placeholder={t('Nome')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={t('Email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <input
                 type="password"
-                placeholder="Senha"
+                placeholder={t('Senha')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <button type="submit">Cadastrar</button>
+              <button type="submit">{t('Cadastrar')}</button>
               <button
                 type="button"
                 className="login-google"
                 onClick={loginGoogle}
               >
                 <img src="/icons/search.png" width={'25px'} alt="Google" />
-                Cadastrar com Google
+                {t('Cadastrar com Google')}
               </button>
             </form>
           </div>
@@ -97,27 +99,27 @@ const LoginPage: React.FC = () => {
           {/* Formulário de Login */}
           <div className="form-container sign-in">
             <form onSubmit={(e) => { e.preventDefault(); login(); }}>
-              <h1>Entrar</h1>
+              <h1>{t('Entrar')}</h1>
 
 
 
-              <span style={{ color: '#9B3BD2' }}> faça login de forma manual:</span>
+              <span style={{ color: '#9B3BD2' }}>{t('faça login de forma manual:')}</span>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={t('Email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <input
                 type="password"
-                placeholder="Senha"
+                placeholder={t('Senha')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <a href="#" style={{ color: '#9B3BD2' }}>Esqueceu sua senha?</a>
-              <button type="submit">Entrar</button>
+              <a href="#" style={{ color: '#9B3BD2' }}>{t('Esqueceu sua senha?')}</a>
+              <button type="submit">{t('Entrar')}</button>
 
               <button
                 type="button"
@@ -125,7 +127,7 @@ const LoginPage: React.FC = () => {
                 onClick={loginGoogle}
               >
                 <img src="/icons/search.png" width={'25px'} alt="Google" />
-                Entrar com Google
+                {t('Entrar com Google')}
               </button>
             </form>
           </div>
@@ -135,19 +137,19 @@ const LoginPage: React.FC = () => {
             <div className="toggle">
               <div className="toggle-panel toggle-left">
                 <Link to="/">
-                  <div className="voltar">Voltar</div>
+                  <div className="voltar">{t('Voltar')}</div>
                 </Link>
-                <h1>Bem-vindo de volta!</h1>
-                <p>Entre na sua conta Nebula para ter acesso aos seus cursos!</p>
-                <button className="hidden" id="login" onClick={handleLoginClick}>Entrar</button>
+                <h1>{t('Bem-vindo de volta!')}</h1>
+                <p>{t('Entre na sua conta Nebula para ter acesso aos seus cursos!')}</p>
+                <button className="hidden" id="login" onClick={handleLoginClick}>{t('Entrar')}</button>
               </div>
               <div className="toggle-panel toggle-right">
                 <Link to="/">
-                  <div className="voltar">Voltar</div>
+                  <div className="voltar">{t('Voltar')}</div>
                 </Link>
-                <h1>Não possui uma conta?</h1>
-                <p>Cadastre-se no curso Nebula!</p>
-                <button className="hidden" id="register" onClick={handleRegisterClick}>Cadastrar</button>
+                <h1>{t('Não possui uma conta?')}</h1>
+                <p>{t('Cadastre-se no curso Nebula!')}</p>
+                <button className="hidden" id="register" onClick={handleRegisterClick}>{t('Cadastrar')}</button>
               </div>
             </div>
           </div>

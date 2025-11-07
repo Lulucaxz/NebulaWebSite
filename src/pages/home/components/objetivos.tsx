@@ -1,12 +1,15 @@
 import "./objetivos.css";
+import { useTranslation } from 'react-i18next';
 
 function Objetivos() {
+  const { t } = useTranslation();
+  
   return (
     <>
       <div className="obj-container">
 
         <div className="sessao">
-          <h1>QUEM SOMOS</h1>
+          <h1>{t('QUEM SOMOS')}</h1>
           <hr />
         </div>
 
@@ -24,7 +27,7 @@ function Objetivos() {
               </svg>
             </div>
             <div className="obj-barra-texto">
-              <span>Nossa missão: ensinar astronomia e astrofísica de forma completa, guiando os alunos do nível mais básico ao mais avançado. Nosso propósito é preparar adolescentes recém-saídos do ensino médio e adultos de todas as idades para dominarem o conhecimento do universo, oferecendo um caminho real para seguirem carreiras de destaque nos diversos campos da física e da ciência espacial.</span>
+              <span>{t('Nossa missão: ensinar astronomia e astrofísica de forma completa, guiando os alunos do nível mais básico ao mais avançado. Nosso propósito é preparar adolescentes recém-saídos do ensino médio e adultos de todas as idades para dominarem o conhecimento do universo, oferecendo um caminho real para seguirem carreiras de destaque nos diversos campos da física e da ciência espacial.')}</span>
             </div>
           </div>
 
@@ -41,7 +44,7 @@ function Objetivos() {
               </svg>
             </div>
             <div className="obj-barra-texto">
-              <span>Nossa visão: ser reconhecido nacional e internacionalmente como o curso mais completo, acessível e inspirador de astronomia e astrofísica, presente tanto online quanto em instituições de ensino. Queremos ser o ponto de partida para grandes carreiras científicas, formando alunos que se destaquem em universidades, centros de pesquisa e agências espaciais ao redor do mundo.</span>
+              <span>{t('Nossa visão: ser reconhecido nacional e internacionalmente como o curso mais completo, acessível e inspirador de astronomia e astrofísica, presente tanto online quanto em instituições de ensino. Queremos ser o ponto de partida para grandes carreiras científicas, formando alunos que se destaquem em universidades, centros de pesquisa e agências espaciais ao redor do mundo.')}</span>
             </div>
           </div>
 
@@ -58,7 +61,7 @@ function Objetivos() {
               </svg>
             </div>
             <div className="obj-barra-texto obj-barra-texto-valores">
-              <span>Nossos valores: acreditamos em um ensino de qualidade, acessível para todos, independentemente da idade ou formação. Valorizamos o amor pela ciência, a curiosidade, o respeito à diversidade e o compromisso com cada aluno em sua jornada de aprendizado. Nosso conteúdo é baseado em fontes confiáveis e atualizadas, sempre com o objetivo de transformar vidas por meio do conhecimento.</span>
+              <span>{t('Nossos valores: acreditamos em um ensino de qualidade, acessível para todos, independentemente da idade ou formação. Valorizamos o amor pela ciência, a curiosidade, o respeito à diversidade e o compromisso com cada aluno em sua jornada de aprendizado. Nosso conteúdo é baseado em fontes confiáveis e atualizadas, sempre com o objetivo de transformar vidas por meio do conhecimento.')}</span>
             </div>
           </div>
         </div>
