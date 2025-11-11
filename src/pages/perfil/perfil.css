@@ -183,17 +183,15 @@
 }
 
 .prf-foto {
-  width: 150px;
+  width: 80px;
   aspect-ratio: 1/1;
   border-radius: 50%;
-  position: relative;
-  top: -50px;
   object-fit: cover;
 }
 
 .prf-nome-usuario span {
-  font-family: "Archivo Black", sans-serif;
-  font-size: 40px;
+  font-family: "Questrial", sans-serif;
+  font-size: 32px;
 }
 
 .prf-usuario-rank {
@@ -315,7 +313,7 @@
 .prf-infomacoes {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  font-family: 'Questrial', sans-serif;
 }
 
 @media screen and (max-width: 425px) {
