@@ -2,12 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import { initial_cursos } from './components/cursosDados';
-import { useState } from 'react'; // O useState já estava aqui
+import { useState } from 'react'; 
 import { fetchWithCredentials, API_BASE } from '../../api';
 import { Link } from "react-router-dom";
 
-// Importe o CSS para as novas animações
-// (Vamos adicionar o conteúdo a 'cursos.css' na próxima etapa)
 import './cursos.css'; 
 
 function Atividades() {
@@ -18,7 +16,7 @@ function Atividades() {
         questao?: string; 
         dissertativa?: boolean; 
         alternativas?: string[];
-        respostaCorreta?: string; // <-- Adicionado tipo para a resposta
+        respostaCorreta?: string; 
     };
     type AtividadeType = { id: number; questoes?: Questao[] };
     type ModuloType = { id: number; atividades: AtividadeType[] };
@@ -30,8 +28,8 @@ function Atividades() {
     
     // --- ESTADO ATUALIZADO ---
     
-    // Mantém o estado para dissertativas (como estava)
-    const [respostas, setRespostas] = useState<string[]>(() => (atividade?.questoes || []).map(() => 'Digite sua resposta aqui...'));
+    // 1. MUDANÇA AQUI: O estado agora começa com string vazia
+    const [respostas, setRespostas] = useState<string[]>(() => (atividade?.questoes || []).map(() => ''));
 
     // NOVO ESTADO: Armazena a *seleção* (o texto) do usuário para cada questão
     const [selecoes, setSelecoes] = useState<(string | null)[]>(
@@ -87,8 +85,6 @@ function Atividades() {
             <div className="cursos-espacamento">
                 {atividade.questoes?.map((questao: Questao, index: number) => {
 
-                    // (A função updateMatrizAltenativas foi removida, pois foi substituída)
-
                     return (
                         <div key={`questao${atividade.id}-${index}`} className='questao'>
                             <div className="sessao">
@@ -97,8 +93,10 @@ function Atividades() {
                             </div>
                             <div className="questao-descricao">{questao.questao}</div>
                             
-                            {/* --- Seção Dissertativa (sem mudanças) --- */}
+                            {/* --- Seção Dissertativa (MODIFICADA) --- */}
+                            {/* 2. MUDANÇA AQUI: Adicionado 'placeholder' */}
                             <textarea className='questao-disertativa'
+                                placeholder='Digite sua resposta aqui...' 
                                 maxLength={2000}
                                 value={respostas[index]}
                                 onChange={e => setRespostas(prev => prev.map((v,i) => i===index ? e.target.value : v))}
