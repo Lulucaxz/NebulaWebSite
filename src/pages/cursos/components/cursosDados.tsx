@@ -1,3 +1,19 @@
+type QuestaoBase = {
+    questao: string;
+    dissertativa: boolean;
+    alternativas?: string[];
+    respostaCorreta?: string;
+};
+
+const selecionarQuestoes = <T extends QuestaoBase>(banco: T[], indices: number[]): T[] =>
+    indices.map((index) => {
+        const origem = banco[index];
+        return {
+            ...origem,
+            alternativas: origem.alternativas ? [...origem.alternativas] : undefined
+        } as T;
+    });
+
 // Questões base para o curso Órbita (modulares por tema)
 const questoesIniciantes = [
     { questao: 'Explique, com suas palavras, por que as estrelas parecem “nascer” no leste e “se pôr” no oeste ao longo da noite.', dissertativa: true },
@@ -8,6 +24,26 @@ const questoesIniciantes = [
         dissertativa: false, 
         alternativas: ['Translação da Terra', 'Rotação da Terra', 'Movimento do Sol ao redor da Terra', 'Precessão dos equinócios'],
         respostaCorreta: 'Rotação da Terra'
+    },
+    { 
+        questao: 'O que é a Estrela Polar e por que ela é importante para a navegação no Hemisfério Norte?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Qual a diferença entre um planeta e uma estrela quando observados a olho nu?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'A "Estrela Dalva" é, na verdade, qual planeta?', 
+        dissertativa: false, 
+        alternativas: ['Marte', 'Júpiter', 'Vênus', 'Saturno'],
+        respostaCorreta: 'Vênus'
+    },
+    {
+        questao: 'Que instrumento simples pode ajudar a estimar a altura de uma estrela acima do horizonte?',
+        dissertativa: false,
+        alternativas: ['Cronômetro', 'Astrolábio', 'Bússola magnética', 'Termômetro'],
+        respostaCorreta: 'Astrolábio'
     }
 ];
 
@@ -20,6 +56,26 @@ const questoesSistemaSolar = [
         dissertativa: false, 
         alternativas: ['Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Mercúrio, Terra, Vênus, Marte, Júpiter, Saturno, Urano, Netuno', 'Vênus, Mercúrio, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Terra, Marte, Mercúrio, Vênus, Júpiter, Saturno, Urano, Netuno'],
         respostaCorreta: 'Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno'
+    },
+    { 
+        questao: 'O que é o Cinturão de Asteroides e onde ele se localiza?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Qual planeta é famoso por seus anéis?', 
+        dissertativa: false, 
+        alternativas: ['Júpiter', 'Saturno', 'Urano', 'Netuno'],
+        respostaCorreta: 'Saturno'
+    },
+    {
+        questao: 'Explique por que Plutão deixou de ser classificado como planeta principal em 2006.',
+        dissertativa: true
+    },
+    {
+        questao: 'Qual planeta possui o dia (rotação) mais longo do Sistema Solar?',
+        dissertativa: false,
+        alternativas: ['Vênus', 'Mercúrio', 'Marte', 'Netuno'],
+        respostaCorreta: 'Vênus'
     }
 ];
 
@@ -32,6 +88,20 @@ const questoesEstrelas = [
         dissertativa: false, 
         alternativas: ['Idade', 'Temperatura', 'Composição química única', 'Tamanho do sistema planetário'],
         respostaCorreta: 'Temperatura'
+    },
+    { 
+        questao: 'O que é uma estrela anã branca?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Resuma o que mostra o diagrama de Hertzsprung-Russell e como ele organiza as estrelas.',
+        dissertativa: true
+    },
+    {
+        questao: 'Estrelas variáveis Cefeidas são úteis porque permitem:',
+        dissertativa: false,
+        alternativas: ['Medir campos magnéticos estelares', 'Determinar distâncias por relação período-luminosidade', 'Identificar atmosferas estelares', 'Prever erupções solares'],
+        respostaCorreta: 'Determinar distâncias por relação período-luminosidade'
     }
 ];
 
@@ -44,6 +114,26 @@ const questoesTelescopios = [
         dissertativa: false, 
         alternativas: ['Aumentar o brilho', 'Alterar a cor do astro', 'Realçar contraste e segurança', 'Focar automaticamente'],
         respostaCorreta: 'Realçar contraste e segurança'
+    },
+    { 
+        questao: 'O que é a "abertura" de um telescópio e por que ela é considerada a característica mais importante?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Para observar galáxias e nebulosas, que são objetos de brilho fraco, o ideal é um telescópio com:', 
+        dissertativa: false, 
+        alternativas: ['Grande aumento', 'Grande abertura', 'Lentes coloridas', 'Filtro lunar'],
+        respostaCorreta: 'Grande abertura'
+    },
+    { 
+        questao: 'Explique o que é a distância focal de um telescópio.', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Qual prática melhora a nitidez da imagem em telescópios refletores?',
+        dissertativa: false,
+        alternativas: ['Usar lentes coloridas', 'Colimar os espelhos regularmente', 'Observar apenas durante o dia', 'Retirar o espelho secundário'],
+        respostaCorreta: 'Colimar os espelhos regularmente'
     }
 ];
 
@@ -56,6 +146,20 @@ const questoesFenomenos = [
         dissertativa: false, 
         alternativas: ['Sombra da Terra', 'Posição relativa Sol–Terra–Lua', 'Rotação da Lua', 'Nuvens na atmosfera'],
         respostaCorreta: 'Posição relativa Sol–Terra–Lua'
+    },
+    { 
+        questao: 'O que é uma aurora boreal/austral e o que a causa?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Por que as marés altas são mais intensas durante luas novas e cheias?',
+        dissertativa: true
+    },
+    {
+        questao: 'Qual fenômeno é responsável pelo “anel de fogo” visível em alguns eclipses solares?',
+        dissertativa: false,
+        alternativas: ['Difração na atmosfera', 'Distância maior entre Terra e Sol', 'Diâmetro aparente menor da Lua', 'Reflexão na superfície lunar'],
+        respostaCorreta: 'Diâmetro aparente menor da Lua'
     }
 ];
 
@@ -68,6 +172,26 @@ const questoesCicloEstelar = [
         dissertativa: false, 
         alternativas: ['Nascimento de estrelas', 'Morte de estrelas massivas', 'Planetas gigantes', 'Cometas brilhantes'],
         respostaCorreta: 'Morte de estrelas massivas'
+    },
+    { 
+        questao: 'O que restará do nosso Sol no final de sua vida?', 
+        dissertativa: false, 
+        alternativas: ['Um buraco negro', 'Uma estrela de nêutrons', 'Uma anã branca', 'Nada'],
+        respostaCorreta: 'Uma anã branca'
+    },
+    { 
+        questao: 'O que são estrelas de nêutrons?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'De onde vêm os elementos químicos mais pesados que o ferro, como ouro e platina?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Buracos negros estelares se formam a partir de:', 
+        dissertativa: false, 
+        alternativas: ['Estrelas de baixa massa como o Sol', 'Colapso de estrelas extremamente massivas', 'Colisão de duas anãs brancas', 'Nuvens de gás e poeira'],
+        respostaCorreta: 'Colapso de estrelas extremamente massivas'
     }
 ];
 
@@ -81,6 +205,20 @@ const questoesBBang = [
         dissertativa: false, 
         alternativas: ['Efeito Doppler local de estrelas', 'Expansão do espaço entre galáxias', 'Aproximação da Via Láctea', 'Erro sistemático instrumental'],
         respostaCorreta: 'Expansão do espaço entre galáxias'
+    },
+    { 
+        questao: 'O que a uniformidade da Radiação Cósmica de Fundo em todas as direções nos diz sobre o universo primitivo?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Resuma o papel das oscilações acústicas de bárions nos primeiros instantes do Big Bang.',
+        dissertativa: true
+    },
+    {
+        questao: 'A temperatura média prevista para a radiação cósmica de fundo hoje é de aproximadamente:',
+        dissertativa: false,
+        alternativas: ['2,7 K', '27 K', '270 K', '2700 K'],
+        respostaCorreta: '2,7 K'
     }
 ];
 
@@ -93,6 +231,26 @@ const questoesMateriaEnergiaEscura = [
         dissertativa: false, 
         alternativas: ['Medir temperaturas de estrelas', 'Inferir distribuição de massa (visível e escura)', 'Calibrar espectros', 'Detectar ondas gravitacionais diretamente'],
         respostaCorreta: 'Inferir distribuição de massa (visível e escura)'
+    },
+    { 
+        questao: 'Qual a porcentagem aproximada do conteúdo de energia do universo que se acredita ser matéria escura?', 
+        dissertativa: false, 
+        alternativas: ['5%', '27%', '68%', '95%'],
+        respostaCorreta: '27%'
+    },
+    { 
+        questao: 'O que é energia escura e qual seu efeito na expansão do universo?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Explique a importância da observação do aglomerado “Bullet Cluster” para a matéria escura.',
+        dissertativa: true
+    },
+    {
+        questao: 'Qual destes candidatos é um exemplo de matéria escura bariônica?',
+        dissertativa: false,
+        alternativas: ['WIMPs', 'Áxions', 'MACHOs', 'Neutrinos estéreis'],
+        respostaCorreta: 'MACHOs'
     }
 ];
 
@@ -100,11 +258,23 @@ const questoesEstruturaUniverso = [
     { questao: 'Descreva a teia cósmica e como filamentos e vazios se organizam.', dissertativa: true },
     { questao: 'Qual o papel da gravidade no crescimento de estruturas a partir de flutuações primordiais?', dissertativa: true },
     { questao: 'Como levantamentos de galáxias mapeiam a estrutura em grande escala?', dissertativa: true },
-    { 
-        questao: 'O espectro de potência da matéria fornece:', 
-        dissertativa: false, 
+    {
+        questao: 'O espectro de potência da matéria fornece:',
+        dissertativa: false,
         alternativas: ['Distribuição de temperaturas estelares', 'Distribuição estatística de flutuações em escalas', 'Histórico químico de galáxias', 'Idades de aglomerados globulares'],
         respostaCorreta: 'Distribuição estatística de flutuações em escalas'
+    },
+    { questao: 'Explique o conceito de “bias” entre distribuição de matéria e galáxias observadas.', dissertativa: true },
+    { questao: 'Resuma como o efeito Sunyaev-Zel’dovich ajuda a pesar aglomerados de galáxias.', dissertativa: true },
+    {
+        questao: 'O parâmetro σ₈ mede:',
+        dissertativa: false,
+        alternativas: ['A taxa de expansão local', 'A amplitude das flutuações de densidade em 8 h⁻¹ Mpc', 'A fração de matéria bariônica', 'A energia escura presente no universo'],
+        respostaCorreta: 'A amplitude das flutuações de densidade em 8 h⁻¹ Mpc'
+    },
+    {
+        questao: 'O que diferencia o regime linear do regime não-linear no crescimento de estruturas?',
+        dissertativa: true
     }
 ];
 
@@ -117,6 +287,26 @@ const questoesRelatividadeBuracosNegros = [
         dissertativa: false, 
         alternativas: ['Emissão de luz do interior', 'Efeito gravitacional sobre matéria vizinha', 'Sombra projetada por um planeta', 'Mudanças na cor do céu noturno'],
         respostaCorreta: 'Efeito gravitacional sobre matéria vizinha'
+    },
+    { 
+        questao: 'O que é a "espaguetificação"?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'A primeira imagem de um buraco negro, divulgada em 2019, foi do buraco negro no centro de qual galáxia?', 
+        dissertativa: false, 
+        alternativas: ['Via Láctea', 'Andrômeda', 'Messier 87', 'Galáxia do Triângulo'],
+        respostaCorreta: 'Messier 87'
+    },
+    {
+        questao: 'Descreva o mecanismo de lente gravitacional forte e como ele pode revelar buracos negros.',
+        dissertativa: true
+    },
+    {
+        questao: 'O primeiro evento de ondas gravitacionais observado (GW150914) foi resultado da fusão de:',
+        dissertativa: false,
+        alternativas: ['Duas estrelas de nêutrons', 'Dois buracos negros estelares', 'Um buraco negro e uma estrela de nêutrons', 'Dois buracos negros supermassivos'],
+        respostaCorreta: 'Dois buracos negros estelares'
     }
 ];
 
@@ -129,6 +319,20 @@ const questoesCosmologiaObservacional = [
         dissertativa: false, 
         alternativas: ['Densidade de energia escura', 'Densidade de matéria (normal + escura)', 'Curvatura espacial', 'Temperatura média do CMB'],
         respostaCorreta: 'Densidade de matéria (normal + escura)'
+    },
+    { 
+        questao: 'O que são Oscilações Acústicas de Bárions (BAO) e como elas são usadas como uma "régua padrão"?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Explique como cadeias de Markov Monte Carlo (MCMC) são usadas para ajustar parâmetros cosmológicos.',
+        dissertativa: true
+    },
+    {
+        questao: 'Qual combinação de sondas ajuda a quebrar a degenerescência entre H₀ e Ωₘ?',
+        dissertativa: false,
+        alternativas: ['Somente CMB', 'Somente SNe Ia', 'CMB + BAO + SNe Ia', 'Somente lentes fracas'],
+        respostaCorreta: 'CMB + BAO + SNe Ia'
     }
 ];
 
@@ -141,6 +345,26 @@ const questoesInflacao = [
         dissertativa: false, 
         alternativas: ['Ausência de inflação', 'Modelos inflacionários', 'Universo estático', 'Apenas matéria bariônica'],
         respostaCorreta: 'Modelos inflacionários'
+    },
+    { 
+        questao: 'O que é o "multiverso" e como a teoria da inflação eterna pode levar a essa ideia?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'A inflação cósmica ocorreu:', 
+        dissertativa: false, 
+        alternativas: ['Nos primeiros 3 minutos do universo', 'Uma fração de segundo após o Big Bang', 'Antes do Big Bang', 'Junto com a formação das primeiras estrelas'],
+        respostaCorreta: 'Uma fração de segundo após o Big Bang'
+    },
+    {
+        questao: 'Descreva o processo de “reheating” (re-aquecimento) após o final da inflação.',
+        dissertativa: true
+    },
+    {
+        questao: 'Um valor de índice espectral escalar (nₛ) ligeiramente menor que 1 indica:',
+        dissertativa: false,
+        alternativas: ['Espectro azul com mais potência em pequenas escalas', 'Espectro vermelho com mais potência em grandes escalas', 'Espectro plano ideal', 'Inconsistência com inflação'],
+        respostaCorreta: 'Espectro vermelho com mais potência em grandes escalas'
     }
 ];
 
@@ -154,6 +378,20 @@ const questoesLuzMedidas = [
         dissertativa: false, 
         alternativas: ['Temperatura e pico do espectro', 'Massa e luminosidade', 'Idade e metalicidade', 'Velocidade radial e distância'],
         respostaCorreta: 'Temperatura e pico do espectro'
+    },
+    { 
+        questao: 'O que é o Efeito Doppler e como ele é usado em astronomia para medir a velocidade de objetos?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Explique por que telescópios espaciais observam em infravermelho para estudar regiões com poeira.',
+        dissertativa: true
+    },
+    {
+        questao: 'Fotometria multibanda permite estimar qual propriedade estelar com maior precisão?',
+        dissertativa: false,
+        alternativas: ['Idade individual', 'Composição atmosférica', 'Temperatura efetiva e extinção', 'Momento angular'],
+        respostaCorreta: 'Temperatura efetiva e extinção'
     }
 ];
 
@@ -166,6 +404,26 @@ const questoesFormacaoEstelar = [
         dissertativa: false, 
         alternativas: ['Nuvens de poeira fria', 'Gás ionizado por estrelas jovens', 'Aglomerados globulares antigos', 'Buracos negros supermassivos'],
         respostaCorreta: 'Gás ionizado por estrelas jovens'
+    },
+    { 
+        questao: 'O que são "objetos de Herbig-Haro"?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Qual é a principal fonte de energia de uma protoestrela?', 
+        dissertativa: false, 
+        alternativas: ['Fusão nuclear de hidrogênio', 'Contração gravitacional', 'Fusão nuclear de hélio', 'Aniquilação de matéria e antimatéria'],
+        respostaCorreta: 'Contração gravitacional'
+    },
+    {
+        questao: 'Como jatos bipolares influenciam o ambiente em volta de estrelas jovens?',
+        dissertativa: true
+    },
+    {
+        questao: 'Núcleos densos em nuvens moleculares podem ser detectados através de emissão em:',
+        dissertativa: false,
+        alternativas: ['Raios gama', 'Infravermelho distante e rádio', 'Luz visível', 'Raios X'],
+        respostaCorreta: 'Infravermelho distante e rádio'
     }
 ];
 
@@ -178,6 +436,20 @@ const questoesViaLactea = [
         dissertativa: false, 
         alternativas: ['Somente matéria bariônica', 'Presença de matéria escura', 'Universo estático', 'Erro de medição sistemático'],
         respostaCorreta: 'Presença de matéria escura'
+    },
+    { 
+        questao: 'O que é Sagitário A* (Sgr A*)?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Quais evidências observacionais suportam a presença de barras (bar) na Via Láctea?',
+        dissertativa: true
+    },
+    {
+        questao: 'A contagem de estrelas do disco fino é mais eficiente em que faixa espectral devido à extinção?',
+        dissertativa: false,
+        alternativas: ['Ultravioleta', 'Óptico azul', 'Infravermelho próximo', 'Rádio de alta frequência'],
+        respostaCorreta: 'Infravermelho próximo'
     }
 ];
 
@@ -190,6 +462,26 @@ const questoesExoplanetas = [
         dissertativa: false, 
         alternativas: ['Variações de velocidade da estrela', 'Queda no brilho quando o planeta passa à frente', 'Imagem direta do planeta', 'Emissão térmica do planeta'],
         respostaCorreta: 'Queda no brilho quando o planeta passa à frente'
+    },
+    { 
+        questao: 'O que é a "zona habitável" de uma estrela?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Qual telescópio espacial foi um dos mais prolíficos na descoberta de exoplanetas usando o método de trânsito?', 
+        dissertativa: false, 
+        alternativas: ['Hubble', 'Spitzer', 'Kepler', 'James Webb'],
+        respostaCorreta: 'Kepler'
+    },
+    {
+        questao: 'Explique por que espectroscopia de transmissão é útil para detectar moléculas em atmosferas exoplanetárias.',
+        dissertativa: true
+    },
+    {
+        questao: 'O método de microlente gravitacional é especialmente sensível a planetas:',
+        dissertativa: false,
+        alternativas: ['Muito próximos da estrela', 'Em sistemas binários brilhantes', 'Em órbitas largas, inclusive em galáxias distantes', 'Com atmosferas espessas'],
+        respostaCorreta: 'Em órbitas largas, inclusive em galáxias distantes'
     }
 ];
 
@@ -197,11 +489,23 @@ const questoesMorfologiaEvolucao = [
     { questao: 'Descreva a classificação morfológica de galáxias (Hubble).', dissertativa: true },
     { questao: 'Explique como interações e fusões afetam a evolução galáctica.', dissertativa: true },
     { questao: 'Comente evidências observacionais de eventos de fusão.', dissertativa: true },
-    { 
-        questao: 'Galáxias elípticas tendem a ser associadas a:', 
-        dissertativa: false, 
+    {
+        questao: 'Galáxias elípticas tendem a ser associadas a:',
+        dissertativa: false,
         alternativas: ['Formação estelar intensa recente', 'Populações estelares mais velhas', 'Discos com braços espirais proeminentes', 'Altas taxas de gás frio'],
         respostaCorreta: 'Populações estelares mais velhas'
+    },
+    { questao: 'O que diferencia galáxias lenticulares (S0) de espirais clássicas?', dissertativa: true },
+    { questao: 'Explique o papel do quenching ambiental em aglomerados de galáxias.', dissertativa: true },
+    {
+        questao: 'Assinale o mecanismo que pode transformar uma galáxia espiral em elíptica:',
+        dissertativa: false,
+        alternativas: ['Perda de gás por ventos solares', 'Fusão maior (major merger)', 'Rotação diferencial isolada', 'Explosões de raios gama'],
+        respostaCorreta: 'Fusão maior (major merger)'
+    },
+    {
+        questao: 'O que são galáxias “green valley” e por que são importantes?',
+        dissertativa: true
     }
 ];
 
@@ -214,6 +518,26 @@ const questoesCosmografia = [
         dissertativa: false, 
         alternativas: ['Mede-se sua temperatura com precisão', 'São velas padrão para distâncias extragalácticas', 'São sempre parte de galáxias anãs', 'Têm brilho absolutamente constante'],
         respostaCorreta: 'São velas padrão para distâncias extragalácticas'
+    },
+    { 
+        questao: 'O que é o "Grupo Local" de galáxias?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'Qual é a galáxia espiral massiva mais próxima da Via Láctea?', 
+        dissertativa: false, 
+        alternativas: ['Galáxia do Triângulo', 'Galáxia de Andrômeda', 'Grande Nuvem de Magalhães', 'Pequena Nuvem de Magalhães'],
+        respostaCorreta: 'Galáxia de Andrômeda'
+    },
+    {
+        questao: 'Explique o que são padrões de fluxo peculiar e como eles ajudam em cosmografia.',
+        dissertativa: true
+    },
+    {
+        questao: 'A relação de Tully-Fisher conecta luminosidade com qual propriedade galáctica?',
+        dissertativa: false,
+        alternativas: ['Metalicidade', 'Velocidade de rotação', 'Temperatura média', 'Conteúdo de poeira'],
+        respostaCorreta: 'Velocidade de rotação'
     }
 ];
 
@@ -231,6 +555,20 @@ const questoesObjetosCompactos = [
         dissertativa: false, 
         alternativas: ['Pressão de degenerescência eletrônica', 'Equação de Estado da matéria nuclear', 'Taxa de rotação', 'Campo magnético'],
         respostaCorreta: 'Equação de Estado da matéria nuclear'
+    },
+    { 
+        questao: 'O que são magnetares?', 
+        dissertativa: true 
+    },
+    {
+        questao: 'Explique como pares binários de estrelas de nêutrons podem produzir kilonovas.',
+        dissertativa: true
+    },
+    {
+        questao: 'Qual observável indica a presença de uma anã branca em um sistema binário?',
+        dissertativa: false,
+        alternativas: ['Absorção de raios cósmicos', 'Linhas espectrais de hidrogênio amplas em UV', 'Oscilações de neutrinos', 'Emissão de raios gama persistente'],
+        respostaCorreta: 'Linhas espectrais de hidrogênio amplas em UV'
     }
 ];
 
@@ -245,6 +583,20 @@ const questoesFisicaBN = [
         dissertativa: false, 
         alternativas: ['Carga', 'Entropia', 'Massa', 'Momento Angular'],
         respostaCorreta: 'Entropia'
+    },
+    { 
+        questao: 'O que é a ergosfera de um buraco negro de Kerr?', 
+        dissertativa: true 
+    },
+    { 
+        questao: 'O processo de Penrose é um mecanismo teórico para:', 
+        dissertativa: false, 
+        alternativas: ['Destruir um buraco negro', 'Extrair energia de um buraco negro em rotação', 'Criar um buraco de minhoca', 'Medir a massa de um buraco negro'],
+        respostaCorreta: 'Extrair energia de um buraco negro em rotação'
+    },
+    {
+        questao: 'Compare qualitativamente as diferenças entre as soluções de Kerr e Kerr-Newman.',
+        dissertativa: true
     }
 ];
 
@@ -259,6 +611,14 @@ const questoesFormacaoGalaxias = [
         dissertativa: false, 
         alternativas: ['Feedback de supernovas', 'Aquecimento por choque (shock heating) e feedback de AGN', 'Radiação UV de fundo', 'Decaimento da matéria escura'],
         respostaCorreta: 'Aquecimento por choque (shock heating) e feedback de AGN'
+    },
+    { questao: 'Explique o papel de fluxos frios (cold flows) na alimentação de galáxias em alto redshift.', dissertativa: true },
+    { questao: 'Como os halos de matéria escura definem o potencial onde as galáxias crescem?', dissertativa: true },
+    {
+        questao: 'AGN do tipo quasar são caracterizados por:',
+        dissertativa: false,
+        alternativas: ['Emissão fraca em todas as bandas', 'Linhas largas e luminosidade extrema', 'Ausência de disco de acreção', 'Rotação lenta'],
+        respostaCorreta: 'Linhas largas e luminosidade extrema'
     }
 ];
 
@@ -286,7 +646,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Geometria da Expansão',
                         descricao: 'Aplique a métrica FLRW (Aula 1) para explicar o conceito de "desvio para o vermelho cosmológico" em oposição ao Doppler.'
                     },
-                    questoes: questoesBBang
+                    questoes: selecionarQuestoes(questoesBBang, [0, 1, 4, 6])
                 },
                 {
                     id: 3514529,
@@ -295,7 +655,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Física do Desacoplamento',
                         descricao: 'Com base na Aula 2, explique o processo termodinâmico que tornou o Universo transparente e deu origem ao CMB.'
                     },
-                    questoes: questoesBBang
+                    questoes: selecionarQuestoes(questoesBBang, [2, 3, 5, 0, 6])
                 },
                 {
                     id: 5679283,
@@ -304,7 +664,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Prevendo os Elementos Leves',
                         descricao: 'Discuta o processo da BBN (Aula 3). Por que a nucleossíntese parou no Lítio e não produziu elementos mais pesados?'
                     },
-                    questoes: questoesBBang
+                    questoes: selecionarQuestoes(questoesBBang, [1, 2, 4, 5, 6, 3])
                 },
                 {
                     id: 2567356,
@@ -313,7 +673,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Testes de Consistência',
                         descricao: 'Resolva problemas comparando as idades e abundâncias previstas pelo modelo padrão com dados observacionais (Aula 4).'
                     },
-                    questoes: questoesBBang
+                    questoes: selecionarQuestoes(questoesBBang, [0, 2, 4])
                 },
                 {
                     id: 6393456,
@@ -322,7 +682,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Análise dos Pilares',
                         descricao: 'Discuta por que a Radiação Cósmica de Fundo é considerada a evidência mais forte do Big Bang.'
                     },
-                    questoes: questoesBBang
+                    questoes: selecionarQuestoes(questoesBBang, [3, 5, 6, 1, 2, 0, 4])
                 },
                 {
                     id: 8354434,
@@ -331,7 +691,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão de Cosmologia Primordial',
                         descricao: 'Uma avaliação integradora (Aula 5) que conecta a Relatividade Geral à termodinâmica e física nuclear.'
                     },
-                    questoes: questoesBBang
+                    questoes: selecionarQuestoes(questoesBBang, [6, 4, 1, 3, 0])
                 }
             ],
             videoAulas: [
@@ -394,7 +754,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Dinâmica de Galáxias',
                         descricao: 'Use o Teorema do Virial (Aula 1) para estimar a massa de um aglomerado de galáxias. Compare com a massa luminosa.'
                     },
-                    questoes: questoesMateriaEnergiaEscura
+                    questoes: selecionarQuestoes(questoesMateriaEnergiaEscura, [0, 1, 4, 6, 7])
                 },
                 {
                     id: 3534529,
@@ -403,7 +763,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Mapeando Massa com Lentes',
                         descricao: 'Explique como o "cisalhamento" (shear) de lentes fracas (Aula 2) permite mapear a matéria escura, independentemente da dinâmica.'
                     },
-                    questoes: questoesMateriaEnergiaEscura
+                    questoes: selecionarQuestoes(questoesMateriaEnergiaEscura, [2, 5, 1, 3])
                 },
                 {
                     id: 5639283,
@@ -412,7 +772,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: O Diagrama de Hubble de SNe Ia',
                         descricao: 'Interprete o diagrama de Hubble (Aula 3) e explique por que a aceleração é a conclusão preferida.'
                     },
-                    questoes: questoesMateriaEnergiaEscura
+                    questoes: selecionarQuestoes(questoesMateriaEnergiaEscura, [0, 2, 6, 4, 5, 7])
                 },
                 {
                     id: 2557356,
@@ -421,7 +781,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Resolvendo as Equações de Friedmann',
                         descricao: 'Discuta o papel do parâmetro de equação de estado (w) (Aula 4). O que acontece se w < -1/3?'
                     },
-                    questoes: questoesMateriaEnergiaEscura
+                    questoes: selecionarQuestoes(questoesMateriaEnergiaEscura, [3, 0, 6])
                 },
                 {
                     id: 6353456,
@@ -430,7 +790,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Debate: CDM vs. MOND',
                         descricao: 'Cite duas evidências independentes para Matéria Escura Fria (CDM) que são difíceis de explicar com gravidade modificada (MOND).'
                     },
-                    questoes: questoesMateriaEnergiaEscura
+                    questoes: selecionarQuestoes(questoesMateriaEnergiaEscura, [1, 2, 3, 4, 5, 6, 7])
                 },
                 {
                     id: 8374434,
@@ -439,7 +799,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Setor Escuro',
                         descricao: 'Avaliação final (Aula 5) sobre os modelos teóricos para a matéria escura e a energia escura.'
                     },
-                    questoes: questoesMateriaEnergiaEscura
+                    questoes: selecionarQuestoes(questoesMateriaEnergiaEscura, [0, 5, 7, 2, 4])
                 }
             ],
             videoAulas: [
@@ -502,7 +862,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Crescimento Linear de Estruturas',
                         descricao: 'Explique por que a matéria escura é essencial para o crescimento de estruturas (Aula 1). O que aconteceria em um universo só de bários?'
                     },
-                    questoes: questoesEstruturaUniverso
+                    questoes: selecionarQuestoes(questoesEstruturaUniverso, [0, 1, 4, 6])
                 },
                 {
                     id: 3554529,
@@ -511,7 +871,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Colapso e Viralização',
                         descricao: 'Descreva o modelo de colapso "top-hat" (Aula 2) e como ele prevê a densidade de halos viralizados.'
                     },
-                    questoes: questoesEstruturaUniverso
+                    questoes: selecionarQuestoes(questoesEstruturaUniverso, [2, 3, 5])
                 },
                 {
                     id: 5699283,
@@ -520,7 +880,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Física de Aglomerados (Observáveis)',
                         descricao: 'Compare como a massa de um aglomerado pode ser medida usando Lentes (Aula 3), Raio-X e o Efeito SZ.'
                     },
-                    questoes: questoesEstruturaUniverso
+                    questoes: selecionarQuestoes(questoesEstruturaUniverso, [1, 2, 4, 7, 5])
                 },
                 {
                     id: 2577356,
@@ -529,7 +889,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Interpretando o Espectro de Potência',
                         descricao: 'O que o P(k) (Aula 4) nos informa? O que é o "turnover" no espectro de potência e o que o causa?'
                     },
-                    questoes: questoesEstruturaUniverso
+                    questoes: selecionarQuestoes(questoesEstruturaUniverso, [3, 6, 0, 7, 2, 4])
                 },
                 {
                     id: 6393456,
@@ -538,7 +898,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: O Papel das Simulações',
                         descricao: 'Por que simulações de N-Corpos (Aula 5) são necessárias? Por que não podemos resolver o crescimento não-linear analiticamente?'
                     },
-                    questoes: questoesEstruturaUniverso
+                    questoes: selecionarQuestoes(questoesEstruturaUniverso, [5, 7, 1, 0, 6, 4, 2])
                 },
                 {
                     id: 8384434,
@@ -547,7 +907,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão de Formação de Estruturas',
                         descricao: 'Teste final integrando a teoria de perturbações com a física de fluidos e a estatística de grande escala.'
                     },
-                    questoes: questoesEstruturaUniverso
+                    questoes: selecionarQuestoes(questoesEstruturaUniverso, [0, 3, 2, 5])
                 }
             ],
             videoAulas: [
@@ -609,7 +969,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Curvatura e Movimento',
                         descricao: 'Explique o ditado "matéria diz ao espaço como se curvar, espaço diz à matéria como se mover" (Aula 1) usando um dos testes clássicos (Aula 2).'
                     },
-                    questoes: questoesRelatividadeBuracosNegros
+                    questoes: selecionarQuestoes(questoesRelatividadeBuracosNegros, [0, 1, 6, 7])
                 },
                 {
                     id: 3514529,
@@ -618,7 +978,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: A Métrica de Kerr',
                         descricao: 'Diferencie a métrica de Kerr da de Schwarzschild (Aula 3). O que é a ergoesfera e como ela permite a extração de energia?'
                     },
-                    questoes: questoesRelatividadeBuracosNegros
+                    questoes: selecionarQuestoes(questoesRelatividadeBuracosNegros, [2, 3, 5, 0, 4])
                 },
                 {
                     id: 5679283,
@@ -627,7 +987,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Fontes de Ondas Gravitacionais',
                         descricao: 'Comente sobre a detecção de ondas gravitacionais (Aula 4). O que o "chirp" de uma fusão nos diz sobre as massas dos objetos?'
                     },
-                    questoes: questoesRelatividadeBuracosNegros
+                    questoes: selecionarQuestoes(questoesRelatividadeBuracosNegros, [2, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -636,7 +996,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Física da Acreção',
                         descricao: 'Descreva como um buraco negro (que não emite luz) pode ser a fonte dos objetos mais luminosos do universo (Quasares) (Aula 5).'
                     },
-                    questoes: questoesRelatividadeBuracosNegros
+                    questoes: selecionarQuestoes(questoesRelatividadeBuracosNegros, [0, 3, 4, 6, 1])
                 },
                 {
                     id: 6393456,
@@ -645,7 +1005,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Problemas Abertos',
                         descricao: 'Discuta o conceito de singularidade e o paradoxo da informação (Aula 6).'
                     },
-                    questoes: questoesRelatividadeBuracosNegros
+                    questoes: selecionarQuestoes(questoesRelatividadeBuracosNegros, [4, 6, 7, 2, 5, 0])
                 },
                 {
                     id: 8354434,
@@ -654,7 +1014,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 4',
                         descricao: 'Avaliação final sobre as soluções e implicações astrofísicas das Equações de Campo de Einstein.'
                     },
-                    questoes: questoesRelatividadeBuracosNegros
+                    questoes: selecionarQuestoes(questoesRelatividadeBuracosNegros, [1, 2, 3, 5, 6, 7, 4])
                 }
             ],
             videoAulas: [
@@ -723,7 +1083,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: A Física das BAO',
                         descricao: 'Explique a origem física das Oscilações Acústicas de Bárions (BAO) (Aula 2) e por que ela atua como uma "régua padrão".'
                     },
-                    questoes: questoesCosmologiaObservacional
+                    questoes: selecionarQuestoes(questoesCosmologiaObservacional, [0, 4, 5])
                 },
                 {
                     id: 3514529,
@@ -732,7 +1092,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: A Tensão em H0',
                         descricao: 'Descreva a tensão de Hubble (Aula 3). Por que ela é um problema tão sério para o modelo ΛCDM?'
                     },
-                    questoes: questoesCosmologiaObservacional
+                    questoes: selecionarQuestoes(questoesCosmologiaObservacional, [1, 3, 6, 0])
                 },
                 {
                     id: 5679283,
@@ -741,7 +1101,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Geometria vs. Crescimento',
                         descricao: 'Diferencie sondas de "geometria" (como BAO/SNe) de sondas de "crescimento de estrutura" (como RSD/Lensing) (Aula 5).'
                     },
-                    questoes: questoesCosmologiaObservacional
+                    questoes: selecionarQuestoes(questoesCosmologiaObservacional, [2, 4, 5, 1, 6])
                 },
                 {
                     id: 2567356,
@@ -750,7 +1110,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Estatística Cosmológica',
                         descricao: 'O que é "Likelihood" (Aula 4)? Explique por que a análise combinada (Aula 6) é tão poderosa para quebrar degenerescências de parâmetros.'
                     },
-                    questoes: questoesCosmologiaObservacional
+                    questoes: selecionarQuestoes(questoesCosmologiaObservacional, [3, 5, 0, 2, 4, 6])
                 },
                 {
                     id: 6393456,
@@ -759,7 +1119,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Erros Sistemáticos',
                         descricao: 'Discuta possíveis fontes de erro sistemático (Aula 1, Aula 3) na calibração de SNe Ia que poderiam impactar a medida de H0.'
                     },
-                    questoes: questoesCosmologiaObservacional
+                    questoes: selecionarQuestoes(questoesCosmologiaObservacional, [4, 6, 1, 0, 5, 2, 3])
                 },
                 {
                     id: 8354434,
@@ -768,7 +1128,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 5',
                         descricao: 'Avaliação final sobre o arsenal de sondas observacionais e os métodos estatísticos usados para definir o modelo cosmológico.'
                     },
-                    questoes: questoesCosmologiaObservacional
+                    questoes: selecionarQuestoes(questoesCosmologiaObservacional, [2, 3, 5, 6])
                 }
             ],
             videoAulas: [
@@ -837,7 +1197,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Os Problemas do Big Bang Padrão',
                         descricao: 'Explique detalhadamente o problema do horizonte (Aula 1). Por que a uniformidade do CMB é um problema?'
                     },
-                    questoes: questoesInflacao
+                    questoes: selecionarQuestoes(questoesInflacao, [0, 5, 7])
                 },
                 {
                     id: 3514529,
@@ -846,7 +1206,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: O Campo "Inflaton"',
                         descricao: 'Descreva as condições de "slow-roll" (Aula 2) e como elas garantem um período de inflação e uma saída "graciosa".'
                     },
-                    questoes: questoesInflacao
+                    questoes: selecionarQuestoes(questoesInflacao, [1, 2, 4, 6])
                 },
                 {
                     id: 5679283,
@@ -855,7 +1215,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Das Flutuações Quânticas às Galáxias',
                         descricao: 'Explique a conexão entre flutuações quânticas microscópicas (Aula 3) e a estrutura em grande escala do universo (Módulo 3).'
                     },
-                    questoes: questoesInflacao
+                    questoes: selecionarQuestoes(questoesInflacao, [2, 3, 5, 6, 7])
                 },
                 {
                     id: 2567356,
@@ -864,7 +1224,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Modos B Primordiais',
                         descricao: 'O que são Modos-B (Aula 5) no CMB? Por que sua detecção (associada a ondas gravitacionais primordiais) seria a "bala de prata" da inflação?'
                     },
-                    questoes: questoesInflacao
+                    questoes: selecionarQuestoes(questoesInflacao, [3, 4, 7, 1, 0])
                 },
                 {
                     id: 6393456,
@@ -873,7 +1233,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Restringindo Modelos de Inflação',
                         descricao: 'Como os observáveis ns e r (Aula 5) nos ajudam a diferenciar entre diferentes "potenciais" inflacionários (ex: m²Φ², Φ⁴)?'
                     },
-                    questoes: questoesInflacao
+                    questoes: selecionarQuestoes(questoesInflacao, [4, 6, 7, 2, 0, 5])
                 },
                 {
                     id: 8354434,
@@ -882,7 +1242,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão da Inflação e TQC',
                         descricao: 'Avaliação final sobre a aplicação da Teoria Quântica de Campos para resolver os problemas fundamentais da cosmologia (Aula 6).'
                     },
-                    questoes: questoesInflacao
+                    questoes: selecionarQuestoes(questoesInflacao, [1, 3, 2, 4, 5, 6, 7])
                 }
             ],
             videoAulas: [
@@ -951,7 +1311,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Pressão de Degenerescência Eletrônica',
                         descricao: 'Analise a física da pressão de degenerescência (Aula 1) e derive (qualitativamente) o Limite de Chandrasekhar.'
                     },
-                    questoes: questoesObjetosCompactos
+                    questoes: selecionarQuestoes(questoesObjetosCompactos, [0, 1, 5, 6])
                 },
                 {
                     id: 3514529,
@@ -960,7 +1320,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: A Equação de Estado (EoS) Nuclear',
                         descricao: 'Discuta a estrutura interna de uma Estrela de Nêutrons (Aula 2) e a incerteza na EoS da matéria nuclear.'
                     },
-                    questoes: questoesObjetosCompactos
+                    questoes: selecionarQuestoes(questoesObjetosCompactos, [2, 3, 4, 7, 0, 5])
                 },
                 {
                     id: 5679283,
@@ -969,7 +1329,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: O Limite TOV',
                         descricao: 'Explique como o limite de Tolman-Oppenheimer-Volkoff (Aula 2) estabelece a massa máxima para uma estrela de nêutrons.'
                     },
-                    questoes: questoesObjetosCompactos
+                    questoes: selecionarQuestoes(questoesObjetosCompactos, [1, 2, 6])
                 },
                 {
                     id: 2567356,
@@ -978,7 +1338,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Eletrodinâmica de Pulsares',
                         descricao: 'Descreva o modelo do "farol" (Aula 3) e a física da magnetosfera que gera a emissão coerente de rádio.'
                     },
-                    questoes: questoesObjetosCompactos
+                    questoes: selecionarQuestoes(questoesObjetosCompactos, [3, 4, 5, 7])
                 },
                 {
                     id: 6393456,
@@ -987,7 +1347,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Magnetares e Surtos de Raios Gama',
                         descricao: 'Investigue a física dos Magnetares (Aula 4), objetos com os campos magnéticos mais intensos do universo.'
                     },
-                    questoes: questoesObjetosCompactos
+                    questoes: selecionarQuestoes(questoesObjetosCompactos, [0, 2, 4, 6, 7, 1, 5])
                 },
                 {
                     id: 8354434,
@@ -996,7 +1356,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão da Matéria Extrema',
                         descricao: 'Avaliação final (Aula 5) comparando os processos físicos que sustentam Anãs Brancas e Estrelas de Nêutrons.'
                     },
-                    questoes: questoesObjetosCompactos
+                    questoes: selecionarQuestoes(questoesObjetosCompactos, [5, 6, 7, 3, 1])
                 }
             ],
             videoAulas: [
@@ -1058,7 +1418,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: O Teorema "No-Hair" (Sem Cabelo)',
                         descricao: 'Discuta as implicações do Teorema No-Hair (Aula 1). Por que um buraco negro é definido apenas por M, Q e J?'
                     },
-                    questoes: questoesFisicaBN
+                    questoes: selecionarQuestoes(questoesFisicaBN, [0, 1, 5, 7])
                 },
                 {
                     id: 3514529,
@@ -1067,7 +1427,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: As Leis da Termodinâmica de BN',
                         descricao: 'Explique as quatro leis da termodinâmica de buracos negros (Aula 2), focando na relação entre área do horizonte e entropia.'
                     },
-                    questoes: questoesFisicaBN
+                    questoes: selecionarQuestoes(questoesFisicaBN, [2, 3, 4, 6, 0])
                 },
                 {
                     id: 5679283,
@@ -1076,7 +1436,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: A Evaporação Quântica (Radiação Hawking)',
                         descricao: 'Descreva o processo de criação de pares (Aula 3) que leva à Radiação Hawking. Qual a temperatura de um BN?'
                     },
-                    questoes: questoesFisicaBN
+                    questoes: selecionarQuestoes(questoesFisicaBN, [1, 2, 7])
                 },
                 {
                     id: 2567356,
@@ -1085,7 +1445,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: O Paradoxo da Informação',
                         descricao: 'Explique por que a evaporação de buracos negros (Aula 4) viola a unitariedade da Mecânica Quântica.'
                     },
-                    questoes: questoesFisicaBN
+                    questoes: selecionarQuestoes(questoesFisicaBN, [3, 4, 5, 6])
                 },
                 {
                     id: 6393456,
@@ -1094,7 +1454,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: A Natureza da Singularidade',
                         descricao: 'Compare a singularidade de ponto (Schwarzschild) com a singularidade de anel (Kerr) (Aula 5). O que é a Hipótese da Censura Cósmica?'
                     },
-                    questoes: questoesFisicaBN
+                    questoes: selecionarQuestoes(questoesFisicaBN, [0, 2, 4, 6, 7, 1])
                 },
                 {
                     id: 8354434,
@@ -1103,7 +1463,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão: RG vs. MQ',
                         descricao: 'Avaliação final (Aula 6) sobre os pontos de conflito e sinergia entre a Relatividade Geral e a Mecânica Quântica na física de buracos negros.'
                     },
-                    questoes: questoesFisicaBN
+                    questoes: selecionarQuestoes(questoesFisicaBN, [5, 6, 7, 3, 1, 0])
                 }
             ],
             videoAulas: [
@@ -1172,7 +1532,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: A Função de Massa de Halos',
                         descricao: 'Discuta o formalismo de Press-Schechter (Aula 1) e como ele prevê a abundância de halos de matéria escura em diferentes massas e redshifts.'
                     },
-                    questoes: questoesFormacaoGalaxias
+                    questoes: selecionarQuestoes(questoesFormacaoGalaxias, [0, 1, 4, 7])
                 },
                 {
                     id: 3514529,
@@ -1181,7 +1541,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: A Física das Fusões (Mergers)',
                         descricao: 'Explique o conceito de "fricção dinâmica" (Aula 2) e como ela determina o tempo de escala para a fusão de galáxias satélites.'
                     },
-                    questoes: questoesFormacaoGalaxias
+                    questoes: selecionarQuestoes(questoesFormacaoGalaxias, [2, 3, 5, 6, 1])
                 },
                 {
                     id: 5679283,
@@ -1190,7 +1550,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: A Batalha do Gás (Resfriamento vs. Aquecimento)',
                         descricao: 'Descreva a "função de resfriamento" (cooling function) do gás (Aula 3) e por que ela leva a uma formação de estrelas ineficiente em halos massivos.'
                     },
-                    questoes: questoesFormacaoGalaxias
+                    questoes: selecionarQuestoes(questoesFormacaoGalaxias, [0, 2, 6])
                 },
                 {
                     id: 2567356,
@@ -1199,7 +1559,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Feedback Estelar (Supernovas)',
                         descricao: 'Como o "feedback" de supernovas (Aula 4) regula a formação estelar, especialmente em galáxias de baixa massa?'
                     },
-                    questoes: questoesFormacaoGalaxias
+                    questoes: selecionarQuestoes(questoesFormacaoGalaxias, [3, 4, 5, 7, 1, 0])
                 },
                 {
                     id: 6393456,
@@ -1208,7 +1568,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Feedback de AGN e "Quenching"',
                         descricao: 'Compare o modo "Quasar" e o modo "Rádio/Jet" (Aula 5). Por que o feedback de AGN (Aula 6) é essencial para explicar o "quenching" de galáxias massivas?'
                     },
-                    questoes: questoesFormacaoGalaxias
+                    questoes: selecionarQuestoes(questoesFormacaoGalaxias, [5, 6, 7, 2, 3, 1, 4])
                 },
                 {
                     id: 8354434,
@@ -1217,7 +1577,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão da Evolução de Galáxias',
                         descricao: 'Avaliação final sobre o modelo hierárquico e os processos físicos (fusões, feedback) que definem a evolução das galáxias.'
                     },
-                    questoes: questoesFormacaoGalaxias
+                    questoes: selecionarQuestoes(questoesFormacaoGalaxias, [1, 3, 5, 7])
                 }
             ],
             videoAulas: [
@@ -1288,7 +1648,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Decifrando a Luz',
                         descricao: 'Com base nas Aulas 1 e 2, explique como a espectroscopia revela a composição e o movimento de um astro.'
                     },
-                    questoes: questoesLuzMedidas
+                    questoes: selecionarQuestoes(questoesLuzMedidas, [0, 1, 4])
                 },
                 {
                     id: 3514529,
@@ -1297,7 +1657,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Magnitude e Índice de Cor',
                         descricao: 'Aplique os conceitos da Aula 3. Responda questões sobre a escala de magnitudes e como a cor se relaciona com a temperatura.'
                     },
-                    questoes: questoesLuzMedidas
+                    questoes: selecionarQuestoes(questoesLuzMedidas, [2, 3, 5, 6])
                 },
                 {
                     id: 5679283,
@@ -1306,7 +1666,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Medindo Distâncias',
                         descricao: 'Use o que aprendeu na Aula 4 sobre paralaxe e velas padrão para resolver problemas de estimativa de distância.'
                     },
-                    questoes: questoesLuzMedidas
+                    questoes: selecionarQuestoes(questoesLuzMedidas, [1, 2, 4, 5])
                 },
                 {
                     id: 2567356,
@@ -1315,7 +1675,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: A Lei de Wien',
                         descricao: 'Concentre-se na relação entre a temperatura de um corpo negro e o pico de seu espectro de emissão.'
                     },
-                    questoes: questoesLuzMedidas
+                    questoes: selecionarQuestoes(questoesLuzMedidas, [0, 3, 6, 2, 5])
                 },
                 {
                     id: 6393456,
@@ -1324,7 +1684,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Incertezas na Prática',
                         descricao: 'Discuta os desafios e fontes de erro em medições astronômicas, como visto na Aula 5.'
                     },
-                    questoes: questoesLuzMedidas
+                    questoes: selecionarQuestoes(questoesLuzMedidas, [4, 5, 6, 1, 0, 2])
                 },
                 {
                     id: 8354434,
@@ -1333,7 +1693,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão de Fotometria e Espectroscopia',
                         descricao: 'Questionário final do módulo (Aula 6), integrando todos os conceitos sobre como medimos as propriedades dos astros.'
                     },
-                    questoes: questoesLuzMedidas
+                    questoes: selecionarQuestoes(questoesLuzMedidas, [3, 5, 0, 6, 2, 1, 4])
                 }
             ],
             videoAulas: [
@@ -1402,7 +1762,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Do Colapso à Protoestrela',
                         descricao: 'Resuma o processo de colapso de nuvens moleculares (Aula 1) até a formação de protoestrelas (Aula 2).'
                     },
-                    questoes: questoesFormacaoEstelar
+                    questoes: selecionarQuestoes(questoesFormacaoEstelar, [0, 2, 5, 7])
                 },
                 {
                     id: 3514529,
@@ -1411,7 +1771,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Regulando o Nascimento: Feedback',
                         descricao: 'Explique o que é "feedback estelar" (ventos, radiação) e como ele afeta o meio interestelar (Aula 3).'
                     },
-                    questoes: questoesFormacaoEstelar
+                    questoes: selecionarQuestoes(questoesFormacaoEstelar, [1, 3, 6])
                 },
                 {
                     id: 5679283,
@@ -1420,7 +1780,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: O Papel da Poeira e Gás',
                         descricao: 'Comente o papel da poeira na observação da formação estelar (extinção) e o que são Regiões HII (Aula 4).'
                     },
-                    questoes: questoesFormacaoEstelar
+                    questoes: selecionarQuestoes(questoesFormacaoEstelar, [0, 1, 4, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -1429,7 +1789,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Medindo a Formação Estelar',
                         descricao: 'Quais são os "observáveis" (Aula 5) usados para medir a taxa de formação estelar em galáxias?'
                     },
-                    questoes: questoesFormacaoEstelar
+                    questoes: selecionarQuestoes(questoesFormacaoEstelar, [2, 3, 4, 6, 7, 0])
                 },
                 {
                     id: 6393456,
@@ -1438,7 +1798,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Propriedades do ISM',
                         descricao: 'Descreva os diferentes componentes do Meio Interestelar (gás ionizado, neutro, molecular).'
                     },
-                    questoes: questoesFormacaoEstelar
+                    questoes: selecionarQuestoes(questoesFormacaoEstelar, [5, 6, 7, 1, 2, 3])
                 },
                 {
                     id: 8354434,
@@ -1447,7 +1807,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 2',
                         descricao: 'Questionário final (Aula 6) integrando os processos de formação estelar e a física do ISM.'
                     },
-                    questoes: questoesFormacaoEstelar
+                    questoes: selecionarQuestoes(questoesFormacaoEstelar, [0, 4, 5, 7, 2, 3, 1])
                 }
             ],
             videoAulas: [
@@ -1516,7 +1876,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Anatomia da Galáxia',
                         descricao: 'Descreva as principais componentes da Via Láctea (disco, bojo, halo) e suas populações estelares (Aula 1).'
                     },
-                    questoes: questoesViaLactea
+                    questoes: selecionarQuestoes(questoesViaLactea, [0, 2, 5])
                 },
                 {
                     id: 3514529,
@@ -1525,7 +1885,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: O Enigma da Rotação',
                         descricao: 'Explique como medimos a rotação galáctica (Aula 2) e o que a curva de rotação indica sobre a matéria escura (Aula 4).'
                     },
-                    questoes: questoesViaLactea
+                    questoes: selecionarQuestoes(questoesViaLactea, [1, 3, 6, 4])
                 },
                 {
                     id: 5679283,
@@ -1534,7 +1894,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Onde Estamos?',
                         descricao: 'Qual a nossa localização na galáxia (Aula 3) e o que isso implica para as observações (ex: "Zona de Evitamento")?'
                     },
-                    questoes: questoesViaLactea
+                    questoes: selecionarQuestoes(questoesViaLactea, [0, 1, 4, 5, 6])
                 },
                 {
                     id: 2567356,
@@ -1543,7 +1903,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Fósseis Galácticos',
                         descricao: 'O que são correntes estelares e subestruturas (Aula 5)? O que elas nos dizem sobre o passado da Via Láctea?'
                     },
-                    questoes: questoesViaLactea
+                    questoes: selecionarQuestoes(questoesViaLactea, [2, 3, 5, 6, 0, 1])
                 },
                 {
                     id: 6393456,
@@ -1552,7 +1912,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Propriedades da Vizinhança',
                         descricao: 'Discuta as características da vizinhança solar e como ela se compara a outras regiões da galáxia.'
                     },
-                    questoes: questoesViaLactea
+                    questoes: selecionarQuestoes(questoesViaLactea, [4, 6, 0, 2, 3, 5, 1])
                 },
                 {
                     id: 8354434,
@@ -1561,7 +1921,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 3',
                         descricao: 'Consolide seu conhecimento (Aula 6) sobre a estrutura, dinâmica e composição da Via Láctea.'
                     },
-                    questoes: questoesViaLactea
+                    questoes: selecionarQuestoes(questoesViaLactea, [1, 2, 4, 6])
                 }
             ],
             videoAulas: [
@@ -1630,7 +1990,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Métodos Indiretos: Trânsito e Velocidade Radial',
                         descricao: 'Compare os métodos de trânsito (Aula 1) e velocidade radial (Aula 2). O que cada um mede e o que inferimos (raio vs. massa mínima)?'
                     },
-                    questoes: questoesExoplanetas
+                    questoes: selecionarQuestoes(questoesExoplanetas, [0, 1, 6, 7])
                 },
                 {
                     id: 3514529,
@@ -1639,7 +1999,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Fotografando Mundos Distantes',
                         descricao: 'Quais são os desafios e limitações da imagem direta de exoplanetas? (Aula 3)'
                     },
-                    questoes: questoesExoplanetas
+                    questoes: selecionarQuestoes(questoesExoplanetas, [2, 3, 4])
                 },
                 {
                     id: 5679283,
@@ -1648,7 +2008,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Analisando Atmosferas',
                         descricao: 'Explique como a espectroscopia de trânsito (Aula 4) nos permite inferir a composição da atmosfera de um exoplaneta.'
                     },
-                    questoes: questoesExoplanetas
+                    questoes: selecionarQuestoes(questoesExoplanetas, [1, 2, 4, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -1657,7 +2017,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: O que é "Habitabilidade"?',
                         descricao: 'Discuta o conceito de "Zona Habitável" (Aula 5) e comente as limitações observacionais no estudo da habitabilidade.'
                     },
-                    questoes: questoesExoplanetas
+                    questoes: selecionarQuestoes(questoesExoplanetas, [3, 5, 6, 0, 2, 4])
                 },
                 {
                     id: 6393456,
@@ -1666,7 +2026,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Viés Observacional',
                         descricao: 'Discuta por que os primeiros métodos de detecção encontraram tantos "Júpiteres Quentes". O que é viés de seleção?'
                     },
-                    questoes: questoesExoplanetas
+                    questoes: selecionarQuestoes(questoesExoplanetas, [4, 6, 7, 1, 2, 3, 5])
                 },
                 {
                     id: 8354434,
@@ -1675,7 +2035,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 4',
                         descricao: 'Teste final (Aula 6) sobre os métodos de detecção e caracterização de exoplanetas.'
                     },
-                    questoes: questoesExoplanetas
+                    questoes: selecionarQuestoes(questoesExoplanetas, [0, 2, 3, 5])
                 }
             ],
             videoAulas: [
@@ -1744,7 +2104,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: O Zoológico Galáctico de Hubble',
                         descricao: 'Descreva a classificação morfológica de galáxias (Aula 1), diferenciando espirais, elípticas e irregulares.'
                     },
-                    questoes: questoesMorfologiaEvolucao
+                    questoes: selecionarQuestoes(questoesMorfologiaEvolucao, [0, 1, 4, 7])
                 },
                 {
                     id: 3514529,
@@ -1753,7 +2113,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Estruturas Internas',
                         descricao: 'Qual o papel de barras, braços espirais e bojos na dinâmica e formação estelar de uma galáxia? (Aula 2)'
                     },
-                    questoes: questoesMorfologiaEvolucao
+                    questoes: selecionarQuestoes(questoesMorfologiaEvolucao, [2, 3, 5])
                 },
                 {
                     id: 5679283,
@@ -1762,7 +2122,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Canibalismo Galáctico',
                         descricao: 'Explique como interações e fusões (Aula 3) afetam a evolução galáctica e cite evidências observacionais (ex: caudas de maré).'
                     },
-                    questoes: questoesMorfologiaEvolucao
+                    questoes: selecionarQuestoes(questoesMorfologiaEvolucao, [1, 2, 4, 5, 6])
                 },
                 {
                     id: 2567356,
@@ -1771,7 +2131,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: O Universo Jovem',
                         descricao: 'Como a população de galáxias muda com o redshift (Aula 4)? As galáxias de hoje são iguais às do passado?'
                     },
-                    questoes: questoesMorfologiaEvolucao
+                    questoes: selecionarQuestoes(questoesMorfologiaEvolucao, [3, 4, 6, 7, 0, 2])
                 },
                 {
                     id: 6393456,
@@ -1780,7 +2140,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Galáxias Ativas (Starburst e AGN)',
                         descricao: 'Diferencie um surto de formação estelar (Starburst) de um Núcleo Ativo de Galáxia (AGN) (Aula 5).'
                     },
-                    questoes: questoesMorfologiaEvolucao
+                    questoes: selecionarQuestoes(questoesMorfologiaEvolucao, [5, 7, 1, 0, 6, 4, 2])
                 },
                 {
                     id: 8354434,
@@ -1789,7 +2149,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 5',
                         descricao: 'Consolide (Aula 6) a conexão entre morfologia, ambiente e evolução das galáxias.'
                     },
-                    questoes: questoesMorfologiaEvolucao
+                    questoes: selecionarQuestoes(questoesMorfologiaEvolucao, [0, 2, 3, 5])
                 }
             ],
             videoAulas: [
@@ -1858,7 +2218,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: A Escada de Distâncias Cósmicas',
                         descricao: 'Explique o conceito da escada de distâncias (Aula 1). Por que precisamos de múltiplos "degraus" (calibradores)?'
                     },
-                    questoes: questoesCosmografia
+                    questoes: selecionarQuestoes(questoesCosmografia, [0, 1, 7])
                 },
                 {
                     id: 3514529,
@@ -1867,7 +2227,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Velas Padrão: Cefeidas',
                         descricao: 'Por que as Cefeidas (Aula 1) são tão importantes como velas padrão para distâncias extragalácticas?'
                     },
-                    questoes: questoesCosmografia
+                    questoes: selecionarQuestoes(questoesCosmografia, [2, 3, 5, 6])
                 },
                 {
                     id: 5679283,
@@ -1876,7 +2236,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: O Diagrama HR como Ferramenta',
                         descricao: 'Descreva como o Diagrama HR (Aula 2) pode ser usado para estimar distâncias de aglomerados estelares (main-sequence fitting).'
                     },
-                    questoes: questoesCosmografia
+                    questoes: selecionarQuestoes(questoesCosmografia, [1, 2, 4, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -1885,7 +2245,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: O Céu em Múltiplos Comprimentos',
                         descricao: 'O que diferentes faixas do espectro (ex: Rádio, Raio-X) revelam sobre o universo que o visível não mostra? (Aula 3)'
                     },
-                    questoes: questoesCosmografia
+                    questoes: selecionarQuestoes(questoesCosmografia, [3, 4, 6, 0, 7])
                 },
                 {
                     id: 6393456,
@@ -1894,7 +2254,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Limites da Observação',
                         descricao: 'Discuta os desafios da cosmografia, como extinção (reddening) e vieses de seleção (Aula 4).'
                     },
-                    questoes: questoesCosmografia
+                    questoes: selecionarQuestoes(questoesCosmografia, [5, 6, 7, 1, 2, 3, 0])
                 },
                 {
                     id: 8354434,
@@ -1903,7 +2263,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 6',
                         descricao: 'Teste final (Aula 6) sobre as técnicas de mapeamento e medição de escalas no Universo.'
                     },
-                    questoes: questoesCosmografia
+                    questoes: selecionarQuestoes(questoesCosmografia, [0, 4, 5, 7, 2, 3])
                 }
             ],
             videoAulas: [
@@ -1974,7 +2334,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Se Localizando no Céu',
                         descricao: 'Com base nas Aulas 1 e 2, aplique seu conhecimento sobre pontos cardeais e o movimento aparente do céu para responder às questões.'
                     },
-                    questoes: questoesIniciantes
+                    questoes: selecionarQuestoes(questoesIniciantes, [0, 2, 4])
                 },
                 {
                     id: 3514529,
@@ -1983,7 +2343,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Reconhecimento de Constelações',
                         descricao: 'Teste sua habilidade de identificar padrões no céu. Use o que aprendeu na Aula 3 para descrever como localizar constelações famosas.'
                     },
-                    questoes: questoesIniciantes
+                    questoes: selecionarQuestoes(questoesIniciantes, [1, 3, 6, 7])
                 },
                 {
                     id: 5679283,
@@ -1992,7 +2352,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: O Desafio da Poluição Luminosa',
                         descricao: 'A Aula 4 discutiu o céu urbano. Explique os desafios da poluição luminosa e as técnicas para adaptar a visão ao escuro.'
                     },
-                    questoes: questoesIniciantes
+                    questoes: selecionarQuestoes(questoesIniciantes, [0, 1, 4, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -2001,7 +2361,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Planejando sua Observação',
                         descricao: 'Com base na Aula 5, crie um pequeno roteiro de observação. O que você procuraria em sua primeira noite?'
                     },
-                    questoes: questoesIniciantes
+                    questoes: selecionarQuestoes(questoesIniciantes, [2, 3, 5, 6, 7, 0])
                 },
                 {
                     id: 6393456,
@@ -2010,7 +2370,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Prática de Orientação',
                         descricao: 'Resolva questões dissertativas sobre como a rotação da Terra afeta o que vemos e quando vemos.'
                     },
-                    questoes: questoesIniciantes
+                    questoes: selecionarQuestoes(questoesIniciantes, [4, 5, 6, 1, 2, 3, 0])
                 },
                 {
                     id: 8354434,
@@ -2019,7 +2379,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 1',
                         descricao: 'Um questionário final (Aula 6) para consolidar todo o aprendizado sobre observação a olho nu, movimentos e constelações.'
                     },
-                    questoes: questoesIniciantes
+                    questoes: selecionarQuestoes(questoesIniciantes, [1, 2, 5, 7])
                 }
             ],
             videoAulas: [
@@ -2088,7 +2448,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: O Sol, Nossa Estrela',
                         descricao: 'Com base na Aula 1, descreva a estrutura básica do Sol e sua influência no Sistema Solar.'
                     },
-                    questoes: questoesSistemaSolar
+                    questoes: selecionarQuestoes(questoesSistemaSolar, [0, 1, 5])
                 },
                 {
                     id: 3514529,
@@ -2097,7 +2457,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Vizinhança Rochosa',
                         descricao: 'Explore os planetas rochosos (Aula 2). Compare as superfícies e atmosferas de Mercúrio, Vênus, Terra e Marte.'
                     },
-                    questoes: questoesSistemaSolar
+                    questoes: selecionarQuestoes(questoesSistemaSolar, [2, 3, 4, 6])
                 },
                 {
                     id: 5679283,
@@ -2106,7 +2466,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Os Gigantes do Sistema',
                         descricao: 'Foco nas Aulas 3 e 4. Descreva as características dos gigantes gasosos (Júpiter, Saturno) e de gelo (Urano, Netuno).'
                     },
-                    questoes: questoesSistemaSolar
+                    questoes: selecionarQuestoes(questoesSistemaSolar, [1, 2, 4, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -2115,7 +2475,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Pequenos Corpos, Grandes Histórias',
                         descricao: 'O que são asteroides e cometas? (Aula 5). Aponte as diferenças observáveis.'
                     },
-                    questoes: questoesSistemaSolar
+                    questoes: selecionarQuestoes(questoesSistemaSolar, [3, 4, 6, 0, 7])
                 },
                 {
                     id: 6393456,
@@ -2124,7 +2484,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Colocando em Escala',
                         descricao: 'Descreva, em escala qualitativa, as diferenças de tamanho e distância entre os corpos do Sistema Solar (Aula 6).'
                     },
-                    questoes: questoesSistemaSolar
+                    questoes: selecionarQuestoes(questoesSistemaSolar, [5, 6, 7, 1, 2, 3, 0])
                 },
                 {
                     id: 8354434,
@@ -2133,7 +2493,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 2',
                         descricao: 'Teste final: Verifique seu conhecimento sobre a ordem, características e escalas do Sistema Solar.'
                     },
-                    questoes: questoesSistemaSolar
+                    questoes: selecionarQuestoes(questoesSistemaSolar, [0, 2, 3, 5])
                 }
             ],
             videoAulas: [
@@ -2202,7 +2562,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Cor e Temperatura Estelar',
                         descricao: 'Explique a relação entre a cor de uma estrela (ex: azul vs. vermelha) e sua temperatura (Aula 1).'
                     },
-                    questoes: questoesEstrelas
+                    questoes: selecionarQuestoes(questoesEstrelas, [0, 2, 4])
                 },
                 {
                     id: 3514529,
@@ -2211,7 +2571,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Magnitude Aparente vs. Realidade',
                         descricao: 'Defina magnitude aparente (Aula 2) e comente por que uma estrela mais brilhante nem sempre é a mais próxima.'
                     },
-                    questoes: questoesEstrelas
+                    questoes: selecionarQuestoes(questoesEstrelas, [1, 3, 5, 6])
                 },
                 {
                     id: 5679283,
@@ -2220,7 +2580,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Navegando com Mapas Celestes',
                         descricao: 'Descreva como usar um planisfério ou app (Aula 3) para localizar uma constelação em uma data específica.'
                     },
-                    questoes: questoesEstrelas
+                    questoes: selecionarQuestoes(questoesEstrelas, [0, 1, 4, 5])
                 },
                 {
                     id: 2567356,
@@ -2229,7 +2589,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: O Céu de Cada Estação',
                         descricao: 'Cite constelações visíveis em diferentes estações (Aula 4) e como identificá-las.'
                     },
-                    questoes: questoesEstrelas
+                    questoes: selecionarQuestoes(questoesEstrelas, [2, 3, 6, 0, 5])
                 },
                 {
                     id: 6393456,
@@ -2238,7 +2598,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Guia de Observação Inicial',
                         descricao: 'Liste alguns dos objetos fáceis (Aula 5) para iniciantes e o que esperar ver.'
                     },
-                    questoes: questoesEstrelas
+                    questoes: selecionarQuestoes(questoesEstrelas, [4, 5, 6, 1, 0, 2])
                 },
                 {
                     id: 8354434,
@@ -2247,7 +2607,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 3',
                         descricao: 'Consolide seu conhecimento (Aula 6) sobre como ler o céu e entender as propriedades básicas das estrelas.'
                     },
-                    questoes: questoesEstrelas
+                    questoes: selecionarQuestoes(questoesEstrelas, [0, 1, 2, 3, 4, 5, 6])
                 }
             ],
             videoAulas: [
@@ -2316,7 +2676,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: Escolhendo seu Instrumento',
                         descricao: 'Compare telescópios refratores e refletores (Aula 1), listando vantagens e desvantagens para iniciantes.'
                     },
-                    questoes: questoesTelescopios
+                    questoes: selecionarQuestoes(questoesTelescopios, [0, 2, 5])
                 },
                 {
                     id: 3514529,
@@ -2325,7 +2685,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: O Mito do "Aumento Infinito"',
                         descricao: 'O que é aumento útil (Aula 2)? Por que "mais aumento" nem sempre é melhor?'
                     },
-                    questoes: questoesTelescopios
+                    questoes: selecionarQuestoes(questoesTelescopios, [1, 3, 6, 7])
                 },
                 {
                     id: 5679283,
@@ -2334,7 +2694,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Montagem e Alinhamento',
                         descricao: 'Descreva os princípios básicos das montagens azimutal e equatorial e a importância do alinhamento (Aulas 3 e 4).'
                     },
-                    questoes: questoesTelescopios
+                    questoes: selecionarQuestoes(questoesTelescopios, [0, 1, 4, 5, 7])
                 },
                 {
                     id: 2567356,
@@ -2343,7 +2703,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Observação Solar: Segurança Primeiro!',
                         descricao: 'Descreva DUAS boas práticas de segurança ao observar o Sol (Aula 5) e por que são essenciais.'
                     },
-                    questoes: questoesTelescopios
+                    questoes: selecionarQuestoes(questoesTelescopios, [2, 3, 5, 6, 7, 0])
                 },
                 {
                     id: 6393456,
@@ -2352,7 +2712,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Acessórios: Oculares e Filtros',
                         descricao: 'Explique o papel das oculares e filtros para realçar o contraste e garantir a segurança.'
                     },
-                    questoes: questoesTelescopios
+                    questoes: selecionarQuestoes(questoesTelescopios, [4, 5, 6, 1, 2, 3, 7])
                 },
                 {
                     id: 8354434,
@@ -2361,7 +2721,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 4',
                         descricao: 'Prepare seu checklist para a primeira sessão prática com um telescópio (Aula 6).'
                     },
-                    questoes: questoesTelescopios
+                    questoes: selecionarQuestoes(questoesTelescopios, [0, 3, 4, 6])
                 }
             ],
             videoAulas: [
@@ -2430,7 +2790,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: As Faces da Lua',
                         descricao: 'Explique por que a Lua tem fases, baseando-se na geometria Sol-Terra-Lua (Aula 1).'
                     },
-                    questoes: questoesFenomenos
+                    questoes: selecionarQuestoes(questoesFenomenos, [0, 1, 5])
                 },
                 {
                     id: 3514529,
@@ -2439,7 +2799,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: Quando a Sombra Cobre o Céu',
                         descricao: 'Por que não ocorrem eclipses solares e lunares todos os meses? (Aula 2). Diferencie um eclipse total de um anular.'
                     },
-                    questoes: questoesFenomenos
+                    questoes: selecionarQuestoes(questoesFenomenos, [2, 3, 6, 4])
                 },
                 {
                     id: 5679283,
@@ -2448,7 +2808,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: Planejando uma Chuva de Meteoros',
                         descricao: 'Como se planejar para observar uma chuva de meteoros (Aula 3)? Considere horário, direção e condições.'
                     },
-                    questoes: questoesFenomenos
+                    questoes: selecionarQuestoes(questoesFenomenos, [0, 2, 4, 5, 6])
                 },
                 {
                     id: 2567356,
@@ -2457,7 +2817,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Encontros Cósmicos',
                         descricao: 'O que são conjunções e ocultações? (Aula 4). Como elas diferem de eclipses?'
                     },
-                    questoes: questoesFenomenos
+                    questoes: selecionarQuestoes(questoesFenomenos, [1, 3, 4, 6, 0, 2])
                 },
                 {
                     id: 6393456,
@@ -2466,7 +2826,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Usando Calendários Astronômicos',
                         descricao: 'Pratique o uso de efemérides (Aula 5) para prever o próximo fenômeno visível em sua região.'
                     },
-                    questoes: questoesFenomenos
+                    questoes: selecionarQuestoes(questoesFenomenos, [4, 5, 6, 1, 2, 3, 0])
                 },
                 {
                     id: 8354434,
@@ -2475,7 +2835,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 5',
                         descricao: 'Teste seu conhecimento (Aula 6) sobre os principais fenômenos celestes e sua previsibilidade.'
                     },
-                    questoes: questoesFenomenos
+                    questoes: selecionarQuestoes(questoesFenomenos, [0, 3, 5, 6])
                 }
             ],
             videoAulas: [
@@ -2544,7 +2904,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 1: O Berçário Estelar',
                         descricao: 'Resuma como estrelas nascem a partir de nuvens de gás e poeira (Aula 1).'
                     },
-                    questoes: questoesCicloEstelar
+                    questoes: selecionarQuestoes(questoesCicloEstelar, [0, 2, 4, 7])
                 },
                 {
                     id: 3514529,
@@ -2553,7 +2913,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 2: A Longa Vida na Sequência Principal',
                         descricao: 'O que define a sequência principal? (Aula 2). Por que estrelas como o Sol são estáveis por bilhões de anos?'
                     },
-                    questoes: questoesCicloEstelar
+                    questoes: selecionarQuestoes(questoesCicloEstelar, [1, 3, 5])
                 },
                 {
                     id: 5679283,
@@ -2562,7 +2922,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 3: O Fim das Estrelas como o Sol',
                         descricao: 'Descreva o que é uma nebulosa planetária e uma anã branca (Aula 3).'
                     },
-                    questoes: questoesCicloEstelar
+                    questoes: selecionarQuestoes(questoesCicloEstelar, [0, 1, 4, 5, 6])
                 },
                 {
                     id: 2567356,
@@ -2571,7 +2931,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 4: Morte Explosiva: Supernovas',
                         descricao: 'Explique por que estrelas massivas têm vidas curtas e estão associadas a supernovas (Aula 4).'
                     },
-                    questoes: questoesCicloEstelar
+                    questoes: selecionarQuestoes(questoesCicloEstelar, [2, 3, 6, 7, 0])
                 },
                 {
                     id: 6393456,
@@ -2580,7 +2940,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 5: Vendo o Ciclo no Céu',
                         descricao: 'Cite exemplos de objetos no céu (Aula 5) que ilustram diferentes estágios da vida estelar (ex: Nebulosa de Órion, Pleiades, etc.).'
                     },
-                    questoes: questoesCicloEstelar
+                    questoes: selecionarQuestoes(questoesCicloEstelar, [4, 5, 6, 7, 1, 2, 0])
                 },
                 {
                     id: 8354434,
@@ -2589,7 +2949,7 @@ export const initial_cursos = {
                         titulo: 'Atividade 6: Revisão do Módulo 6',
                         descricao: 'Consolide o panorama geral do ciclo de vida estelar (Aula 6).'
                     },
-                    questoes: questoesCicloEstelar
+                    questoes: selecionarQuestoes(questoesCicloEstelar, [3, 5, 7, 2, 0, 4])
                 }
             ],
             videoAulas: [
