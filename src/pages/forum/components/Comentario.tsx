@@ -4,7 +4,6 @@ import { initial_comentarios } from "./comentariosDados"
 
 export function Comentario() {
   const [comentarios, setComentarios] = useState(initial_comentarios)
-  const [comentar, setComentar] = useState('')
 
   const handleDelete = (id: number) => {
     setComentarios(prev => prev.filter(c => c.idComentario !== id))
@@ -18,26 +17,6 @@ export function Comentario() {
     )
   }
 
-  const adicionarComentario = () => {
-    if (comentar.trim() === '') return
-
-    const novoComentario = {
-      idComentario: comentarios.length + 1,
-      temaPergunta: "Nova pergunta", // ou algum valor padrão/editável
-      nomeUsuario: "Luiz", // pode ser dinâmico
-      dataHora: new Date().toLocaleString(),
-      conteudoComentario: comentar,
-      numeroAvaliacao: "0",
-      avaliacaoDoUsuario: "",
-  fotoPerfil: "/img/users/kurbie.jpg",
-      arrayRespostas: [],
-      contagem: false
-    }
-
-    setComentarios(prev => [...prev, novoComentario])
-    setComentar('')
-  }
-
   return (
     <>
       {comentarios.map(comentario => (
@@ -48,24 +27,6 @@ export function Comentario() {
           onEdit={handleEdit}
         />
       ))}
-
-      <div className="forum-imput-comentar">
-        <textarea
-          value={comentar}
-          maxLength={400}
-          placeholder="Escreva um novo comentário..."
-          onChange={e => setComentar(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault()
-              adicionarComentario()
-            }
-          }}
-        />
-        <button onClick={adicionarComentario}>
-          <img src="/icons/submit.svg" alt="Enviar comentário" />
-        </button>
-      </div>
     </>
   )
 }

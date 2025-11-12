@@ -1,187 +1,220 @@
+/* Comentario.css - Estilos atualizados para corresponder à imagem */
 .frm-comentario {
-    width: 1500px;
-    background-color: #454545;
+    width: 800px; /* Ajustado para uma largura mais próxima da imagem */
     overflow: hidden;
-    border-radius: 10px;
     display: flex;
+    flex-direction: column;
     justify-self: center;
     padding: 0;
-    margin-bottom: 100px;
+    margin-bottom: 30px;
     transition: all 0.5s;
+    border-radius: 0 !important;
 }
 
-.frm-comentario-lateral-esquerda .frm-comentario-foto-perfil {
-    width: 65px;
-    height: 65px;
+/* Topo do comentário - informações do usuário e botões de ação */
+.frm-comentario-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.frm-comentario-info-usuario {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.frm-comentario-foto-perfil {
+    width: 45px; /* Tamanho da foto de perfil */
+    height: 45px;
     border-radius: 50%;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.frm-comentario-detalhes-usuario h3 {
+    color: #FFFFFF;
+    font-family: "Inter", sans-serif;
+    font-size: 16px; /* Fonte menor para o nome */
+    font-weight: 500;
     margin: 0;
-    padding: 0;
-    cursor: pointer;
 }
 
-.frm-comentario-lateral-esquerda {
-    width: 100px;
-    min-height: 400px;
-    max-height: calc(100% - (30px * 2));
-    background-color: #363636;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 0;
-}
-
-.frm-comentario img {
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.outroUsuario {
-    display: none;
-    opacity: 0;
-    visibility: hidden;
-}
-
-.frm-comentario-lateral-esquerda div {
-    width: 65px;
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    gap: 15px;
-}
-
-.frm-comentario-lateral-esquerda div p {
-    color: #D390FF;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 400;
-
+.frm-comentario-detalhes-usuario span {
+    color: #A4A4A4;
     font-family: "Inter", sans-serif;
+    font-size: 12px; /* Fonte menor para a data */
 }
 
-.frm-comentario-lateral-esquerda nav {
+/* Botões de ação no cabeçalho */
+.frm-comentario-topo .frm-comentario-botao-acao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.frm-comentario-topo .frm-comentario-botao-acao img {
+    width: 30px; /* Tamanho dos ícones */
+    height: 30px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.frm-comentario-topo .frm-comentario-botao-acao:hover img {
+    opacity: 1;
+}
+
+/* Tags */
+.frm-comentario-tags {
     display: flex;
-    flex-direction: column;
-    position: absolute;
-    bottom: 30px;
-    gap: 20px;
+    gap: 8px;
+    padding: 0 0 15px; /* Espaçamento das tags */
 }
 
-
-.frm-comentario-lateral-direita {
-    width: 100%;
-    min-height: 420px;
-    padding: 40px 0 0 0;
-    position: relative;
+.frm-comentario-tag {
+    padding: 4px 12px;
+    background-color: #4A2E5D; /* Cor da tag 'Dúvida' */
+    color: #E1C9FF; /* Cor do texto da tag */
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
 }
 
+.frm-comentario-tag:nth-child(2) {
+    background-color: #6A2573; /* Cor da tag 'Universo' */
+}
+
+.frm-comentario-tag:nth-child(3) {
+    background-color: #BCA0EA; /* Cor da tag 'Observação' */
+    color: #3A2D4C;
+}
+
+/* Título do comentário */
 .frm-comentario-titulo {
-    width: calc(100% - (50px * 2));
-    padding: 0 50px;
+    padding: 0 0 15px;
 }
 
-.frm-comentario-titulo h3 {
+.frm-comentario-titulo h2 {
+    color: #FFFFFF;
+    font-family: "Inter", sans-serif;
+    font-size: 24px; /* Tamanho do título */
     font-weight: 700;
-    font-size: 24px;
-    color: #ffffff;
-
-    font-family: "Inter", sans-serif;
+    margin: 0;
 }
 
-.frm-comentario-titulo h4 {
-    font-weight: 400;
-    font-size: 20px;
-    color: #a4a4a4;
+/* Imagem do comentário */
+.frm-comentario-imagem {
+    padding: 0 0 20px; /* Espaçamento da imagem */
+}
 
-    font-family: "Inter", sans-serif;
+.frm-comentario-imagem img {
+    max-width: 100%;
+}
+
+/* Conteúdo do comentário */
+.frm-comentario-conteudo-container {
+    padding: 0 0 20px;
 }
 
 .frm-comentario-conteudo {
-    width: calc(100% - (50px * 2));
-    padding: 40px 50px 200px 50px;
     white-space: pre-wrap;
     word-break: break-word;
-
-    font-weight: 300;
-    font-size: 24px;
+    font-weight: 400; /* Peso da fonte do parágrafo */
+    font-size: 16px; /* Tamanho da fonte do parágrafo */
     text-align: justify;
-    color: #FFFFFF;
-
+    color: #DCDCDC; /* Cor do texto do parágrafo */
     font-family: "Inter", sans-serif;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.frm-comentario-conteudo-editar {
+    margin-bottom: 15px;
 }
 
 .frm-comentario-conteudo-editar-input {
     width: 100%;
-    height: 300px;
+    height: 150px;
     box-sizing: border-box;
-    background-color: rgba(240, 248, 255, 0);
-
-    font-weight: 300;
-    font-size: 24px;
+    background-color: #252525;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 10px;
+    font-weight: 400;
+    font-size: 16px;
     text-align: justify;
-    color: #FFFFFF;
-
+    color: #DCDCDC;
     font-family: "Inter", sans-serif;
+    resize: vertical;
 }
 
-.frm-comentario-conteudo-editar {
-    width: calc(100% - (50px * 2));
-    padding: 40px 50px 200px 50px;
-    border: none;
-}
-
-.frm-comentario-baixo {
-    width: 100%;
-    padding: 30px 0;
-    display: flex;
-    background-color: #555555;
-    flex-direction: row-reverse;
-    position: absolute;
-    gap: 80px;
-    bottom: 0;
-}
-
-.frm-comentario-baixo div {
+/* Área de interação */
+.frm-comentario-interacao {
     display: flex;
     align-items: center;
-
-    font-weight: 400;
-    font-size: 24px;
-    color: #A4A4A4;
-
-    font-family: "Inter", sans-serif;
+    gap: 20px; /* Espaço entre os grupos de interação */
+    padding: 15px 0;
 }
 
-.frm-comentario-baixo button {
+.frm-comentario-avaliacao,
+.frm-comentario-respostas-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.frm-comentario-botao-avaliacao,
+.frm-comentario-botao-respostas {
+    background: none;
     border: none;
-    background-color: #555555;
-    padding: 10px 40px;
-    border-radius: 5px;
-    margin-right: 30px;
-    transition: all 0.2s;
     cursor: pointer;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    background-color: #363636;
+    transition: all 0.2s;
+    gap: 8px;
+}
 
-    font-weight: 400;
-    font-size: 24px;
-    color: #D390FF;
+.frm-comentario-botao-avaliacao:hover,
+.frm-comentario-botao-respostas:hover {
+    background-color: #4A4A4A;
+}
 
+.frm-comentario-botao-avaliacao img,
+.frm-comentario-botao-respostas img {
+    width: 22px;
+    height: 22px;
+    opacity: 0.8;
+}
+
+.frm-comentario-numero-avaliacao,
+.frm-comentario-numero-respostas {
+    color: #A4A4A4;
     font-family: "Inter", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
 }
 
-.frm-comentario-baixo button:hover {
-    background-color: #454545;
+/* Remove o botão de ação duplicado da parte inferior */
+.frm-comentario-interacao .frm-comentario-botao-acao {
+    display: none;
 }
 
-.frm-comentario-baixo button:active {
-    background-color: #2c2c2c;
+/* Linha divisória final */
+.frm-comentario-divisor {
+    border: none;
+    background-color: #DCDCDC;
+    height: 2px;
+    width: 100%;
 }
 
-
+/* Estilos para respostas (mantidos, mas podem precisar de ajuste) */
 .ver-respostas-form-esconder {
     overflow: hidden;
     height: 0;
@@ -191,7 +224,7 @@
 }
 
 .ver-respostas-form {
-    width: calc(1500px - (50px * 2));
+    width: calc(800px - (50px * 2)); /* Ajustado para a nova largura */
     background-color: #363636;
     overflow: hidden;
     border-radius: 0 0 10px 10px;
@@ -208,11 +241,9 @@
     border: 2px solid #A4A4A4;
     border-radius: 7px;
     padding: 20px 20px 0 20px;
-
     font-weight: 400;
     font-size: 32px;
     color: #e7e7e7;
-
     font-family: 'Inter';
 }
 
@@ -251,56 +282,4 @@
     opacity: 0;
     transition: all 1s;
     margin-bottom: 100px;
-}
-
-.forum-imput-comentar {
-    position: fixed;
-    bottom: 50px;
-    align-self: center;
-    background-color: #303030;
-    padding: 25px;
-    border: 3px solid #1d1d1d;
-    display: flex;
-    gap: 25px;
-}
-
-.forum-imput-comentar textarea {
-    width: 900px;
-    height: 130px;
-    background-color: #555555;
-    border: 2px solid #A4A4A4;
-    padding: 20px 20px 0 20px;
-
-    font-family: 'Questrial';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 25px;
-    text-align: justify;
-
-    color: #F8EFFF;
-
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.forum-imput-comentar button {
-    width: 75px;
-    height: 75px;
-    background-color: #555555;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 7px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.forum-imput-comentar button img {
-    width: 70%;
-    height: 70%;
-    transform: rotateZ(-40deg);
-    margin-top: -10%;
-    margin-right: -5%;
 }
