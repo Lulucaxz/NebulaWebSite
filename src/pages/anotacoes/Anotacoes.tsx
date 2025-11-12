@@ -190,8 +190,10 @@ function Anotacoes2() {
     <>
       <Menu />
       {carregando ? (
-        <div style={{ color: 'white', textAlign: 'center', paddingTop: '100px', fontSize: '24px' }}>
-          Carregando anotações...
+        <div className="anotacoes-loading">
+          <div className="anotacoes-loading__spinner" role="status" aria-live="polite">
+            <span className="anotacoes-loading__sr-only">Carregando anotações</span>
+          </div>
         </div>
       ) : (
         <AnotacoesColunas

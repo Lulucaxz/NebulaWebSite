@@ -1,31 +1,91 @@
 import "./rank.css";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
 import UsuarioRank from "./usuarioRank";
 import axios from "axios";
 
+type RankUsuario = {
+  id: number;
+  username: string;
+  user: string;
+  icon: string;
+  pontos: number;
+  colocacao: number | string;
+};
+
+type UsuarioLogado = {
+  id: number;
+  username: string;
+  user: string;
+  icon: string;
+  pontos: number;
+  colocacao?: number | string;
+};
+
+type RankEntry = RankUsuario & { posicao: number };
+
 export function Rank() {
   const { t } = useTranslation();
   const [pesquisa, setPesquisa] = useState("");
-  const [usuarios, setUsuarios] = useState<any[]>([]);
-  const [usuarioLogado, setUsuarioLogado] = useState<string>("");
+  const [usuarios, setUsuarios] = useState<RankUsuario[]>([]);
+  const [usuarioLogado, setUsuarioLogado] = useState<UsuarioLogado | null>(null);
 
   useEffect(() => {
-    // Busca ranking
-    axios.get("http://localhost:4000/api/rank")
+    axios.get<RankUsuario[]>("http://localhost:4000/api/rank")
       .then(res => setUsuarios(res.data))
       .catch(() => setUsuarios([]));
-    // Busca usuário logado
-    axios.get("http://localhost:4000/auth/me", { withCredentials: true })
-      .then(res => setUsuarioLogado(res.data.user))
-      .catch(() => setUsuarioLogado(""));
+
+    axios.get<UsuarioLogado>("http://localhost:4000/auth/me", { withCredentials: true })
+      .then(res => setUsuarioLogado(res.data))
+      .catch(() => setUsuarioLogado(null));
   }, []);
 
-  const usuariosFiltrados = usuarios.filter((usuario) =>
-    usuario.user.toLowerCase().includes(pesquisa.toLowerCase()) ||
-    usuario.username.toLowerCase().includes(pesquisa.toLowerCase())
-  );
+  const listaCompleta = useMemo(() => {
+    const normalizados: RankEntry[] = usuarios.map((usuario, idx) => ({
+      ...usuario,
+      posicao: Number(usuario.colocacao ?? idx + 1) || idx + 1,
+    }));
+
+    if (!usuarioLogado) {
+      return normalizados;
+    }
+
+    const jaListada = normalizados.some((usuario) => usuario.user === usuarioLogado.user);
+    if (jaListada) {
+      return normalizados;
+    }
+
+    const posicaoLogadoRaw = Number(usuarioLogado.colocacao);
+    const posicaoLogado = Number.isFinite(posicaoLogadoRaw) && posicaoLogadoRaw > 0
+      ? posicaoLogadoRaw
+      : normalizados.length + 1;
+
+    return [
+      ...normalizados,
+      {
+        id: usuarioLogado.id,
+        username: usuarioLogado.username,
+        user: usuarioLogado.user,
+        icon: usuarioLogado.icon,
+        pontos: usuarioLogado.pontos,
+        colocacao: posicaoLogado,
+        posicao: posicaoLogado,
+      },
+    ].sort((a, b) => a.posicao - b.posicao);
+  }, [usuarios, usuarioLogado]);
+
+  const usuariosFiltrados = useMemo(() => {
+    const termo = pesquisa.trim().toLowerCase();
+    if (!termo) {
+      return listaCompleta;
+    }
+
+    return listaCompleta.filter((usuario) =>
+      usuario.user.toLowerCase().includes(termo) ||
+      usuario.username.toLowerCase().includes(termo)
+    );
+  }, [listaCompleta, pesquisa]);
 
   return (
     <>
@@ -55,18 +115,18 @@ export function Rank() {
 
       <div className="prf-container-rank">
         {usuariosFiltrados.length > 0 ? (
-          usuariosFiltrados.map((user, idx) => (
+          usuariosFiltrados.map((user) => (
             <div
               key={user.id}
               className={
-                user.user === usuarioLogado ? "prf-sticky-user" : ""
+                usuarioLogado && user.user === usuarioLogado.user ? "prf-sticky-user" : ""
               }
             >
               <UsuarioRank
                 fotoRank={user.icon}
                 nomeRank={user.username}
                 pontosRank={user.pontos}
-                posicaoRank={(idx + 1).toString()}
+                posicaoRank={user.posicao.toString()}
               />
             </div>
           ))

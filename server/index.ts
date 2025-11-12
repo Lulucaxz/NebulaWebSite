@@ -40,6 +40,33 @@ type AuthenticatedRequest = Request & { isAuthenticated?: () => boolean; user?: 
 
 interface UsuarioRow extends RowDataPacket { id: number; senha?: string; [key: string]: unknown }
 
+const recalculateRankingQuery = `
+  UPDATE usuario u
+  JOIN (
+    SELECT id, ROW_NUMBER() OVER (ORDER BY pontos DESC, id ASC) AS posicao
+    FROM usuario
+  ) ranked ON ranked.id = u.id
+  SET u.colocacao = ranked.posicao
+`;
+
+const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
+
+const uploadBufferToCloudinary = (fileBuffer: Buffer, folder: string) => {
+  return new Promise<string>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error || !result) {
+          reject(error || new Error("Upload falhou"));
+          return;
+        }
+        resolve(result.secure_url);
+      }
+    );
+    uploadStream.end(fileBuffer);
+  });
+};
+
 
 
 
@@ -101,14 +128,15 @@ passport.use(new GoogleStrategy({
 
     // Cria novo usuário
     const [result] = await pool.query<ResultSetHeader>(
-      `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
+      `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
         progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, seguidores, seguindo, provider)
-       VALUES (?, ?, 0, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 0, 0, 'google')`,
+       VALUES (?, ?, 0, ?, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 0, 0, 'google')`,
       [
         profile.displayName,
         `@${profile.displayName.replace(/\s/g, '')}${Date.now()}`,
         0,
-        photo || "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png",
+  photo || "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png",
+  DEFAULT_BANNER,
         "...",
         email
       ]
@@ -163,13 +191,39 @@ app.get('/auth/me', asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE id = ?", [authReq.user.id]);
+  const connection = await pool.getConnection();
+  let userRow: RowDataPacket | null = null;
 
-  if (rows.length === 0) {
-    return res.status(404).json({ error: "Usuário não encontrado" });
+  try {
+    await connection.beginTransaction();
+
+    await connection.query(recalculateRankingQuery);
+
+    const [rows] = await connection.query<RowDataPacket[]>(
+      "SELECT * FROM usuario WHERE id = ?",
+      [authReq.user.id]
+    );
+
+    if (rows.length === 0) {
+      await connection.rollback();
+      res.status(404).json({ error: "Usuário não encontrado" });
+      return;
+    }
+
+    userRow = rows[0];
+    await connection.commit();
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
   }
 
-  res.json(rows[0]);
+  if (!userRow) {
+    return;
+  }
+
+  res.json(userRow);
 }));
 
 // Logout
@@ -209,10 +263,18 @@ app.post('/auth/register', asyncHandler(async (req: Request, res: Response) => {
 
   try {
     await pool.query<ResultSetHeader>(
-      `INSERT INTO usuario (username, user, pontos, colocacao, icon, biografia,
+      `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
         progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
-       VALUES (?, ?, 0, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','local', 0, 0)`,
-      [name, userTag, nextColocacao, "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png", email, hashedPassword]
+       VALUES (?, ?, 0, ?, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','local', 0, 0)`,
+      [
+        name,
+        userTag,
+        nextColocacao,
+  "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png",
+  DEFAULT_BANNER,
+        email,
+        hashedPassword
+      ]
     );
     res.status(201).json({ message: 'Usuário registrado com sucesso' });
   } catch (err) {
@@ -253,7 +315,10 @@ app.post('/auth/login', asyncHandler(async (req: Request, res: Response) => {
 
 app.put(
   "/auth/update",
-  upload.single("photo"),
+  upload.fields([
+    { name: "photo", maxCount: 1 },
+    { name: "banner", maxCount: 1 }
+  ]),
   asyncHandler(async (req: Request, res: Response) => {
     const authReq = req as AuthenticatedRequest;
     if (!authReq.isAuthenticated || !authReq.isAuthenticated() || !authReq.user) {
@@ -261,26 +326,31 @@ app.put(
       return;
     }
 
-    const { name, bio, idUser, curso, idioma, tema, progresso1, progresso2, progresso3 } = req.body;
-    const photoFile = req.file;
+  const { name, bio, idUser, curso, idioma, tema, progresso1, progresso2, progresso3, bannerUrl: bannerBodyUrl } = req.body;
+  const files = req.files as Record<string, Array<{ buffer: Buffer }>> | undefined;
+    const photoFile = files?.photo?.[0];
+    const bannerFile = files?.banner?.[0];
     const userId = authReq.user.id;
 
     let photoUrl: string | undefined;
     if (photoFile) {
-      const uploadToCloudinary = (fileBuffer: Buffer) => {
-        return new Promise<string>((resolve, reject) => {
-          const uploadStream = cloudinary.uploader.upload_stream(
-            { folder: "NEBULA_PFP_IMGS" },
-            (error, result) => {
-              if (error || !result) return reject(error || new Error("Upload falhou"));
-              resolve(result.secure_url);
-            }
-          );
-          uploadStream.end(fileBuffer);
-        });
-      };
       try {
-        photoUrl = await uploadToCloudinary(photoFile.buffer);
+        photoUrl = await uploadBufferToCloudinary(photoFile.buffer, "NEBULA_PFP_IMGS");
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro no upload do Cloudinary" });
+        return;
+      }
+    }
+
+    const normalizedBannerBodyUrl =
+      typeof bannerBodyUrl === "string" && bannerBodyUrl.trim().length > 0
+        ? bannerBodyUrl.trim()
+        : undefined;
+    let bannerUrl: string | undefined = normalizedBannerBodyUrl;
+    if (bannerFile) {
+      try {
+        bannerUrl = await uploadBufferToCloudinary(bannerFile.buffer, "NEBULA_BANNER_IMGS");
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Erro no upload do Cloudinary" });
@@ -330,6 +400,10 @@ app.put(
     if (photoUrl) {
       fields.push("icon = ?");
       values.push(photoUrl);
+    }
+    if (bannerUrl) {
+      fields.push("banner = ?");
+      values.push(bannerUrl);
     }
 
     if (fields.length === 0) {

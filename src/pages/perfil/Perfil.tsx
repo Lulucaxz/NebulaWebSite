@@ -15,8 +15,9 @@ type User = {
   name: string;
   bio: string;
   prf_user: string;
-  rank: number;
+  colocacao: number | string;
   photo: string;
+  banner: string;
   curso: string;
   idioma: string;
   tema: string;
@@ -25,9 +26,11 @@ type User = {
   progresso3: number;
 };
 
+const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
+
 function Perfil() {
   const { t } = useTranslation();
-  const [user, setUser] = useState<User | null>(null);
+  const [, setUser] = useState<User | null>(null);
   const [mostrarEditor, setMostrarEditor] = useState(false);
   const [loading, setLoading] = useState(true); // Adicionado para controle de carregamento
 
@@ -35,11 +38,12 @@ function Perfil() {
   const [nome, setNome] = useState("");
   const [biografia, setBiografia] = useState("");
   const [usuario, setUsuario] = useState("");
-  const [rank, setRank] = useState("0025");
+  const [rank, setRank] = useState<number | null>(null);
   const [fotoUrl, setFotoUrl] = useState("");
-  const [curso, setCurso] = useState("");
-  const [idioma, setIdioma] = useState("");
-  const [tema, setTema] = useState("");
+  const [bannerUrl, setBannerUrl] = useState(DEFAULT_BANNER);
+  const [, setCurso] = useState("");
+  const [, setIdioma] = useState("");
+  const [, setTema] = useState("");
   const [progresso1, setProgresso1] = useState(0);
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
@@ -53,9 +57,13 @@ function Perfil() {
   const [fotoPreview, setFotoPreview] = useState<string>("");
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImageSrc, setCropImageSrc] = useState<string>("");
+  const [bannerEditada, setBannerEditada] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
+  const [bannerResetToDefault, setBannerResetToDefault] = useState(false);
 
   // Para controlar o objeto URL e liberar memória depois
   const fotoPreviewUrlRef = useRef<string | null>(null);
+  const bannerPreviewUrlRef = useRef<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -68,9 +76,11 @@ function Perfil() {
         setUser(userData);
         setNome(userData.username);
         setBiografia(userData.biografia || "");
-        setUsuario(userData.user);
-        setRank(userData.colocacao);
-        setFotoUrl(userData.icon);
+    setUsuario(userData.user);
+    const colocacaoNumerica = Number(userData.colocacao);
+    setRank(Number.isFinite(colocacaoNumerica) ? colocacaoNumerica : null);
+  setFotoUrl(userData.icon);
+  setBannerUrl(userData.banner || DEFAULT_BANNER);
         setCurso(userData.curso || "");
         setIdioma(userData.idioma || "");
         setTema(userData.tema || "");
@@ -85,6 +95,26 @@ function Perfil() {
       });
   }, [navigate]);
 
+  useEffect(() => {
+    if (!mostrarEditor) {
+      if (bannerPreviewUrlRef.current) {
+        URL.revokeObjectURL(bannerPreviewUrlRef.current);
+        bannerPreviewUrlRef.current = null;
+      }
+      setBannerPreview("");
+      setBannerEditada(null);
+      setBannerResetToDefault(false);
+    }
+  }, [mostrarEditor]);
+
+  useEffect(() => {
+    return () => {
+      if (bannerPreviewUrlRef.current) {
+        URL.revokeObjectURL(bannerPreviewUrlRef.current);
+      }
+    };
+  }, []);
+
   const salvarEdicao = () => {
     setMostrarEditor(false);
     const formData = new FormData();
@@ -93,6 +123,11 @@ function Perfil() {
     formData.append("idUser", usuario);
     if (fotoEditada) {
       formData.append("photo", fotoEditada);
+    }
+    if (bannerEditada) {
+      formData.append("banner", bannerEditada);
+    } else if (bannerResetToDefault) {
+  formData.append("bannerUrl", DEFAULT_BANNER);
     }
 
     axios
@@ -122,6 +157,20 @@ function Perfil() {
     }
   };
 
+  const onBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (bannerPreviewUrlRef.current) {
+        URL.revokeObjectURL(bannerPreviewUrlRef.current);
+      }
+      const previewUrl = URL.createObjectURL(file);
+      bannerPreviewUrlRef.current = previewUrl;
+      setBannerPreview(previewUrl);
+      setBannerEditada(file);
+      setBannerResetToDefault(false);
+    }
+  };
+
   // Callback para receber a imagem croppada
   const handleCropComplete = (croppedBlob: Blob) => {
     setCropModalOpen(false);
@@ -135,9 +184,21 @@ function Perfil() {
     setFotoEditada(new File([croppedBlob], "profile.jpg", { type: "image/jpeg" }));
   };
 
+  const handleBannerReset = () => {
+    if (bannerPreviewUrlRef.current) {
+      URL.revokeObjectURL(bannerPreviewUrlRef.current);
+      bannerPreviewUrlRef.current = null;
+    }
+  setBannerPreview(DEFAULT_BANNER);
+    setBannerEditada(null);
+    setBannerResetToDefault(true);
+  };
+
   if (loading) {
     return <div style={{ background: '#070209', width: '100vw', height: '100vh' }}></div>; // Ou um spinner
   }
+
+  const bannerDisplay = bannerPreview || bannerUrl || DEFAULT_BANNER;
 
   return (
     <div className="container">
@@ -145,7 +206,7 @@ function Perfil() {
         <Menu />
 
         <div id="prf-containerAll">
-          <div className="prf-banner"></div>
+          <div className="prf-banner" style={{ backgroundImage: `url(${bannerDisplay})` }}></div>
 
           <div className="prf-usuario-barra">
             <div className="prf-container">
@@ -160,7 +221,7 @@ function Perfil() {
                     <span>{usuario}</span>
                   </div>
                   <div className="prf-rank">
-                    <span>#{rank}</span>
+                    <span>{rank !== null ? `#${rank}` : '#-'}</span>
                   </div>
                 </div>
               </div>
@@ -230,6 +291,32 @@ function Perfil() {
                           />
                         </div>
                       )}
+                      <div className="prf-add-imagem">
+                        <label htmlFor="prf-editar-banner">
+                          {t('ESCOLHA UM BANNER')}
+                        </label>
+                        <input
+                          id="prf-editar-banner"
+                          hidden
+                          type="file"
+                          accept="image/*"
+                          onChange={onBannerChange}
+                        />
+                      </div>
+                      <div className="prf-preview-banner">
+                        <img
+                          src={bannerPreview || bannerUrl || DEFAULT_BANNER}
+                          alt={t('Prévia da imagem')}
+                          className="prf-preview-banner-img"
+                        />
+                        <button
+                          type="button"
+                          className="prf-banner-reset"
+                          onClick={handleBannerReset}
+                        >
+                          {t('USAR BANNER PADRÃO')}
+                        </button>
+                      </div>
                       {cropModalOpen && (
                         <CropImageModal
                           imageSrc={cropImageSrc}
