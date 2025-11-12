@@ -158,13 +158,11 @@ function Perfil() {
                 <div className="prf-nome-usuario">
                   <span>{nome}</span>
                 </div>
-                <div className="prf-usuario-rank">
-                  <div className="prf-usuario">
-                    <span>{usuario}</span>
-                  </div>
-                  <div className="prf-rank">
-                    <span>#{rank}</span>
-                  </div>
+                <div className="prf-usuario">
+                  <span>{usuario}</span>
+                </div>
+                <div className="prf-rank">
+                  <span>#{rank}</span>
                 </div>
               </div>
 
