@@ -1,7 +1,7 @@
 import "./perfil.css";
 import "../../index.css";
 import { useEffect, useState, useRef } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { CropImageModal } from "./CropImageModal";
 import { Menu } from "../../components/Menu";
 import { Rank } from "./components/rank";
@@ -9,7 +9,6 @@ import { BarraDeProgresso } from "./components/barraProgresso";
 import Footer from "../../components/footer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 
 type User = {
   name: string;
@@ -44,7 +43,6 @@ function Perfil() {
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
 
-
   // Estados para edição
   const [nomeEditado, setNomeEditado] = useState("");
   const [bioEditada, setBioEditada] = useState("");
@@ -58,7 +56,6 @@ function Perfil() {
   const fotoPreviewUrlRef = useRef<string | null>(null);
 
   const navigate = useNavigate();
-
 
   useEffect(() => {
     axios
@@ -132,11 +129,17 @@ function Perfil() {
     }
     fotoPreviewUrlRef.current = previewUrl;
     setFotoPreview(previewUrl);
-    setFotoEditada(new File([croppedBlob], "profile.jpg", { type: "image/jpeg" }));
+    setFotoEditada(
+      new File([croppedBlob], "profile.jpg", { type: "image/jpeg" })
+    );
   };
 
   if (loading) {
-    return <div style={{ background: '#070209', width: '100vw', height: '100vh' }}></div>; // Ou um spinner
+    return (
+      <div
+        style={{ background: "#070209", width: "100vw", height: "100vh" }}
+      ></div>
+    ); // Ou um spinner
   }
 
   return (
@@ -198,19 +201,19 @@ function Perfil() {
                         className="prf-editar-nome"
                         type="text"
                         value={nomeEditado}
-                        placeholder={t('Nome')}
+                        placeholder={t("Nome")}
                         onChange={(e) => setNomeEditado(e.target.value)}
                       />
                       <textarea
                         className="prf-editar-biografia"
                         value={bioEditada}
-                        placeholder={t('Biografia')}
+                        placeholder={t("Biografia")}
                         rows={5}
                         onChange={(e) => setBioEditada(e.target.value)}
                       />
                       <div className="prf-add-imagem">
                         <label htmlFor="prf-editar-imagem">
-                          {t('ESCOLHA UMA IMAGEM')}
+                          {t("ESCOLHA UMA IMAGEM")}
                         </label>
                         <input
                           id="prf-editar-imagem"
@@ -225,7 +228,7 @@ function Perfil() {
                         <div className="prf-preview-imagem">
                           <img
                             src={fotoPreview}
-                            alt={t('Prévia da imagem')}
+                            alt={t("Prévia da imagem")}
                             className="prf-preview-img"
                           />
                         </div>
@@ -242,7 +245,7 @@ function Perfil() {
                         className="prf-botao-editar-enviar"
                         onClick={salvarEdicao}
                       >
-                        {t('ENVIAR')}
+                        {t("ENVIAR")}
                       </button>
                     </div>
                   </div>
@@ -251,12 +254,44 @@ function Perfil() {
             </div>
           </div>
 
-          <div className="prf-container2">
+          <div className="prf-container2" style={{color:"var(--branco)"}}>
             <div className="prf-colunas">
-              <div className="prf-coluna1">
+              <div className="prf-coluna1" style={{color:"var(--branco)", minWidth:"300px"}}>
+                <span>PREFERÊNCIA DA CONTA</span>
+                <div className="prf-linguagem">
+                  <span>Linguagem:</span>
+                  <div className="input">
+                    <input type="checkbox" name="portugues" id="portugues" />
+                    <span>Português (Brasil)</span>
+                  </div>
+                  <div className="input">
+                    <input type="checkbox" name="ingles" id="ingles" />
+                    <span>American English</span>
+                  </div>
+                </div>
+                <div className="prf-tema">
+                  <span>Tema:</span>
+                  <div className="input">
+                    <input type="checkbox" name="claro" id="claro" />
+                    <span>Claro</span>
+                  </div>
+                  <div className="input">
+                    <input type="checkbox" name="escuro" id="escuro" />
+                    <span>Escuro</span>
+                  </div>
+                </div>
+                <span>OUTRAS OPÇÕES</span>
+                <button>Editar perfil</button>
+                <button>Avaliar planos</button>
+                <button>Sair</button>
+              </div>
+              <hr />
+              <div className="prf-coluna2">
+                <span>BIOGRAFIA</span>
                 <div className="prf-biografia">
                   <span>{biografia}</span>
                 </div>
+                <span>PROGRESSO</span>
                 <BarraDeProgresso
                   progresso1={progresso1}
                   progresso2={progresso2}
