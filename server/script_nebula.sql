@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`anotacoes` (
   `usuario_id` INT NOT NULL,
   `conteudo` VARCHAR(2000) NOT NULL,
   `img` TEXT NULL,
-  `pdf` TEXT NULL,
+  `pdf` LONGBLOB NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `posicao` INT NOT NULL DEFAULT 0,
   `id` VARCHAR(45) NOT NULL,

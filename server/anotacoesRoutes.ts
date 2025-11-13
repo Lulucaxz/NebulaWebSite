@@ -12,7 +12,7 @@ interface AnotacaoRow extends RowDataPacket {
   usuario_id: number;
   conteudo: string;
   img: string | null;
-  pdf: string | null;
+  hasPdf: number;
   coluna: number;
   pdfNome?: string | null;
   created_at: string;
@@ -20,9 +20,40 @@ interface AnotacaoRow extends RowDataPacket {
 }
 interface MaxPosRow extends RowDataPacket { maxPos: number | null }
 
+type AnotacaoResponse = {
+  id: string;
+  usuario_id: number;
+  conteudo: string;
+  img: string | null;
+  pdf: string | null;
+  coluna: number;
+  pdfNome: string | null;
+  created_at: string;
+  posicao: number;
+};
+
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+const resolveBaseUrl = (req: Request) => {
+  const forwardedProto = (req.headers['x-forwarded-proto'] as string | undefined)?.split(',')[0]?.trim();
+  const protocol = forwardedProto || req.protocol;
+  const host = req.get('host');
+  return `${protocol}://${host}`;
+};
+
+const mapAnotacaoResponse = (req: Request, row: AnotacaoRow): AnotacaoResponse => ({
+  id: row.id,
+  usuario_id: row.usuario_id,
+  conteudo: row.conteudo,
+  img: row.img,
+  pdf: row.hasPdf ? `${resolveBaseUrl(req)}/api/anotacoes/${row.id}/pdf` : null,
+  coluna: row.coluna,
+  pdfNome: row.pdfNome ?? null,
+  created_at: row.created_at,
+  posicao: row.posicao,
+});
 
 // Helper: Função de Upload para o Cloudinary (copiada do seu index.ts)
 const uploadToCloudinary = (fileBuffer: Buffer) => {
@@ -61,10 +92,11 @@ router.get('/', isAuthenticated, asyncHandler(async (req: Request, res: Response
   // e depois por posicao DESC (maior posicao aparece primeiro). Posicao
   // é gerenciada no backend e salva no banco.
   const [rows] = await pool.query<AnotacaoRow[]>(
-    "SELECT * FROM anotacoes WHERE usuario_id = ? ORDER BY coluna ASC, posicao DESC",
+    "SELECT id, usuario_id, conteudo, img, (pdf IS NOT NULL) AS hasPdf, coluna, pdfNome, created_at, posicao FROM anotacoes WHERE usuario_id = ? ORDER BY coluna ASC, posicao DESC",
     [userId]
   );
-  res.json(rows);
+  const response = rows.map((row) => mapAnotacaoResponse(req, row));
+  res.json(response);
 }));
 
 // [CREATE] Criar uma nova anotação
@@ -78,7 +110,7 @@ router.post('/', isAuthenticated, upload.fields([
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
   let imgUrl: string | null = null;
-  let pdfUrl: string | null = null;
+  let pdfBuffer: Buffer | null = null;
   let pdfNome: string | null = null;
 
   // Upload da Imagem (se existir)
@@ -88,12 +120,12 @@ router.post('/', isAuthenticated, upload.fields([
 
   // Upload do PDF (se existir)
   if (files['pdf'] && files['pdf'][0]) {
-    pdfUrl = await uploadToCloudinary(files['pdf'][0].buffer);
+    pdfBuffer = files['pdf'][0].buffer;
     pdfNome = files['pdf'][0].originalname; // Salva o nome original
   }
 
   // Validar se há conteúdo
-  if (!imgUrl && !pdfUrl && !conteudo) {
+  if (!imgUrl && !pdfBuffer && !conteudo) {
     return res.status(400).json({ error: "Anotação não pode estar vazia" });
   }
   
@@ -109,12 +141,16 @@ router.post('/', isAuthenticated, upload.fields([
 
   await pool.query<ResultSetHeader>(
     "INSERT INTO anotacoes (id, usuario_id, coluna, conteudo, img, pdf, pdfNome, posicao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    [newId, userId, Number(coluna), conteudo || '', imgUrl, pdfUrl, pdfNome, newPos]
+    [newId, userId, Number(coluna), conteudo || '', imgUrl, pdfBuffer, pdfNome, newPos]
   );
 
   // Retorna a anotação recém-criada
-  const [rows] = await pool.query<AnotacaoRow[]>("SELECT * FROM anotacoes WHERE id = ?", [newId]);
-  res.status(201).json(rows[0]);
+  const [rows] = await pool.query<AnotacaoRow[]>(
+    "SELECT id, usuario_id, conteudo, img, (pdf IS NOT NULL) AS hasPdf, coluna, pdfNome, created_at, posicao FROM anotacoes WHERE id = ?",
+    [newId]
+  );
+  const anotacao = rows[0];
+  res.status(201).json(mapAnotacaoResponse(req, anotacao));
 }));
 
 // [UPDATE] Atualizar uma anotação existente
@@ -129,7 +165,7 @@ router.put('/:id', isAuthenticated, upload.fields([
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
   let imgUrl: string | undefined;
-  let pdfUrl: string | undefined;
+  let pdfBuffer: Buffer | undefined;
   let pdfNome: string | undefined = bodyPdfNome; // Nome vindo do body
 
   // Upload de nova Imagem
@@ -139,7 +175,7 @@ router.put('/:id', isAuthenticated, upload.fields([
 
   // Upload de novo PDF
   if (files['pdf'] && files['pdf'][0]) {
-    pdfUrl = await uploadToCloudinary(files['pdf'][0].buffer);
+    pdfBuffer = files['pdf'][0].buffer;
     pdfNome = files['pdf'][0].originalname; // Salva o novo nome
   }
   
@@ -161,9 +197,9 @@ router.put('/:id', isAuthenticated, upload.fields([
     fields.push("img = ?");
     values.push(imgUrl);
   }
-  if (pdfUrl) { // Se fez upload de novo PDF
+  if (pdfBuffer) { // Se fez upload de novo PDF
     fields.push("pdf = ?");
-    values.push(pdfUrl);
+    values.push(pdfBuffer);
     fields.push("pdfNome = ?");
     values.push(pdfNome);
   }
@@ -195,11 +231,45 @@ router.put('/:id', isAuthenticated, upload.fields([
   );
 
   // Retorna a anotação atualizada
-  const [rows] = await pool.query<AnotacaoRow[]>("SELECT * FROM anotacoes WHERE id = ?", [id]);
+  const [rows] = await pool.query<AnotacaoRow[]>(
+    "SELECT id, usuario_id, conteudo, img, (pdf IS NOT NULL) AS hasPdf, coluna, pdfNome, created_at, posicao FROM anotacoes WHERE id = ?",
+    [id]
+  );
   if (rows.length === 0) {
     return res.status(404).json({ error: "Anotação não encontrada" });
   }
-  res.json(rows[0]);
+  res.json(mapAnotacaoResponse(req, rows[0]));
+}));
+
+// [READ] Baixar PDF armazenado no banco
+router.get('/:id/pdf', isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+  const authReq = req as AuthenticatedRequest;
+  const userId = authReq.user!.id;
+  const { id } = req.params;
+
+  const [rows] = await pool.query<RowDataPacket[]>(
+    "SELECT pdf, pdfNome FROM anotacoes WHERE id = ? AND usuario_id = ?",
+    [id, userId]
+  );
+
+  if (rows.length === 0) {
+    res.status(404).json({ error: 'Anotação não encontrada' });
+    return;
+  }
+
+  const row = rows[0] as { pdf: Buffer | null; pdfNome: string | null };
+
+  if (!row.pdf) {
+    res.status(404).json({ error: 'Nenhum PDF associado a esta anotação' });
+    return;
+  }
+
+  const filename = row.pdfNome?.trim().length ? row.pdfNome!.trim() : `${id}.pdf`;
+  const asciiFallback = filename.replace(/[^\w\-. ]/g, '_') || `${id}.pdf`;
+  const encodedName = encodeURIComponent(filename);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encodedName}`);
+  res.send(row.pdf);
 }));
 
 // [MOVE] Mover anotação para cima ou para baixo (swap de posicao)
@@ -247,15 +317,19 @@ router.post('/:id/move', isAuthenticated, asyncHandler(async (req: Request, res:
     const neighbor = neighborArr[0] as unknown as { id: string; posicao: number };
 
     // Swap posicoes
-  await conn.query("UPDATE anotacoes SET posicao = ? WHERE id = ?", [neighbor.posicao, curr.id]);
-  await conn.query("UPDATE anotacoes SET posicao = ? WHERE id = ?", [curr.posicao, neighbor.id]);
+      await conn.query("UPDATE anotacoes SET posicao = ? WHERE id = ?", [neighbor.posicao, curr.id]);
+      await conn.query("UPDATE anotacoes SET posicao = ? WHERE id = ?", [curr.posicao, neighbor.id]);
 
     await conn.commit();
     conn.release();
 
     // return updated rows for both ids
-    const [updatedRows] = await pool.query<AnotacaoRow[]>("SELECT * FROM anotacoes WHERE id IN (?, ?)", [curr.id, neighbor.id]);
-    res.json({ success: true, swapped: updatedRows });
+    const [updatedRows] = await pool.query<AnotacaoRow[]>(
+      "SELECT id, usuario_id, conteudo, img, (pdf IS NOT NULL) AS hasPdf, coluna, pdfNome, created_at, posicao FROM anotacoes WHERE id IN (?, ?)",
+      [curr.id, neighbor.id]
+    );
+    const formatted = updatedRows.map((row) => mapAnotacaoResponse(req, row));
+    res.json({ success: true, swapped: formatted });
   } catch (err) {
     await conn.rollback();
     conn.release();
