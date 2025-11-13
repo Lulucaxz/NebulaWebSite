@@ -37,8 +37,8 @@ function Perfil() {
   const [rank, setRank] = useState("0025");
   const [fotoUrl, setFotoUrl] = useState("");
   const [curso, setCurso] = useState("");
-  const [idioma, setIdioma] = useState("");
-  const [tema, setTema] = useState("");
+  const [idioma, setIdioma] = useState("pt-br");
+  const [tema, setTema] = useState("escuro");
   const [progresso1, setProgresso1] = useState(0);
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
@@ -68,9 +68,11 @@ function Perfil() {
         setUsuario(userData.user);
         setRank(userData.colocacao);
         setFotoUrl(userData.icon);
-        setCurso(userData.curso || "");
-        setIdioma(userData.idioma || "");
-        setTema(userData.tema || "");
+  setCurso(userData.curso || "");
+  const idiomaNormalizado = (userData.idioma || "").toLowerCase();
+  setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
+  const temaNormalizado = (userData.tema || "").toLowerCase();
+  setTema(temaNormalizado === "claro" ? "claro" : "escuro");
         setProgresso1(userData.progresso1 || 0);
         setProgresso2(userData.progresso2 || 0);
         setProgresso3(userData.progresso3 || 0);
@@ -152,6 +154,9 @@ function Perfil() {
 
           <div className="prf-usuario-barra">
             <div className="prf-container">
+
+              <div className="prf-informacoes-header">
+
               <img className="prf-foto" src={fotoUrl} alt="Foto de perfil" />
 
               <div className="prf-infomacoes">
@@ -165,24 +170,11 @@ function Perfil() {
                   <span>#{rank}</span>
                 </div>
               </div>
+              </div>
 
-              <div
-                className="prf-editar"
-                onClick={() => {
-                  setNomeEditado(nome);
-                  setBioEditada(biografia);
-                  setMostrarEditor(true);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"
-                  width="24px"
-                  fill="#FFFFFF"
-                >
-                  <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
-                </svg>
+              <div className="prf-social-header">
+                <span>Seguidores: 1</span>
+                <span>Seguindo: 1</span>
               </div>
 
               {mostrarEditor && (
@@ -255,41 +247,81 @@ function Perfil() {
           <div className="prf-container2" style={{color:"var(--branco)"}}>
             <div className="prf-colunas">
               <div className="prf-coluna1" style={{color:"var(--branco)", minWidth:"300px"}}>
-                <span>PREFERÊNCIA DA CONTA</span>
+                <span className="prf-titulo-informacoes">PREFERÊNCIA DA CONTA</span>
                 <div className="prf-linguagem">
                   <span>Linguagem:</span>
-                  <div className="input">
-                    <input type="checkbox" name="portugues" id="portugues" />
-                    <span>Português (Brasil)</span>
-                  </div>
-                  <div className="input">
-                    <input type="checkbox" name="ingles" id="ingles" />
-                    <span>American English</span>
+                  <div className="prf-option-group">
+                    <label className="prf-option" htmlFor="idioma-ptbr">
+                      <input
+                        className="prf-option-input"
+                        type="radio"
+                        name="idioma"
+                        id="idioma-ptbr"
+                        value="pt-br"
+                        checked={idioma === "pt-br"}
+                        onChange={() => setIdioma("pt-br")}
+                      />
+                      <span className="prf-option-text">Português (Brasil)</span>
+                    </label>
+                    <label className="prf-option" htmlFor="idioma-en">
+                      <input
+                        className="prf-option-input"
+                        type="radio"
+                        name="idioma"
+                        id="idioma-en"
+                        value="en-us"
+                        checked={idioma === "en-us"}
+                        onChange={() => setIdioma("en-us")}
+                      />
+                      <span className="prf-option-text">American English</span>
+                    </label>
                   </div>
                 </div>
                 <div className="prf-tema">
                   <span>Tema:</span>
-                  <div className="input">
-                    <input type="checkbox" name="claro" id="claro" />
-                    <span>Claro</span>
-                  </div>
-                  <div className="input">
-                    <input type="checkbox" name="escuro" id="escuro" />
-                    <span>Escuro</span>
+                  <div className="prf-option-group">
+                    <label className="prf-option" htmlFor="tema-claro">
+                      <input
+                        className="prf-option-input"
+                        type="radio"
+                        name="tema"
+                        id="tema-claro"
+                        value="claro"
+                        checked={tema === "claro"}
+                        onChange={() => setTema("claro")}
+                      />
+                      <span className="prf-option-text">Claro</span>
+                    </label>
+                    <label className="prf-option" htmlFor="tema-escuro">
+                      <input
+                        className="prf-option-input"
+                        type="radio"
+                        name="tema"
+                        id="tema-escuro"
+                        value="escuro"
+                        checked={tema === "escuro"}
+                        onChange={() => setTema("escuro")}
+                      />
+                      <span className="prf-option-text">Escuro</span>
+                    </label>
                   </div>
                 </div>
-                <span>OUTRAS OPÇÕES</span>
-                <button>Editar perfil</button>
-                <button>Avaliar planos</button>
-                <button>Sair</button>
+                <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
+                <div className="prf-btn-config" onClick={() => {
+                  setNomeEditado(nome);
+                  setBioEditada(biografia);
+                  setMostrarEditor(true);
+                }}>Editar perfil</div>
+                <div className="prf-btn-config">Avaliar planos</div>
+                <div className="prf-btn-config">Sair</div>
               </div>
               <hr />
               <div className="prf-coluna2">
-                <span>BIOGRAFIA</span>
+                <span className="prf-titulo-informacoes">BIOGRAFIA</span>
                 <div className="prf-biografia">
                   <span>{biografia}</span>
                 </div>
-                <span>PROGRESSO</span>
+                <span className="prf-titulo-informacoes">PROGRESSO</span>
                 <BarraDeProgresso
                   progresso1={progresso1}
                   progresso2={progresso2}

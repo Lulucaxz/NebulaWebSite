@@ -168,9 +168,9 @@
 .prf-usuario-barra {
   width: 100%;
   height: 100px;
-  background-color: var(--roxo1);
   display: flex;
   justify-content: center;
+  padding: 25px 0;
 
   color: #fff;
 }
@@ -178,15 +178,18 @@
 .prf-container {
   width: 90%;
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
   align-items: center;
 }
 
-.prf-foto {
-  width: 80px;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  object-fit: cover;
+.prf-informacoes-header {
+  display: flex;
+  gap: 25px;
+}
+
+.prf-social-header {
+  display: flex;
+  gap: 25px;
 }
 
 .prf-nome-usuario span {
@@ -194,40 +197,30 @@
   font-size: 32px;
 }
 
-.prf-usuario-rank {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  top: -10px;
-  font-family: "Questrial", sans-serif;
-}
-
 .prf-usuario span {
-  font-size: 20px;
+  font-size: 16px;
+  color: var(--cinza-claro1);
 }
 
 .prf-rank span {
-  color: var(--branco);
+  font-size: 16px;
+  color: var(--cinza-claro1);
 }
 
-.prf-editar svg {
-  min-width: 40px;
-  min-height: 40px;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+.prf-foto {
+  width: 100px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .prf-container2 {
   width: calc(90%);
 }
 
-/* COLUNAS */
-
 .prf-colunas {
   display: flex;
-  margin: 50px 0;
+  margin-top: 25px;
   gap: 25px;
 }
 
@@ -236,6 +229,60 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
+}
+
+.prf-linguagem,
+.prf-tema {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prf-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prf-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-family: "Questrial", sans-serif;
+}
+
+.prf-option-input {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--cinza-claro1);
+  background: transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.prf-option-input:checked {
+  background-color: var(--roxo1);
+  border-color: var(--roxo1);
+}
+
+.prf-option-input:focus-visible {
+  outline: 2px solid var(--roxo1);
+  outline-offset: 2px;
+}
+
+.prf-option-text {
+  color: var(--cinza-claro1);
+  transition: color 0.2s ease;
+}
+
+.prf-option-input:checked + .prf-option-text {
+  color: var(--branco);
+}
+
+.prf-titulo-informacoes {
+  font-size: 24px;
 }
 
 .prf-biografia {
@@ -313,6 +360,7 @@
   display: flex;
   flex-direction: column;
   font-family: 'Questrial', sans-serif;
+  justify-content: center;
 }
 
 .prf-coluna2 {
@@ -433,5 +481,20 @@
 .prf-botao-editar-enviar:hover {
   background-color: var(--branco);
   color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-btn-config {
+  padding: 5px;
+  font-family: "Questrial", sans-serif;
+  background-color: var(--cinza-claro1);
+  color: var(--branco);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.prf-btn-config:hover {
+  background-color: var(--roxo1);
   cursor: pointer;
 }

@@ -1,5 +1,5 @@
 import "./menu.css";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
@@ -40,17 +40,22 @@ export function Menu() {
     setTemaClaro((prev) => !prev);
   };
 
+  const getMenuItemClass = (isActive: boolean) =>
+    [
+      "menu-icones",
+      temaClaro ? "claro" : "",
+      isActive ? "active" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
   return (
     <div
       className={"menu-barra-lateral"}
     >
       <div id="menu-principais-icones">
 
-        <Link to="/perfil">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="perfil-icone"
-          >
+        <NavLink to="/perfil" className={({ isActive }) => getMenuItemClass(isActive)} id="perfil-icone">
             {isAuthenticated ? (
               <img
                 id="imgperfil_menu"
@@ -70,14 +75,9 @@ export function Menu() {
             )}
             
             <span className="texto-barra">{t('PERFIL')}</span>
-          </div>
-        </Link>
+        </NavLink>
 
-        <Link to="/anotacoes">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="anotacoes-icone"
-          >
+        <NavLink to="/anotacoes" className={({ isActive }) => getMenuItemClass(isActive)} id="anotacoes-icone">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -89,14 +89,9 @@ export function Menu() {
             </svg>
 
             <span className="texto-barra">{t('ANOTAÇÕES')}</span>
-          </div>
-        </Link>
+        </NavLink>
 
-        <Link to="/cursos">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="cursos-icone"
-          >
+        <NavLink to="/cursos" className={({ isActive }) => getMenuItemClass(isActive)} id="cursos-icone">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -108,14 +103,9 @@ export function Menu() {
             </svg>
 
             <span className="texto-barra">{t('CURSOS')}</span>
-          </div>
-        </Link>
+        </NavLink>
 
-        <Link to="/forum">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="forum-icone"
-          >
+        <NavLink to="/forum" className={({ isActive }) => getMenuItemClass(isActive)} id="forum-icone">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -127,14 +117,9 @@ export function Menu() {
             </svg>
 
             <span className="texto-barra">{t('FÓRUM')}</span>
-          </div>
-        </Link>
+        </NavLink>
 
-        <Link to="/planos">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="carrinho-icone"
-          >
+        <NavLink to="/planos" className={({ isActive }) => getMenuItemClass(isActive)} id="carrinho-icone">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -146,16 +131,11 @@ export function Menu() {
             </svg>
 
             <span className="texto-barra">{t('CARRINHO')}</span>
-          </div>
-        </Link>
+        </NavLink>
       </div>
 
       <div>
-        <Link to="/">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="carrinho-icone"
-          >
+        <NavLink to="/" end className={({ isActive }) => getMenuItemClass(isActive)} id="carrinho-icone">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -166,14 +146,13 @@ export function Menu() {
               <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
             </svg>
             <span className="texto-barra">{t('INÍCIO')}</span>
-          </div>
-        </Link>
-        <Link to="/configuracoes">
-          <div
-            className={`menu-icones ${temaClaro ? "claro" : ""}`}
-            id="configuracoes-icone"
-            onClick={toggleTema}
-          >
+        </NavLink>
+        <NavLink
+          to="/configuracoes"
+          className={({ isActive }) => getMenuItemClass(isActive)}
+          id="configuracoes-icone"
+          onClick={toggleTema}
+        >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -185,8 +164,7 @@ export function Menu() {
             </svg>
 
             <span className="texto-barra">{t('CONFIGURAÇÕES')}</span>
-          </div>
-        </Link>
+        </NavLink>
       </div>
     </div>
   );
