@@ -7,6 +7,7 @@ interface Resposta {
   idResposta: number
   rfotoPerfil: string
   rnomeUsuario: string
+  assinatura: "Universo" | "Galáxia" | "Órbita"
   rdataHora: string
   rconteudoComentario: string
 }
@@ -22,10 +23,12 @@ interface ComentarioItemProps {
   avaliacaoDoUsuario: string
   fotoPerfil: string
   tags: string[]
-  imagemComentario?: string
+  imagemComentario?: string | null
   arrayRespostas: Resposta[]
   onDelete: (id: number) => void
   onEdit: (id: number, novoConteudo: string) => void
+  onVisualizarRespostas: (visualizar: boolean) => void
+  onResponderA: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void
 }
 
 export function ComentarioItem({
@@ -42,13 +45,26 @@ export function ComentarioItem({
   imagemComentario,
   arrayRespostas,
   onDelete,
-  onEdit
+  onEdit,
+  onVisualizarRespostas,
+  onResponderA
 }: ComentarioItemProps) {
-  const [resposta, setResposta] = useState('')
   const [comteudoEditado, setComteudoEditado] = useState('')
   const [ativo, setAtivo] = useState(false)
   const [editar, setEditar] = useState(false)
-  const [respostas, setRespostas] = useState(arrayRespostas)
+  const [respostas] = useState(arrayRespostas)
+  const [jaAvaliou, setJaAvaliou] = useState(false)
+  const [totalAvaliacoes, setTotalAvaliacoes] = useState(parseInt(numeroAvaliacao.toString()))
+
+  const handleLike = () => {
+    if (!jaAvaliou) {
+      setTotalAvaliacoes(prev => prev + 1)
+      setJaAvaliou(true)
+    } else {
+      setTotalAvaliacoes(prev => prev - 1)
+      setJaAvaliou(false)
+    }
+  }
 
   const formatarDataHora = (assinatura: string, dataHora: string) => {
     const data = new Date(dataHora);
@@ -65,10 +81,6 @@ export function ComentarioItem({
 
   const estiloComentario = {
     borderRadius: ativo ? '10px 10px 0px 0px' : '10px'
-  }
-
-  const estiloFormulario = {
-    height: ativo ? '300px' : '0px'
   }
 
   const estiloRespostas = {
@@ -161,16 +173,22 @@ export function ComentarioItem({
         {/* Área de interação (avaliação e respostas) */}
         <div className="frm-comentario-interacao">
           <div className="frm-comentario-avaliacao">
-            <button className="frm-comentario-botao-avaliacao">
+            <button 
+              className={`frm-comentario-botao-avaliacao ${jaAvaliou ? 'liked' : ''}`}
+              onClick={handleLike}
+            >
               <img src="/icons/like_forum.svg" alt="Avaliar" />
-              <span className="frm-comentario-numero-avaliacao">{numeroAvaliacao}</span>
+              <span className="frm-comentario-numero-avaliacao">{totalAvaliacoes}</span>
             </button>
           </div>
 
           <div className="frm-comentario-respostas-info">
             <button
               className="frm-comentario-botao-respostas"
-              onClick={() => setAtivo(!ativo)}
+              onClick={() => {
+                setAtivo(!ativo);
+                onVisualizarRespostas(!ativo);
+              }}
             >
               <img src="/icons/coment_forum.svg" alt="Respostas" />
               <span className="frm-comentario-numero-respostas">{respostas.length}</span>
@@ -180,48 +198,6 @@ export function ComentarioItem({
 
         {/* Seção de respostas */}
         <div className="frm-comentario-ver-respostas">
-          <div className="ver-respostas-form-esconder" style={estiloFormulario}>
-            <div className="ver-respostas-form">
-              <textarea
-                value={resposta}
-                maxLength={400}
-                placeholder="Digite sua resposta aqui"
-                onChange={e => setResposta(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && !e.shiftKey && resposta.trim() !== '') {
-                    setRespostas(prev => [
-                      ...prev,
-                      {
-                        idResposta: prev.length + 1,
-                        rfotoPerfil: "/icones-usuarios/kurbie.jpg",
-                        rnomeUsuario: "Luiz",
-                        rdataHora: new Date().toLocaleString(),
-                        rconteudoComentario: resposta
-                      }
-                    ])
-                    setResposta('')
-                  }
-                }}
-              />
-              <button onClick={() => {
-                if (resposta.trim() !== '') {
-                  setRespostas(prev => [
-                    ...prev,
-                    {
-                      idResposta: prev.length + 1,
-                      rfotoPerfil: "/icones-usuarios/kurbie.jpg",
-                      rnomeUsuario: "Luiz",
-                      rdataHora: new Date().toLocaleString(),
-                      rconteudoComentario: resposta
-                    }
-                  ])
-                  setResposta('')
-                }
-              }}>
-                <img src="/submit.svg" alt="enviar" />
-              </button>
-            </div>
-          </div>
           <div className="ver-respostas-container" style={estiloRespostas}>
             {
               respostas.map(res => (
@@ -231,6 +207,9 @@ export function ComentarioItem({
                   rnomeUsuario={res.rnomeUsuario}
                   rdataHora={res.rdataHora}
                   rconteudoComentario={res.rconteudoComentario}
+                  assinatura={res.assinatura}
+                  onResponderA={onResponderA}
+                  idResposta={res.idResposta}
                 />
               ))
             }

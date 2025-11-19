@@ -2,7 +2,12 @@ import { useState } from "react"
 import { ComentarioItem } from "./ComentarioItem"
 import { initial_comentarios } from "./comentariosDados"
 
-export function Comentario() {
+interface ComentarioProps {
+  onVisualizarRespostas: (visualizar: boolean) => void;
+  onResponderA: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void;
+}
+
+export function Comentario({ onVisualizarRespostas, onResponderA }: ComentarioProps) {
   const [comentarios, setComentarios] = useState(initial_comentarios)
 
   const handleDelete = (id: number) => {
@@ -25,6 +30,8 @@ export function Comentario() {
           {...comentario}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          onVisualizarRespostas={onVisualizarRespostas}
+          onResponderA={onResponderA}
         />
       ))}
     </>

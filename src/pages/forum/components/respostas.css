@@ -1,75 +1,147 @@
-.resposta {
-    width: 1300px;
-    background-color: #282828;
-    overflow: hidden;
-    border-radius: 10px;
-    display: flex;
-    justify-self: center;
-    padding: 0  ;
-    margin-bottom: 50px;
-}
-
-
-.resposta-lateral-esquerda {
-    width: 100px;
-    max-height: calc(100% - (30px * 2));
-    background-color: #363636;
-    position: relative;
+/* Estilos para o componente de resposta */
+.resposta-item {
+    width: 100%;
+    max-width: 750px;
+    border-radius: 8px;
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 30px 0;
+    gap: 15px;
 }
-.resposta img {
-    width: 65px;
-    height: 65px;
+
+/* Header da resposta */
+.resposta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.resposta-usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.resposta-foto-perfil {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     cursor: pointer;
 }
 
-.resposta-lateral-direita {
-    width: 100%;
-    padding: 40px 0 0 0;
-    position: relative;
-}
-.resposta-titulo {
-    width: calc(100% - (50px * 2));
-    padding: 0 50px;
-}
-.resposta-titulo h3 {
-    font-weight: 700;
-    font-size: 24px;
-    color: #ffffff;
-
-    font-family: "Inter", sans-serif;
-}
-.resposta-titulo h4 {
-    font-weight: 400;
-    font-size: 20px;
-    color: #a4a4a4;
-
-    font-family: "Inter", sans-serif;
-}
-.resposta-conteudo {
-    width: calc(100% - (50px * 2));
-    padding: 40px 50px 100px 50px;
-    white-space: pre-wrap;
-    word-break: break-word;
-
-    font-weight: 300;
-    font-size: 24px;
-    text-align: justify;
+.resposta-detalhes h3 {
     color: #FFFFFF;
-
     font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
 }
-.resposta-baixo {
-    width: 100%;
-    padding: 30px 0;
+
+.resposta-detalhes span {
+    color: #A4A4A4;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.resposta-conteudo p {
+    color: #FFFFFF;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0;
+    text-align: justify;
+}
+
+/* Ações da resposta */
+.resposta-acoes {
     display: flex;
-    background-color: #555555;
-    flex-direction: row-reverse;
-    position: absolute;
-    gap: 80px;
-    bottom: 0;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.resposta-interacao {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.resposta-botao-like,
+.resposta-botao-comentar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 8px;
+    display: flex;
+    align-items: center;
+    background-color: #363636;
+    border-radius: 4px;
+    transition: all 0.2s;
+    gap: 6px;
+}
+
+.resposta-botao-like:hover,
+.resposta-botao-comentar:hover {
+    background-color: #4A4A4A;
+}
+
+.resposta-botao-like.liked {
+    background-color: #007ACC;
+}
+
+.resposta-botao-like.liked:hover {
+    background-color: #005A99;
+}
+
+.resposta-botao-like.liked img {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.resposta-botao-like.liked span {
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.resposta-botao-like img,
+.resposta-botao-comentar img {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+    transition: filter 0.2s;
+}
+
+.resposta-botao-like span,
+.resposta-botao-comentar span {
+    color: #A4A4A4;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Botão de responder */
+.resposta-botao-responder {
+    background: none;
+    border: none;
+    color: #ACACAC;
+    background-color: #363636;
+    font-family: 'Questrial';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 25px;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px 8px;
+    transition: all 0.2s;
+}
+
+.resposta-botao-responder:hover {
+    background-color: #414141;
 }

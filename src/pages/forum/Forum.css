@@ -234,6 +234,182 @@
   background-color: #c17ae6;
 }
 
+/* Novos estilos para área de criar comentários */
+
+/* Estado de seleção de comentário para responder */
+.forum-estado-selecionar {
+  background-color: #1A1A1A !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forum-mensagem-selecionar {
+  text-align: center;
+  color: #FFFFFF;
+  width: 100%;
+  padding: 40px 25px;
+}
+
+.forum-mensagem-selecionar h3 {
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+/* Tags de escolha */
+.forum-escolha-tags {
+  margin-bottom: 25px;
+}
+
+.forum-escolha-tags p {
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.forum-tags-opcoes {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.forum-tag-opcao {
+  padding: 8px 16px;
+  background-color: #363636;
+  border: none;
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.forum-tag-opcao:hover {
+  background-color: #4A4A4A;
+}
+
+.forum-tag-opcao.selecionada {
+  background-color: #9A30EB;
+}
+
+/* Containers para título e texto */
+.forum-titulo-container,
+.forum-texto-container {
+  margin-bottom: 25px;
+}
+
+.forum-titulo-container p,
+.forum-texto-container p {
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.forum-contador {
+  text-align: right;
+  color: #A4A4A4;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Container de imagem */
+.forum-imagem-container {
+  margin-bottom: 25px;
+}
+
+.forum-imagem-container p {
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.forum-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #363636;
+  border: 2px dashed #A4A4A4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.forum-upload-area:hover {
+  background-color: #4A4A4A;
+  border-color: #FFFFFF;
+}
+
+.forum-upload-area img {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.forum-upload-area span {
+  color: #A4A4A4;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+}
+
+/* Botões */
+.forum-botoes {
+  display: flex;
+  gap: 15px;
+  margin-top: auto;
+}
+
+.forum-botao-cancelar,
+.forum-botao-enviar {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.forum-botao-cancelar {
+  background-color: transparent;
+  color: #A4A4A4;
+  border: 1px solid #A4A4A4;
+}
+
+.forum-botao-cancelar:hover {
+  background-color: #363636;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+.forum-botao-enviar {
+  background-color: #9A30EB;
+  color: #FFFFFF;
+}
+
+.forum-botao-enviar:hover {
+  background-color: #8a27d6;
+}
+
+.forum-botao-enviar:disabled {
+  background-color: #555555;
+  color: #A4A4A4;
+  cursor: not-allowed;
+}
+
 /* Sessão de Baixo - Footer */
 .forum-sessao-baixo {
   width: 100%;
