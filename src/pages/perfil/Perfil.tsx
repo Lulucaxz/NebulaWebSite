@@ -9,6 +9,7 @@ import { BarraDeProgresso } from "./components/barraProgresso";
 import Footer from "../../components/footer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Banner from "../home/components/banner";
 
 type User = {
   name: string;
@@ -68,11 +69,11 @@ function Perfil() {
         setUsuario(userData.user);
         setRank(userData.colocacao);
         setFotoUrl(userData.icon);
-  setCurso(userData.curso || "");
-  const idiomaNormalizado = (userData.idioma || "").toLowerCase();
-  setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
-  const temaNormalizado = (userData.tema || "").toLowerCase();
-  setTema(temaNormalizado === "claro" ? "claro" : "escuro");
+        setCurso(userData.curso || "");
+        const idiomaNormalizado = (userData.idioma || "").toLowerCase();
+        setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
+        const temaNormalizado = (userData.tema || "").toLowerCase();
+        setTema(temaNormalizado === "claro" ? "claro" : "escuro");
         setProgresso1(userData.progresso1 || 0);
         setProgresso2(userData.progresso2 || 0);
         setProgresso3(userData.progresso3 || 0);
@@ -154,22 +155,20 @@ function Perfil() {
 
           <div className="prf-usuario-barra">
             <div className="prf-container">
-
               <div className="prf-informacoes-header">
+                <img className="prf-foto" src={fotoUrl} alt="Foto de perfil" />
 
-              <img className="prf-foto" src={fotoUrl} alt="Foto de perfil" />
-
-              <div className="prf-infomacoes">
-                <div className="prf-nome-usuario">
-                  <span>{nome}</span>
+                <div className="prf-infomacoes">
+                  <div className="prf-nome-usuario">
+                    <span>{nome}</span>
+                  </div>
+                  <div className="prf-usuario">
+                    <span>{usuario}</span>
+                  </div>
+                  <div className="prf-rank">
+                    <span>#{rank}</span>
+                  </div>
                 </div>
-                <div className="prf-usuario">
-                  <span>{usuario}</span>
-                </div>
-                <div className="prf-rank">
-                  <span>#{rank}</span>
-                </div>
-              </div>
               </div>
 
               <div className="prf-social-header">
@@ -186,14 +185,57 @@ function Perfil() {
                     className="aba-editar"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="prf-edicao">
+                    <div
+                      className="prf-editor-banner"
+                      style={{
+                        height: "180px",
+                        backgroundImage: `url(nebulosaBanner.jpg)`,
+                        position: "relative",
+                      }}
+                    >
                       <input
-                        className="prf-editar-nome"
-                        type="text"
-                        value={nomeEditado}
-                        placeholder={t("Nome")}
-                        onChange={(e) => setNomeEditado(e.target.value)}
+                        className="prf-editor-banner-btn"
+                        type="button"
+                        value={t("Alterar banner")}
                       />
+                    </div>
+                    <div className="prf-edicao">
+                      <div className="prf-edicao-superior">
+                        <div className="prf-edicao-foto"></div>
+                      <div className="prf-editor-foto-info">
+                        <span style={{fontSize:"20px"}}>{t("Foto de perfil")}</span>
+                        <span style={{fontSize:"16px", color:"var(--cinza-claro1)"}}>{t("Escolha uma foto de perfil")}</span>
+                        <label className="" htmlFor="prf-editar-foto">
+                          <span>teste</span>
+                          <input
+                            hidden
+                            id="prf-editar-foto"
+                            className="prf-editar-foto-btn"
+                            type="file"
+                            onChange={(e) => setNomeEditado(e.target.value)}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="prf-editor-nome-info">
+                        <span>{t("Apelido")}</span>
+                        <span>
+                          {t(
+                            "Escolha seu apelido (usuário não pode ser alterado)"
+                          )}
+                        </span>
+                        <input
+                          className="prf-editar-nome"
+                          type="text"
+                          value={nomeEditado}
+                          placeholder={t("Nome")}
+                          onChange={(e) => setNomeEditado(e.target.value)}
+                        />
+                      </div>
+                      </div>
+
+                      <hr />
+
                       <textarea
                         className="prf-editar-biografia"
                         value={bioEditada}
@@ -244,10 +286,15 @@ function Perfil() {
             </div>
           </div>
 
-          <div className="prf-container2" style={{color:"var(--branco)"}}>
+          <div className="prf-container2" style={{ color: "var(--branco)" }}>
             <div className="prf-colunas">
-              <div className="prf-coluna1" style={{color:"var(--branco)", minWidth:"300px"}}>
-                <span className="prf-titulo-informacoes">PREFERÊNCIA DA CONTA</span>
+              <div
+                className="prf-coluna1"
+                style={{ color: "var(--branco)", minWidth: "300px" }}
+              >
+                <span className="prf-titulo-informacoes">
+                  PREFERÊNCIA DA CONTA
+                </span>
                 <div className="prf-linguagem">
                   <span>Linguagem:</span>
                   <div className="prf-option-group">
@@ -261,7 +308,9 @@ function Perfil() {
                         checked={idioma === "pt-br"}
                         onChange={() => setIdioma("pt-br")}
                       />
-                      <span className="prf-option-text">Português (Brasil)</span>
+                      <span className="prf-option-text">
+                        Português (Brasil)
+                      </span>
                     </label>
                     <label className="prf-option" htmlFor="idioma-en">
                       <input
@@ -307,11 +356,16 @@ function Perfil() {
                   </div>
                 </div>
                 <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
-                <div className="prf-btn-config" onClick={() => {
-                  setNomeEditado(nome);
-                  setBioEditada(biografia);
-                  setMostrarEditor(true);
-                }}>Editar perfil</div>
+                <div
+                  className="prf-btn-config"
+                  onClick={() => {
+                    setNomeEditado(nome);
+                    setBioEditada(biografia);
+                    setMostrarEditor(true);
+                  }}
+                >
+                  Editar perfil
+                </div>
                 <div className="prf-btn-config">Avaliar planos</div>
                 <div className="prf-btn-config">Sair</div>
               </div>

@@ -400,8 +400,7 @@
 
 .aba-editar {
   background-color: var(--cinza-escuro2);
-  padding: 25px;
-  max-width: 400px;
+  max-width: 800px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -412,6 +411,7 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
+  padding: 25px;
 }
 
 .prf-editar-nome {
@@ -497,4 +497,41 @@
 .prf-btn-config:hover {
   background-color: var(--roxo1);
   cursor: pointer;
+}
+
+.prf-editor-banner-btn {
+  background-color: var(--cinza-claro1);
+  padding: 5px 25px;
+  position: absolute;
+  left: 25px;
+  bottom: 25px;
+  border: none;
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+  font-size: 14px;
+}
+
+.prf-editor-banner-btn:hover {
+  background-color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-edicao-superior {
+  display: flex;
+  gap: 25px;
+}
+
+.prf-edicao-foto {
+  height: 100px;
+  aspect-ratio: 1/1;
+  background-image: url(../../../public/icones-usuarios/FotoPerfil4.jpg);
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+}
+
+.prf-editor-foto-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
