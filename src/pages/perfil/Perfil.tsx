@@ -137,6 +137,8 @@ function Perfil() {
     );
   };
 
+  const [bioCharCount, setBioCharCount] = useState(0);
+
   if (loading) {
     return (
       <div
@@ -201,70 +203,97 @@ function Perfil() {
                     </div>
                     <div className="prf-edicao">
                       <div className="prf-edicao-superior">
-                        <div className="prf-edicao-foto"></div>
-                      <div className="prf-editor-foto-info">
-                        <span style={{fontSize:"20px"}}>{t("Foto de perfil")}</span>
-                        <span style={{fontSize:"16px", color:"var(--cinza-claro1)"}}>{t("Escolha uma foto de perfil")}</span>
-                        <label className="" htmlFor="prf-editar-foto">
-                          <span>teste</span>
+                        <div
+                          className="prf-edicao-foto"
+                          style={{ backgroundImage: `url(${fotoPreview ? fotoPreview : fotoUrl})` }}
+                        ></div>
+                        <div className="prf-editor-foto-info">
+                          <span style={{ fontSize: "20px" }}>
+                            {t("Foto de perfil")}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "16px",
+                              color: "var(--cinza-claro1)",
+                            }}
+                          >
+                            {t("Escolha uma foto de perfil")}
+                          </span>
+                          <label
+                            className="prf-editar-foto-label"
+                            htmlFor="prf-editar-foto"
+                          >
+                            <span>Alterar foto</span>
+                            <input
+                              hidden
+                              id="prf-editar-foto"
+                              className="prf-editar-foto-btn"
+                              type="file"
+                              accept="image/*"
+                              onChange={onFileChange}
+                            />
+                          </label>
+                        </div>
+
+                        <div className="prf-editor-nome-info">
+                          <span style={{ fontSize: "20px" }}>
+                            {t("Apelido")}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "16px",
+                              color: "var(--cinza-claro1)",
+                            }}
+                          >
+                            {t(
+                              "Escolha seu apelido (usuário não pode ser alterado)"
+                            )}
+                          </span>
                           <input
-                            hidden
-                            id="prf-editar-foto"
-                            className="prf-editar-foto-btn"
-                            type="file"
+                            className="prf-editar-nome"
+                            type="text"
+                            value={nomeEditado}
+                            placeholder={t("Nome")}
                             onChange={(e) => setNomeEditado(e.target.value)}
                           />
-                        </label>
-                      </div>
-
-                      <div className="prf-editor-nome-info">
-                        <span>{t("Apelido")}</span>
-                        <span>
-                          {t(
-                            "Escolha seu apelido (usuário não pode ser alterado)"
-                          )}
-                        </span>
-                        <input
-                          className="prf-editar-nome"
-                          type="text"
-                          value={nomeEditado}
-                          placeholder={t("Nome")}
-                          onChange={(e) => setNomeEditado(e.target.value)}
-                        />
-                      </div>
+                        </div>
                       </div>
 
                       <hr />
+                      <div className="prf-editar-biografia-container">
+                        <span style={{ fontSize: "20px" }}>Biografia</span>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            color:
+                              bioCharCount === 1000
+                                ? "red"
+                                : "var(--cinza-claro1)",
+                          }}
+                        >
+                          <span>Altere a sua biografia como quiser</span>
+                          <span>{bioCharCount}/1000</span>
+                        </div>
 
-                      <textarea
-                        className="prf-editar-biografia"
-                        value={bioEditada}
-                        placeholder={t("Biografia")}
-                        rows={5}
-                        onChange={(e) => setBioEditada(e.target.value)}
-                      />
-                      <div className="prf-add-imagem">
-                        <label htmlFor="prf-editar-imagem">
-                          {t("ESCOLHA UMA IMAGEM")}
-                        </label>
-                        <input
-                          id="prf-editar-imagem"
-                          hidden
-                          type="file"
-                          accept="image/*"
-                          onChange={onFileChange}
+                        <textarea
+                          className="prf-editar-biografia"
+                          value={bioEditada}
+                          placeholder={t("Biografia")}
+                          rows={5}
+                          maxLength={1000}
+                          style={{
+                            maxHeight: "400px",
+                            overflowY: "auto",
+                          }}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setBioEditada(value);
+                            setBioCharCount(value.length);
+                          }}
                         />
                       </div>
 
-                      {fotoPreview && (
-                        <div className="prf-preview-imagem">
-                          <img
-                            src={fotoPreview}
-                            alt={t("Prévia da imagem")}
-                            className="prf-preview-img"
-                          />
-                        </div>
-                      )}
                       {cropModalOpen && (
                         <CropImageModal
                           imageSrc={cropImageSrc}
@@ -273,12 +302,18 @@ function Perfil() {
                         />
                       )}
 
+                    <div className="prf-editar-botoes">
+                      <button
+                        className="prf-botao-editar-enviar cancelar"
+                        onClick={() => setMostrarEditor(false)}
+                      >{t("CANCELAR")}</button>
                       <button
                         className="prf-botao-editar-enviar"
                         onClick={salvarEdicao}
                       >
                         {t("ENVIAR")}
                       </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -372,7 +407,13 @@ function Perfil() {
               <hr />
               <div className="prf-coluna2">
                 <span className="prf-titulo-informacoes">BIOGRAFIA</span>
-                <div className="prf-biografia">
+                <div
+                  className="prf-biografia"
+                  style={{
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                >
                   <span>{biografia}</span>
                 </div>
                 <span className="prf-titulo-informacoes">PROGRESSO</span>

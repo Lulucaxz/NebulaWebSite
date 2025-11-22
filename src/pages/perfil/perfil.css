@@ -301,6 +301,18 @@
   }
 }
 
+.prf-biografia::-webkit-scrollbar {
+  width: 10px;
+}
+
+.prf-biografia::-webkit-scrollbar-track {
+    background: var(--cinza-claro1);
+}
+
+.prf-biografia::-webkit-scrollbar-thumb {
+    background-color: var(--roxo1);
+}
+
 .prf-curso-estatistica {
   background-color: red;
   height: 30px;
@@ -400,7 +412,7 @@
 
 .aba-editar {
   background-color: var(--cinza-escuro2);
-  max-width: 800px;
+  max-width: 850px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -416,8 +428,8 @@
 
 .prf-editar-nome {
   border: 0;
-  font-size: 16px;
-  background-color: var(--cinza-escuro3);
+  font-size: 20px;
+  background-color: var(--cinza-claro1);
   width: calc(100% - 20px);
   padding: 10px;
   color: var(--branco);
@@ -427,7 +439,7 @@
 
 .prf-editar-biografia {
   border: 0;
-  height: 100px;
+  height: 250px;
   font-size: 16px;
   background-color: var(--cinza-escuro3);
   width: calc(100% - 20px);
@@ -464,18 +476,18 @@
   cursor: pointer;
 }
 
-.prf-preview-img {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-}
-
 .prf-botao-editar-enviar {
-  height: 35px;
+  padding: 10px 25px;
   font-family: "Questrial", sans-serif;
-  border: 0;
   background-color: var(--roxo1);
   color: var(--branco);
+  width: auto;
+  border: 0;
+  font-size: 16px;
+}
+
+.prf-botao-editar-enviar.cancelar {
+  background-color: var(--cinza-claro1);
 }
 
 .prf-botao-editar-enviar:hover {
@@ -501,14 +513,14 @@
 
 .prf-editor-banner-btn {
   background-color: var(--cinza-claro1);
-  padding: 5px 25px;
+  padding: 10px 25px;
   position: absolute;
   left: 25px;
   bottom: 25px;
   border: none;
   color: var(--branco);
   font-family: "Questrial", sans-serif;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .prf-editor-banner-btn:hover {
@@ -530,8 +542,37 @@
   border-radius: 50%;
 }
 
-.prf-editor-foto-info {
+.prf-editor-foto-info, .prf-editor-nome-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.prf-editar-foto-label {
+  display: flex;
+  justify-content: center;
+  background-color: var(--cinza-claro1);
+  padding: 10px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+  font-size: 20px;
+}
+
+.prf-editar-foto-label:hover {
+  background-color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-editar-biografia-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prf-editar-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
