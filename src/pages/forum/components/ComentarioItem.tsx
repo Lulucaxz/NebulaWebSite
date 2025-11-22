@@ -1,7 +1,17 @@
 // ComentarioItem.jsx - Componente atualizado
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Respostas } from "./respostas"
 import "./Comentario.css"
+
+interface RespostaAninhada {
+  idResposta: number
+  rfotoPerfil: string
+  rnomeUsuario: string
+  assinatura: "Universo" | "Galáxia" | "Órbita"
+  rdataHora: string
+  rconteudoComentario: string
+  eDoUsuario: boolean
+}
 
 interface Resposta {
   idResposta: number
@@ -10,6 +20,8 @@ interface Resposta {
   assinatura: "Universo" | "Galáxia" | "Órbita"
   rdataHora: string
   rconteudoComentario: string
+  eDoUsuario: boolean
+  arrayRespostasAninhadas?: RespostaAninhada[]
 }
 
 interface ComentarioItemProps {
@@ -19,16 +31,20 @@ interface ComentarioItemProps {
   assinatura: "Universo" | "Galáxia" | "Órbita"
   dataHora: string
   conteudoComentario: string
-  numeroAvaliacao: String
+  numeroAvaliacao: string | number
   avaliacaoDoUsuario: string
+  eDoUsuario: boolean
   fotoPerfil: string
   tags: string[]
   imagemComentario?: string | null
   arrayRespostas: Resposta[]
   onDelete: (id: number) => void
-  onEdit: (id: number, novoConteudo: string) => void
-  onVisualizarRespostas: (visualizar: boolean) => void
+  onVisualizarRespostas: (id: number, visualizar: boolean) => void
   onResponderA: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void
+  estaAtivo: boolean
+  respondendoA: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null
+  onEditarComentario: (id: number, titulo: string, conteudo: string, tags: string[], imagem: string | null) => void
+  onEditarResposta: (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => void
 }
 
 export function ComentarioItem({
@@ -40,21 +56,38 @@ export function ComentarioItem({
   conteudoComentario,
   numeroAvaliacao,
   avaliacaoDoUsuario,
+  eDoUsuario,
   fotoPerfil,
   tags,
   imagemComentario,
   arrayRespostas,
   onDelete,
-  onEdit,
   onVisualizarRespostas,
-  onResponderA
+  onResponderA,
+  estaAtivo,
+  respondendoA,
+  onEditarComentario,
+  onEditarResposta
 }: ComentarioItemProps) {
-  const [comteudoEditado, setComteudoEditado] = useState('')
-  const [ativo, setAtivo] = useState(false)
-  const [editar, setEditar] = useState(false)
-  const [respostas] = useState(arrayRespostas)
+  const [respostas, setRespostas] = useState(arrayRespostas)
+  // Sincroniza respostas quando prop mudar (edição salva no pai)
+  useEffect(() => {
+    setRespostas(arrayRespostas)
+  }, [arrayRespostas])
   const [jaAvaliou, setJaAvaliou] = useState(false)
   const [totalAvaliacoes, setTotalAvaliacoes] = useState(parseInt(numeroAvaliacao.toString()))
+
+  const handleDeleteResposta = (idResposta: number) => {
+    setRespostas(prev => prev.filter(r => r.idResposta !== idResposta))
+  }
+
+  const handleEditResposta = (idResposta: number, novoConteudo: string) => {
+    setRespostas(prev =>
+      prev.map(r =>
+        r.idResposta === idResposta ? { ...r, rconteudoComentario: novoConteudo } : r
+      )
+    )
+  }
 
   const handleLike = () => {
     if (!jaAvaliou) {
@@ -80,12 +113,12 @@ export function ComentarioItem({
   const dataHoraFormatada = formatarDataHora(assinatura, dataHora);
 
   const estiloComentario = {
-    borderRadius: ativo ? '10px 10px 0px 0px' : '10px'
+    borderRadius: estaAtivo ? '10px 10px 0px 0px' : '10px'
   }
 
   const estiloRespostas = {
-    height: ativo ? 'auto' : '0px',
-    opacity: ativo ? 1 : 0
+    height: estaAtivo ? 'auto' : '0px',
+    opacity: estaAtivo ? 1 : 0
   }
 
   return (
@@ -102,30 +135,24 @@ export function ComentarioItem({
           </div>
 
           {/* Botões de ação (editar/excluir) */}
-          <div className={avaliacaoDoUsuario}>
-            <button
-              className="frm-comentario-botao-acao"
-              onClick={() => {
-                if (editar) {
-                  if (comteudoEditado.trim() !== '') {
-                    onEdit(idComentario, comteudoEditado)
-                    setEditar(false)
-                  }
-                } else {
-                  setComteudoEditado(conteudoComentario)
-                  setEditar(true)
-                }
-              }}
-            >
-              <img src="/icons/edit_forum.svg" alt="Editar" />
-            </button>
-            <button
-              className="frm-comentario-botao-acao"
-              onClick={() => onDelete(idComentario)}
-            >
-              <img src="/icons/delete.svg" alt="Excluir" />
-            </button>
-          </div>
+          {eDoUsuario && (
+            <div className={avaliacaoDoUsuario}>
+              <button
+                className="frm-comentario-botao-acao"
+                onClick={() => {
+                  onEditarComentario(idComentario, temaPergunta, conteudoComentario, tags, imagemComentario || null)
+                }}
+              >
+                <img src="/icons/edit_forum.svg" alt="Editar" />
+              </button>
+              <button
+                className="frm-comentario-botao-acao"
+                onClick={() => onDelete(idComentario)}
+              >
+                <img src="/icons/delete.svg" alt="Excluir" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tags */}
@@ -149,25 +176,9 @@ export function ComentarioItem({
 
         {/* Conteúdo do comentário */}
         <div className="frm-comentario-conteudo-container">
-          <p className="frm-comentario-conteudo" style={{ display: editar ? 'none' : 'block' }}>
+          <p className="frm-comentario-conteudo">
             {conteudoComentario}
           </p>
-
-          {/* Área de edição */}
-          <div className="frm-comentario-conteudo-editar" style={{ display: !editar ? 'none' : 'block' }}>
-            <textarea
-              maxLength={2000}
-              value={comteudoEditado}
-              className="frm-comentario-conteudo-editar-input"
-              onChange={e => setComteudoEditado(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey && comteudoEditado.trim() !== '') {
-                  onEdit(idComentario, comteudoEditado)
-                  setEditar(false)
-                }
-              }}
-            />
-          </div>
         </div>
 
         {/* Área de interação (avaliação e respostas) */}
@@ -184,10 +195,14 @@ export function ComentarioItem({
 
           <div className="frm-comentario-respostas-info">
             <button
-              className="frm-comentario-botao-respostas"
+              className={`frm-comentario-botao-respostas ${estaAtivo ? 'active' : ''}`}
               onClick={() => {
-                setAtivo(!ativo);
-                onVisualizarRespostas(!ativo);
+                const novoEstado = !estaAtivo;
+                onVisualizarRespostas(idComentario, novoEstado);
+                // Quando fecha as respostas, limpa o estado de responder
+                if (!novoEstado) {
+                  onResponderA(null);
+                }
               }}
             >
               <img src="/icons/coment_forum.svg" alt="Respostas" />
@@ -199,6 +214,23 @@ export function ComentarioItem({
         {/* Seção de respostas */}
         <div className="frm-comentario-ver-respostas">
           <div className="ver-respostas-container" style={estiloRespostas}>
+            {/* Botão para responder ao comentário principal */}
+            {estaAtivo && (
+              <button 
+                className={`resposta-botao-responder ${respondendoA?.tipo === 'comentario' && respondendoA?.id === idComentario ? 'active' : ''}`}
+                style={{ marginBottom: '20px' }}
+                onClick={() => {
+                  onResponderA({
+                    tipo: 'comentario',
+                    id: idComentario,
+                    nome: nomeUsuario
+                  });
+                }}
+              >
+                Responder: {nomeUsuario}
+              </button>
+            )}
+            
             {
               respostas.map(res => (
                 <Respostas
@@ -210,6 +242,12 @@ export function ComentarioItem({
                   assinatura={res.assinatura}
                   onResponderA={onResponderA}
                   idResposta={res.idResposta}
+                  arrayRespostasAninhadas={res.arrayRespostasAninhadas}
+                  respondendoA={respondendoA}
+                  eDoUsuario={res.eDoUsuario}
+                  onDelete={handleDeleteResposta}
+                  onEdit={handleEditResposta}
+                  onEditarResposta={onEditarResposta}
                 />
               ))
             }

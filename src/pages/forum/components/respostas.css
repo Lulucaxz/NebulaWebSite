@@ -2,7 +2,6 @@
 .resposta-item {
     width: 100%;
     max-width: 750px;
-    border-radius: 8px;
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
@@ -49,6 +48,26 @@
     line-height: 1.2;
 }
 
+/* Botões de ação (editar/excluir) */
+.resposta-header .resposta-botao-acao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.resposta-header .resposta-botao-acao img {
+    width: 30px;
+    height: 30px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.resposta-header .resposta-botao-acao:hover img {
+    opacity: 1;
+}
+
 .resposta-conteudo p {
     color: #FFFFFF;
     font-family: "Inter", sans-serif;
@@ -82,7 +101,6 @@
     display: flex;
     align-items: center;
     background-color: #363636;
-    border-radius: 4px;
     transition: all 0.2s;
     gap: 6px;
 }
@@ -93,11 +111,11 @@
 }
 
 .resposta-botao-like.liked {
-    background-color: #007ACC;
+    background-color: #9A30EB;
 }
 
 .resposta-botao-like.liked:hover {
-    background-color: #005A99;
+    background-color: #8a27d6;
 }
 
 .resposta-botao-like.liked img {
@@ -105,6 +123,24 @@
 }
 
 .resposta-botao-like.liked span {
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+/* Estado ativo para botão de comentar */
+.resposta-botao-comentar.active {
+    background-color: #9A30EB;
+}
+
+.resposta-botao-comentar.active:hover {
+    background-color: #8a27d6;
+}
+
+.resposta-botao-comentar.active img {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+.resposta-botao-comentar.active span {
     color: #FFFFFF;
     font-weight: 600;
 }
@@ -140,8 +176,20 @@
     cursor: pointer;
     padding: 10px 8px;
     transition: all 0.2s;
+    width: 100%;
+    max-width: 750px;
 }
 
 .resposta-botao-responder:hover {
     background-color: #414141;
+}
+
+/* Estado ativo para botão de responder */
+.resposta-botao-responder.active {
+    background-color: #9A30EB;
+    color: #FFFFFF;
+}
+
+.resposta-botao-responder.active:hover {
+    background-color: #8a27d6;
 }
