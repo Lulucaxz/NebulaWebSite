@@ -83,8 +83,6 @@ function Atividades() {
         window.localStorage.setItem(tentativaKey, String(tentativas));
     }, [tentativas, tentativaKey]);
     
-    console.log(atividadeInd);
-
     // --- Verificação de Módulo (como estava) ---
     if (!modulo || !atividade) {
         return <div>Módulo não encontrado.</div>;
@@ -95,6 +93,7 @@ function Atividades() {
     const pontosPorQuestao = totalQuestoes > 0 ? pontosTotal / totalQuestoes : 0;
     const notaMinima = 6;
 
+<<<<<<< HEAD
     const clampScore = (value: unknown) => {
         const numeric = typeof value === 'number' ? value : Number(value);
         if (!Number.isFinite(numeric)) return 0;
@@ -107,14 +106,16 @@ function Atividades() {
         dissertativasOverrides?: Record<number, boolean>,
         objetivasOverrides?: Record<number, boolean>
     ) => {
+=======
+    const avaliarQuestoes = (): ('neutro' | 'correta' | 'incorreta')[] => {
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
         if (!atividade.questoes || atividade.questoes.length === 0) {
-            return { pontos: 0, percentual: 0 };
+            return [];
         }
 
-        let pontos = 0;
-
-        atividade.questoes.forEach((questao, index) => {
+        return atividade.questoes.map((questao, index) => {
             if (questao.dissertativa) {
+<<<<<<< HEAD
                 const override = dissertativasOverrides?.[index];
                 const isCorreta = typeof override === 'boolean'
                     ? override
@@ -130,15 +131,37 @@ function Atividades() {
                 if (acertouObjetiva) {
                     pontos += pontosPorQuestao;
                 }
+=======
+                return (respostas[index] ?? '').trim().length > 0 ? 'correta' : 'incorreta';
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
             }
-        });
 
-        const percentual = (pontos / pontosTotal) * 100;
-        return { pontos, percentual };
+            if (!questao.respostaCorreta || !selecoes[index]) {
+                return 'incorreta';
+            }
+
+            return selecoes[index] === questao.respostaCorreta ? 'correta' : 'incorreta';
+        });
+    };
+
+    const calcularPontuacao = () => {
+        const resultados = avaliarQuestoes();
+
+        if (resultados.length === 0) {
+            return { pontos: 0, percentual: 0, resultados };
+        }
+
+        const pontos = resultados.reduce((acc, status) => (
+            status === 'correta' ? acc + pontosPorQuestao : acc
+        ), 0);
+        const percentual = (pontosTotal === 0 ? 0 : (pontos / pontosTotal) * 100);
+
+        return { pontos, percentual, resultados };
     };
 
     // --- NOVA FUNÇÃO DE CLIQUE ---
     const handleAlternativaClick = (
+<<<<<<< HEAD
         questionIndex: number,
         alternativaClicada: string
     ) => {
@@ -149,10 +172,20 @@ function Atividades() {
             i === questionIndex ? alternativaClicada : sel
         ));
         setStatusRespostas(prev => prev.map((status, i) =>
+=======
+        questionIndex: number, 
+        alternativaClicada: string
+    ) => {
+        setSelecoes(prev => prev.map((sel, i) => 
+            i === questionIndex ? alternativaClicada : sel
+        ));
+        setStatusRespostas(prev => prev.map((status, i) => 
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
             i === questionIndex ? 'neutro' : status
         ));
     };
 
+<<<<<<< HEAD
     const avaliarQuestoesObjetivas = () => {
         const questoes = atividade.questoes ?? [];
         const overrides: Record<number, boolean> = {};
@@ -314,6 +347,13 @@ function Atividades() {
             console.error(err);
             showAlert('Erro ao enviar atividade. Verifique sua conexão.');
         }
+=======
+    const handleRespostaDissertativaChange = (questionIndex: number, valor: string) => {
+        setRespostas(prev => prev.map((v, i) => i === questionIndex ? valor : v));
+        setStatusRespostas(prev => prev.map((status, i) => 
+            i === questionIndex ? 'neutro' : status
+        ));
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
     };
 
 
@@ -342,6 +382,7 @@ function Atividades() {
                                 placeholder='Digite sua resposta aqui...' 
                                 maxLength={2000}
                                 value={respostas[index]}
+<<<<<<< HEAD
                                 onChange={e => {
                                     if (atividadeFinalizada) {
                                         return;
@@ -355,6 +396,9 @@ function Atividades() {
                                     }
                                 }}
                                 disabled={atividadeFinalizada}
+=======
+                                onChange={e => handleRespostaDissertativaChange(index, e.target.value)}
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
                                 style={{
                                 display: questao.dissertativa ? 'block' : 'none',
                             }}></textarea>
@@ -372,7 +416,6 @@ function Atividades() {
                             {/* --- Seção de Alternativas (MODIFICADA) --- */}
                             <div className="questao-alternativas" style={{ display: !questao.dissertativa ? 'grid' : 'none' }}>
                                 {(questao.alternativas ?? ['Alternativa A', 'Alternativa B', 'Alternativa C', 'Alternativa D']).map((alt: string, altIdx: number) => {
-                                    
                                     const status = statusRespostas[index];
                                     const isSelected = selecoes[index] === alt;
 
@@ -391,9 +434,15 @@ function Atividades() {
                                             key={`alt-${atividade.id}-${index}-${altIdx}`} 
                                             className={className} // Classe dinâmica aplicada aqui
                                             onClick={() => { 
+<<<<<<< HEAD
                                                 handleAlternativaClick(index, alt); 
                                             }}
                                             style={{ cursor: 'pointer' }}
+=======
+                                                // Chama a nova função de clique
+                                                handleAlternativaClick(index, alt); 
+                                            }}
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
                                         >
                                             <div className="alternativa-letra" 
                                                  // Estilo da letra (A, B, C) é controlado por CSS agora
@@ -422,6 +471,7 @@ function Atividades() {
                         {atividadeFinalizada ? 'VOLTAR' : 'CANCELAR'}
                     </Link>
                     <div className='tarefa-sessao-fim-acoes'>
+<<<<<<< HEAD
                         {!atividadeFinalizada && (
                             <button
                                 className='tarefa-sessao-fim-button'
@@ -439,6 +489,43 @@ function Atividades() {
                                 {avaliandoDissertativas ? 'AVALIANDO...' : 'ENVIAR'}
                             </button>
                         )}
+=======
+                        <button className='tarefa-sessao-fim-button' onClick={async () => {
+                            const tentativaAtual = tentativas + 1;
+                            setTentativas(tentativaAtual);
+
+                            const { pontos, percentual, resultados } = calcularPontuacao();
+                            if (resultados.length > 0) {
+                                setStatusRespostas(resultados);
+                            }
+                            const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
+                            const atingiuMeta = pontos > notaMinima;
+
+                            alert(`${mensagemResultado}\n${atingiuMeta ? 'Parabéns! A atividade será marcada como concluída.' : 'Você precisa atingir 6 pontos para concluir a atividade.'}`);
+
+                            if (!atingiuMeta) {
+                                return;
+                            }
+
+                            try {
+                                const body = JSON.stringify({
+                                    totalActivities: modulo.atividades.length,
+                                    score: pontos,
+                                    attempts: tentativaAtual
+                                });
+                                const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
+                                if (res.ok) {
+                                    window.location.href = `/modulos/${assinatura}/${modulo.id}`;
+                                } else {
+                                    const data = await res.json().catch(() => ({}));
+                                    alert('Erro ao enviar atividade: ' + (data.error || res.statusText));
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                alert('Erro ao enviar atividade. Verifique sua conexão.');
+                            }
+                        }} style={{ backgroundColor: '#9A30EB', border: 'none', padding: '10px 16px', color: '#fff', cursor: 'pointer' }}>ENVIAR</button>
+>>>>>>> 89ca877820bf4585d5bef529f8644eb465bdfdc6
                     </div>
                 </div>
                 {relatorioAtividade && (

@@ -340,6 +340,21 @@
     background-color: #636363;
 }
 
+.questao-alternativa.selecionada {
+    background-color: #F8EFFF;
+    color: #323232;
+}
+
+.questao-alternativa.selecionada .alternativa-letra {
+    background-color: #F1D9FF;
+    color: #9A30EB;
+}
+
+.questao-alternativa.selecionada .alternativa-texto {
+    color: #323232;
+    font-weight: 600;
+}
+
 .alternativa-letra {
     background-color: #9A30EB;
     padding: 20px;
