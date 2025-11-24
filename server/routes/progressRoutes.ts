@@ -48,6 +48,13 @@ const getPointsPerActivity = (assinatura: string) => {
   return 5; // órbita
 };
 
+const normalizeScore = (value: unknown): number | undefined => {
+  if (value === null || value === undefined) return undefined;
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numeric)) return undefined;
+  return Math.min(Math.max(numeric, 0), 10);
+};
+
 // Module completion
 router.post('/module/:assinatura/:moduloId', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
   const r = req as AuthenticatedRequest;
@@ -82,18 +89,26 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
   const { assinatura, moduloId, atividadeId } = req.params;
   // accept optional totalActivities in body to determine module completion
   const totalActivities = typeof req.body?.totalActivities === 'number' ? Number(req.body.totalActivities) : undefined;
+  const score = normalizeScore(req.body?.score);
 
   const [result] = await pool.query<ResultSetHeader>('INSERT IGNORE INTO atividades_concluidas (usuario_id, assinatura, modulo_id, atividade_id) VALUES (?, ?, ?, ?)', [userId, assinatura, Number(moduloId), Number(atividadeId)]);
 
   let addedPoints = false;
+  let pointsAwarded = 0;
   if (result.affectedRows && result.affectedRows > 0) {
     addedPoints = true;
-    const pointsToAdd = getPointsPerActivity(assinatura);
-    // Only update pontos on activity completion
-    await pool.query<ResultSetHeader>(
-      `UPDATE usuario SET pontos = pontos + ? WHERE id = ?`,
-      [pointsToAdd, userId]
-    );
+    const basePoints = getPointsPerActivity(assinatura);
+    const scaledPoints = typeof score === 'number'
+      ? Math.round(basePoints * (score / 10))
+      : basePoints;
+    const safePoints = Math.max(0, scaledPoints);
+    if (safePoints > 0) {
+      await pool.query<ResultSetHeader>(
+        `UPDATE usuario SET pontos = pontos + ? WHERE id = ?`,
+        [safePoints, userId]
+      );
+      pointsAwarded = safePoints;
+    }
   }
 
   // If caller provided totalActivities, check whether the module is now complete
@@ -112,7 +127,7 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
     }
   }
 
-  res.status(201).json({ success: true, addedPoints, moduleCompleted });
+  res.status(201).json({ success: true, addedPoints, pointsAwarded, moduleCompleted });
 }));
 
 router.delete('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHandler(async (req: Request, res: Response) => {

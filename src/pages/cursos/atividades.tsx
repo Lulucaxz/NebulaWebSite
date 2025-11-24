@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import { initial_cursos } from './components/cursosDados';
-import { useState } from 'react'; 
+import { useEffect, useState } from 'react'; 
 import { fetchWithCredentials, API_BASE } from '../../api';
 import { Link } from "react-router-dom";
 
@@ -25,6 +25,9 @@ function Atividades() {
     const curso = (initial_cursos as unknown as Record<string, ModuloType[]>)[assinatura ?? ''];
     const modulo = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
     const atividade = modulo?.atividades?.[Number(atividadeInd)] as AtividadeType;
+    const tentativaKey = assinatura && modulo && atividade
+        ? `atividade-${assinatura}-${modulo.id}-${atividade.id}-tentativas`
+        : undefined;
     
     // --- ESTADO ATUALIZADO ---
     
@@ -40,6 +43,26 @@ function Atividades() {
     const [statusRespostas, setStatusRespostas] = useState<('neutro' | 'correta' | 'incorreta')[]>(
         () => Array(atividade?.questoes?.length || 0).fill('neutro')
     );
+
+    const [tentativas, setTentativas] = useState<number>(() => {
+        if (typeof window === 'undefined' || !tentativaKey) return 0;
+        const stored = window.localStorage.getItem(tentativaKey);
+        const parsed = stored !== null ? Number(stored) : 0;
+        return Number.isFinite(parsed) ? parsed : 0;
+    });
+
+    useEffect(() => {
+        if (!tentativaKey || typeof window === 'undefined') return;
+        const stored = window.localStorage.getItem(tentativaKey);
+        const parsed = stored !== null ? Number(stored) : 0;
+        const normalized = Number.isFinite(parsed) ? parsed : 0;
+        setTentativas(normalized);
+    }, [tentativaKey]);
+
+    useEffect(() => {
+        if (!tentativaKey || typeof window === 'undefined') return;
+        window.localStorage.setItem(tentativaKey, String(tentativas));
+    }, [tentativas, tentativaKey]);
     
     console.log(atividadeInd);
 
@@ -47,6 +70,32 @@ function Atividades() {
     if (!modulo || !atividade) {
         return <div>Módulo não encontrado.</div>;
     }
+
+    const totalQuestoes = atividade.questoes?.length ?? 0;
+    const pontosTotal = 10;
+    const pontosPorQuestao = totalQuestoes > 0 ? pontosTotal / totalQuestoes : 0;
+    const notaMinima = 6;
+
+    const calcularPontuacao = () => {
+        if (!atividade.questoes || atividade.questoes.length === 0) {
+            return { pontos: 0, percentual: 0 };
+        }
+
+        let pontos = 0;
+
+        atividade.questoes.forEach((questao, index) => {
+            if (questao.dissertativa) {
+                if ((respostas[index] ?? '').trim().length > 0) {
+                    pontos += pontosPorQuestao;
+                }
+            } else if (statusRespostas[index] === 'correta') {
+                pontos += pontosPorQuestao;
+            }
+        });
+
+        const percentual = (pontos / pontosTotal) * 100;
+        return { pontos, percentual };
+    };
 
     // --- NOVA FUNÇÃO DE CLIQUE ---
     const handleAlternativaClick = (
@@ -157,21 +206,43 @@ function Atividades() {
                         Você chegou ao fim desta tarefa. Certifique-se de que todas as questões então respondidas ou marcadas de forma correta, cuidados com palavras erradas e se atente as nomenclaturas e sinais utilizados.
                     </p>
                     <Link className='tarefa-sessao-fim-button' to={`/modulos/${assinatura}/${modulo.id}`}>CANCELAR</Link>
-                    <button className='tarefa-sessao-fim-button' onClick={async () => {
-                        try {
-                            const body = JSON.stringify({ totalActivities: modulo.atividades.length });
-                            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
-                            if (res.ok) {
-                                window.location.href = `/modulos/${assinatura}/${modulo.id}`;
-                            } else {
-                                const data = await res.json().catch(() => ({}));
-                                alert('Erro ao enviar atividade: ' + (data.error || res.statusText));
+                    <div className='tarefa-sessao-fim-acoes'>
+                        <button className='tarefa-sessao-fim-button' onClick={async () => {
+                            const tentativaAtual = tentativas + 1;
+                            setTentativas(tentativaAtual);
+
+                            const { pontos, percentual } = calcularPontuacao();
+                            const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
+                            const atingiuMeta = pontos > notaMinima;
+
+                            alert(`${mensagemResultado}\n${atingiuMeta ? 'Parabéns! A atividade será marcada como concluída.' : 'Você precisa atingir 6 pontos para concluir a atividade.'}`);
+
+                            if (!atingiuMeta) {
+                                return;
                             }
-                        } catch (err) {
-                            console.error(err);
-                            alert('Erro ao enviar atividade. Verifique sua conexão.');
-                        }
-                    }} style={{ backgroundColor: '#9A30EB', border: 'none', padding: '10px 16px', color: '#fff', cursor: 'pointer' }}>ENVIAR</button>
+
+                            try {
+                                const body = JSON.stringify({
+                                    totalActivities: modulo.atividades.length,
+                                    score: pontos,
+                                    attempts: tentativaAtual
+                                });
+                                const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
+                                if (res.ok) {
+                                    window.location.href = `/modulos/${assinatura}/${modulo.id}`;
+                                } else {
+                                    const data = await res.json().catch(() => ({}));
+                                    alert('Erro ao enviar atividade: ' + (data.error || res.statusText));
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                alert('Erro ao enviar atividade. Verifique sua conexão.');
+                            }
+                        }} style={{ backgroundColor: '#9A30EB', border: 'none', padding: '10px 16px', color: '#fff', cursor: 'pointer' }}>ENVIAR</button>
+                    </div>
+                </div>
+                <div className='tarefa-tentativas-wrapper'>
+                    <span className='tarefa-tentativas'>Tentativas registradas: {tentativas}</span>
                 </div>
             </div>
             <Footer />
