@@ -22,7 +22,7 @@ const questoesIniciantes = [
     { 
         questao: 'O movimento aparente diário do céu é causado principalmente por:', 
         dissertativa: false, 
-        alternativas: ['Translação da Terra', 'Rotação da Terra', 'Movimento do Sol ao redor da Terra', 'Precessão dos equinócios'],
+        alternativas: ['Rotação da Terra', 'Precessão dos equinócios', 'Translação da Terra', 'Movimento do Sol ao redor da Terra'],
         respostaCorreta: 'Rotação da Terra'
     },
     { 
@@ -36,13 +36,13 @@ const questoesIniciantes = [
     { 
         questao: 'A "Estrela Dalva" é, na verdade, qual planeta?', 
         dissertativa: false, 
-        alternativas: ['Marte', 'Júpiter', 'Vênus', 'Saturno'],
+        alternativas: ['Júpiter', 'Saturno', 'Marte', 'Vênus'],
         respostaCorreta: 'Vênus'
     },
     {
         questao: 'Que instrumento simples pode ajudar a estimar a altura de uma estrela acima do horizonte?',
         dissertativa: false,
-        alternativas: ['Cronômetro', 'Astrolábio', 'Bússola magnética', 'Termômetro'],
+        alternativas: ['Cronômetro', 'Termômetro', 'Astrolábio', 'Bússola magnética'],
         respostaCorreta: 'Astrolábio'
     }
 ];
@@ -54,7 +54,7 @@ const questoesSistemaSolar = [
     { 
         questao: 'A ordem correta dos planetas a partir do Sol é:', 
         dissertativa: false, 
-        alternativas: ['Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Mercúrio, Terra, Vênus, Marte, Júpiter, Saturno, Urano, Netuno', 'Vênus, Mercúrio, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Terra, Marte, Mercúrio, Vênus, Júpiter, Saturno, Urano, Netuno'],
+        alternativas: ['Mercúrio, Terra, Vênus, Marte, Júpiter, Saturno, Urano, Netuno', 'Terra, Marte, Mercúrio, Vênus, Júpiter, Saturno, Urano, Netuno', 'Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno', 'Vênus, Mercúrio, Terra, Marte, Júpiter, Saturno, Urano, Netuno'],
         respostaCorreta: 'Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno'
     },
     { 
@@ -64,7 +64,7 @@ const questoesSistemaSolar = [
     { 
         questao: 'Qual planeta é famoso por seus anéis?', 
         dissertativa: false, 
-        alternativas: ['Júpiter', 'Saturno', 'Urano', 'Netuno'],
+        alternativas: ['Júpiter', 'Urano', 'Netuno', 'Saturno'],
         respostaCorreta: 'Saturno'
     },
     {
@@ -74,7 +74,7 @@ const questoesSistemaSolar = [
     {
         questao: 'Qual planeta possui o dia (rotação) mais longo do Sistema Solar?',
         dissertativa: false,
-        alternativas: ['Vênus', 'Mercúrio', 'Marte', 'Netuno'],
+        alternativas: ['Mercúrio', 'Netuno', 'Vênus', 'Marte'],
         respostaCorreta: 'Vênus'
     }
 ];
@@ -86,7 +86,7 @@ const questoesEstrelas = [
     { 
         questao: 'Cores estelares indicam principalmente:', 
         dissertativa: false, 
-        alternativas: ['Idade', 'Temperatura', 'Composição química única', 'Tamanho do sistema planetário'],
+        alternativas: ['Composição química única', 'Tamanho do sistema planetário', 'Idade', 'Temperatura'],
         respostaCorreta: 'Temperatura'
     },
     { 
@@ -100,7 +100,7 @@ const questoesEstrelas = [
     {
         questao: 'Estrelas variáveis Cefeidas são úteis porque permitem:',
         dissertativa: false,
-        alternativas: ['Medir campos magnéticos estelares', 'Determinar distâncias por relação período-luminosidade', 'Identificar atmosferas estelares', 'Prever erupções solares'],
+        alternativas: ['Prever erupções solares', 'Medir campos magnéticos estelares', 'Determinar distâncias por relação período-luminosidade', 'Identificar atmosferas estelares'],
         respostaCorreta: 'Determinar distâncias por relação período-luminosidade'
     }
 ];
@@ -112,7 +112,7 @@ const questoesTelescopios = [
     { 
         questao: 'Filtros e oculares são usados principalmente para:', 
         dissertativa: false, 
-        alternativas: ['Aumentar o brilho', 'Alterar a cor do astro', 'Realçar contraste e segurança', 'Focar automaticamente'],
+        alternativas: ['Focar automaticamente', 'Realçar contraste e segurança', 'Alterar a cor do astro', 'Aumentar o brilho'],
         respostaCorreta: 'Realçar contraste e segurança'
     },
     { 
@@ -122,7 +122,7 @@ const questoesTelescopios = [
     { 
         questao: 'Para observar galáxias e nebulosas, que são objetos de brilho fraco, o ideal é um telescópio com:', 
         dissertativa: false, 
-        alternativas: ['Grande aumento', 'Grande abertura', 'Lentes coloridas', 'Filtro lunar'],
+        alternativas: ['Filtro lunar', 'Lentes coloridas', 'Grande aumento', 'Grande abertura'],
         respostaCorreta: 'Grande abertura'
     },
     { 
@@ -132,7 +132,7 @@ const questoesTelescopios = [
     {
         questao: 'Qual prática melhora a nitidez da imagem em telescópios refletores?',
         dissertativa: false,
-        alternativas: ['Usar lentes coloridas', 'Colimar os espelhos regularmente', 'Observar apenas durante o dia', 'Retirar o espelho secundário'],
+        alternativas: ['Observar apenas durante o dia', 'Retirar o espelho secundário', 'Usar lentes coloridas', 'Colimar os espelhos regularmente'],
         respostaCorreta: 'Colimar os espelhos regularmente'
     }
 ];
@@ -144,7 +144,7 @@ const questoesFenomenos = [
     { 
         questao: 'As fases da Lua são causadas principalmente por:', 
         dissertativa: false, 
-        alternativas: ['Sombra da Terra', 'Posição relativa Sol–Terra–Lua', 'Rotação da Lua', 'Nuvens na atmosfera'],
+        alternativas: ['Posição relativa Sol–Terra–Lua', 'Rotação da Lua', 'Sombra da Terra', 'Nuvens na atmosfera'],
         respostaCorreta: 'Posição relativa Sol–Terra–Lua'
     },
     { 
@@ -158,7 +158,7 @@ const questoesFenomenos = [
     {
         questao: 'Qual fenômeno é responsável pelo “anel de fogo” visível em alguns eclipses solares?',
         dissertativa: false,
-        alternativas: ['Difração na atmosfera', 'Distância maior entre Terra e Sol', 'Diâmetro aparente menor da Lua', 'Reflexão na superfície lunar'],
+        alternativas: ['Reflexão na superfície lunar', 'Diâmetro aparente menor da Lua', 'Difração na atmosfera', 'Distância maior entre Terra e Sol'],
         respostaCorreta: 'Diâmetro aparente menor da Lua'
     }
 ];
@@ -170,13 +170,13 @@ const questoesCicloEstelar = [
     { 
         questao: 'Uma supernova está associada geralmente a:', 
         dissertativa: false, 
-        alternativas: ['Nascimento de estrelas', 'Morte de estrelas massivas', 'Planetas gigantes', 'Cometas brilhantes'],
+        alternativas: ['Cometas brilhantes', 'Planetas gigantes', 'Nascimento de estrelas', 'Morte de estrelas massivas'],
         respostaCorreta: 'Morte de estrelas massivas'
     },
     { 
         questao: 'O que restará do nosso Sol no final de sua vida?', 
         dissertativa: false, 
-        alternativas: ['Um buraco negro', 'Uma estrela de nêutrons', 'Uma anã branca', 'Nada'],
+        alternativas: ['Uma anã branca', 'Nada', 'Um buraco negro', 'Uma estrela de nêutrons'],
         respostaCorreta: 'Uma anã branca'
     },
     { 
@@ -190,7 +190,7 @@ const questoesCicloEstelar = [
     { 
         questao: 'Buracos negros estelares se formam a partir de:', 
         dissertativa: false, 
-        alternativas: ['Estrelas de baixa massa como o Sol', 'Colapso de estrelas extremamente massivas', 'Colisão de duas anãs brancas', 'Nuvens de gás e poeira'],
+        alternativas: ['Nuvens de gás e poeira', 'Colisão de duas anãs brancas', 'Colapso de estrelas extremamente massivas', 'Estrelas de baixa massa como o Sol'],
         respostaCorreta: 'Colapso de estrelas extremamente massivas'
     }
 ];
@@ -203,7 +203,7 @@ const questoesBBang = [
     { 
         questao: 'O desvio para o vermelho galáctico é interpretado como:', 
         dissertativa: false, 
-        alternativas: ['Efeito Doppler local de estrelas', 'Expansão do espaço entre galáxias', 'Aproximação da Via Láctea', 'Erro sistemático instrumental'],
+        alternativas: ['Expansão do espaço entre galáxias', 'Efeito Doppler local de estrelas', 'Aproximação da Via Láctea', 'Erro sistemático instrumental'],
         respostaCorreta: 'Expansão do espaço entre galáxias'
     },
     { 
@@ -217,7 +217,7 @@ const questoesBBang = [
     {
         questao: 'A temperatura média prevista para a radiação cósmica de fundo hoje é de aproximadamente:',
         dissertativa: false,
-        alternativas: ['2,7 K', '27 K', '270 K', '2700 K'],
+        alternativas: ['270 K', '2,7 K', '27 K', '2700 K'],
         respostaCorreta: '2,7 K'
     }
 ];
@@ -229,13 +229,13 @@ const questoesMateriaEnergiaEscura = [
     { 
         questao: 'Lentes gravitacionais fortes e fracas são úteis para:', 
         dissertativa: false, 
-        alternativas: ['Medir temperaturas de estrelas', 'Inferir distribuição de massa (visível e escura)', 'Calibrar espectros', 'Detectar ondas gravitacionais diretamente'],
+        alternativas: ['Inferir distribuição de massa (visível e escura)', 'Detectar ondas gravitacionais diretamente', 'Calibrar espectros', 'Medir temperaturas de estrelas'],
         respostaCorreta: 'Inferir distribuição de massa (visível e escura)'
     },
     { 
         questao: 'Qual a porcentagem aproximada do conteúdo de energia do universo que se acredita ser matéria escura?', 
         dissertativa: false, 
-        alternativas: ['5%', '27%', '68%', '95%'],
+        alternativas: ['68%', '5%', '27%', '95%'],
         respostaCorreta: '27%'
     },
     { 
@@ -249,7 +249,7 @@ const questoesMateriaEnergiaEscura = [
     {
         questao: 'Qual destes candidatos é um exemplo de matéria escura bariônica?',
         dissertativa: false,
-        alternativas: ['WIMPs', 'Áxions', 'MACHOs', 'Neutrinos estéreis'],
+        alternativas: ['WIMPs', 'Áxions', 'Neutrinos estéreis', 'MACHOs'],
         respostaCorreta: 'MACHOs'
     }
 ];
@@ -261,7 +261,7 @@ const questoesEstruturaUniverso = [
     {
         questao: 'O espectro de potência da matéria fornece:',
         dissertativa: false,
-        alternativas: ['Distribuição de temperaturas estelares', 'Distribuição estatística de flutuações em escalas', 'Histórico químico de galáxias', 'Idades de aglomerados globulares'],
+        alternativas: ['Idades de aglomerados globulares', 'Histórico químico de galáxias', 'Distribuição estatística de flutuações em escalas', 'Distribuição de temperaturas estelares'],
         respostaCorreta: 'Distribuição estatística de flutuações em escalas'
     },
     { questao: 'Explique o conceito de “bias” entre distribuição de matéria e galáxias observadas.', dissertativa: true },
@@ -269,7 +269,7 @@ const questoesEstruturaUniverso = [
     {
         questao: 'O parâmetro σ₈ mede:',
         dissertativa: false,
-        alternativas: ['A taxa de expansão local', 'A amplitude das flutuações de densidade em 8 h⁻¹ Mpc', 'A fração de matéria bariônica', 'A energia escura presente no universo'],
+        alternativas: ['A energia escura presente no universo', 'A fração de matéria bariônica', 'A amplitude das flutuações de densidade em 8 h⁻¹ Mpc', 'A taxa de expansão local'],
         respostaCorreta: 'A amplitude das flutuações de densidade em 8 h⁻¹ Mpc'
     },
     {
@@ -285,7 +285,7 @@ const questoesRelatividadeBuracosNegros = [
     { 
         questao: 'Um buraco negro pode ser detectado indiretamente por:', 
         dissertativa: false, 
-        alternativas: ['Emissão de luz do interior', 'Efeito gravitacional sobre matéria vizinha', 'Sombra projetada por um planeta', 'Mudanças na cor do céu noturno'],
+        alternativas: ['Efeito gravitacional sobre matéria vizinha', 'Sombra projetada por um planeta', 'Mudanças na cor do céu noturno', 'Emissão de luz do interior'],
         respostaCorreta: 'Efeito gravitacional sobre matéria vizinha'
     },
     { 
@@ -295,7 +295,7 @@ const questoesRelatividadeBuracosNegros = [
     { 
         questao: 'A primeira imagem de um buraco negro, divulgada em 2019, foi do buraco negro no centro de qual galáxia?', 
         dissertativa: false, 
-        alternativas: ['Via Láctea', 'Andrômeda', 'Messier 87', 'Galáxia do Triângulo'],
+        alternativas: ['Messier 87', 'Via Láctea', 'Galáxia do Triângulo', 'Andrômeda'],
         respostaCorreta: 'Messier 87'
     },
     {
@@ -305,7 +305,7 @@ const questoesRelatividadeBuracosNegros = [
     {
         questao: 'O primeiro evento de ondas gravitacionais observado (GW150914) foi resultado da fusão de:',
         dissertativa: false,
-        alternativas: ['Duas estrelas de nêutrons', 'Dois buracos negros estelares', 'Um buraco negro e uma estrela de nêutrons', 'Dois buracos negros supermassivos'],
+        alternativas: ['Dois buracos negros estelares', 'Um buraco negro e uma estrela de nêutrons', 'Dois buracos negros supermassivos', 'Duas estrelas de nêutrons'],
         respostaCorreta: 'Dois buracos negros estelares'
     }
 ];
@@ -317,7 +317,7 @@ const questoesCosmologiaObservacional = [
     { 
         questao: 'O parâmetro Ωm representa:', 
         dissertativa: false, 
-        alternativas: ['Densidade de energia escura', 'Densidade de matéria (normal + escura)', 'Curvatura espacial', 'Temperatura média do CMB'],
+        alternativas: ['Curvatura espacial', 'Temperatura média do CMB', 'Densidade de energia escura', 'Densidade de matéria (normal + escura)'],
         respostaCorreta: 'Densidade de matéria (normal + escura)'
     },
     { 
@@ -331,7 +331,7 @@ const questoesCosmologiaObservacional = [
     {
         questao: 'Qual combinação de sondas ajuda a quebrar a degenerescência entre H₀ e Ωₘ?',
         dissertativa: false,
-        alternativas: ['Somente CMB', 'Somente SNe Ia', 'CMB + BAO + SNe Ia', 'Somente lentes fracas'],
+        alternativas: ['CMB + BAO + SNe Ia', 'Somente lentes fracas', 'Somente CMB', 'Somente SNe Ia'],
         respostaCorreta: 'CMB + BAO + SNe Ia'
     }
 ];
@@ -343,7 +343,7 @@ const questoesInflacao = [
     { 
         questao: 'O espectro quase invariante de escala observado no CMB é consistente com:', 
         dissertativa: false, 
-        alternativas: ['Ausência de inflação', 'Modelos inflacionários', 'Universo estático', 'Apenas matéria bariônica'],
+        alternativas: ['Universo estático', 'Ausência de inflação', 'Apenas matéria bariônica', 'Modelos inflacionários'],
         respostaCorreta: 'Modelos inflacionários'
     },
     { 
@@ -353,7 +353,7 @@ const questoesInflacao = [
     { 
         questao: 'A inflação cósmica ocorreu:', 
         dissertativa: false, 
-        alternativas: ['Nos primeiros 3 minutos do universo', 'Uma fração de segundo após o Big Bang', 'Antes do Big Bang', 'Junto com a formação das primeiras estrelas'],
+        alternativas: ['Antes do Big Bang', 'Nos primeiros 3 minutos do universo', 'Uma fração de segundo após o Big Bang', 'Junto com a formação das primeiras estrelas'],
         respostaCorreta: 'Uma fração de segundo após o Big Bang'
     },
     {
@@ -363,7 +363,7 @@ const questoesInflacao = [
     {
         questao: 'Um valor de índice espectral escalar (nₛ) ligeiramente menor que 1 indica:',
         dissertativa: false,
-        alternativas: ['Espectro azul com mais potência em pequenas escalas', 'Espectro vermelho com mais potência em grandes escalas', 'Espectro plano ideal', 'Inconsistência com inflação'],
+        alternativas: ['Espectro vermelho com mais potência em grandes escalas', 'Inconsistência com inflação', 'Espectro plano ideal', 'Espectro azul com mais potência em pequenas escalas'],
         respostaCorreta: 'Espectro vermelho com mais potência em grandes escalas'
     }
 ];
@@ -376,7 +376,7 @@ const questoesLuzMedidas = [
     { 
         questao: 'A lei de Wien relaciona:', 
         dissertativa: false, 
-        alternativas: ['Temperatura e pico do espectro', 'Massa e luminosidade', 'Idade e metalicidade', 'Velocidade radial e distância'],
+        alternativas: ['Idade e metalicidade', 'Temperatura e pico do espectro', 'Velocidade radial e distância', 'Massa e luminosidade'],
         respostaCorreta: 'Temperatura e pico do espectro'
     },
     { 
@@ -390,7 +390,7 @@ const questoesLuzMedidas = [
     {
         questao: 'Fotometria multibanda permite estimar qual propriedade estelar com maior precisão?',
         dissertativa: false,
-        alternativas: ['Idade individual', 'Composição atmosférica', 'Temperatura efetiva e extinção', 'Momento angular'],
+        alternativas: ['Composição atmosférica', 'Idade individual', 'Momento angular', 'Temperatura efetiva e extinção'],
         respostaCorreta: 'Temperatura efetiva e extinção'
     }
 ];
@@ -402,7 +402,7 @@ const questoesFormacaoEstelar = [
     { 
         questao: 'Regiões HII são:', 
         dissertativa: false, 
-        alternativas: ['Nuvens de poeira fria', 'Gás ionizado por estrelas jovens', 'Aglomerados globulares antigos', 'Buracos negros supermassivos'],
+        alternativas: ['Nuvens de poeira fria', 'Aglomerados globulares antigos', 'Buracos negros supermassivos', 'Gás ionizado por estrelas jovens'],
         respostaCorreta: 'Gás ionizado por estrelas jovens'
     },
     { 
@@ -412,7 +412,7 @@ const questoesFormacaoEstelar = [
     { 
         questao: 'Qual é a principal fonte de energia de uma protoestrela?', 
         dissertativa: false, 
-        alternativas: ['Fusão nuclear de hidrogênio', 'Contração gravitacional', 'Fusão nuclear de hélio', 'Aniquilação de matéria e antimatéria'],
+        alternativas: ['Fusão nuclear de hidrogênio', 'Aniquilação de matéria e antimatéria', 'Contração gravitacional', 'Fusão nuclear de hélio'],
         respostaCorreta: 'Contração gravitacional'
     },
     {
@@ -422,7 +422,7 @@ const questoesFormacaoEstelar = [
     {
         questao: 'Núcleos densos em nuvens moleculares podem ser detectados através de emissão em:',
         dissertativa: false,
-        alternativas: ['Raios gama', 'Infravermelho distante e rádio', 'Luz visível', 'Raios X'],
+        alternativas: ['Raios X', 'Raios gama', 'Luz visível', 'Infravermelho distante e rádio'],
         respostaCorreta: 'Infravermelho distante e rádio'
     }
 ];
@@ -434,7 +434,7 @@ const questoesViaLactea = [
     { 
         questao: 'A curva de rotação da Via Láctea indica:', 
         dissertativa: false, 
-        alternativas: ['Somente matéria bariônica', 'Presença de matéria escura', 'Universo estático', 'Erro de medição sistemático'],
+        alternativas: ['Universo estático', 'Somente matéria bariônica', 'Erro de medição sistemático', 'Presença de matéria escura'],
         respostaCorreta: 'Presença de matéria escura'
     },
     { 
@@ -448,7 +448,7 @@ const questoesViaLactea = [
     {
         questao: 'A contagem de estrelas do disco fino é mais eficiente em que faixa espectral devido à extinção?',
         dissertativa: false,
-        alternativas: ['Ultravioleta', 'Óptico azul', 'Infravermelho próximo', 'Rádio de alta frequência'],
+        alternativas: ['Rádio de alta frequência', 'Ultravioleta', 'Óptico azul', 'Infravermelho próximo'],
         respostaCorreta: 'Infravermelho próximo'
     }
 ];
@@ -460,7 +460,7 @@ const questoesExoplanetas = [
     { 
         questao: 'O método de trânsito mede:', 
         dissertativa: false, 
-        alternativas: ['Variações de velocidade da estrela', 'Queda no brilho quando o planeta passa à frente', 'Imagem direta do planeta', 'Emissão térmica do planeta'],
+        alternativas: ['Queda no brilho quando o planeta passa à frente', 'Emissão térmica do planeta', 'Variações de velocidade da estrela', 'Imagem direta do planeta'],
         respostaCorreta: 'Queda no brilho quando o planeta passa à frente'
     },
     { 
@@ -470,7 +470,7 @@ const questoesExoplanetas = [
     { 
         questao: 'Qual telescópio espacial foi um dos mais prolíficos na descoberta de exoplanetas usando o método de trânsito?', 
         dissertativa: false, 
-        alternativas: ['Hubble', 'Spitzer', 'Kepler', 'James Webb'],
+        alternativas: ['Spitzer', 'Hubble', 'James Webb', 'Kepler'],
         respostaCorreta: 'Kepler'
     },
     {
@@ -480,7 +480,7 @@ const questoesExoplanetas = [
     {
         questao: 'O método de microlente gravitacional é especialmente sensível a planetas:',
         dissertativa: false,
-        alternativas: ['Muito próximos da estrela', 'Em sistemas binários brilhantes', 'Em órbitas largas, inclusive em galáxias distantes', 'Com atmosferas espessas'],
+        alternativas: ['Em sistemas binários brilhantes', 'Com atmosferas espessas', 'Muito próximos da estrela', 'Em órbitas largas, inclusive em galáxias distantes'],
         respostaCorreta: 'Em órbitas largas, inclusive em galáxias distantes'
     }
 ];
@@ -492,7 +492,7 @@ const questoesMorfologiaEvolucao = [
     {
         questao: 'Galáxias elípticas tendem a ser associadas a:',
         dissertativa: false,
-        alternativas: ['Formação estelar intensa recente', 'Populações estelares mais velhas', 'Discos com braços espirais proeminentes', 'Altas taxas de gás frio'],
+        alternativas: ['Altas taxas de gás frio', 'Formação estelar intensa recente', 'Populações estelares mais velhas', 'Discos com braços espirais proeminentes'],
         respostaCorreta: 'Populações estelares mais velhas'
     },
     { questao: 'O que diferencia galáxias lenticulares (S0) de espirais clássicas?', dissertativa: true },
@@ -500,7 +500,7 @@ const questoesMorfologiaEvolucao = [
     {
         questao: 'Assinale o mecanismo que pode transformar uma galáxia espiral em elíptica:',
         dissertativa: false,
-        alternativas: ['Perda de gás por ventos solares', 'Fusão maior (major merger)', 'Rotação diferencial isolada', 'Explosões de raios gama'],
+        alternativas: ['Rotação diferencial isolada', 'Explosões de raios gama', 'Perda de gás por ventos solares', 'Fusão maior (major merger)'],
         respostaCorreta: 'Fusão maior (major merger)'
     },
     {
@@ -516,7 +516,7 @@ const questoesCosmografia = [
     { 
         questao: 'Cefeidas são importantes porque:', 
         dissertativa: false, 
-        alternativas: ['Mede-se sua temperatura com precisão', 'São velas padrão para distâncias extragalácticas', 'São sempre parte de galáxias anãs', 'Têm brilho absolutamente constante'],
+        alternativas: ['São velas padrão para distâncias extragalácticas', 'Mede-se sua temperatura com precisão', 'Têm brilho absolutamente constante', 'São sempre parte de galáxias anãs'],
         respostaCorreta: 'São velas padrão para distâncias extragalácticas'
     },
     { 
@@ -526,7 +526,7 @@ const questoesCosmografia = [
     { 
         questao: 'Qual é a galáxia espiral massiva mais próxima da Via Láctea?', 
         dissertativa: false, 
-        alternativas: ['Galáxia do Triângulo', 'Galáxia de Andrômeda', 'Grande Nuvem de Magalhães', 'Pequena Nuvem de Magalhães'],
+        alternativas: ['Grande Nuvem de Magalhães', 'Galáxia do Triângulo', 'Pequena Nuvem de Magalhães', 'Galáxia de Andrômeda'],
         respostaCorreta: 'Galáxia de Andrômeda'
     },
     {
@@ -536,7 +536,7 @@ const questoesCosmografia = [
     {
         questao: 'A relação de Tully-Fisher conecta luminosidade com qual propriedade galáctica?',
         dissertativa: false,
-        alternativas: ['Metalicidade', 'Velocidade de rotação', 'Temperatura média', 'Conteúdo de poeira'],
+        alternativas: ['Conteúdo de poeira', 'Metalicidade', 'Velocidade de rotação', 'Temperatura média'],
         respostaCorreta: 'Velocidade de rotação'
     }
 ];
@@ -553,7 +553,7 @@ const questoesObjetosCompactos = [
     { 
         questao: 'A massa máxima de uma estrela de nêutrons (limite TOV) é determinada principalmente por:', 
         dissertativa: false, 
-        alternativas: ['Pressão de degenerescência eletrônica', 'Equação de Estado da matéria nuclear', 'Taxa de rotação', 'Campo magnético'],
+        alternativas: ['Pressão de degenerescência eletrônica', 'Taxa de rotação', 'Campo magnético', 'Equação de Estado da matéria nuclear'],
         respostaCorreta: 'Equação de Estado da matéria nuclear'
     },
     { 
@@ -567,7 +567,7 @@ const questoesObjetosCompactos = [
     {
         questao: 'Qual observável indica a presença de uma anã branca em um sistema binário?',
         dissertativa: false,
-        alternativas: ['Absorção de raios cósmicos', 'Linhas espectrais de hidrogênio amplas em UV', 'Oscilações de neutrinos', 'Emissão de raios gama persistente'],
+        alternativas: ['Linhas espectrais de hidrogênio amplas em UV', 'Emissão de raios gama persistente', 'Absorção de raios cósmicos', 'Oscilações de neutrinos'],
         respostaCorreta: 'Linhas espectrais de hidrogênio amplas em UV'
     }
 ];
@@ -581,7 +581,7 @@ const questoesFisicaBN = [
     { 
         questao: 'A "Termodinâmica do Buraco Negro" relaciona a área do horizonte de eventos com qual propriedade física?', 
         dissertativa: false, 
-        alternativas: ['Carga', 'Entropia', 'Massa', 'Momento Angular'],
+        alternativas: ['Momento Angular', 'Carga', 'Massa', 'Entropia'],
         respostaCorreta: 'Entropia'
     },
     { 
@@ -591,7 +591,7 @@ const questoesFisicaBN = [
     { 
         questao: 'O processo de Penrose é um mecanismo teórico para:', 
         dissertativa: false, 
-        alternativas: ['Destruir um buraco negro', 'Extrair energia de um buraco negro em rotação', 'Criar um buraco de minhoca', 'Medir a massa de um buraco negro'],
+        alternativas: ['Extrair energia de um buraco negro em rotação', 'Criar um buraco de minhoca', 'Medir a massa de um buraco negro', 'Destruir um buraco negro'],
         respostaCorreta: 'Extrair energia de um buraco negro em rotação'
     },
     {
@@ -609,7 +609,7 @@ const questoesFormacaoGalaxias = [
     { 
         questao: 'O processo que impede o gás de se resfriar e formar estrelas em halos muito massivos (M > 10^12 Msol) é dominado por:', 
         dissertativa: false, 
-        alternativas: ['Feedback de supernovas', 'Aquecimento por choque (shock heating) e feedback de AGN', 'Radiação UV de fundo', 'Decaimento da matéria escura'],
+        alternativas: ['Decaimento da matéria escura', 'Radiação UV de fundo', 'Feedback de supernovas', 'Aquecimento por choque (shock heating) e feedback de AGN'],
         respostaCorreta: 'Aquecimento por choque (shock heating) e feedback de AGN'
     },
     { questao: 'Explique o papel de fluxos frios (cold flows) na alimentação de galáxias em alto redshift.', dissertativa: true },
@@ -617,7 +617,7 @@ const questoesFormacaoGalaxias = [
     {
         questao: 'AGN do tipo quasar são caracterizados por:',
         dissertativa: false,
-        alternativas: ['Emissão fraca em todas as bandas', 'Linhas largas e luminosidade extrema', 'Ausência de disco de acreção', 'Rotação lenta'],
+        alternativas: ['Linhas largas e luminosidade extrema', 'Rotação lenta', 'Ausência de disco de acreção', 'Emissão fraca em todas as bandas'],
         respostaCorreta: 'Linhas largas e luminosidade extrema'
     }
 ];
