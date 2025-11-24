@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { showAlert } from '../../Alert';
 
 axios.defaults.withCredentials = true;
 const API_URL = "http://localhost:4000";
@@ -25,10 +26,10 @@ const LoginPage: React.FC = () => {
   const register = async () => {
     try {
       await axios.post(`${API_URL}/auth/register`, { name, email, password });
-      alert("Cadastro realizado com sucesso!");
+      showAlert("Cadastro realizado com sucesso!");
       setIsActive(false); // Volta para o login após cadastro
     } catch (err: any) {
-      alert(err.response?.data?.error || "Erro no cadastro");
+      showAlert(err.response?.data?.error || "Erro no cadastro");
     }
   };
 
@@ -39,7 +40,7 @@ const LoginPage: React.FC = () => {
       const res = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
       setUser(res.data);
     } catch (err: any) {
-      alert(err.response?.data?.error || "Erro no login");
+      showAlert(err.response?.data?.error || "Erro no login");
     }
   };
 

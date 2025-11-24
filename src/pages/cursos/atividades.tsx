@@ -5,6 +5,7 @@ import { initial_cursos } from './components/cursosDados';
 import { useState } from 'react'; 
 import { fetchWithCredentials, API_BASE } from '../../api';
 import { Link } from "react-router-dom";
+import { showAlert } from "../../Alert";
 
 import './cursos.css'; 
 
@@ -165,11 +166,11 @@ function Atividades() {
                                 window.location.href = `/modulos/${assinatura}/${modulo.id}`;
                             } else {
                                 const data = await res.json().catch(() => ({}));
-                                alert('Erro ao enviar atividade: ' + (data.error || res.statusText));
+                                showAlert('Erro ao enviar atividade: ' + (data.error || res.statusText));
                             }
                         } catch (err) {
                             console.error(err);
-                            alert('Erro ao enviar atividade. Verifique sua conexão.');
+                            showAlert('Erro ao enviar atividade. Verifique sua conexão.');
                         }
                     }} style={{ backgroundColor: '#9A30EB', border: 'none', padding: '10px 16px', color: '#fff', cursor: 'pointer' }}>ENVIAR</button>
                 </div>
