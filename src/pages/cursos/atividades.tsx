@@ -64,8 +64,6 @@ function Atividades() {
         window.localStorage.setItem(tentativaKey, String(tentativas));
     }, [tentativas, tentativaKey]);
     
-    console.log(atividadeInd);
-
     // --- Verificação de Módulo (como estava) ---
     if (!modulo || !atividade) {
         return <div>Módulo não encontrado.</div>;
@@ -76,53 +74,57 @@ function Atividades() {
     const pontosPorQuestao = totalQuestoes > 0 ? pontosTotal / totalQuestoes : 0;
     const notaMinima = 6;
 
-    const calcularPontuacao = () => {
+    const avaliarQuestoes = (): ('neutro' | 'correta' | 'incorreta')[] => {
         if (!atividade.questoes || atividade.questoes.length === 0) {
-            return { pontos: 0, percentual: 0 };
+            return [];
         }
 
-        let pontos = 0;
-
-        atividade.questoes.forEach((questao, index) => {
+        return atividade.questoes.map((questao, index) => {
             if (questao.dissertativa) {
-                if ((respostas[index] ?? '').trim().length > 0) {
-                    pontos += pontosPorQuestao;
-                }
-            } else if (statusRespostas[index] === 'correta') {
-                pontos += pontosPorQuestao;
+                return (respostas[index] ?? '').trim().length > 0 ? 'correta' : 'incorreta';
             }
-        });
 
-        const percentual = (pontos / pontosTotal) * 100;
-        return { pontos, percentual };
+            if (!questao.respostaCorreta || !selecoes[index]) {
+                return 'incorreta';
+            }
+
+            return selecoes[index] === questao.respostaCorreta ? 'correta' : 'incorreta';
+        });
+    };
+
+    const calcularPontuacao = () => {
+        const resultados = avaliarQuestoes();
+
+        if (resultados.length === 0) {
+            return { pontos: 0, percentual: 0, resultados };
+        }
+
+        const pontos = resultados.reduce((acc, status) => (
+            status === 'correta' ? acc + pontosPorQuestao : acc
+        ), 0);
+        const percentual = (pontosTotal === 0 ? 0 : (pontos / pontosTotal) * 100);
+
+        return { pontos, percentual, resultados };
     };
 
     // --- NOVA FUNÇÃO DE CLIQUE ---
     const handleAlternativaClick = (
         questionIndex: number, 
-        alternativaClicada: string,
-        respostaCorreta: string | undefined
+        alternativaClicada: string
     ) => {
-        // 1. Impede que o usuário mude a resposta após clicar
-        if (statusRespostas[questionIndex] !== 'neutro') {
-            return; 
-        }
-
-        // 2. Armazena a seleção do usuário
         setSelecoes(prev => prev.map((sel, i) => 
             i === questionIndex ? alternativaClicada : sel
         ));
+        setStatusRespostas(prev => prev.map((status, i) => 
+            i === questionIndex ? 'neutro' : status
+        ));
+    };
 
-        // 3. Verifica se está correta e atualiza o status
-        if (alternativaClicada === respostaCorreta) {
-            setStatusRespostas(prev => prev.map((status, i) => 
-                i === questionIndex ? 'correta' : status
-            ));
-        } else {
-            setStatusRespostas(prev => prev.map((status, i) => 
-                i === questionIndex ? 'incorreta' : status
-            ));
-        }
+    const handleRespostaDissertativaChange = (questionIndex: number, valor: string) => {
+        setRespostas(prev => prev.map((v, i) => i === questionIndex ? valor : v));
+        setStatusRespostas(prev => prev.map((status, i) => 
+            i === questionIndex ? 'neutro' : status
+        ));
     };
 
 
@@ -148,7 +150,7 @@ function Atividades() {
                                 placeholder='Digite sua resposta aqui...' 
                                 maxLength={2000}
                                 value={respostas[index]}
-                                onChange={e => setRespostas(prev => prev.map((v,i) => i===index ? e.target.value : v))}
+                                onChange={e => handleRespostaDissertativaChange(index, e.target.value)}
                                 style={{
                                 display: questao.dissertativa ? 'auto' : 'none',
                             }}></textarea>
@@ -156,10 +158,8 @@ function Atividades() {
                             {/* --- Seção de Alternativas (MODIFICADA) --- */}
                             <div className="questao-alternativas" style={{ display: !questao.dissertativa ? 'grid' : 'none' }}>
                                 {(questao.alternativas ?? ['Alternativa A', 'Alternativa B', 'Alternativa C', 'Alternativa D']).map((alt: string, altIdx: number) => {
-                                    
                                     const status = statusRespostas[index];
                                     const isSelected = selecoes[index] === alt;
-                                    const isCorrect = questao.respostaCorreta === alt;
 
                                     // Define a classe CSS dinâmica
                                     let className = 'questao-alternativa';
@@ -167,8 +167,8 @@ function Atividades() {
                                         className += ' correta'; // Verde
                                     } else if (status === 'incorreta' && isSelected) {
                                         className += ' incorreta'; // Vermelho
-                                    } else if (status === 'incorreta' && isCorrect) {
-                                        className += ' correta-depois'; // Mostra a correta (sem piscar)
+                                    } else if (isSelected) {
+                                        className += ' selecionada';
                                     }
                                     
                                     return (
@@ -177,10 +177,8 @@ function Atividades() {
                                             className={className} // Classe dinâmica aplicada aqui
                                             onClick={() => { 
                                                 // Chama a nova função de clique
-                                                handleAlternativaClick(index, alt, questao.respostaCorreta); 
+                                                handleAlternativaClick(index, alt); 
                                             }}
-                                            // Desabilita o clique após a resposta
-                                            style={{ cursor: status !== 'neutro' ? 'not-allowed' : 'pointer' }}
                                         >
                                             <div className="alternativa-letra" 
                                                  // Estilo da letra (A, B, C) é controlado por CSS agora
@@ -211,7 +209,10 @@ function Atividades() {
                             const tentativaAtual = tentativas + 1;
                             setTentativas(tentativaAtual);
 
-                            const { pontos, percentual } = calcularPontuacao();
+                            const { pontos, percentual, resultados } = calcularPontuacao();
+                            if (resultados.length > 0) {
+                                setStatusRespostas(resultados);
+                            }
                             const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
                             const atingiuMeta = pontos > notaMinima;
 
