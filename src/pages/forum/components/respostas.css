@@ -8,6 +8,10 @@
     gap: 15px;
 }
 
+.resposta-item-scrollable {
+    overflow: visible;
+}
+
 /* Header da resposta */
 .resposta-header {
     display: flex;
@@ -76,6 +80,21 @@
     line-height: 1.5;
     margin: 0;
     text-align: justify;
+}
+
+.resposta-imagem {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #1F1F1F;
+    margin-top: 10px;
+}
+
+.resposta-imagem img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 /* Ações da resposta */
@@ -192,4 +211,10 @@
 
 .resposta-botao-responder.active:hover {
     background-color: #8a27d6;
+}
+
+.resposta-filhas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }

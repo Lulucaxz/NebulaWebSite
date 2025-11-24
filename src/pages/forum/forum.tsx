@@ -1,9 +1,114 @@
-import { useState, useMemo } from "react";
-import { Comentario, ComentarioData } from "./components/Comentario";
+import { useState, useMemo, useRef, type ChangeEvent, type KeyboardEvent } from "react";
+import { Comentario } from "./components/Comentario";
+import type { ComentarioData, RespostaData } from "./types";
 import { initial_comentarios } from "./components/comentariosDados";
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import "./Forum.css";
+
+const usuarioPadrao = (initial_comentarios as ComentarioData[]).find((comentario) => comentario.eDoUsuario);
+
+const atualizarRespostaPorId = (
+  respostas: RespostaData[],
+  alvoId: number,
+  updater: (resposta: RespostaData) => RespostaData
+): { lista: RespostaData[]; atualizou: boolean } => {
+  let atualizou = false;
+  const lista = respostas.map(resposta => {
+    if (resposta.idResposta === alvoId) {
+      atualizou = true;
+      return updater(resposta);
+    }
+    if (resposta.arrayRespostasAninhadas?.length) {
+      const resultado = atualizarRespostaPorId(resposta.arrayRespostasAninhadas, alvoId, updater);
+      if (resultado.atualizou) {
+        atualizou = true;
+        return {
+          ...resposta,
+          arrayRespostasAninhadas: resultado.lista
+        };
+      }
+    }
+    return resposta;
+  });
+
+  return {
+    lista: atualizou ? lista : respostas,
+    atualizou
+  };
+};
+
+const adicionarRespostaComoFilha = (
+  respostas: RespostaData[],
+  alvoId: number,
+  novaResposta: RespostaData
+): { lista: RespostaData[]; adicionou: boolean } => {
+  let adicionou = false;
+  const lista = respostas.map(resposta => {
+    if (resposta.idResposta === alvoId) {
+      adicionou = true;
+      return {
+        ...resposta,
+        arrayRespostasAninhadas: [...(resposta.arrayRespostasAninhadas ?? []), novaResposta]
+      };
+    }
+    if (resposta.arrayRespostasAninhadas?.length) {
+      const resultado = adicionarRespostaComoFilha(resposta.arrayRespostasAninhadas, alvoId, novaResposta);
+      if (resultado.adicionou) {
+        adicionou = true;
+        return {
+          ...resposta,
+          arrayRespostasAninhadas: resultado.lista
+        };
+      }
+    }
+    return resposta;
+  });
+
+  return {
+    lista: adicionou ? lista : respostas,
+    adicionou
+  };
+};
+
+const removerRespostaPorId = (
+  respostas: RespostaData[],
+  alvoId: number
+): { lista: RespostaData[]; removeu: boolean } => {
+  let removeu = false;
+  const lista = respostas.reduce<RespostaData[]>((acc, resposta) => {
+    if (resposta.idResposta === alvoId) {
+      removeu = true;
+      return acc;
+    }
+
+    let proximaResposta = resposta;
+    if (resposta.arrayRespostasAninhadas?.length) {
+      const resultado = removerRespostaPorId(resposta.arrayRespostasAninhadas, alvoId);
+      if (resultado.removeu) {
+        removeu = true;
+        proximaResposta = {
+          ...resposta,
+          arrayRespostasAninhadas: resultado.lista
+        };
+      }
+    }
+
+    acc.push(proximaResposta);
+    return acc;
+  }, []);
+
+  return {
+    lista: removeu ? lista : respostas,
+    removeu
+  };
+};
+
+const existeRespostaPorId = (respostas: RespostaData[], alvoId: number): boolean =>
+  respostas.some(resposta =>
+    resposta.idResposta === alvoId ||
+    (resposta.arrayRespostasAninhadas ? existeRespostaPorId(resposta.arrayRespostasAninhadas, alvoId) : false)
+  );
 
 function Forum() {
   const [comentarios, setComentarios] = useState<ComentarioData[]>(initial_comentarios as ComentarioData[]);
@@ -28,6 +133,88 @@ function Forum() {
     imagem: string | null,
     nomeUsuarioResposta: string
   } | null>(null);
+  const [imagemPublicacao, setImagemPublicacao] = useState<string | null>(null);
+  const imagemInputRef = useRef<HTMLInputElement | null>(null);
+
+  const usuarioAtual = useMemo(() => ({
+    nome: usuarioPadrao?.nomeUsuario ?? "Você",
+    assinatura: (usuarioPadrao?.assinatura ?? "Universo") as ComentarioData["assinatura"],
+    fotoPerfil: usuarioPadrao?.fotoPerfil ?? "/icones-usuarios/FotoPerfil12.jpg",
+    avaliacaoClass: usuarioPadrao?.avaliacaoDoUsuario ?? "esteUsuario"
+  }), []);
+
+  const formularioValido = tituloPublicacao.trim().length > 0 && conteudoPublicacao.trim().length > 0 && tagsSelecionadas.length > 0;
+
+  const limparImagemSelecionada = () => {
+    setImagemPublicacao(null);
+    if (imagemInputRef.current) {
+      imagemInputRef.current.value = "";
+    }
+  };
+
+  const resetConteudoEImagem = () => {
+    setConteudoPublicacao("");
+    limparImagemSelecionada();
+  };
+
+  const handleUploadImagem = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImagemPublicacao(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Permitir selecionar o mesmo arquivo novamente
+    event.target.value = "";
+  };
+
+  const handleRemoverImagem = () => {
+    limparImagemSelecionada();
+  };
+
+  const handleUploadAreaKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      imagemInputRef.current?.click();
+    }
+  };
+
+  const handleResetFormulario = () => {
+    setTituloPublicacao("");
+    setTagsSelecionadas([]);
+    resetConteudoEImagem();
+  };
+
+  const handleCriarPublicacao = () => {
+    if (!formularioValido) {
+      alert('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    const novoComentario: ComentarioData = {
+      idComentario: Date.now(),
+      fotoPerfil: usuarioAtual.fotoPerfil,
+      nomeUsuario: usuarioAtual.nome,
+      assinatura: usuarioAtual.assinatura,
+      dataHora: new Date().toISOString(),
+      temaPergunta: tituloPublicacao.trim(),
+      conteudoComentario: conteudoPublicacao.trim(),
+      numeroAvaliacao: 0,
+      avaliacaoDoUsuario: usuarioAtual.avaliacaoClass,
+      eDoUsuario: true,
+      tags: [...tagsSelecionadas],
+      imagemComentario: imagemPublicacao,
+      arrayRespostas: []
+    };
+
+    setComentarios(prev => [novoComentario, ...prev]);
+    handleResetFormulario();
+  };
 
   // Função para lidar com mudanças no estado de visualização de respostas
   const handleVisualizarRespostas = (visualizar: boolean) => {
@@ -35,10 +222,11 @@ function Forum() {
     // Se está fechando as respostas, limpa o estado de responder
     if (!visualizar) {
       setRespondendoA(null);
+      resetConteudoEImagem();
       // Se estava editando uma resposta, limpa a edição
       if (editandoResposta) {
         setEditandoResposta(null);
-        setConteudoPublicacao("");
+        resetConteudoEImagem();
       }
       // NÃO limpar editandoComentario - manter a edição de comentário ativa
     }
@@ -47,16 +235,44 @@ function Forum() {
   // Função para lidar com mudanças no estado de responder
   const handleResponderA = (resposta: { tipo: 'comentario' | 'resposta', id: number, nome: string } | null) => {
     setRespondendoA(resposta);
+    if (resposta) {
+      setEditandoComentario(null);
+      setEditandoResposta(null);
+      setTituloPublicacao("");
+      setTagsSelecionadas([]);
+    }
+    resetConteudoEImagem();
+    if (resposta) {
+      setVisualizandoRespostas(true);
+    }
     // Cancelar qualquer edição em andamento
     if (editandoComentario) {
       setEditandoComentario(null);
-      setTituloPublicacao("");
-      setConteudoPublicacao("");
-      setTagsSelecionadas([]);
     }
     if (editandoResposta) {
       setEditandoResposta(null);
-      setConteudoPublicacao("");
+    }
+  };
+
+  const handleDeleteResposta = (idResposta: number) => {
+    let precisaLimparResponder = false;
+
+    setComentarios(prev => {
+      const atualizado = prev.map(comentario => {
+        const { lista, removeu } = removerRespostaPorId(comentario.arrayRespostas, idResposta);
+        return removeu ? { ...comentario, arrayRespostas: lista } : comentario;
+      });
+
+      if (respondendoA?.tipo === 'resposta') {
+        const aindaExiste = atualizado.some(c => existeRespostaPorId(c.arrayRespostas, respondendoA.id));
+        precisaLimparResponder = !aindaExiste;
+      }
+
+      return atualizado;
+    });
+
+    if (precisaLimparResponder || (respondendoA && respondendoA.id === idResposta)) {
+      handleResponderA(null);
     }
   };
 
@@ -71,6 +287,7 @@ function Forum() {
     setTituloPublicacao(titulo);
     setConteudoPublicacao(conteudo);
     setTagsSelecionadas(tags);
+    setImagemPublicacao(imagem || null);
     setRespondendoA(null);
   };
 
@@ -78,6 +295,7 @@ function Forum() {
   const handleEditarResposta = (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => {
     setEditandoResposta({ id, conteudo, imagem, nomeUsuarioResposta: nomeUsuario });
     setConteudoPublicacao(conteudo);
+    setImagemPublicacao(imagem || null);
     setRespondendoA(null);
     setEditandoComentario(null); // Garante que não está editando comentário
     setVisualizandoRespostas(true); // Garante que está visualizando respostas
@@ -87,13 +305,11 @@ function Forum() {
   const handleCancelarEdicao = () => {
     if (editandoComentario) {
       setEditandoComentario(null);
-      setTituloPublicacao("");
-      setConteudoPublicacao("");
-      setTagsSelecionadas([]);
+      handleResetFormulario();
       // Se estava editando comentário e não está visualizando respostas, não fazer nada especial
     } else if (editandoResposta) {
       setEditandoResposta(null);
-      setConteudoPublicacao("");
+      resetConteudoEImagem();
       // Mantém visualizandoRespostas como true para continuar vendo as respostas
     }
   };
@@ -106,14 +322,13 @@ function Forum() {
         ...c,
         temaPergunta: tituloPublicacao,
         conteudoComentario: conteudoPublicacao,
-        tags: [...tagsSelecionadas]
+        tags: [...tagsSelecionadas],
+        imagemComentario: imagemPublicacao
       } : c));
       // Aqui você faria a requisição para o backend
       // Limpar estados após salvar
       setEditandoComentario(null);
-      setTituloPublicacao("");
-      setConteudoPublicacao("");
-      setTagsSelecionadas([]);
+      handleResetFormulario();
       alert('Comentário editado com sucesso!');
     } else {
       alert('Por favor, preencha todos os campos obrigatórios');
@@ -123,22 +338,80 @@ function Forum() {
   // Função para salvar edição de resposta
   const handleSalvarEdicaoResposta = () => {
     if (editandoResposta && conteudoPublicacao.trim()) {
-      // Atualiza resposta na lista
-      setComentarios(prev => prev.map(c => ({
-        ...c,
-        arrayRespostas: c.arrayRespostas.map(r => r.idResposta === editandoResposta.id ? {
-          ...r,
-          rconteudoComentario: conteudoPublicacao
-        } : r)
-      })));
-      // Aqui você faria a requisição para o backend
-      // Limpar estados após salvar
+        setComentarios(prev => prev.map(c => {
+          const { lista, atualizou } = atualizarRespostaPorId(
+            c.arrayRespostas,
+            editandoResposta.id,
+            resposta => ({
+              ...resposta,
+              rconteudoComentario: conteudoPublicacao.trim(),
+              rimagemComentario: imagemPublicacao
+            })
+          );
+
+          return atualizou ? { ...c, arrayRespostas: lista } : c;
+        }));
+
       setEditandoResposta(null);
-      setConteudoPublicacao("");
+      resetConteudoEImagem();
       alert('Resposta editada com sucesso!');
     } else {
       alert('Por favor, preencha o conteúdo da resposta');
     }
+  };
+
+  const handleEnviarResposta = () => {
+    if (!respondendoA) {
+      return;
+    }
+
+    if (!conteudoPublicacao.trim()) {
+      alert('Por favor, preencha o conteúdo da resposta');
+      return;
+    }
+
+    const destinoExiste = respondendoA.tipo === 'comentario'
+      ? comentarios.some(c => c.idComentario === respondendoA.id)
+      : comentarios.some(c => existeRespostaPorId(c.arrayRespostas, respondendoA.id));
+
+    if (!destinoExiste) {
+      alert('Não foi possível encontrar a publicação original. Ela pode ter sido removida.');
+      handleResponderA(null);
+      resetConteudoEImagem();
+      return;
+    }
+
+    const agora = new Date();
+    const baseResposta: RespostaData = {
+      idResposta: agora.getTime(),
+      rfotoPerfil: usuarioAtual.fotoPerfil,
+      rnomeUsuario: usuarioAtual.nome,
+      assinatura: usuarioAtual.assinatura,
+      rdataHora: agora.toISOString(),
+      rconteudoComentario: conteudoPublicacao.trim(),
+      eDoUsuario: true,
+      rimagemComentario: imagemPublicacao,
+      arrayRespostasAninhadas: []
+    };
+
+    setComentarios(prev => prev.map(c => {
+      if (respondendoA.tipo === 'comentario' && c.idComentario === respondendoA.id) {
+        return {
+          ...c,
+          arrayRespostas: [baseResposta, ...c.arrayRespostas]
+        };
+      }
+
+      if (respondendoA.tipo === 'resposta') {
+        const { lista, adicionou } = adicionarRespostaComoFilha(c.arrayRespostas, respondendoA.id, baseResposta);
+        return adicionou ? { ...c, arrayRespostas: lista } : c;
+      }
+
+      return c;
+    }));
+
+    resetConteudoEImagem();
+    setRespondendoA(null);
   };
 
   // Função para toggle de tags selecionadas
@@ -161,6 +434,47 @@ function Forum() {
   };
 
   const renderizarAreaCriarComentario = () => {
+    const renderUploadSection = () => (
+      <div className="forum-imagem-container">
+        <p>Escolha uma imagem</p>
+        <div
+          className={`forum-upload-area ${imagemPublicacao ? 'has-preview' : ''}`}
+          onClick={() => imagemInputRef.current?.click()}
+          onKeyDown={handleUploadAreaKeyDown}
+          role="button"
+          tabIndex={0}
+        >
+          {imagemPublicacao ? (
+            <div className="forum-upload-preview">
+              <img src={imagemPublicacao} alt="Pré-visualização da postagem" />
+              <button
+                type="button"
+                className="forum-upload-remove"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleRemoverImagem();
+                }}
+              >
+                Remover imagem
+              </button>
+            </div>
+          ) : (
+            <>
+              <img src="/icons/image-icon.svg" alt="Upload" />
+              <span>Selecione sua imagem</span>
+            </>
+          )}
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          ref={imagemInputRef}
+          className="forum-upload-input"
+          onChange={handleUploadImagem}
+        />
+      </div>
+    );
+
     // Estado Edição de Comentário (tem prioridade)
     if (editandoComentario) {
       return (
@@ -199,13 +513,7 @@ function Forum() {
             </div>
 
             {/* Upload de imagem */}
-            <div className="forum-imagem-container">
-              <p>Escolha uma imagem</p>
-              <div className="forum-upload-area">
-                <img src="/icons/image-icon.svg" alt="Upload" />
-                <span>Selecione sua imagem</span>
-              </div>
-            </div>
+            {renderUploadSection()}
 
             {/* Texto */}
             <div className="forum-texto-container">
@@ -248,13 +556,7 @@ function Forum() {
             <h3>Você está editando sua resposta</h3>
 
             {/* Upload de imagem */}
-            <div className="forum-imagem-container">
-              <p>Escolha uma imagem</p>
-              <div className="forum-upload-area">
-                <img src="/icons/image-icon.svg" alt="Upload" />
-                <span>Selecione sua imagem</span>
-              </div>
-            </div>
+            {renderUploadSection()}
 
             {/* Texto */}
             <div className="forum-texto-container">
@@ -273,16 +575,14 @@ function Forum() {
             <div className="forum-botoes">
               <button
                 className="forum-botao-cancelar"
-                onClick={() => {
-                  setEditandoResposta(null);
-                  setConteudoPublicacao("");
-                }}
+                onClick={handleCancelarEdicao}
               >
                 Cancelar
               </button>
               <button
                 className="forum-botao-enviar"
                 onClick={handleSalvarEdicaoResposta}
+                disabled={!conteudoPublicacao.trim()}
               >
                 Enviar
               </button>
@@ -326,17 +626,11 @@ function Forum() {
                 className="forum-input-titulo"
                 maxLength={100}
               />
-              <div className="forum-contador">0/100</div>
+              <div className="forum-contador">{tituloPublicacao.length}/100</div>
             </div>
 
             {/* Upload de imagem */}
-            <div className="forum-imagem-container">
-              <p>Escolha uma imagem</p>
-              <div className="forum-upload-area">
-                <img src="/icons/image-icon.svg" alt="Upload" />
-                <span>Selecione sua imagem</span>
-              </div>
-            </div>
+            {renderUploadSection()}
 
             {/* Texto */}
             <div className="forum-texto-container">
@@ -348,13 +642,26 @@ function Forum() {
                 maxLength={1000}
                 className="forum-textarea-conteudo"
               />
-              <div className="forum-contador">0/1000</div>
+              <div className="forum-contador">{conteudoPublicacao.length}/1000</div>
             </div>
 
             {/* Botões */}
             <div className="forum-botoes">
-              <button className="forum-botao-cancelar">Cancelar</button>
-              <button className="forum-botao-enviar">Enviar</button>
+              <button
+                className="forum-botao-cancelar"
+                onClick={handleResetFormulario}
+                type="button"
+              >
+                Cancelar
+              </button>
+              <button
+                className="forum-botao-enviar"
+                onClick={handleCriarPublicacao}
+                disabled={!formularioValido}
+                type="button"
+              >
+                Enviar
+              </button>
             </div>
           </div>
         </div>
@@ -380,13 +687,7 @@ function Forum() {
             <h3>Respondendo {respondendoA.nome}</h3>
 
             {/* Upload de imagem */}
-            <div className="forum-imagem-container">
-              <p>Escolha uma imagem</p>
-              <div className="forum-upload-area">
-                <img src="/icons/image-icon.svg" alt="Upload" />
-                <span>Selecione sua imagem</span>
-              </div>
-            </div>
+            {renderUploadSection()}
 
             {/* Texto */}
             <div className="forum-texto-container">
@@ -398,7 +699,7 @@ function Forum() {
                 maxLength={1000}
                 className="forum-textarea-conteudo"
               />
-              <div className="forum-contador">0/1000</div>
+              <div className="forum-contador">{conteudoPublicacao.length}/1000</div>
             </div>
 
             {/* Botões */}
@@ -407,12 +708,18 @@ function Forum() {
                 className="forum-botao-cancelar"
                 onClick={() => {
                   handleResponderA(null);
-                  setConteudoPublicacao("");
+                  resetConteudoEImagem();
                 }}
               >
                 Cancelar
               </button>
-              <button className="forum-botao-enviar">Enviar</button>
+              <button
+                className="forum-botao-enviar"
+                onClick={handleEnviarResposta}
+                disabled={!conteudoPublicacao.trim()}
+              >
+                Enviar
+              </button>
             </div>
           </div>
         </div>
@@ -445,7 +752,10 @@ function Forum() {
     }
     // Garantir visibilidade do comentário da resposta sendo editada
     if (editandoResposta) {
-      const alvoComentario = comentarios.find(c => c.arrayRespostas.some(r => r.idResposta === editandoResposta.id));
+      const alvoComentario = comentarios.find(c => c.arrayRespostas.some(r =>
+        r.idResposta === editandoResposta.id ||
+        r.arrayRespostasAninhadas?.some(aninhada => aninhada.idResposta === editandoResposta.id)
+      ));
       if (alvoComentario && !base.some(c => c.idComentario === alvoComentario.idComentario)) {
         base = [alvoComentario, ...base];
       }
@@ -522,6 +832,7 @@ function Forum() {
                 onEditarComentario={handleEditarComentario}
                 onEditarResposta={handleEditarResposta}
                 onDeleteComentario={(id) => setComentarios(prev => prev.filter(c => c.idComentario !== id))}
+                onDeleteResposta={handleDeleteResposta}
               />
             </div>
           </div>

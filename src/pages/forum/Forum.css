@@ -208,6 +208,22 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.forum-criar-comentario-styck::-webkit-scrollbar {
+  width: 8px;
+}
+
+.forum-criar-comentario-styck::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.forum-criar-comentario-styck::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .forum-criar-comentario-conteudo h3 {
@@ -407,15 +423,29 @@
   justify-content: center;
   padding: 40px 20px;
   background-color: #363636;
-  border: none;
+  border: 1px dashed #5A5A5A;
+  border-radius: 8px;
   outline: none;
   color: #F8EFFF;
   cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .forum-upload-area:hover {
   background-color: #4A4A4A;
   border-color: #FFFFFF;
+}
+
+.forum-upload-area:focus-visible {
+  outline: 2px solid #9A30EB;
+  outline-offset: 2px;
+}
+
+.forum-upload-area.has-preview {
+  padding: 0;
+  background-color: #1F1F1F;
+  display: block;
 }
 
 .forum-upload-area img {
@@ -429,6 +459,44 @@
   color: #A4A4A4;
   font-family: "Inter", sans-serif;
   font-size: 14px;
+}
+
+.forum-upload-preview {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.forum-upload-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.forum-upload-remove {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #F8EFFF;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.forum-upload-remove:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1A1A1A;
+}
+
+.forum-upload-input {
+  display: none;
 }
 
 /* Botões */

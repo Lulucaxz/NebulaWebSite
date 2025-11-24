@@ -1,38 +1,6 @@
 import { useState } from "react"
 import { ComentarioItem } from "./ComentarioItem"
-
-export interface ComentarioData {
-  idComentario: number;
-  temaPergunta: string;
-  nomeUsuario: string;
-  assinatura: "Universo" | "Galáxia" | "Órbita";
-  dataHora: string;
-  conteudoComentario: string;
-  numeroAvaliacao: string | number;
-  avaliacaoDoUsuario: string;
-  eDoUsuario: boolean;
-  fotoPerfil: string;
-  tags: string[];
-  imagemComentario?: string | null;
-  arrayRespostas: {
-    idResposta: number;
-    rfotoPerfil: string;
-    rnomeUsuario: string;
-    assinatura: "Universo" | "Galáxia" | "Órbita";
-    rdataHora: string;
-    rconteudoComentario: string;
-    eDoUsuario: boolean;
-    arrayRespostasAninhadas?: {
-      idResposta: number;
-      rfotoPerfil: string;
-      rnomeUsuario: string;
-      assinatura: "Universo" | "Galáxia" | "Órbita";
-      rdataHora: string;
-      rconteudoComentario: string;
-      eDoUsuario: boolean;
-    }[];
-  }[];
-}
+import type { ComentarioData } from "../types"
 
 interface ComentarioProps {
   comentarios: ComentarioData[];
@@ -42,9 +10,10 @@ interface ComentarioProps {
   onEditarComentario: (id: number, titulo: string, conteudo: string, tags: string[], imagem: string | null) => void;
   onEditarResposta: (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => void;
   onDeleteComentario?: (id: number) => void;
+  onDeleteResposta?: (id: number) => void;
 }
 
-export function Comentario({ comentarios, onVisualizarRespostas, onResponderA, respondendoA, onEditarComentario, onEditarResposta, onDeleteComentario }: ComentarioProps) {
+export function Comentario({ comentarios, onVisualizarRespostas, onResponderA, respondendoA, onEditarComentario, onEditarResposta, onDeleteComentario, onDeleteResposta }: ComentarioProps) {
   const [comentarioAtivoId, setComentarioAtivoId] = useState<number | null>(null)
 
   const handleDelete = (id: number) => {
@@ -79,6 +48,7 @@ export function Comentario({ comentarios, onVisualizarRespostas, onResponderA, r
           key={comentario.idComentario}
           {...comentario}
           onDelete={handleDelete}
+          onDeleteResposta={onDeleteResposta}
           onVisualizarRespostas={handleVisualizarRespostasComentario}
           onResponderA={onResponderA}
           estaAtivo={comentarioAtivoId === comentario.idComentario}

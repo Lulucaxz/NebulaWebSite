@@ -1,15 +1,6 @@
 import { useState } from "react";
 import "./respostas.css";
-
-interface RespostaAninhada {
-    idResposta: number;
-    rfotoPerfil: string;
-    rnomeUsuario: string;
-    assinatura: "Universo" | "Galáxia" | "Órbita";
-    rdataHora: string;
-    rconteudoComentario: string;
-    eDoUsuario: boolean;
-}
+import type { RespostaData } from "../types";
 
 interface respostasProps {
     rfotoPerfil: string;
@@ -17,14 +8,15 @@ interface respostasProps {
     rdataHora: string;
     rconteudoComentario: string;
     assinatura?: "Universo" | "Galáxia" | "Órbita";
+    rimagemComentario?: string | null;
     onResponderA?: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void;
     idResposta?: number;
-    arrayRespostasAninhadas?: RespostaAninhada[];
+    arrayRespostasAninhadas?: RespostaData[];
     respondendoA?: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null;
     eDoUsuario?: boolean;
-    onDelete?: (idResposta: number) => void;
-    onEdit?: (idResposta: number, novoConteudo: string) => void;
+    onDeleteResposta?: (idResposta: number) => void;
     onEditarResposta?: (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => void;
+    nivel?: number;
 }
 
 export function Respostas({ 
@@ -33,21 +25,21 @@ export function Respostas({
     rdataHora, 
     rconteudoComentario, 
     assinatura = "Órbita",
+    rimagemComentario = null,
     onResponderA,
     idResposta = 0,
     arrayRespostasAninhadas = [],
     respondendoA,
     eDoUsuario = false,
-    onDelete,
-    onEdit,
-    onEditarResposta
+    onDeleteResposta,
+    onEditarResposta,
+    nivel = 0
 }: respostasProps) {
     const [jaAvaliou, setJaAvaliou] = useState(false);
     const [totalLikes, setTotalLikes] = useState(2);
     const [mostrarRespostasAninhadas, setMostrarRespostasAninhadas] = useState(false);
     
     // Estado de likes para respostas aninhadas
-    const [likesAninhados, setLikesAninhados] = useState<{[key: number]: {ativo: boolean, total: number}}>({});
 
     const formatarDataHora = (dataHora: string) => {
         const data = new Date(dataHora);
@@ -67,26 +59,19 @@ export function Respostas({
         }
     };
 
-    const handleLikeAninhado = (idRespostaAninhada: number) => {
-        setLikesAninhados(prev => {
-            const estadoAtual = prev[idRespostaAninhada] || { ativo: false, total: 0 };
-            return {
-                ...prev,
-                [idRespostaAninhada]: {
-                    ativo: !estadoAtual.ativo,
-                    total: estadoAtual.ativo ? estadoAtual.total - 1 : estadoAtual.total + 1
-                }
-            };
-        });
-    };
+    const indentAtual = `${nivel * 20}px`;
 
-    const getLikesAninhado = (idRespostaAninhada: number) => {
-        return likesAninhados[idRespostaAninhada] || { ativo: false, total: 0 };
+    const contemRespostaAninhada = (lista: RespostaData[] | undefined, alvoId: number): boolean => {
+        if (!lista) {
+            return false;
+        }
+
+        return lista.some(item => item.idResposta === alvoId || contemRespostaAninhada(item.arrayRespostasAninhadas, alvoId));
     };
 
     return (
         <>
-            <div className="resposta-item">
+            <div className="resposta-item resposta-item-scrollable" style={{ marginLeft: indentAtual }}>
                 {/* Cabeçalho da resposta */}
                 <div className="resposta-header">
                     <div className="resposta-usuario-info">
@@ -107,7 +92,7 @@ export function Respostas({
                                 className="resposta-botao-acao"
                                 onClick={() => {
                                     if (onEditarResposta) {
-                                        onEditarResposta(idResposta, rconteudoComentario, null, rnomeUsuario);
+                                        onEditarResposta(idResposta, rconteudoComentario, rimagemComentario || null, rnomeUsuario);
                                     }
                                 }}
                             >
@@ -115,7 +100,7 @@ export function Respostas({
                             </button>
                             <button
                                 className="resposta-botao-acao"
-                                onClick={() => onDelete && onDelete(idResposta)}
+                                onClick={() => onDeleteResposta && onDeleteResposta(idResposta)}
                             >
                                 <img src="/icons/delete.svg" alt="Excluir" />
                             </button>
@@ -127,6 +112,12 @@ export function Respostas({
                 <div className="resposta-conteudo">
                     <p>{rconteudoComentario}</p>
                 </div>
+
+                {rimagemComentario && (
+                    <div className="resposta-imagem">
+                        <img src={rimagemComentario} alt={`Imagem da resposta de ${rnomeUsuario}`} />
+                    </div>
+                )}
 
                 {/* Botões de interação */}
                 <div className="resposta-acoes">
@@ -147,11 +138,8 @@ export function Respostas({
                                 
                                 // Se está fechando as respostas aninhadas e estava respondendo uma resposta aninhada, limpa
                                 if (!novoEstado && respondendoA?.tipo === 'resposta' && onResponderA) {
-                                    // Verifica se a resposta sendo respondida é uma resposta aninhada
-                                    const eRespostaAninhada = arrayRespostasAninhadas.some(
-                                        ra => ra.idResposta === respondendoA.id
-                                    );
-                                    if (eRespostaAninhada) {
+                                    const estaNesteGrupo = respondendoA.id === idResposta || contemRespostaAninhada(arrayRespostasAninhadas, respondendoA.id);
+                                    if (estaNesteGrupo) {
                                         onResponderA(null);
                                     }
                                 }
@@ -181,82 +169,26 @@ export function Respostas({
 
             {/* Respostas aninhadas */}
             {mostrarRespostasAninhadas && arrayRespostasAninhadas.length > 0 && (
-                <div style={{ marginLeft: '40px' }}>
-                    {arrayRespostasAninhadas.map(respostaAninhada => {
-                        const likeInfo = getLikesAninhado(respostaAninhada.idResposta);
-                        return (
-                            <div key={`resposta-aninhada-${respostaAninhada.idResposta}`} className="resposta-item">
-                                <div className="resposta-header">
-                                    <div className="resposta-usuario-info">
-                                        <div 
-                                            className="resposta-foto-perfil" 
-                                            style={{ backgroundImage: `url(${respostaAninhada.rfotoPerfil})` }}
-                                        ></div>
-                                        <div className="resposta-detalhes">
-                                            <h3 className="resposta-nome">{respostaAninhada.rnomeUsuario}</h3>
-                                            <span className="resposta-data">{formatarDataHora(respostaAninhada.rdataHora)}</span>
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Botões de editar/excluir para respostas aninhadas */}
-                                    {respostaAninhada.eDoUsuario && (
-                                        <div>
-                                            <button
-                                                className="resposta-botao-acao"
-                                                onClick={() => {
-                                                    if (onEditarResposta) {
-                                                        onEditarResposta(respostaAninhada.idResposta, respostaAninhada.rconteudoComentario, null, respostaAninhada.rnomeUsuario);
-                                                    }
-                                                }}
-                                            >
-                                                <img src="/icons/edit_forum.svg" alt="Editar" />
-                                            </button>
-                                            <button
-                                                className="resposta-botao-acao"
-                                                onClick={() => {
-                                                    // Implementar exclusão de resposta aninhada
-                                                    console.log('Excluir resposta aninhada:', respostaAninhada.idResposta);
-                                                }}
-                                            >
-                                                <img src="/icons/delete.svg" alt="Excluir" />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="resposta-conteudo">
-                                    <p>{respostaAninhada.rconteudoComentario}</p>
-                                </div>
-
-                                <div className="resposta-acoes">
-                                    <div className="resposta-interacao">
-                                        <button 
-                                            className={`resposta-botao-like ${likeInfo.ativo ? 'liked' : ''}`}
-                                            onClick={() => handleLikeAninhado(respostaAninhada.idResposta)}
-                                        >
-                                            <img src="/icons/like_forum.svg" alt="Like" />
-                                            <span>{likeInfo.total}</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <button 
-                                    className={`resposta-botao-responder ${respondendoA?.tipo === 'resposta' && respondendoA?.id === respostaAninhada.idResposta ? 'active' : ''}`}
-                                    onClick={() => {
-                                        if (onResponderA) {
-                                            onResponderA({
-                                                tipo: 'resposta',
-                                                id: respostaAninhada.idResposta,
-                                                nome: respostaAninhada.rnomeUsuario
-                                            });
-                                        }
-                                    }}
-                                >
-                                    Responder: {respostaAninhada.rnomeUsuario}
-                                </button>
-                            </div>
-                        );
-                    })}
+                <div className="resposta-filhas">
+                    {arrayRespostasAninhadas.map(respostaAninhada => (
+                        <Respostas
+                            key={`resposta-aninhada-${respostaAninhada.idResposta}`}
+                            rfotoPerfil={respostaAninhada.rfotoPerfil}
+                            rnomeUsuario={respostaAninhada.rnomeUsuario}
+                            rdataHora={respostaAninhada.rdataHora}
+                            rconteudoComentario={respostaAninhada.rconteudoComentario}
+                            assinatura={respostaAninhada.assinatura}
+                            rimagemComentario={respostaAninhada.rimagemComentario}
+                            onResponderA={onResponderA}
+                            idResposta={respostaAninhada.idResposta}
+                            arrayRespostasAninhadas={respostaAninhada.arrayRespostasAninhadas}
+                            respondendoA={respondendoA}
+                            eDoUsuario={respostaAninhada.eDoUsuario}
+                            onDeleteResposta={onDeleteResposta}
+                            onEditarResposta={onEditarResposta}
+                            nivel={nivel + 1}
+                        />
+                    ))}
                 </div>
             )}
         </>

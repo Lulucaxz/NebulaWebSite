@@ -2,27 +2,7 @@
 import { useState, useEffect } from "react"
 import { Respostas } from "./respostas"
 import "./Comentario.css"
-
-interface RespostaAninhada {
-  idResposta: number
-  rfotoPerfil: string
-  rnomeUsuario: string
-  assinatura: "Universo" | "Galáxia" | "Órbita"
-  rdataHora: string
-  rconteudoComentario: string
-  eDoUsuario: boolean
-}
-
-interface Resposta {
-  idResposta: number
-  rfotoPerfil: string
-  rnomeUsuario: string
-  assinatura: "Universo" | "Galáxia" | "Órbita"
-  rdataHora: string
-  rconteudoComentario: string
-  eDoUsuario: boolean
-  arrayRespostasAninhadas?: RespostaAninhada[]
-}
+import type { RespostaData } from "../types"
 
 interface ComentarioItemProps {
   idComentario: number
@@ -37,8 +17,9 @@ interface ComentarioItemProps {
   fotoPerfil: string
   tags: string[]
   imagemComentario?: string | null
-  arrayRespostas: Resposta[]
+  arrayRespostas: RespostaData[]
   onDelete: (id: number) => void
+  onDeleteResposta?: (id: number) => void
   onVisualizarRespostas: (id: number, visualizar: boolean) => void
   onResponderA: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void
   estaAtivo: boolean
@@ -62,6 +43,7 @@ export function ComentarioItem({
   imagemComentario,
   arrayRespostas,
   onDelete,
+  onDeleteResposta,
   onVisualizarRespostas,
   onResponderA,
   estaAtivo,
@@ -78,15 +60,16 @@ export function ComentarioItem({
   const [totalAvaliacoes, setTotalAvaliacoes] = useState(parseInt(numeroAvaliacao.toString()))
 
   const handleDeleteResposta = (idResposta: number) => {
-    setRespostas(prev => prev.filter(r => r.idResposta !== idResposta))
-  }
-
-  const handleEditResposta = (idResposta: number, novoConteudo: string) => {
-    setRespostas(prev =>
-      prev.map(r =>
-        r.idResposta === idResposta ? { ...r, rconteudoComentario: novoConteudo } : r
-      )
+    setRespostas(prev => prev
+      .filter(r => r.idResposta !== idResposta)
+      .map(r => ({
+        ...r,
+        arrayRespostasAninhadas: r.arrayRespostasAninhadas?.filter(aninhada => aninhada.idResposta !== idResposta)
+      }))
     )
+    if (onDeleteResposta) {
+      onDeleteResposta(idResposta);
+    }
   }
 
   const handleLike = () => {
@@ -245,9 +228,10 @@ export function ComentarioItem({
                   arrayRespostasAninhadas={res.arrayRespostasAninhadas}
                   respondendoA={respondendoA}
                   eDoUsuario={res.eDoUsuario}
-                  onDelete={handleDeleteResposta}
-                  onEdit={handleEditResposta}
+                  onDeleteResposta={handleDeleteResposta}
+                  rimagemComentario={res.rimagemComentario}
                   onEditarResposta={onEditarResposta}
+                  nivel={0}
                 />
               ))
             }
