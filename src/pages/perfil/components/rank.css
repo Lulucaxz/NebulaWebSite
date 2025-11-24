@@ -71,6 +71,12 @@
     background-color: #7E28C0;
 }
 
+.prf-usuarios-rank:hover, .prf-usuarios-rank.prf-cor2:hover {
+    background-color: var(--branco);
+    cursor: pointer;
+    color: var(--roxo1);
+}
+
 .prf-usuarios-rank, .prf-sticky-user{
     display: flex;
     height: 60px;
