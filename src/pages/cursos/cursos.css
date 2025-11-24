@@ -297,6 +297,29 @@
     color: #F8EFFF;
 }
 
+.questao-feedback {
+    margin-top: 12px;
+    font-family: 'Questrial';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #F8EFFF;
+}
+
+.questao-feedback.correta {
+    color: #57e38a;
+}
+
+.questao-feedback.incorreta {
+    color: #ff7a7a;
+}
+
+.questao-feedback-detalhe {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
 .questao-alternativas {
     width: 100%;
     display: grid;

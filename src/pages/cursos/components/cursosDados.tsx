@@ -16,9 +16,9 @@ const selecionarQuestoes = <T extends QuestaoBase>(banco: T[], indices: number[]
 
 // Questões base para o curso Órbita (modulares por tema)
 const questoesIniciantes = [
-    { questao: 'Explique, com suas palavras, por que as estrelas parecem “nascer” no leste e “se pôr” no oeste ao longo da noite.', dissertativa: true },
-    { questao: 'Cite duas constelações fáceis de reconhecer no céu e descreva um método simples para identificá-las.', dissertativa: true },
-    { questao: 'Qual a melhor prática para observar o céu a olho nu em uma cidade grande? Comente sobre poluição luminosa e adaptação da visão ao escuro.', dissertativa: true },
+    { questao: 'Explique, com suas palavras, por que as estrelas parecem “nascer” no leste e “se pôr” no oeste ao longo da noite.', dissertativa: true, respostaCorreta: 'Esse movimento aparente ocorre porque a Terra gira de oeste para leste em aproximadamente 24 horas, fazendo com que toda a abóbada celeste pareça deslocar-se de leste para oeste; portanto, vemos as estrelas surgirem no horizonte leste e desaparecerem no oeste.' },
+    { questao: 'Cite duas constelações fáceis de reconhecer no céu e descreva um método simples para identificá-las.', dissertativa: true, respostaCorreta: 'Exemplos: Órion e Cruzeiro do Sul. Órion pode ser encontrado alinhando as três estrelas do Cinturão; o Cruzeiro é identificado pelas quatro estrelas brilhantes forma de cruz e pela linha prolongada do eixo maior apontando para o polo sul celeste.' },
+    { questao: 'Qual a melhor prática para observar o céu a olho nu em uma cidade grande? Comente sobre poluição luminosa e adaptação da visão ao escuro.', dissertativa: true, respostaCorreta: 'Procure locais mais escuros, desligue ou bloqueie luzes diretas, use visão periférica e dê cerca de 20 a 30 minutos para os olhos se adaptarem; evitar telas e luzes brancas ajuda a minimizar os efeitos da poluição luminosa.' },
     { 
         questao: 'O movimento aparente diário do céu é causado principalmente por:', 
         dissertativa: false, 
@@ -27,11 +27,13 @@ const questoesIniciantes = [
     },
     { 
         questao: 'O que é a Estrela Polar e por que ela é importante para a navegação no Hemisfério Norte?', 
-        dissertativa: true 
+        dissertativa: true,
+        respostaCorreta: 'A Estrela Polar é Polaris, localizada próxima ao polo norte celeste; por quase não mudar de posição no céu, ela indica com boa precisão a direção norte e serve como referência de latitude para navegadores do hemisfério norte.'
     },
     { 
         questao: 'Qual a diferença entre um planeta e uma estrela quando observados a olho nu?', 
-        dissertativa: true 
+        dissertativa: true,
+        respostaCorreta: 'Estrelas emitem luz própria e normalmente cintilam devido à atmosfera; planetas refletem luz solar, costumam apresentar brilho contínuo e disco ligeiramente maior, além de se moverem lentamente em relação ao fundo de estrelas ao longo da eclíptica.'
     },
     { 
         questao: 'A "Estrela Dalva" é, na verdade, qual planeta?', 

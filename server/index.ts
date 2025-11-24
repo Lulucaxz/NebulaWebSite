@@ -118,9 +118,13 @@ app.use('/api/progress', progressRoutes);
 app.use("/api/forum", forumRoutes);
 
 // Config Google Strategy
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+if (googleClientId && googleClientSecret) {
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID || '',
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  clientID: googleClientId,
+  clientSecret: googleClientSecret,
   callbackURL: "/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
   try {
@@ -157,6 +161,9 @@ passport.use(new GoogleStrategy({
   }
 
 }));
+} else {
+  console.warn('Google OAuth não configurado: defina GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET para habilitar o login com Google.');
+}
 
 
 
@@ -181,14 +188,24 @@ passport.deserializeUser(async (user, done) => {
 // Rotas
 
 // Google OAuth
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+if (googleClientId && googleClientSecret) {
+  app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect(CLIENT_URL);
-  }
-);
+  app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+      res.redirect(CLIENT_URL);
+    }
+  );
+} else {
+  app.get('/auth/google', (_req, res) => {
+    res.status(503).json({ error: 'Login com Google indisponível no momento.' });
+  });
+
+  app.get('/auth/google/callback', (_req, res) => {
+    res.status(503).json({ error: 'Login com Google indisponível no momento.' });
+  });
+}
 
 // Obter usuário logado
 app.get('/auth/me', asyncHandler(async (req: Request, res: Response) => {

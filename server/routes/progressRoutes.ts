@@ -1,9 +1,21 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import OpenAI from 'openai';
 import { pool } from '../db';
 import { asyncHandler } from '../utils';
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 const router = express.Router();
+
+const openAiKey = process.env.OPENAI_API_KEY;
+const graderModel = process.env.OPENAI_GRADER_MODEL || 'gpt-4.1-mini';
+const openaiClient = openAiKey ? new OpenAI({ apiKey: openAiKey }) : null;
+
+type EssayGradePayload = {
+  questionIndex: number;
+  question: string;
+  referenceAnswer: string;
+  studentAnswer: string;
+};
 
 interface User { id: number }
 type AuthenticatedRequest = Request & { isAuthenticated?: () => boolean; user?: User };
@@ -15,6 +27,122 @@ const ensureAuth = (req: Request, res: Response, next: NextFunction) => {
     return;
   }
   next();
+};
+
+const clamp01 = (value: number) => {
+  if (Number.isNaN(value)) return 0;
+  if (value < 0) return 0;
+  if (value > 1) return 1;
+  return value;
+};
+
+const truncate = (text: string, max = 1200) => {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max)}...`;
+};
+
+const tryParseJson = (raw: string) => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+};
+
+const extractResponseText = (completion: unknown): string | undefined => {
+  const c = completion as { output_text?: unknown; output?: unknown } | undefined;
+  if (Array.isArray(c?.output_text) && c.output_text.length > 0) {
+    const text = c.output_text.join('\n').trim();
+    if (text.length > 0) {
+      return text;
+    }
+  }
+
+  if (Array.isArray((c as Record<string, unknown>)?.output)) {
+    const chunks: string[] = [];
+    (c as { output: unknown[] }).output.forEach((item) => {
+      const message = item as { content?: unknown[] };
+      if (!Array.isArray(message?.content)) {
+        return;
+      }
+      message.content.forEach((block) => {
+        const b = block as { text?: unknown };
+        if (typeof b.text === 'string') {
+          chunks.push(b.text);
+          return;
+        }
+        if (b.text && typeof (b.text as { value?: unknown }).value === 'string') {
+          chunks.push((b.text as { value: string }).value);
+        }
+      });
+    });
+
+    const fallback = chunks.join('\n').trim();
+    if (fallback.length > 0) {
+      return fallback;
+    }
+  }
+
+  return undefined;
+};
+
+const gradeEssayAnswer = async (payload: EssayGradePayload) => {
+  if (!openaiClient) {
+    throw new Error('Serviço de avaliação indisponível.');
+  }
+
+  const systemPrompt = `Você é um avaliador automático extremamente objetivo.
+Analise a resposta do aluno comparando com o gabarito referência.
+Retorne somente um JSON com dois campos: "score" (número entre 0 e 1) e "explanation" (texto curto em português).
+Use nota abaixo de 0.5 quando a resposta não cobre os pontos principais.`;
+
+  const userPrompt = `Pergunta: ${truncate(payload.question, 600) || 'N/A'}
+Gabarito referência: ${truncate(payload.referenceAnswer, 1200)}
+Resposta do aluno: ${truncate(payload.studentAnswer, 1200)}
+
+Avalie a resposta do aluno.`;
+
+  const fullPrompt = `${systemPrompt}
+
+${userPrompt}
+
+Formato esperado do JSON: { "score": number entre 0 e 1, "explanation": "texto" }`;
+
+  try {
+    const completion = await openaiClient.responses.create({
+      model: graderModel,
+      temperature: 0,
+      max_output_tokens: 400,
+      input: fullPrompt
+    });
+
+    const rawText = extractResponseText(completion);
+    if (!rawText) {
+      throw new Error('Resposta inválida do OpenAI');
+    }
+
+    const parsed = tryParseJson(rawText);
+    if (!parsed || typeof parsed.score === 'undefined') {
+      throw new Error('Não foi possível interpretar a nota retornada.');
+    }
+
+    const explanation = typeof parsed.explanation === 'string' ? parsed.explanation : '';
+    return {
+      score: clamp01(Number(parsed.score)),
+      explanation
+    };
+  } catch (error) {
+    console.error('Erro ao avaliar questão dissertativa com OpenAI', error);
+    throw new Error('Não foi possível consultar o OpenAI Graders no momento.');
+  }
 };
 
 // GET / -> { modules: [...], activities: [...] }
@@ -80,6 +208,56 @@ router.delete('/module/:assinatura/:moduloId', ensureAuth, asyncHandler(async (r
     await pool.query<ResultSetHeader>(`UPDATE usuario SET ${progressoCol} = CASE WHEN ${progressoCol} > 0 THEN ${progressoCol} - 1 ELSE 0 END WHERE id = ?`, [userId]);
   }
   res.json({ success: true, moduleDeleted: Boolean(del.affectedRows && del.affectedRows > 0) });
+}));
+
+router.post('/activity/dissertativas/avaliar', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
+  if (!openaiClient) {
+    res.status(503).json({ error: 'OpenAI Graders não está configurado no servidor.' });
+    return;
+  }
+
+  const items = Array.isArray(req.body?.items) ? (req.body.items as Array<Record<string, unknown>>) : [];
+  if (items.length === 0) {
+    res.status(400).json({ error: 'Nenhuma questão foi enviada para avaliação.' });
+    return;
+  }
+
+  const sanitized: EssayGradePayload[] = items
+    .map((item: Record<string, unknown>) => ({
+      questionIndex: Number(item?.questionIndex),
+      question: String(item?.question ?? ''),
+      referenceAnswer: String(item?.referenceAnswer ?? ''),
+      studentAnswer: String(item?.studentAnswer ?? ''),
+    }))
+    .filter((item: EssayGradePayload) => Number.isFinite(item.questionIndex));
+
+  if (sanitized.length === 0) {
+    res.status(400).json({ error: 'Formato das questões inválido.' });
+    return;
+  }
+
+  if (sanitized.some((item) => !item.referenceAnswer.trim())) {
+    res.status(400).json({ error: 'Existe questão dissertativa sem gabarito configurado.' });
+    return;
+  }
+
+  if (sanitized.some((item) => !item.studentAnswer.trim())) {
+    res.status(400).json({ error: 'Preencha todas as respostas dissertativas antes de enviar.' });
+    return;
+  }
+
+  const limited = sanitized.slice(0, 10); // segurança
+  const results = await Promise.all(limited.map(async (item) => {
+    const grade = await gradeEssayAnswer(item);
+    return {
+      questionIndex: item.questionIndex,
+      score: grade.score,
+      isCorrect: grade.score >= 0.5,
+      explanation: grade.explanation,
+    };
+  }));
+
+  res.json({ results });
 }));
 
 // Activity completion

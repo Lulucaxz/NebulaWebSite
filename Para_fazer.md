@@ -11,6 +11,3 @@ Responsividade
 
 
 Modo claro
-
-
-backend Avaliações

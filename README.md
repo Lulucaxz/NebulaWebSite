@@ -52,3 +52,12 @@ export default tseslint.config({
   },
 })
 ```
+
+## Configuração do OpenAI Graders
+
+As questões dissertativas agora utilizam o OpenAI Graders para validar as respostas dos alunos. Para habilitar esse fluxo configure as variáveis no diretório `server`:
+
+- `OPENAI_API_KEY`: chave privada obtida no painel da OpenAI. **Obrigatória**.
+- `OPENAI_GRADER_MODEL`: (opcional) modelo usado para correção. Por padrão usamos `gpt-4.1-mini`.
+
+Após atualizar o `.env` execute `npm install` dentro de `server/` para instalar a dependência `openai` e reinicie a API.
