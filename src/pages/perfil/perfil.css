@@ -531,6 +531,23 @@
   cursor: pointer;
 }
 
+.prf-banner-reset {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+  padding: 10px 25px;
+  border: none;
+  background-color: var(--cinza-claro1);
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.prf-banner-reset:hover {
+  background-color: var(--roxo1);
+}
+
 .prf-edicao-superior {
   display: flex;
   gap: 25px;

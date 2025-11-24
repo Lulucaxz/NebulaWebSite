@@ -1,8 +1,8 @@
 import { Router } from "express";
 import type { Request } from "express";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
-import { pool } from "./db";
-import { asyncHandler } from "./utils";
+import { pool } from "../db";
+import { asyncHandler } from "../utils";
 
 const router = Router();
 

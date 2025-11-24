@@ -1,7 +1,7 @@
 
 import express, { Request, Response, NextFunction } from 'express';
-import { pool } from "./db";
-import { asyncHandler } from "./utils"; 
+import { pool } from "../db";
+import { asyncHandler } from "../utils"; 
 import { v4 as uuidv4 } from 'uuid';
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../perfil.css";
+import { API_BASE, fetchWithCredentials } from "../../../api";
+import type { AvaliacaoCard } from "../../../types/avaliacao";
 
 interface ModalAvaliarPlanosProps {
   onClose: () => void; // Função para fechar o modal
@@ -8,6 +10,9 @@ interface ModalAvaliarPlanosProps {
 const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
   const [rating, setRating] = useState(0); // Estado para a avaliação
   const [feedback, setFeedback] = useState(""); // Estado para o feedback
+  const [submitting, setSubmitting] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState<string | null>(null);
+  const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
 
   const handleRatingClick = (value: number) => {
     setRating(value); // Define a avaliação selecionada
@@ -17,11 +22,51 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
     setFeedback(e.target.value); // Atualiza o feedback
   };
 
-  const handleSubmit = () => {
-    // Lógica para enviar a avaliação e o feedback
-    console.log("Avaliação:", rating);
-    console.log("Feedback:", feedback);
-    onClose(); // Fecha o modal após o envio
+  const handleSubmit = async () => {
+    if (submitting) return;
+
+    if (rating === 0) {
+      setMensagemErro("Selecione uma quantidade de estrelas.");
+      return;
+    }
+
+    if (feedback.trim().length < 10) {
+      setMensagemErro("Conte pelo menos 10 caracteres sobre sua experiência.");
+      return;
+    }
+
+    setMensagemErro(null);
+    setSubmitting(true);
+
+    try {
+      const response = await fetchWithCredentials(`${API_BASE}/api/avaliacoes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estrelas: rating, texto: feedback.trim() }),
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok || !payload) {
+        throw new Error((payload as { error?: string } | null)?.error || "Não foi possível enviar sua avaliação agora.");
+      }
+
+      const avaliacaoCriada = payload as AvaliacaoCard;
+      window.dispatchEvent(new CustomEvent("nebula-avaliacao-criada", { detail: avaliacaoCriada }));
+
+      setMensagemSucesso("Agradecemos pela avaliação!");
+      setTimeout(() => {
+        setRating(0);
+        setFeedback("");
+        setMensagemSucesso(null);
+        onClose();
+      }, 2000);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erro inesperado ao enviar sua avaliação.";
+      setMensagemErro(message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -63,6 +108,12 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             onChange={handleFeedbackChange}
           />
         </div>
+        {mensagemErro && (
+          <span style={{ color: "#ff6b6b", fontSize: "14px" }}>{mensagemErro}</span>
+        )}
+        {mensagemSucesso && (
+          <span style={{ color: "var(--roxo1)", fontSize: "14px" }}>{mensagemSucesso}</span>
+        )}
         <div
           className="modal-actions"
           style={{ display: "flex", justifyContent: "end", gap: "25px" }}
@@ -73,8 +124,13 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
           >
             CANCELAR
           </button>
-          <button className="prf-botao-editar-enviar" onClick={handleSubmit}>
-            ENVIAR AVALIAÇÃO
+          <button
+            className="prf-botao-editar-enviar"
+            onClick={handleSubmit}
+            disabled={submitting}
+            style={submitting ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
+          >
+            {submitting ? "ENVIANDO..." : "ENVIAR AVALIAÇÃO"}
           </button>
         </div>
       </div>

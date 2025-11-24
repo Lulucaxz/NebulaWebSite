@@ -230,23 +230,26 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_resposta_like` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `NEBULA`.`avaliação`
+-- Table `NEBULA`.`avaliacao`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `NEBULA`.`avaliacao` ;
 DROP TABLE IF EXISTS `NEBULA`.`avaliação` ;
 
-CREATE TABLE IF NOT EXISTS `NEBULA`.`avaliação` (
+CREATE TABLE IF NOT EXISTS `NEBULA`.`avaliacao` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `star` INT NOT NULL,
-  `conteudo` TEXT(2000) NOT NULL,
   `usuario_id` INT NOT NULL,
+  `estrelas` TINYINT NOT NULL,
+  `texto` TEXT NOT NULL,
+  `curso` VARCHAR(45) NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  INDEX `fk_avaliação_usuario1_idx` (`usuario_id` ASC) VISIBLE,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_avaliação_usuario1`
+  INDEX `idx_avaliacao_usuario` (`usuario_id` ASC) VISIBLE,
+  CONSTRAINT `fk_avaliacao_usuario`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `NEBULA`.`usuario` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `chk_avaliacao_estrelas` CHECK ((`estrelas` BETWEEN 1 AND 5))
 ) ENGINE = InnoDB;
 
 ALTER TABLE usuario DROP INDEX colocacao_UNIQUE;

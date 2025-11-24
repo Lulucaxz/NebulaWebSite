@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
 import { PoolConnection } from "mysql2/promise";
-import { pool } from "./db";
-import { asyncHandler } from "./utils";
+import { pool } from "../db";
+import { asyncHandler } from "../utils";
 
 type AuthenticatedRequest = Request & {
   user?: {

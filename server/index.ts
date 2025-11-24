@@ -13,11 +13,12 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 import { pool } from "./db";
 
-import rankRoutes from "./rankRoutes";
-import anotacoesRoutes from "./anotacoesRoutes";
-import progressRoutes from "./progressRoutes";
-import forumRoutes from "./forumRoutes";
-import followRoutes from "./followRoutes";
+import rankRoutes from "./routes/rankRoutes";
+import anotacoesRoutes from "./routes/anotacoesRoutes";
+import progressRoutes from "./routes/progressRoutes";
+import forumRoutes from "./routes/forumRoutes";
+import followRoutes from "./routes/followRoutes";
+import avaliacoesRoutes from "./routes/avaliacoesRoutes";
 import { asyncHandler } from './utils';
 
 dotenv.config();
@@ -109,6 +110,7 @@ app.use(passport.session());
 // Rotas de ranking
 app.use("/api", rankRoutes);
 app.use("/api/follow", followRoutes);
+app.use("/api/avaliacoes", avaliacoesRoutes);
 
 app.use("/api/anotacoes", anotacoesRoutes);
 app.use('/api/progress', progressRoutes);

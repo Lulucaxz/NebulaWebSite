@@ -1,8 +1,8 @@
 // Retorna todos os usuários do banco, ordenados por ordem de criação (id crescente)
 import { Router, Request } from 'express';
-import { pool } from './db';
+import { pool } from '../db';
 import { RowDataPacket } from 'mysql2';
-import { asyncHandler } from './utils';
+import { asyncHandler } from '../utils';
 
 const router = Router();
 

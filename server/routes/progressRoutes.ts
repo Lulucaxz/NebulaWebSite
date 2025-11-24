@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { pool } from './db';
-import { asyncHandler } from './utils';
+import { pool } from '../db';
+import { asyncHandler } from '../utils';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 const router = express.Router();

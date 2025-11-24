@@ -1,18 +1,49 @@
 import "./avaliacoes.css";
-import { useState } from "react";
-import { avaliacoes1 } from "./avaliacoesDados";
-import { avaliacoes2 } from "./avaliacoesDados";
-import { avaliacoes3 } from "./avaliacoesDados";
-import { avaliacoes4 } from "./avaliacoesDados";
-import { useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { avaliacoes1, avaliacoes2, avaliacoes3, avaliacoes4 } from "./avaliacoesDados";
 import { useTranslation } from 'react-i18next';
+import { API_BASE, fetchWithCredentials } from "../../../api";
+import type { AvaliacaoCard } from "../../../types/avaliacao";
+
+const criarSeeds = (): AvaliacaoCard[] => {
+  const conjuntos = [avaliacoes1, avaliacoes2, avaliacoes3, avaliacoes4];
+  const lista: AvaliacaoCard[] = [];
+
+  conjuntos.forEach((grupo, grupoIndex) => {
+    grupo.forEach((item, itemIndex) => {
+      lista.push({
+        id: -(grupoIndex * 1000 + itemIndex + 1),
+        nome: item.nome,
+        curso: item.curso.toUpperCase(),
+        estrelas: item.estrelas,
+        foto: item.foto,
+        texto: item.texto,
+        createdAt: "1970-01-01T00:00:00.000Z",
+      });
+    });
+  });
+
+  return lista;
+};
+
+const distribuirEmColunas = (dados: AvaliacaoCard[], colunas = 4): AvaliacaoCard[][] => {
+  return Array.from({ length: colunas }, (_, colunaIndex) =>
+    dados.filter((_, itemIndex) => itemIndex % colunas === colunaIndex)
+  );
+};
 
 function Avaliacoes() {
   const { t } = useTranslation();
 
+  const seedAvaliacoes = useMemo(() => criarSeeds(), []);
+
   const [filtroEstrelaSelecionada, setFiltroEstrelaSelecionada] = useState<number | null>(null);
 
   const [filtrosSelecionados, setFiltrosSelecionados] = useState<string[]>([]);
+
+  const [avaliacoes, setAvaliacoes] = useState<AvaliacaoCard[]>(seedAvaliacoes);
+  const [carregandoAvaliacoes, setCarregandoAvaliacoes] = useState(false);
+  const [erroAvaliacoes, setErroAvaliacoes] = useState<string | null>(null);
 
   const toggleFiltroCurso = (filtro: string) => {
     setFiltrosSelecionados((prev) =>
@@ -30,6 +61,56 @@ function Avaliacoes() {
     if (setaMenos) {
       setaMenos.classList.add("ligada"); // Começa desligado visualmente
     }
+  }, []);
+
+  useEffect(() => {
+    let ativo = true;
+    const controller = new AbortController();
+
+    const carregarAvaliacoesRemotas = async () => {
+      setCarregandoAvaliacoes(true);
+      try {
+        const resposta = await fetchWithCredentials(`${API_BASE}/api/avaliacoes?limit=60`, {
+          signal: controller.signal,
+        });
+
+        const payload = await resposta.json().catch(() => null);
+
+        if (!ativo) return;
+
+        if (!resposta.ok || !Array.isArray(payload)) {
+          throw new Error((payload as { error?: string } | null)?.error || "Erro ao carregar avaliações.");
+        }
+
+        if (payload.length > 0) {
+          setAvaliacoes([...payload, ...seedAvaliacoes]);
+        }
+      } catch (error) {
+        if (!ativo || controller.signal.aborted) return;
+        const mensagem = error instanceof Error ? error.message : "Erro inesperado ao carregar avaliações.";
+        setErroAvaliacoes(mensagem);
+      } finally {
+        if (ativo) {
+          setCarregandoAvaliacoes(false);
+        }
+      }
+    };
+
+    carregarAvaliacoesRemotas();
+
+    return () => {
+      ativo = false;
+      controller.abort();
+    };
+  }, [seedAvaliacoes]);
+
+  useEffect(() => {
+    const handleNovaAvaliacao = (event: CustomEvent<AvaliacaoCard>) => {
+      setAvaliacoes((prev) => [event.detail, ...prev.filter((item) => item.id !== event.detail.id)]);
+    };
+
+    window.addEventListener("nebula-avaliacao-criada", handleNovaAvaliacao);
+    return () => window.removeEventListener("nebula-avaliacao-criada", handleNovaAvaliacao);
   }, []);
 
   const maisAvaliacoes = () => {
@@ -76,8 +157,8 @@ function Avaliacoes() {
     setContainerHeight(1000);
   };
 
-  const filtrarAvaliacoes = (avaliacoes: any[]) => {
-    return avaliacoes.filter((item) => {
+  const filtrarAvaliacoes = useCallback((lista: AvaliacaoCard[]) => {
+    return lista.filter((item) => {
       const cursoCondicao =
         filtrosSelecionados.length === 0 || filtrosSelecionados.includes(item.curso.toUpperCase());
       const estrelaCondicao =
@@ -85,7 +166,10 @@ function Avaliacoes() {
 
       return cursoCondicao && estrelaCondicao;
     });
-  };
+  }, [filtrosSelecionados, filtroEstrelaSelecionada]);
+
+  const avaliacoesFiltradas = useMemo(() => filtrarAvaliacoes(avaliacoes), [avaliacoes, filtrarAvaliacoes]);
+  const colunasAvaliacoes = useMemo(() => distribuirEmColunas(avaliacoesFiltradas), [avaliacoesFiltradas]);
 
   return (
     <>
@@ -136,127 +220,47 @@ function Avaliacoes() {
           style={{ height: `${containerHeight}px` }}
         >
 
-          <div className="nav-comentarios">
-            {filtrarAvaliacoes(avaliacoes1).map((item, index) => (
-              <div className="comentario" key={index}>
-                <div className="comentario-content">
-                  <div className="comentario-usuario">
-                    <img className="comentario-usuario-icon" src={item.foto} alt="Foto do usuário" />
-                    <div className="comentario-usuario-titulo">
-                      <h3>{item.nome}</h3>
-                      <h4>Cursa - {item.curso}</h4>
+          {colunasAvaliacoes.map((coluna, colunaIndex) => (
+            <div className="nav-comentarios" key={`coluna-${colunaIndex}`}>
+              {coluna.map((item) => (
+                <div className="comentario" key={item.id}>
+                  <div className="comentario-content">
+                    <div className="comentario-usuario">
+                      <img className="comentario-usuario-icon" src={item.foto} alt="Foto do usuário" />
+                      <div className="comentario-usuario-titulo">
+                        <h3>{item.nome}</h3>
+                        <h4>Cursa - {item.curso}</h4>
+                      </div>
                     </div>
-                  </div>
-                  <div className="comentario-avaliacao">
-                    {[...Array(5)].map((_, i) => (
-                      <img
-                        key={i}
-                        src={
-                          i < item.estrelas
-                            ? "/icons/estrela-clara.svg"
-                            : "/icons/estrela-escura.svg"
-                        }
-                        alt={`Estrela ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <p className="comentario-conteudo">{item.texto}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="nav-comentarios">
-            {filtrarAvaliacoes(avaliacoes2).map((item, index) => (
-              <div className="comentario" key={index}>
-                <div className="comentario-content">
-                  <div className="comentario-usuario">
-                    <img className="comentario-usuario-icon" src={item.foto} alt="Foto do usuário" />
-                    <div className="comentario-usuario-titulo">
-                      <h3>{item.nome}</h3>
-                      <h4>Cursa - {item.curso}</h4>
+                    <div className="comentario-avaliacao">
+                      {[...Array(5)].map((_, i) => (
+                        <img
+                          key={i}
+                          src={
+                            i < item.estrelas
+                              ? "/icons/estrela-clara.svg"
+                              : "/icons/estrela-escura.svg"
+                          }
+                          alt={`Estrela ${i + 1}`}
+                        />
+                      ))}
                     </div>
+                    <p className="comentario-conteudo">{item.texto}</p>
                   </div>
-                  <div className="comentario-avaliacao">
-                    {[...Array(5)].map((_, i) => (
-                      <img
-                        key={i}
-                        src={
-                          i < item.estrelas
-                            ? "/icons/estrela-clara.svg"
-                            : "/icons/estrela-escura.svg"
-                        }
-                        alt={`Estrela ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <p className="comentario-conteudo">{item.texto}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="nav-comentarios">
-            {filtrarAvaliacoes(avaliacoes3).map((item, index) => (
-              <div className="comentario" key={index}>
-                <div className="comentario-content">
-                  <div className="comentario-usuario">
-                    <img className="comentario-usuario-icon" src={item.foto} alt="Foto do usuário" />
-                    <div className="comentario-usuario-titulo">
-                      <h3>{item.nome}</h3>
-                      <h4>Cursa - {item.curso}</h4>
-                    </div>
-                  </div>
-                  <div className="comentario-avaliacao">
-                    {[...Array(5)].map((_, i) => (
-                      <img
-                        key={i}
-                        src={
-                          i < item.estrelas
-                            ? "/icons/estrela-clara.svg"
-                            : "/icons/estrela-escura.svg"
-                        }
-                        alt={`Estrela ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <p className="comentario-conteudo">{item.texto}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="nav-comentarios">
-            {filtrarAvaliacoes(avaliacoes4).map((item, index) => (
-              <div className="comentario" key={index}>
-                <div className="comentario-content">
-                  <div className="comentario-usuario">
-                    <img className="comentario-usuario-icon" src={item.foto} alt="Foto do usuário" />
-                    <div className="comentario-usuario-titulo">
-                      <h3>{item.nome}</h3>
-                      <h4>Cursa - {item.curso}</h4>
-                    </div>
-                  </div>
-                  <div className="comentario-avaliacao">
-                    {[...Array(5)].map((_, i) => (
-                      <img
-                        key={i}
-                        src={
-                          i < item.estrelas
-                            ? "/icons/estrela-clara.svg"
-                            : "/icons/estrela-escura.svg"
-                        }
-                        alt={`Estrela ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <p className="comentario-conteudo">{item.texto}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ))}
 
         </div>
+        {erroAvaliacoes && (
+          <p style={{ marginTop: "16px", color: "#ff6b6b", textAlign: "center" }}>{erroAvaliacoes}</p>
+        )}
+        {carregandoAvaliacoes && (
+          <p style={{ marginTop: "16px", color: "var(--cinza-claro1)", textAlign: "center" }}>
+            Carregando avaliações...
+          </p>
+        )}
         <div className="avl-botoes-mais-menos">
           <div className="button-mais-menos" id="avl-button-menos" onClick={menosAvaliacoes}>
             <svg

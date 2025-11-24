@@ -605,19 +605,24 @@
 }
 
 .forum-load-more button {
-  background: linear-gradient(135deg, #7c3aed, #5a1fe0);
-  color: #ffffff;
+  background-color: var(--cinza-claro1);
+  color: var(--branco);
   border: none;
-  border-radius: 10px;
-  padding: 10px 24px;
+  padding: 10px 25px;
   font-weight: 600;
+  font-size: 20px;
+  font-family: "Questrial", sans-serif;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
 .forum-load-more button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.forum-load-more button:hover:not(:disabled) {
+  background-color: var(--roxo1);
 }
 
 /* Responsividade */
