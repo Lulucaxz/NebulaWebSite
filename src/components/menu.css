@@ -67,6 +67,18 @@
   }
 }
 
+.menu-icones.active {
+  background-color: var(--roxo1);
+}
+
+.menu-icones.active svg {
+  fill: var(--cinza-escuro3);
+}
+
+.menu-icones.active span {
+  color: var(--cinza-escuro3);
+}
+
 #imgperfil_menu {
   width: 30px;
   height: 30px;
@@ -91,6 +103,18 @@
 }
 
 .menu-icones.claro:hover span {
+  color: var(--roxo1);
+}
+
+.menu-icones.claro.active {
+  background-color: var(--branco);
+}
+
+.menu-icones.claro.active svg {
+  fill: var(--roxo1);
+}
+
+.menu-icones.claro.active span {
   color: var(--roxo1);
 }
 

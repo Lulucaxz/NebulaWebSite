@@ -21,7 +21,10 @@
     --cinza-claro1: #4E4E4E;
     --cinza-claro2: #dbdbdb;
 
-    --roxo1: #9A30EB;
+    --roxo1: #7e28c0;
+    --roxo2: #6C23A3;
+    --roxo3: #51187c;
+    --roxo4: #2d0b47;
 }
 
 body::-webkit-scrollbar {

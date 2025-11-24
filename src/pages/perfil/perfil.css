@@ -144,15 +144,15 @@
 }
 .container-perfil {
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin: 0;
 }
 
 #prf-containerAll {
-  width: calc(100vw - 220px);
-  margin-left: 110px;
+  font-family: "Questrial", sans-serif;
+  width: calc(100vw - 220px - 500px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -171,9 +171,9 @@
 .prf-usuario-barra {
   width: 100%;
   height: 100px;
-  background-color: var(--roxo1);
   display: flex;
   justify-content: center;
+  padding: 25px 0;
 
   color: #fff;
 }
@@ -181,58 +181,49 @@
 .prf-container {
   width: 90%;
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
   align-items: center;
 }
 
-.prf-foto {
-  width: 150px;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  position: relative;
-  top: -50px;
-  object-fit: cover;
+.prf-informacoes-header {
+  display: flex;
+  gap: 25px;
+}
+
+.prf-social-header {
+  display: flex;
+  gap: 25px;
 }
 
 .prf-nome-usuario span {
-  font-family: "Archivo Black", sans-serif;
-  font-size: 40px;
-}
-
-.prf-usuario-rank {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  top: -10px;
   font-family: "Questrial", sans-serif;
+  font-size: 32px;
 }
 
 .prf-usuario span {
-  font-size: 20px;
+  font-size: 16px;
+  color: var(--cinza-claro1);
 }
 
 .prf-rank span {
-  color: var(--branco);
+  font-size: 16px;
+  color: var(--cinza-claro1);
 }
 
-.prf-editar svg {
-  min-width: 40px;
-  min-height: 40px;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+.prf-foto {
+  width: 100px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .prf-container2 {
-  width: 90%;
+  width: calc(90%);
 }
-
-/* COLUNAS */
 
 .prf-colunas {
   display: flex;
-  margin: 50px 0;
+  margin-top: 25px;
   gap: 25px;
 }
 
@@ -243,50 +234,112 @@
   gap: 25px;
 }
 
+.prf-linguagem,
+.prf-tema {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prf-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prf-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-family: "Questrial", sans-serif;
+}
+
+.prf-option-input {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--cinza-claro1);
+  background: transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.prf-option-input:checked {
+  background-color: var(--roxo1);
+  border-color: var(--roxo1);
+}
+
+.prf-option-input:focus-visible {
+  outline: 2px solid var(--roxo1);
+  outline-offset: 2px;
+}
+
+.prf-option-text {
+  color: var(--cinza-claro1);
+  transition: color 0.2s ease;
+}
+
+.prf-option-input:checked + .prf-option-text {
+  color: var(--branco);
+}
+
+.prf-titulo-informacoes {
+  font-size: 24px;
+}
+
 .prf-biografia {
-  padding: 40px;
   text-align: justify;
-  width: calc(100% - 80px);
+  width: 100%;
 
   color: var(--branco);
-  background-color: var(--cinza-escuro3);
 
   font-family: "Questrial", sans-serif;
-  font-size: 24px;
-
-  letter-spacing: 1.5px;
 
   & span {
+  font-size: 16px;
     white-space: pre-wrap;
     width: 100%;
     word-break: break-word
   }
 }
 
+.prf-biografia::-webkit-scrollbar {
+  width: 10px;
+}
+
+.prf-biografia::-webkit-scrollbar-track {
+    background: var(--cinza-claro1);
+}
+
+.prf-biografia::-webkit-scrollbar-thumb {
+    background-color: var(--roxo1);
+}
+
 .prf-curso-estatistica {
-  background-color: var(--cinza-escuro3);
-  height: 60px;
+  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .prf-titulo-estatistica {
-  background-color: var(--roxo1);
   height: 100%;
-  width: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
 
   color: var(--branco);
-  font-family: "Archivo Black", sans-serif;
+  font-family: "Questrial", sans-serif;
+  padding-left: 25px;
 }
 
 .prf-barra-estatistica {
   background-color: var(--cinza-escuro1);
-  height: 20px;
-  width: 60%;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
 }
 .prf-barra-estatistica::-webkit-progress-value {
@@ -303,23 +356,33 @@
 }
 
 .prf-descricao-estatistica {
-  width: 80px;
   height: 100%;
 
   display: flex;
   justify-content: start;
   align-items: center;
+  
+  position: absolute;
+  right: 25px;
 
   color: #fff;
   font-family: "Questrial", sans-serif;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .prf-infomacoes {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  font-family: 'Questrial', sans-serif;
+  justify-content: center;
 }
+
+.prf-coluna2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
 
 @media screen and (max-width: 425px) {
   .prf-colunas {
@@ -351,8 +414,7 @@
 
 .aba-editar {
   background-color: var(--cinza-escuro2);
-  padding: 25px;
-  max-width: 400px;
+  max-width: 850px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -363,12 +425,13 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
+  padding: 25px;
 }
 
 .prf-editar-nome {
   border: 0;
-  font-size: 16px;
-  background-color: var(--cinza-escuro3);
+  font-size: 20px;
+  background-color: var(--cinza-claro1);
   width: calc(100% - 20px);
   padding: 10px;
   color: var(--branco);
@@ -378,7 +441,7 @@
 
 .prf-editar-biografia {
   border: 0;
-  height: 100px;
+  height: 250px;
   font-size: 16px;
   background-color: var(--cinza-escuro3);
   width: calc(100% - 20px);
@@ -415,6 +478,7 @@
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 .prf-preview-img {
   width: 100%;
   aspect-ratio: 1/1;
@@ -451,16 +515,155 @@
   color: var(--branco);
 }
 
+=======
+>>>>>>> origin/new-perfil-page
 .prf-botao-editar-enviar {
-  height: 35px;
+  padding: 10px 25px;
   font-family: "Questrial", sans-serif;
-  border: 0;
   background-color: var(--roxo1);
   color: var(--branco);
+  width: auto;
+  border: 0;
+  font-size: 16px;
+}
+
+.prf-botao-editar-enviar.cancelar {
+  background-color: var(--cinza-claro1);
 }
 
 .prf-botao-editar-enviar:hover {
   background-color: var(--branco);
   color: var(--roxo1);
   cursor: pointer;
+}
+
+.prf-btn-config {
+  padding: 10px;
+  font-family: "Questrial", sans-serif;
+  background-color: var(--cinza-claro1);
+  color: var(--branco);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.prf-btn-config:hover {
+  background-color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-editor-banner-btn {
+  background-color: var(--cinza-claro1);
+  padding: 10px 25px;
+  position: absolute;
+  left: 25px;
+  bottom: 25px;
+  border: none;
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+  font-size: 20px;
+}
+
+.prf-editor-banner-btn:hover {
+  background-color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-edicao-superior {
+  display: flex;
+  gap: 25px;
+}
+
+.prf-edicao-foto {
+  height: 100px;
+  aspect-ratio: 1/1;
+  background-image: url(../../../public/icones-usuarios/FotoPerfil4.jpg);
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+}
+
+.prf-editor-foto-info, .prf-editor-nome-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.prf-editar-foto-label {
+  display: flex;
+  justify-content: center;
+  background-color: var(--cinza-claro1);
+  padding: 10px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  color: var(--branco);
+  font-family: "Questrial", sans-serif;
+  font-size: 20px;
+}
+
+.prf-editar-foto-label:hover {
+  background-color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-editar-biografia-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prf-editar-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.aba-denunciar {
+  background-color: var(--cinza-escuro2);
+  padding: 25px;
+  box-sizing: border-box;
+  max-width: 850px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.prf-denuncia-topicos {
+  display: flex;
+  justify-content: space-between;
+}
+
+.prf-denuncia-topico {
+  padding: 10px 25px;
+  width: auto;
+  font-size: 14px;
+  background-color: var(--cinza-claro1);
+  color: var(--branco);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.prf-denuncia-topico:hover {
+  background-color: var(--roxo1);
+  cursor: pointer;
+}
+
+.prf-denuncia-container-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.aba-avaliar-planos {
+  max-width: 850px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 25px;
+  box-sizing: border-box;
+  background-color: var(--cinza-escuro2);
 }
