@@ -5,6 +5,7 @@ import { initial_comentarios } from "./components/comentariosDados";
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import { API_BASE, fetchWithCredentials } from "../../api";
+import { showAlert } from "../../Alert";
 import "./Forum.css";
 
 interface ForumPostsResponse {
@@ -393,7 +394,7 @@ function Forum() {
 
   const handleCriarPublicacao = async () => {
     if (!formularioValido) {
-      alert('Por favor, preencha todos os campos obrigatórios');
+      showAlert('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
@@ -429,7 +430,7 @@ function Forum() {
       handleResetFormulario();
     } catch (error) {
       console.error(error);
-      alert('Não foi possível criar sua publicação agora. Tente novamente mais tarde.');
+      showAlert('Não foi possível criar sua publicação agora. Tente novamente mais tarde.');
     } finally {
       setEnviandoPublicacao(false);
     }
@@ -506,7 +507,7 @@ function Forum() {
       }
     } catch (error) {
       console.error(error);
-      alert('Não foi possível excluir a resposta. Tente novamente.');
+      showAlert('Não foi possível excluir a resposta. Tente novamente.');
     }
   };
 
@@ -528,7 +529,7 @@ function Forum() {
       }
     } catch (error) {
       console.error(error);
-      alert('Não foi possível excluir esta publicação.');
+      showAlert('Não foi possível excluir esta publicação.');
     }
   };
 
@@ -539,7 +540,7 @@ function Forum() {
       });
 
       if (resposta.status === 401) {
-        alert('Faça login para curtir publicações.');
+        showAlert('Faça login para curtir publicações.');
         return;
       }
 
@@ -555,7 +556,7 @@ function Forum() {
       ));
     } catch (error) {
       console.error(error);
-      alert('Não foi possível atualizar a curtida da publicação.');
+      showAlert('Não foi possível atualizar a curtida da publicação.');
     }
   };
 
@@ -566,7 +567,7 @@ function Forum() {
       });
 
       if (resposta.status === 401) {
-        alert('Faça login para curtir respostas.');
+        showAlert('Faça login para curtir respostas.');
         return;
       }
 
@@ -589,7 +590,7 @@ function Forum() {
       }));
     } catch (error) {
       console.error(error);
-      alert('Não foi possível atualizar a curtida da resposta.');
+      showAlert('Não foi possível atualizar a curtida da resposta.');
     }
   };
 
@@ -634,7 +635,7 @@ function Forum() {
   // Função para salvar edição de comentário
   const handleSalvarEdicaoComentario = async () => {
     if (!editandoComentario || !tituloPublicacao.trim() || !conteudoPublicacao.trim() || tagsSelecionadas.length === 0) {
-      alert('Por favor, preencha todos os campos obrigatórios');
+      showAlert('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
@@ -666,10 +667,10 @@ function Forum() {
       ));
       setEditandoComentario(null);
       handleResetFormulario();
-      alert('Comentário editado com sucesso!');
+      showAlert('Comentário editado com sucesso!');
     } catch (error) {
       console.error(error);
-      alert('Não foi possível salvar sua edição agora.');
+      showAlert('Não foi possível salvar sua edição agora.');
     } finally {
       setSalvandoComentarioEdicao(false);
     }
@@ -678,7 +679,7 @@ function Forum() {
   // Função para salvar edição de resposta
   const handleSalvarEdicaoResposta = async () => {
     if (!editandoResposta || !conteudoPublicacao.trim()) {
-      alert('Por favor, preencha o conteúdo da resposta');
+      showAlert('Por favor, preencha o conteúdo da resposta');
       return;
     }
 
@@ -718,10 +719,10 @@ function Forum() {
 
       setEditandoResposta(null);
       resetConteudoEImagem();
-      alert('Resposta editada com sucesso!');
+      showAlert('Resposta editada com sucesso!');
     } catch (error) {
       console.error(error);
-      alert('Não foi possível salvar a edição da resposta.');
+      showAlert('Não foi possível salvar a edição da resposta.');
     } finally {
       setSalvandoRespostaEdicao(false);
     }
@@ -733,7 +734,7 @@ function Forum() {
     }
 
     if (!conteudoPublicacao.trim()) {
-      alert('Por favor, preencha o conteúdo da resposta');
+      showAlert('Por favor, preencha o conteúdo da resposta');
       return;
     }
 
@@ -752,7 +753,7 @@ function Forum() {
     });
 
     if (!destinoExiste) {
-      alert('Não foi possível encontrar a publicação original. Ela pode ter sido removida.');
+      showAlert('Não foi possível encontrar a publicação original. Ela pode ter sido removida.');
       handleResponderA(null);
       resetConteudoEImagem();
       return;
@@ -797,7 +798,7 @@ function Forum() {
       setRespondendoA(null);
     } catch (error) {
       console.error(error);
-      alert('Não foi possível enviar sua resposta agora. Tente novamente.');
+      showAlert('Não foi possível enviar sua resposta agora. Tente novamente.');
     } finally {
       setEnviandoResposta(false);
     }

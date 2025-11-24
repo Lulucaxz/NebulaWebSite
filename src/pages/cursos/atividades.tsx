@@ -5,6 +5,7 @@ import { initial_cursos } from './components/cursosDados';
 import { useEffect, useState } from 'react'; 
 import { fetchWithCredentials, API_BASE } from '../../api';
 import { Link } from "react-router-dom";
+import { showAlert } from "../../Alert";
 
 import './cursos.css'; 
 
