@@ -1,18 +1,31 @@
-import './dusk.css'
+import { useEffect } from "react";
+import "./dusk.css";
+
+const DUSK_COUNT = 20;
 
 export function Dusk() {
-    setTimeout(() => {
-        for (let i = 0; i < 20; i++) {
-            document.getElementById(`d${i + 1}`).style.cssText += `animation: ababa ${(Math.random() * 6 + 1).toFixed(3)}s infinite;top:${(Math.random() * 99).toFixed(3)}%;left: ${(Math.random() * 99).toFixed(3)}%;-webkit-filter:blur(${(Math.random() * 2 + 1).toFixed(3)}px);`
-        }
-    }, 100)
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            for (let i = 0; i < DUSK_COUNT; i++) {
+                const element = document.getElementById(`d${i + 1}`);
+                if (!element) continue;
+
+                const duration = (Math.random() * 6 + 1).toFixed(3);
+                const top = (Math.random() * 99).toFixed(3);
+                const left = (Math.random() * 99).toFixed(3);
+                const blur = (Math.random() * 2 + 1).toFixed(3);
+                element.style.cssText += `animation: ababa ${duration}s infinite;top:${top}%;left:${left}%;-webkit-filter:blur(${blur}px);`;
+            }
+        }, 100);
+
+        return () => window.clearTimeout(timer);
+    }, []);
 
     return (
         <>
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: DUSK_COUNT }, (_, i) => (
                 <div key={i} className="dusk" id={`d${i + 1}`}></div>
-            ))
-            }
+            ))}
         </>
-    )
+    );
 }

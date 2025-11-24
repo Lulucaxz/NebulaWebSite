@@ -12,6 +12,7 @@ interface User {
   icon: string; // Alterado de photo para icon
   provider: string;
   prf_user: string;
+  tema?: string;
 }
 
 export function Menu() {
@@ -19,26 +20,30 @@ export function Menu() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-
-  useEffect(() => {
-  axios
-    .get("http://localhost:4000/auth/me", { withCredentials: true })
-    .then((res) => {
-        setUser(res.data);
-        setIsAuthenticated(true);
-      })
-    .catch(() => {
-        setUser(null);
-        setIsAuthenticated(false);
-      });
-}, []);
-  
-
   const [temaClaro, setTemaClaro] = useState(false);
 
-  const toggleTema = () => {
-    setTemaClaro((prev) => !prev);
-  };
+  useEffect(() => {
+    let isMounted = true;
+
+    axios
+      .get("http://localhost:4000/auth/me", { withCredentials: true })
+      .then((res) => {
+        if (!isMounted) return;
+        setUser(res.data);
+        setIsAuthenticated(true);
+        setTemaClaro(res.data?.tema === "light");
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setUser(null);
+        setIsAuthenticated(false);
+        setTemaClaro(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const getMenuItemClass = (isActive: boolean) =>
     [
