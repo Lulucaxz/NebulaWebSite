@@ -4,7 +4,6 @@ import { CropImageModal } from "../CropImageModal";
 
 interface ModalEditarProps {
   onClose: () => void;
-  children: React.ReactNode;
   t: (key: string) => string;
   fotoPreview: string;
   fotoUrl: string;
@@ -19,6 +18,9 @@ interface ModalEditarProps {
   handleCropComplete: (croppedBlob: Blob) => void;
   salvarEdicao: () => void;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  bannerDisplay: string;
+  onBannerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBannerReset: () => void;
 }
 
 const ModalEditar: React.FC<ModalEditarProps> = ({
@@ -37,6 +39,9 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
   handleCropComplete,
   salvarEdicao,
   onFileChange,
+  bannerDisplay,
+  onBannerChange,
+  onBannerReset,
 }) => {
   return (
     <div className="prf-modal-backdrop" onClick={onClose}>
@@ -45,15 +50,27 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
           className="prf-editor-banner"
           style={{
             height: "180px",
-            backgroundImage: `url(nebulosaBanner.jpg)`,
+            backgroundImage: `url(${bannerDisplay})`,
             position: "relative",
           }}
         >
-          <input
-            className="prf-editor-banner-btn"
+          <label className="prf-editor-banner-btn" htmlFor="prf-editar-banner">
+            <span>{t("Alterar banner")}</span>
+            <input
+              id="prf-editar-banner"
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={onBannerChange}
+            />
+          </label>
+          <button
             type="button"
-            value={t("Alterar banner")}
-          />
+            className="prf-banner-reset"
+            onClick={onBannerReset}
+          >
+            {t("USAR BANNER PADRÃO")}
+          </button>
         </div>
 
         <div

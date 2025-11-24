@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ModalSeguidores.css";
-import imagemPerfilExemplo from '../../../../public/icones-usuarios/FotoPerfil1.jpg';
+
+const imagemPerfilExemplo = "/img/users/icones-usuarios/FotoPerfil1.jpg";
 
 interface ModalSeguidoresProps {
   onCloseSeguidores: () => void;

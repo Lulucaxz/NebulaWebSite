@@ -478,45 +478,6 @@
   cursor: pointer;
 }
 
-<<<<<<< HEAD
-.prf-preview-img {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-}
-
-.prf-preview-banner {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.prf-preview-banner-img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.prf-banner-reset {
-  align-self: flex-start;
-  padding: 8px 12px;
-  background-color: transparent;
-  border: 1px solid var(--roxo1);
-  color: var(--branco);
-  font-family: "Questrial", sans-serif;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.prf-banner-reset:hover {
-  background-color: var(--roxo1);
-  color: var(--branco);
-}
-
-=======
->>>>>>> origin/new-perfil-page
 .prf-botao-editar-enviar {
   padding: 10px 25px;
   font-family: "Questrial", sans-serif;
