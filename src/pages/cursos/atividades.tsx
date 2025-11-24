@@ -83,6 +83,8 @@ function Atividades() {
         window.localStorage.setItem(tentativaKey, String(tentativas));
     }, [tentativas, tentativaKey]);
     
+    console.log(atividadeInd);
+
     // --- Verificação de Módulo (como estava) ---
     if (!modulo || !atividade) {
         return <div>Módulo não encontrado.</div>;
@@ -93,57 +95,224 @@ function Atividades() {
     const pontosPorQuestao = totalQuestoes > 0 ? pontosTotal / totalQuestoes : 0;
     const notaMinima = 6;
 
-    const avaliarQuestoes = (): ('neutro' | 'correta' | 'incorreta')[] => {
-        if (!atividade.questoes || atividade.questoes.length === 0) {
-            return [];
-        }
-
-        return atividade.questoes.map((questao, index) => {
-            if (questao.dissertativa) {
-                return (respostas[index] ?? '').trim().length > 0 ? 'correta' : 'incorreta';
-            }
-
-            if (!questao.respostaCorreta || !selecoes[index]) {
-                return 'incorreta';
-            }
-
-            return selecoes[index] === questao.respostaCorreta ? 'correta' : 'incorreta';
-        });
+    const clampScore = (value: unknown) => {
+        const numeric = typeof value === 'number' ? value : Number(value);
+        if (!Number.isFinite(numeric)) return 0;
+        if (numeric < 0) return 0;
+        if (numeric > 1) return 1;
+        return numeric;
     };
 
-    const calcularPontuacao = () => {
-        const resultados = avaliarQuestoes();
-
-        if (resultados.length === 0) {
-            return { pontos: 0, percentual: 0, resultados };
+    const calcularPontuacao = (
+        dissertativasOverrides?: Record<number, boolean>,
+        objetivasOverrides?: Record<number, boolean>
+    ) => {
+        if (!atividade.questoes || atividade.questoes.length === 0) {
+            return { pontos: 0, percentual: 0 };
         }
 
-        const pontos = resultados.reduce((acc, status) => (
-            status === 'correta' ? acc + pontosPorQuestao : acc
-        ), 0);
-        const percentual = (pontosTotal === 0 ? 0 : (pontos / pontosTotal) * 100);
+        let pontos = 0;
 
-        return { pontos, percentual, resultados };
+        atividade.questoes.forEach((questao, index) => {
+            if (questao.dissertativa) {
+                const override = dissertativasOverrides?.[index];
+                const isCorreta = typeof override === 'boolean'
+                    ? override
+                    : statusDissertativas[index] === 'correta';
+                if (isCorreta) {
+                    pontos += pontosPorQuestao;
+                }
+            } else {
+                const overrideObjetiva = objetivasOverrides?.[index];
+                const acertouObjetiva = typeof overrideObjetiva === 'boolean'
+                    ? overrideObjetiva
+                    : statusRespostas[index] === 'correta';
+                if (acertouObjetiva) {
+                    pontos += pontosPorQuestao;
+                }
+            }
+        });
+
+        const percentual = (pontos / pontosTotal) * 100;
+        return { pontos, percentual };
     };
 
     // --- NOVA FUNÇÃO DE CLIQUE ---
     const handleAlternativaClick = (
-        questionIndex: number, 
+        questionIndex: number,
         alternativaClicada: string
     ) => {
+        if (atividadeFinalizada) {
+            return;
+        }
         setSelecoes(prev => prev.map((sel, i) => 
             i === questionIndex ? alternativaClicada : sel
         ));
-        setStatusRespostas(prev => prev.map((status, i) => 
+        setStatusRespostas(prev => prev.map((status, i) =>
             i === questionIndex ? 'neutro' : status
         ));
     };
 
-    const handleRespostaDissertativaChange = (questionIndex: number, valor: string) => {
-        setRespostas(prev => prev.map((v, i) => i === questionIndex ? valor : v));
-        setStatusRespostas(prev => prev.map((status, i) => 
-            i === questionIndex ? 'neutro' : status
-        ));
+    const avaliarQuestoesObjetivas = () => {
+        const questoes = atividade.questoes ?? [];
+        const overrides: Record<number, boolean> = {};
+        const novosStatus = [...statusRespostas];
+
+        questoes.forEach((questao, index) => {
+            if (questao.dissertativa) {
+                return;
+            }
+
+            const respostaCorreta = questao.respostaCorreta;
+            const selecionada = selecoes[index];
+
+            if (!selecionada || !respostaCorreta) {
+                novosStatus[index] = 'neutro';
+                return;
+            }
+
+            const acertou = selecionada === respostaCorreta;
+            overrides[index] = acertou;
+            novosStatus[index] = acertou ? 'correta' : 'incorreta';
+        });
+
+        setStatusRespostas(novosStatus);
+        return overrides;
+    };
+
+    const avaliarQuestoesDissertativas = async (): Promise<DissertativaResultadoMap> => {
+        const questoes = atividade.questoes ?? [];
+        const itens: Array<{ questionIndex: number; question: string; referenceAnswer: string; studentAnswer: string }> = [];
+
+        questoes.forEach((questao, index) => {
+            if (!questao.dissertativa) {
+                return;
+            }
+
+            const respostaAluno = (respostas[index] ?? '').trim();
+            if (!respostaAluno) {
+                throw new Error(`Preencha a resposta da questão ${index + 1} antes de enviar.`);
+            }
+
+            const gabarito = (questao.respostaCorreta ?? '').trim();
+            if (!gabarito) {
+                throw new Error(`Questão ${index + 1} não possui gabarito configurado.`);
+            }
+
+            itens.push({
+                questionIndex: index,
+                question: questao.questao ?? '',
+                referenceAnswer: gabarito,
+                studentAnswer: respostaAluno,
+            });
+        });
+
+        if (itens.length === 0) {
+            return {};
+        }
+
+        setAvaliandoDissertativas(true);
+        try {
+            const response = await fetchWithCredentials(`${API_BASE}/api/progress/activity/dissertativas/avaliar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: itens })
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(typeof data.error === 'string' ? data.error : 'Erro ao avaliar as questões dissertativas.');
+            }
+
+            const resultados = Array.isArray(data.results) ? data.results : [];
+            const mapa: DissertativaResultadoMap = {};
+
+            resultados.forEach((resultado: Record<string, unknown>) => {
+                const index = Number(resultado?.questionIndex);
+                if (!Number.isFinite(index)) {
+                    return;
+                }
+
+                const score = clampScore(resultado?.score);
+                const explanation = typeof resultado?.explanation === 'string' ? resultado.explanation : undefined;
+                const isCorrect = typeof resultado?.isCorrect === 'boolean' ? resultado.isCorrect : score >= 0.5;
+
+                mapa[index] = { score, isCorrect, explanation };
+            });
+
+            setStatusDissertativas(prev => prev.map((status, idx) => {
+                const resultado = mapa[idx];
+                if (!resultado) {
+                    return status;
+                }
+                return resultado.isCorrect ? 'correta' : 'incorreta';
+            }));
+
+            setNotasDissertativas(prev => prev.map((nota, idx) => mapa[idx]?.score ?? nota));
+            setFeedbackDissertativas(prev => prev.map((texto, idx) => mapa[idx]?.explanation ?? texto));
+
+            return mapa;
+        } finally {
+            setAvaliandoDissertativas(false);
+        }
+    };
+
+    const handleEnviarAtividade = async () => {
+        if (atividadeFinalizada) {
+            return;
+        }
+        let mapaDissertativas: DissertativaResultadoMap = {};
+        try {
+            mapaDissertativas = await avaliarQuestoesDissertativas();
+        } catch (error) {
+            const mensagem = error instanceof Error ? error.message : 'Erro inesperado ao avaliar as questões dissertativas.';
+            showAlert(mensagem);
+            return;
+        }
+
+        const overrideDissertativas: Record<number, boolean> | undefined = Object.keys(mapaDissertativas).length > 0
+            ? Object.entries(mapaDissertativas).reduce<Record<number, boolean>>((acc, [key, value]) => {
+                const idx = Number(key);
+                if (Number.isFinite(idx)) {
+                    acc[idx] = value.isCorrect;
+                }
+                return acc;
+            }, {})
+            : undefined;
+
+        const overrideObjetivas = avaliarQuestoesObjetivas();
+
+        const tentativaAtual = tentativas + 1;
+        setTentativas(tentativaAtual);
+
+        const { pontos, percentual } = calcularPontuacao(overrideDissertativas, overrideObjetivas);
+        const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
+        const atingiuMeta = pontos > notaMinima;
+
+        const mensagemFinal = `${mensagemResultado}\n${atingiuMeta ? 'Parabéns! A atividade será marcada como concluída.' : 'Esta tentativa não atingiu 6 pontos. Reveja suas respostas antes de tentar novamente.'}`;
+        setRelatorioAtividade(mensagemFinal);
+        showAlert(mensagemFinal);
+        setAtividadeFinalizada(true);
+
+        if (!atingiuMeta) {
+            return;
+        }
+
+        try {
+            const body = JSON.stringify({
+                totalActivities: modulo.atividades.length,
+                score: pontos,
+                attempts: tentativaAtual
+            });
+            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                showAlert('Erro ao enviar atividade: ' + (data.error || res.statusText));
+            }
+        } catch (err) {
+            console.error(err);
+            showAlert('Erro ao enviar atividade. Verifique sua conexão.');
+        }
     };
 
 
@@ -172,7 +341,19 @@ function Atividades() {
                                 placeholder='Digite sua resposta aqui...' 
                                 maxLength={2000}
                                 value={respostas[index]}
-                                onChange={e => handleRespostaDissertativaChange(index, e.target.value)}
+                                onChange={e => {
+                                    if (atividadeFinalizada) {
+                                        return;
+                                    }
+                                    const value = e.target.value;
+                                    setRespostas(prev => prev.map((v,i) => i===index ? value : v));
+                                    if (questao.dissertativa) {
+                                        setStatusDissertativas(prev => prev.map((status, i) => i === index ? 'neutro' : status));
+                                        setNotasDissertativas(prev => prev.map((nota, i) => i === index ? null : nota));
+                                        setFeedbackDissertativas(prev => prev.map((texto, i) => i === index ? null : texto));
+                                    }
+                                }}
+                                disabled={atividadeFinalizada}
                                 style={{
                                 display: questao.dissertativa ? 'block' : 'none',
                             }}></textarea>
@@ -190,6 +371,7 @@ function Atividades() {
                             {/* --- Seção de Alternativas (MODIFICADA) --- */}
                             <div className="questao-alternativas" style={{ display: !questao.dissertativa ? 'grid' : 'none' }}>
                                 {(questao.alternativas ?? ['Alternativa A', 'Alternativa B', 'Alternativa C', 'Alternativa D']).map((alt: string, altIdx: number) => {
+                                    
                                     const status = statusRespostas[index];
                                     const isSelected = selecoes[index] === alt;
 
@@ -208,9 +390,9 @@ function Atividades() {
                                             key={`alt-${atividade.id}-${index}-${altIdx}`} 
                                             className={className} // Classe dinâmica aplicada aqui
                                             onClick={() => { 
-                                                // Chama a nova função de clique
                                                 handleAlternativaClick(index, alt); 
                                             }}
+                                            style={{ cursor: 'pointer' }}
                                         >
                                             <div className="alternativa-letra" 
                                                  // Estilo da letra (A, B, C) é controlado por CSS agora
@@ -239,41 +421,23 @@ function Atividades() {
                         {atividadeFinalizada ? 'VOLTAR' : 'CANCELAR'}
                     </Link>
                     <div className='tarefa-sessao-fim-acoes'>
-                        <button className='tarefa-sessao-fim-button' onClick={async () => {
-                            const tentativaAtual = tentativas + 1;
-                            setTentativas(tentativaAtual);
-
-                            const { pontos, percentual, resultados } = calcularPontuacao();
-                            if (resultados.length > 0) {
-                                setStatusRespostas(resultados);
-                            }
-                            const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
-                            const atingiuMeta = pontos > notaMinima;
-
-                            alert(`${mensagemResultado}\n${atingiuMeta ? 'Parabéns! A atividade será marcada como concluída.' : 'Você precisa atingir 6 pontos para concluir a atividade.'}`);
-
-                            if (!atingiuMeta) {
-                                return;
-                            }
-
-                            try {
-                                const body = JSON.stringify({
-                                    totalActivities: modulo.atividades.length,
-                                    score: pontos,
-                                    attempts: tentativaAtual
-                                });
-                                const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
-                                if (res.ok) {
-                                    window.location.href = `/modulos/${assinatura}/${modulo.id}`;
-                                } else {
-                                    const data = await res.json().catch(() => ({}));
-                                    alert('Erro ao enviar atividade: ' + (data.error || res.statusText));
-                                }
-                            } catch (err) {
-                                console.error(err);
-                                alert('Erro ao enviar atividade. Verifique sua conexão.');
-                            }
-                        }} style={{ backgroundColor: '#9A30EB', border: 'none', padding: '10px 16px', color: '#fff', cursor: 'pointer' }}>ENVIAR</button>
+                        {!atividadeFinalizada && (
+                            <button
+                                className='tarefa-sessao-fim-button'
+                                onClick={handleEnviarAtividade}
+                                disabled={avaliandoDissertativas}
+                                style={{
+                                    backgroundColor: '#9A30EB',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    color: '#fff',
+                                    cursor: avaliandoDissertativas ? 'not-allowed' : 'pointer',
+                                    opacity: avaliandoDissertativas ? 0.7 : 1
+                                }}
+                            >
+                                {avaliandoDissertativas ? 'AVALIANDO...' : 'ENVIAR'}
+                            </button>
+                        )}
                     </div>
                 </div>
                 {relatorioAtividade && (
