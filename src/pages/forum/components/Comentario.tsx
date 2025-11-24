@@ -1,19 +1,21 @@
 import { useState } from "react"
 import { ComentarioItem } from "./ComentarioItem"
-import type { ComentarioData } from "../types"
+import type { ComentarioData, DestinoResposta } from "../types"
 
 interface ComentarioProps {
   comentarios: ComentarioData[];
   onVisualizarRespostas: (visualizar: boolean) => void;
-  onResponderA: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void;
-  respondendoA: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null;
+  onResponderA: (resposta: DestinoResposta | null) => void;
+  respondendoA: DestinoResposta | null;
   onEditarComentario: (id: number, titulo: string, conteudo: string, tags: string[], imagem: string | null) => void;
   onEditarResposta: (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => void;
   onDeleteComentario?: (id: number) => void;
   onDeleteResposta?: (id: number) => void;
+  onToggleCurtirComentario: (id: number, jaCurtiu: boolean) => Promise<void> | void;
+  onToggleCurtirResposta: (id: number, jaCurtiu: boolean) => Promise<void> | void;
 }
 
-export function Comentario({ comentarios, onVisualizarRespostas, onResponderA, respondendoA, onEditarComentario, onEditarResposta, onDeleteComentario, onDeleteResposta }: ComentarioProps) {
+export function Comentario({ comentarios, onVisualizarRespostas, onResponderA, respondendoA, onEditarComentario, onEditarResposta, onDeleteComentario, onDeleteResposta, onToggleCurtirComentario, onToggleCurtirResposta }: ComentarioProps) {
   const [comentarioAtivoId, setComentarioAtivoId] = useState<number | null>(null)
 
   const handleDelete = (id: number) => {
@@ -55,6 +57,8 @@ export function Comentario({ comentarios, onVisualizarRespostas, onResponderA, r
           respondendoA={respondendoA}
           onEditarComentario={handleEditarComentarioWrapper}
           onEditarResposta={handleEditarRespostaWrapper}
+          onToggleCurtirComentario={onToggleCurtirComentario}
+          onToggleCurtirResposta={onToggleCurtirResposta}
         />
       ))}
     </>

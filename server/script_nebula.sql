@@ -98,51 +98,112 @@ EXECUTE stmt2;
 DEALLOCATE PREPARE stmt2;
 
 -- -----------------------------------------------------
--- Table `NEBULA`.`comentario`
+-- Table `NEBULA`.`forum_post`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `NEBULA`.`comentario` ;
+DROP TABLE IF EXISTS `NEBULA`.`forum_post` ;
 
-CREATE TABLE IF NOT EXISTS `NEBULA`.`comentario` (
-  `id` INT NOT NULL,
-  `conteudo` TEXT(200) NOT NULL,
-  `curtidas` INT NOT NULL,
-  `respostas` INT NOT NULL,
-  `datapublicacao` VARCHAR(45) NULL,
-  `usuario_id` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_post` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `usuario_id` INT NULL,
+  `nome_usuario` VARCHAR(100) NOT NULL,
+  `foto_perfil` VARCHAR(1024) NOT NULL,
+  `assinatura` ENUM('Universo','Galáxia','Órbita') NOT NULL DEFAULT 'Universo',
+  `titulo` VARCHAR(200) NOT NULL,
+  `conteudo` TEXT NOT NULL,
+  `tags` JSON NOT NULL,
+  `numero_avaliacao` DECIMAL(5,2) NOT NULL DEFAULT 0,
+  `avaliacao_do_usuario` VARCHAR(45) NOT NULL DEFAULT 'esteUsuario',
+  `imagem_url` TEXT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_comentario_usuario1_idx` (`usuario_id` ASC) VISIBLE,
-  CONSTRAINT `fk_comentario_usuario1`
+  INDEX `idx_forum_post_created_at` (`created_at` DESC),
+  CONSTRAINT `fk_forum_post_usuario`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `NEBULA`.`usuario` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `NEBULA`.`respostas`
+-- Table `NEBULA`.`forum_resposta`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `NEBULA`.`respostas` ;
+DROP TABLE IF EXISTS `NEBULA`.`forum_resposta` ;
 
-CREATE TABLE IF NOT EXISTS `NEBULA`.`respostas` (
-  `id` INT UNSIGNED NOT NULL,
-  `conteudo` VARCHAR(45) NOT NULL,
-  `datapublicacao` VARCHAR(45) NOT NULL,
-  `comentario_id` INT NOT NULL,
-  `usuario_id` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_resposta` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `post_id` INT NOT NULL,
+  `parent_id` BIGINT NULL,
+  `usuario_id` INT NULL,
+  `nome_usuario` VARCHAR(100) NOT NULL,
+  `foto_perfil` VARCHAR(1024) NOT NULL,
+  `assinatura` ENUM('Universo','Galáxia','Órbita') NOT NULL DEFAULT 'Universo',
+  `conteudo` TEXT NOT NULL,
+  `imagem_url` TEXT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  INDEX `fk_respostas_comentario1_idx` (`comentario_id` ASC) VISIBLE,
-  INDEX `fk_respostas_usuario1_idx` (`usuario_id` ASC) VISIBLE,
-  CONSTRAINT `fk_respostas_comentario1`
-    FOREIGN KEY (`comentario_id`)
-    REFERENCES `NEBULA`.`comentario` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_respostas_usuario1`
+  INDEX `idx_resposta_post` (`post_id` ASC),
+  INDEX `idx_resposta_parent` (`parent_id` ASC),
+  CONSTRAINT `fk_forum_resposta_post`
+    FOREIGN KEY (`post_id`)
+    REFERENCES `NEBULA`.`forum_post` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_forum_resposta_parent`
+    FOREIGN KEY (`parent_id`)
+    REFERENCES `NEBULA`.`forum_resposta` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_forum_resposta_usuario`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `NEBULA`.`usuario` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `NEBULA`.`forum_post_like`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `NEBULA`.`forum_post_like` ;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_post_like` (
+  `post_id` INT NOT NULL,
+  `usuario_id` INT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_id`, `usuario_id`),
+  CONSTRAINT `fk_forum_post_like_post`
+    FOREIGN KEY (`post_id`)
+    REFERENCES `NEBULA`.`forum_post` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_forum_post_like_usuario`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `NEBULA`.`usuario` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `NEBULA`.`forum_resposta_like`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `NEBULA`.`forum_resposta_like` ;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_resposta_like` (
+  `resposta_id` BIGINT NOT NULL,
+  `usuario_id` INT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`resposta_id`, `usuario_id`),
+  CONSTRAINT `fk_forum_resposta_like_resposta`
+    FOREIGN KEY (`resposta_id`)
+    REFERENCES `NEBULA`.`forum_resposta` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_forum_resposta_like_usuario`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `NEBULA`.`usuario` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -212,6 +273,73 @@ VALUES
 ('Thiago Gomes', '@thiagogomes', 140, 20, 'https://randomuser.me/api/portraits/men/20.jpg', '/img/nebulosaBanner.jpg', 'Amante do céu noturno', 0, 0, 0, 'thiago@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0);
 
 -- Repita/adapte para até 50 usuários se desejar mais exemplos
+
+-- -----------------------------------------------------
+-- Forum seed data
+-- -----------------------------------------------------
+INSERT INTO `NEBULA`.`forum_post`
+  (`usuario_id`, `nome_usuario`, `foto_perfil`, `assinatura`, `titulo`, `conteudo`, `tags`, `numero_avaliacao`, `avaliacao_do_usuario`, `imagem_url`)
+VALUES
+  (1, 'Ana Souza', 'https://randomuser.me/api/portraits/women/1.jpg', 'Universo', 'Como ganhar mais pontos no ranking?',
+   'Estou parada na parte inferior do ranking. Quais tarefas realmente contam pontos? Já finalizei vídeos, mas nada muda.',
+   JSON_ARRAY('Dúvida','Universo'), 24.0, 'esteUsuario', 'src/pages/forum/ImgComentarioTEMP/comentarioImg1.png'),
+  (2, 'Bruno Lima', 'https://randomuser.me/api/portraits/men/2.jpg', 'Galáxia', 'Trilha ideal para iniciantes em programação',
+   'Quero começar desenvolvimento web, mas não sei em qual trilha focar primeiro. Sugestões?',
+   JSON_ARRAY('Dúvida','Galáxia','Conselho'), 38.0, 'outroUsuario', NULL),
+  (3, 'Carla Dias', 'https://randomuser.me/api/portraits/women/3.jpg', 'Órbita', 'Material complementar de algoritmos',
+   'Preciso de exercícios extras antes da prova de algoritmos. Alguém recomenda livros ou sites?',
+   JSON_ARRAY('Material','Órbita','Dúvida'), 17.0, 'outroUsuario', NULL),
+  (4, 'Diego Alves', 'https://randomuser.me/api/portraits/men/4.jpg', 'Universo', 'Bug na plataforma: vídeos não carregam',
+   'Os vídeos travam desde ontem. Já limpei cache e nada resolveu. Mais alguém?',
+   JSON_ARRAY('Problema','Universo'), 42.0, 'outroUsuario', NULL),
+  (5, 'Elisa Martins', 'https://randomuser.me/api/portraits/women/5.jpg', 'Galáxia', 'Organizando grupo de estudos para Python',
+   'Estou formando um grupo no Discord para revisar Python. Quem tiver interesse me chama!',
+   JSON_ARRAY('Convite','Galáxia','Debate'), 56.0, 'outroUsuario', NULL),
+  (6, 'Felipe Torres', 'https://randomuser.me/api/portraits/men/6.jpg', 'Órbita', 'JavaScript vs TypeScript: qual aprender primeiro?',
+   'Tenho base em lógica e queria entender a ordem ideal entre JS e TS.',
+   JSON_ARRAY('Dúvida','Órbita','Conselho'), 31.0, 'outroUsuario', NULL),
+  (7, 'Giovana Rocha', 'https://randomuser.me/api/portraits/women/7.jpg', 'Universo', 'Certificado não foi emitido após conclusão',
+   'Concluí o curso de React e o certificado não chegou. Quanto tempo normalmente demora?',
+   JSON_ARRAY('Problema','Universo'), 19.0, 'outroUsuario', NULL),
+  (8, 'Henrique Melo', 'https://randomuser.me/api/portraits/men/8.jpg', 'Galáxia', 'Sugestão: modo escuro na plataforma',
+   'Estudo à noite e sinto falta de um modo escuro para cansar menos a vista.',
+   JSON_ARRAY('Observação','Galáxia','Debate'), 89.0, 'outroUsuario', NULL),
+  (9, 'Isabela Nunes', 'https://randomuser.me/api/portraits/women/9.jpg', 'Órbita', 'Dúvida sobre exercício de Arrays',
+   'Não consigo resolver o exercício 7 do módulo 3 sem usar sort(). Alguma dica?',
+   JSON_ARRAY('Dúvida','Órbita','Material'), 12.0, 'outroUsuario', NULL),
+  (10, 'João Pedro', 'https://randomuser.me/api/portraits/men/10.jpg', 'Universo', 'Vale fazer Node antes de React?',
+   'Já entendo JS e quero planejar a trilha. Faço Node antes ou depois de React?',
+   JSON_ARRAY('Conselho','Universo','Debate'), 27.0, 'outroUsuario', NULL),
+  (11, 'Karen Silva', 'https://randomuser.me/api/portraits/women/11.jpg', 'Galáxia', 'Live de dúvidas sobre SQL',
+   'Perdi a última live de SQL. Ficou gravada? Já existe data para a próxima?',
+   JSON_ARRAY('Dúvida','Galáxia'), 33.0, 'outroUsuario', NULL),
+  (12, 'Lucas Pinto', 'https://randomuser.me/api/portraits/men/12.jpg', 'Órbita', 'Compartilhando meu primeiro projeto',
+   'Terminei meu primeiro projeto com React + TS e gostaria de feedbacks.',
+   JSON_ARRAY('Debate','Órbita','Observação'), 67.0, 'outroUsuario', NULL);
+
+INSERT INTO `NEBULA`.`forum_resposta`
+  (`post_id`, `parent_id`, `usuario_id`, `nome_usuario`, `foto_perfil`, `assinatura`, `conteudo`, `imagem_url`)
+VALUES
+  (1, NULL, 2, 'Bruno Lima', 'https://randomuser.me/api/portraits/men/2.jpg', 'Órbita',
+   'Você só ganha pontos concluindo atividades e marcando aulas como finalizadas. Ver vídeos não basta.', NULL),
+  (1, 1, 1, 'Ana Souza', 'https://randomuser.me/api/portraits/women/1.jpg', 'Universo',
+   'Obrigado pela dica! Vou começar a finalizar as aulas e ver se sobe.', NULL),
+  (2, NULL, 6, 'Felipe Torres', 'https://randomuser.me/api/portraits/men/6.jpg', 'Galáxia',
+   'Comece com HTML, CSS e JavaScript. Depois parte para React que usa tudo isso.', NULL),
+  (2, 3, 2, 'Bruno Lima', 'https://randomuser.me/api/portraits/men/2.jpg', 'Galáxia',
+   'Show! Vou seguir essa ordem. Valeu!', NULL),
+  (4, NULL, 11, 'Karen Silva', 'https://randomuser.me/api/portraits/women/11.jpg', 'Galáxia',
+   'Também estou com o bug nos vídeos. A equipe de suporte já avisou que está corrigindo.', NULL),
+  (5, NULL, 9, 'Isabela Nunes', 'https://randomuser.me/api/portraits/women/9.jpg', 'Órbita',
+   'Quero participar do grupo! Pode mandar o link?', NULL),
+  (6, NULL, 8, 'Henrique Melo', 'https://randomuser.me/api/portraits/men/8.jpg', 'Galáxia',
+   'Aprende JavaScript primeiro. Depois o TypeScript fica bem mais fácil.', NULL),
+  (6, 7, 6, 'Felipe Torres', 'https://randomuser.me/api/portraits/men/6.jpg', 'Órbita',
+   'Perfeito, obrigado! Faz sentido começar por JS mesmo.', NULL),
+  (9, NULL, 5, 'Elisa Martins', 'https://randomuser.me/api/portraits/women/5.jpg', 'Galáxia',
+   'Use bubble sort: compare pares adjacentes e troque até tudo ficar ordenado.', NULL),
+  (9, 9, 9, 'Isabela Nunes', 'https://randomuser.me/api/portraits/women/9.jpg', 'Órbita',
+   'Agora entendi! Vou implementar e posto o resultado.', NULL);
 
 -- -----------------------------------------------------
 -- Progress tables: modules and activities completed by users

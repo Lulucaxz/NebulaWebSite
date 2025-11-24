@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./respostas.css";
-import type { RespostaData } from "../types";
+import type { RespostaData, DestinoResposta } from "../types";
 
 interface respostasProps {
     rfotoPerfil: string;
@@ -9,14 +9,18 @@ interface respostasProps {
     rconteudoComentario: string;
     assinatura?: "Universo" | "Galáxia" | "Órbita";
     rimagemComentario?: string | null;
-    onResponderA?: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void;
+    onResponderA?: (resposta: DestinoResposta | null) => void;
     idResposta?: number;
     arrayRespostasAninhadas?: RespostaData[];
-    respondendoA?: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null;
+    respondendoA?: DestinoResposta | null;
     eDoUsuario?: boolean;
     onDeleteResposta?: (idResposta: number) => void;
     onEditarResposta?: (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => void;
     nivel?: number;
+    comentarioId: number;
+    likesCount?: number;
+    usuarioCurtiu?: boolean;
+    onToggleCurtirResposta?: (idResposta: number, jaCurtiu: boolean) => Promise<void> | void;
 }
 
 export function Respostas({ 
@@ -33,10 +37,13 @@ export function Respostas({
     eDoUsuario = false,
     onDeleteResposta,
     onEditarResposta,
-    nivel = 0
+    nivel = 0,
+    comentarioId,
+    likesCount = 0,
+    usuarioCurtiu = false,
+    onToggleCurtirResposta
 }: respostasProps) {
-    const [jaAvaliou, setJaAvaliou] = useState(false);
-    const [totalLikes, setTotalLikes] = useState(2);
+    const [curtindo, setCurtindo] = useState(false);
     const [mostrarRespostasAninhadas, setMostrarRespostasAninhadas] = useState(false);
     
     // Estado de likes para respostas aninhadas
@@ -49,13 +56,15 @@ export function Respostas({
         return `${assinatura} - ${dia}/${mes}/${ano}`;
     };
 
-    const handleLike = () => {
-        if (!jaAvaliou) {
-            setTotalLikes(prev => prev + 1);
-            setJaAvaliou(true);
-        } else {
-            setTotalLikes(prev => prev - 1);
-            setJaAvaliou(false);
+    const handleLike = async () => {
+        if (!onToggleCurtirResposta || curtindo) {
+            return;
+        }
+        setCurtindo(true);
+        try {
+            await onToggleCurtirResposta(idResposta, usuarioCurtiu);
+        } finally {
+            setCurtindo(false);
         }
     };
 
@@ -123,11 +132,12 @@ export function Respostas({
                 <div className="resposta-acoes">
                     <div className="resposta-interacao">
                         <button 
-                            className={`resposta-botao-like ${jaAvaliou ? 'liked' : ''}`}
+                            className={`resposta-botao-like ${usuarioCurtiu ? 'liked' : ''}`}
                             onClick={handleLike}
+                            disabled={curtindo}
                         >
                             <img src="/icons/like_forum.svg" alt="Like" />
-                            <span>{totalLikes}</span>
+                            <span>{likesCount}</span>
                         </button>
                         
                         <button 
@@ -158,7 +168,8 @@ export function Respostas({
                             onResponderA({
                                 tipo: 'resposta',
                                 id: idResposta,
-                                nome: rnomeUsuario
+                                nome: rnomeUsuario,
+                                comentarioId
                             });
                         }
                     }}
@@ -187,6 +198,10 @@ export function Respostas({
                             onDeleteResposta={onDeleteResposta}
                             onEditarResposta={onEditarResposta}
                             nivel={nivel + 1}
+                            comentarioId={comentarioId}
+                            likesCount={respostaAninhada.likesCount}
+                            usuarioCurtiu={respostaAninhada.usuarioCurtiu}
+                            onToggleCurtirResposta={onToggleCurtirResposta}
                         />
                     ))}
                 </div>

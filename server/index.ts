@@ -16,6 +16,7 @@ import { pool } from "./db";
 import rankRoutes from "./rankRoutes";
 import anotacoesRoutes from "./anotacoesRoutes";
 import progressRoutes from "./progressRoutes";
+import forumRoutes from "./forumRoutes";
 import { asyncHandler } from './utils';
 
 dotenv.config();
@@ -109,6 +110,7 @@ app.use("/api", rankRoutes);
 
 app.use("/api/anotacoes", anotacoesRoutes);
 app.use('/api/progress', progressRoutes);
+app.use("/api/forum", forumRoutes);
 
 // Config Google Strategy
 passport.use(new GoogleStrategy({

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { Respostas } from "./respostas"
 import "./Comentario.css"
-import type { RespostaData } from "../types"
+import type { RespostaData, DestinoResposta } from "../types"
 
 interface ComentarioItemProps {
   idComentario: number
@@ -11,7 +11,7 @@ interface ComentarioItemProps {
   assinatura: "Universo" | "Galáxia" | "Órbita"
   dataHora: string
   conteudoComentario: string
-  numeroAvaliacao: string | number
+  numeroAvaliacao: number
   avaliacaoDoUsuario: string
   eDoUsuario: boolean
   fotoPerfil: string
@@ -21,11 +21,15 @@ interface ComentarioItemProps {
   onDelete: (id: number) => void
   onDeleteResposta?: (id: number) => void
   onVisualizarRespostas: (id: number, visualizar: boolean) => void
-  onResponderA: (resposta: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null) => void
+  onResponderA: (resposta: DestinoResposta | null) => void
   estaAtivo: boolean
-  respondendoA: {tipo: 'comentario' | 'resposta', id: number, nome: string} | null
+  respondendoA: DestinoResposta | null
   onEditarComentario: (id: number, titulo: string, conteudo: string, tags: string[], imagem: string | null) => void
   onEditarResposta: (id: number, conteudo: string, imagem: string | null, nomeUsuario: string) => void
+  usuarioCurtiu: boolean
+  onToggleCurtirComentario?: (id: number, jaCurtiu: boolean) => Promise<void> | void
+  onToggleCurtirResposta?: (id: number, jaCurtiu: boolean) => Promise<void> | void
+  foiEditado?: boolean
 }
 
 export function ComentarioItem({
@@ -49,15 +53,19 @@ export function ComentarioItem({
   estaAtivo,
   respondendoA,
   onEditarComentario,
-  onEditarResposta
+  onEditarResposta,
+  usuarioCurtiu,
+  onToggleCurtirComentario,
+  onToggleCurtirResposta,
+  foiEditado = false
 }: ComentarioItemProps) {
   const [respostas, setRespostas] = useState(arrayRespostas)
   // Sincroniza respostas quando prop mudar (edição salva no pai)
   useEffect(() => {
     setRespostas(arrayRespostas)
   }, [arrayRespostas])
-  const [jaAvaliou, setJaAvaliou] = useState(false)
-  const [totalAvaliacoes, setTotalAvaliacoes] = useState(parseInt(numeroAvaliacao.toString()))
+  const [curtindoComentario, setCurtindoComentario] = useState(false)
+  const totalAvaliacoes = Number(numeroAvaliacao)
 
   const handleDeleteResposta = (idResposta: number) => {
     setRespostas(prev => prev
@@ -72,13 +80,15 @@ export function ComentarioItem({
     }
   }
 
-  const handleLike = () => {
-    if (!jaAvaliou) {
-      setTotalAvaliacoes(prev => prev + 1)
-      setJaAvaliou(true)
-    } else {
-      setTotalAvaliacoes(prev => prev - 1)
-      setJaAvaliou(false)
+  const handleLike = async () => {
+    if (!onToggleCurtirComentario || curtindoComentario) {
+      return
+    }
+    setCurtindoComentario(true)
+    try {
+      await onToggleCurtirComentario(idComentario, usuarioCurtiu)
+    } finally {
+      setCurtindoComentario(false)
     }
   }
 
@@ -114,6 +124,7 @@ export function ComentarioItem({
             <div className="frm-comentario-detalhes-usuario">
               <h3 className="frm-comentario-nome-usuario">{nomeUsuario}</h3>
               <span className="frm-comentario-data">{dataHoraFormatada}</span>
+              {foiEditado && <span className="frm-comentario-editado"> (editado)</span>}
             </div>
           </div>
 
@@ -168,8 +179,9 @@ export function ComentarioItem({
         <div className="frm-comentario-interacao">
           <div className="frm-comentario-avaliacao">
             <button 
-              className={`frm-comentario-botao-avaliacao ${jaAvaliou ? 'liked' : ''}`}
+              className={`frm-comentario-botao-avaliacao ${usuarioCurtiu ? 'liked' : ''}`}
               onClick={handleLike}
+              disabled={curtindoComentario}
             >
               <img src="/icons/like_forum.svg" alt="Avaliar" />
               <span className="frm-comentario-numero-avaliacao">{totalAvaliacoes}</span>
@@ -206,7 +218,8 @@ export function ComentarioItem({
                   onResponderA({
                     tipo: 'comentario',
                     id: idComentario,
-                    nome: nomeUsuario
+                    nome: nomeUsuario,
+                    comentarioId: idComentario
                   });
                 }}
               >
@@ -231,7 +244,11 @@ export function ComentarioItem({
                   onDeleteResposta={handleDeleteResposta}
                   rimagemComentario={res.rimagemComentario}
                   onEditarResposta={onEditarResposta}
+                  comentarioId={idComentario}
                   nivel={0}
+                  likesCount={res.likesCount}
+                  usuarioCurtiu={res.usuarioCurtiu}
+                  onToggleCurtirResposta={onToggleCurtirResposta}
                 />
               ))
             }
