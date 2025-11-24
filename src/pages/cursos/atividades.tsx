@@ -60,6 +60,8 @@ function Atividades() {
     );
 
     const [avaliandoDissertativas, setAvaliandoDissertativas] = useState(false);
+    const [atividadeFinalizada, setAtividadeFinalizada] = useState(false);
+    const [relatorioAtividade, setRelatorioAtividade] = useState<string | null>(null);
 
     const [tentativas, setTentativas] = useState<number>(() => {
         if (typeof window === 'undefined' || !tentativaKey) return 0;
@@ -101,7 +103,10 @@ function Atividades() {
         return numeric;
     };
 
-    const calcularPontuacao = (dissertativasOverrides?: Record<number, boolean>) => {
+    const calcularPontuacao = (
+        dissertativasOverrides?: Record<number, boolean>,
+        objetivasOverrides?: Record<number, boolean>
+    ) => {
         if (!atividade.questoes || atividade.questoes.length === 0) {
             return { pontos: 0, percentual: 0 };
         }
@@ -117,8 +122,14 @@ function Atividades() {
                 if (isCorreta) {
                     pontos += pontosPorQuestao;
                 }
-            } else if (statusRespostas[index] === 'correta') {
-                pontos += pontosPorQuestao;
+            } else {
+                const overrideObjetiva = objetivasOverrides?.[index];
+                const acertouObjetiva = typeof overrideObjetiva === 'boolean'
+                    ? overrideObjetiva
+                    : statusRespostas[index] === 'correta';
+                if (acertouObjetiva) {
+                    pontos += pontosPorQuestao;
+                }
             }
         });
 
@@ -128,30 +139,45 @@ function Atividades() {
 
     // --- NOVA FUNÇÃO DE CLIQUE ---
     const handleAlternativaClick = (
-        questionIndex: number, 
-        alternativaClicada: string,
-        respostaCorreta: string | undefined
+        questionIndex: number,
+        alternativaClicada: string
     ) => {
-        // 1. Impede que o usuário mude a resposta após clicar
-        if (statusRespostas[questionIndex] !== 'neutro') {
-            return; 
+        if (atividadeFinalizada) {
+            return;
         }
-
-        // 2. Armazena a seleção do usuário
         setSelecoes(prev => prev.map((sel, i) => 
             i === questionIndex ? alternativaClicada : sel
         ));
+        setStatusRespostas(prev => prev.map((status, i) =>
+            i === questionIndex ? 'neutro' : status
+        ));
+    };
 
-        // 3. Verifica se está correta e atualiza o status
-        if (alternativaClicada === respostaCorreta) {
-            setStatusRespostas(prev => prev.map((status, i) => 
-                i === questionIndex ? 'correta' : status
-            ));
-        } else {
-            setStatusRespostas(prev => prev.map((status, i) => 
-                i === questionIndex ? 'incorreta' : status
-            ));
-        }
+    const avaliarQuestoesObjetivas = () => {
+        const questoes = atividade.questoes ?? [];
+        const overrides: Record<number, boolean> = {};
+        const novosStatus = [...statusRespostas];
+
+        questoes.forEach((questao, index) => {
+            if (questao.dissertativa) {
+                return;
+            }
+
+            const respostaCorreta = questao.respostaCorreta;
+            const selecionada = selecoes[index];
+
+            if (!selecionada || !respostaCorreta) {
+                novosStatus[index] = 'neutro';
+                return;
+            }
+
+            const acertou = selecionada === respostaCorreta;
+            overrides[index] = acertou;
+            novosStatus[index] = acertou ? 'correta' : 'incorreta';
+        });
+
+        setStatusRespostas(novosStatus);
+        return overrides;
     };
 
     const avaliarQuestoesDissertativas = async (): Promise<DissertativaResultadoMap> => {
@@ -232,6 +258,9 @@ function Atividades() {
     };
 
     const handleEnviarAtividade = async () => {
+        if (atividadeFinalizada) {
+            return;
+        }
         let mapaDissertativas: DissertativaResultadoMap = {};
         try {
             mapaDissertativas = await avaliarQuestoesDissertativas();
@@ -241,7 +270,7 @@ function Atividades() {
             return;
         }
 
-        const overrideMap: Record<number, boolean> | undefined = Object.keys(mapaDissertativas).length > 0
+        const overrideDissertativas: Record<number, boolean> | undefined = Object.keys(mapaDissertativas).length > 0
             ? Object.entries(mapaDissertativas).reduce<Record<number, boolean>>((acc, [key, value]) => {
                 const idx = Number(key);
                 if (Number.isFinite(idx)) {
@@ -251,14 +280,20 @@ function Atividades() {
             }, {})
             : undefined;
 
+        const overrideObjetivas = avaliarQuestoesObjetivas();
+
         const tentativaAtual = tentativas + 1;
         setTentativas(tentativaAtual);
 
-        const { pontos, percentual } = calcularPontuacao(overrideMap);
+        const { pontos, percentual } = calcularPontuacao(overrideDissertativas, overrideObjetivas);
         const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
         const atingiuMeta = pontos > notaMinima;
 
-        showAlert(`${mensagemResultado}\n${atingiuMeta ? 'Parabéns! A atividade será marcada como concluída.' : 'Você precisa atingir 6 pontos para concluir a atividade.'}`);
+        const mensagemFinal = `${mensagemResultado}\n${atingiuMeta ? 'Parabéns! A atividade será marcada como concluída.' : 'Você precisa atingir 6 pontos para concluir a atividade.'}`;
+        setRelatorioAtividade(mensagemFinal);
+        showAlert(mensagemFinal);
+
+        setAtividadeFinalizada(true);
 
         if (!atingiuMeta) {
             return;
@@ -271,9 +306,7 @@ function Atividades() {
                 attempts: tentativaAtual
             });
             const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
-            if (res.ok) {
-                window.location.href = `/modulos/${assinatura}/${modulo.id}`;
-            } else {
+            if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
                 showAlert('Erro ao enviar atividade: ' + (data.error || res.statusText));
             }
@@ -310,6 +343,9 @@ function Atividades() {
                                 maxLength={2000}
                                 value={respostas[index]}
                                 onChange={e => {
+                                    if (atividadeFinalizada) {
+                                        return;
+                                    }
                                     const value = e.target.value;
                                     setRespostas(prev => prev.map((v,i) => i===index ? value : v));
                                     if (questao.dissertativa) {
@@ -318,6 +354,7 @@ function Atividades() {
                                         setFeedbackDissertativas(prev => prev.map((texto, i) => i === index ? null : texto));
                                     }
                                 }}
+                                disabled={atividadeFinalizada}
                                 style={{
                                 display: questao.dissertativa ? 'block' : 'none',
                             }}></textarea>
@@ -338,7 +375,6 @@ function Atividades() {
                                     
                                     const status = statusRespostas[index];
                                     const isSelected = selecoes[index] === alt;
-                                    const isCorrect = questao.respostaCorreta === alt;
 
                                     // Define a classe CSS dinâmica
                                     let className = 'questao-alternativa';
@@ -346,8 +382,8 @@ function Atividades() {
                                         className += ' correta'; // Verde
                                     } else if (status === 'incorreta' && isSelected) {
                                         className += ' incorreta'; // Vermelho
-                                    } else if (status === 'incorreta' && isCorrect) {
-                                        className += ' correta-depois'; // Mostra a correta (sem piscar)
+                                    } else if (isSelected) {
+                                        className += ' selecionada';
                                     }
                                     
                                     return (
@@ -355,11 +391,9 @@ function Atividades() {
                                             key={`alt-${atividade.id}-${index}-${altIdx}`} 
                                             className={className} // Classe dinâmica aplicada aqui
                                             onClick={() => { 
-                                                // Chama a nova função de clique
-                                                handleAlternativaClick(index, alt, questao.respostaCorreta); 
+                                                handleAlternativaClick(index, alt); 
                                             }}
-                                            // Desabilita o clique após a resposta
-                                            style={{ cursor: status !== 'neutro' ? 'not-allowed' : 'pointer' }}
+                                            style={{ cursor: 'pointer' }}
                                         >
                                             <div className="alternativa-letra" 
                                                  // Estilo da letra (A, B, C) é controlado por CSS agora
@@ -384,25 +418,35 @@ function Atividades() {
                     <p>
                         Você chegou ao fim desta tarefa. Certifique-se de que todas as questões então respondidas ou marcadas de forma correta, cuidados com palavras erradas e se atente as nomenclaturas e sinais utilizados.
                     </p>
-                    <Link className='tarefa-sessao-fim-button' to={`/modulos/${assinatura}/${modulo.id}`}>CANCELAR</Link>
+                    <Link className='tarefa-sessao-fim-button' to={`/modulos/${assinatura}/${modulo.id}`}>
+                        {atividadeFinalizada ? 'VOLTAR' : 'CANCELAR'}
+                    </Link>
                     <div className='tarefa-sessao-fim-acoes'>
-                        <button
-                            className='tarefa-sessao-fim-button'
-                            onClick={handleEnviarAtividade}
-                            disabled={avaliandoDissertativas}
-                            style={{
-                                backgroundColor: '#9A30EB',
-                                border: 'none',
-                                padding: '10px 16px',
-                                color: '#fff',
-                                cursor: avaliandoDissertativas ? 'not-allowed' : 'pointer',
-                                opacity: avaliandoDissertativas ? 0.7 : 1
-                            }}
-                        >
-                            {avaliandoDissertativas ? 'AVALIANDO...' : 'ENVIAR'}
-                        </button>
+                        {!atividadeFinalizada && (
+                            <button
+                                className='tarefa-sessao-fim-button'
+                                onClick={handleEnviarAtividade}
+                                disabled={avaliandoDissertativas}
+                                style={{
+                                    backgroundColor: '#9A30EB',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    color: '#fff',
+                                    cursor: avaliandoDissertativas ? 'not-allowed' : 'pointer',
+                                    opacity: avaliandoDissertativas ? 0.7 : 1
+                                }}
+                            >
+                                {avaliandoDissertativas ? 'AVALIANDO...' : 'ENVIAR'}
+                            </button>
+                        )}
                     </div>
                 </div>
+                {relatorioAtividade && (
+                    <div className='tarefa-relatorio'>
+                        <h2>Relatório da tentativa</h2>
+                        <p>{relatorioAtividade}</p>
+                    </div>
+                )}
                 <div className='tarefa-tentativas-wrapper'>
                     <span className='tarefa-tentativas'>Tentativas registradas: {tentativas}</span>
                 </div>

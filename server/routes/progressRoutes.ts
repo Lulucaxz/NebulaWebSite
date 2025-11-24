@@ -10,6 +10,15 @@ const openAiKey = process.env.OPENAI_API_KEY;
 const graderModel = process.env.OPENAI_GRADER_MODEL || 'gpt-4.1-mini';
 const openaiClient = openAiKey ? new OpenAI({ apiKey: openAiKey }) : null;
 
+class RateLimitExceededError extends Error {
+  statusCode: number;
+  constructor(message: string) {
+    super(message);
+    this.name = 'RateLimitExceededError';
+    this.statusCode = 429;
+  }
+}
+
 type EssayGradePayload = {
   questionIndex: number;
   question: string;
@@ -34,6 +43,20 @@ const clamp01 = (value: number) => {
   if (value < 0) return 0;
   if (value > 1) return 1;
   return value;
+};
+
+const normalizeExplanation = (text: string | undefined) => {
+  if (!text) return '';
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (normalized.length > 120) {
+    return `${normalized.slice(0, 117)}...`;
+  }
+  return normalized;
+};
+
+const isRateLimitError = (error: unknown) => {
+  const err = error as { status?: number; code?: string } | undefined;
+  return err?.status === 429 || err?.code === 'rate_limit_exceeded';
 };
 
 const truncate = (text: string, max = 1200) => {
@@ -100,8 +123,9 @@ const gradeEssayAnswer = async (payload: EssayGradePayload) => {
   }
 
   const systemPrompt = `Você é um avaliador automático extremamente objetivo.
-Analise a resposta do aluno comparando com o gabarito referência.
-Retorne somente um JSON com dois campos: "score" (número entre 0 e 1) e "explanation" (texto curto em português).
+Compare a resposta do aluno com o gabarito e avalie com imparcialidade.
+Retorne somente um JSON com dois campos: "score" (número entre 0 e 1) e "explanation" (texto em português com até 15 palavras).
+Na explicação, descreva apenas o que foi atendido ou faltou, sem revelar detalhes do gabarito.
 Use nota abaixo de 0.5 quando a resposta não cobre os pontos principais.`;
 
   const userPrompt = `Pergunta: ${truncate(payload.question, 600) || 'N/A'}
@@ -134,12 +158,15 @@ Formato esperado do JSON: { "score": number entre 0 e 1, "explanation": "texto" 
       throw new Error('Não foi possível interpretar a nota retornada.');
     }
 
-    const explanation = typeof parsed.explanation === 'string' ? parsed.explanation : '';
+    const explanation = normalizeExplanation(typeof parsed.explanation === 'string' ? parsed.explanation : '');
     return {
       score: clamp01(Number(parsed.score)),
       explanation
     };
   } catch (error) {
+    if (isRateLimitError(error)) {
+      throw new RateLimitExceededError('Limite de correções atingido. Aguarde alguns segundos e tente novamente.');
+    }
     console.error('Erro ao avaliar questão dissertativa com OpenAI', error);
     throw new Error('Não foi possível consultar o OpenAI Graders no momento.');
   }
@@ -247,15 +274,25 @@ router.post('/activity/dissertativas/avaliar', ensureAuth, asyncHandler(async (r
   }
 
   const limited = sanitized.slice(0, 10); // segurança
-  const results = await Promise.all(limited.map(async (item) => {
-    const grade = await gradeEssayAnswer(item);
-    return {
-      questionIndex: item.questionIndex,
-      score: grade.score,
-      isCorrect: grade.score >= 0.5,
-      explanation: grade.explanation,
-    };
-  }));
+  const results: Array<{ questionIndex: number; score: number; isCorrect: boolean; explanation: string }> = [];
+
+  for (const item of limited) {
+    try {
+      const grade = await gradeEssayAnswer(item);
+      results.push({
+        questionIndex: item.questionIndex,
+        score: grade.score,
+        isCorrect: grade.score >= 0.5,
+        explanation: grade.explanation,
+      });
+    } catch (error) {
+      if (error instanceof RateLimitExceededError) {
+        res.status(429).json({ error: error.message });
+        return;
+      }
+      throw error;
+    }
+  }
 
   res.json({ results });
 }));

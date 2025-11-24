@@ -422,6 +422,27 @@
     align-items: flex-end;
 }
 
+.tarefa-relatorio {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #4E4E4E;
+    color: #F8EFFF;
+    font-family: 'Questrial';
+}
+
+.tarefa-relatorio h2 {
+    margin: 0 0 10px 0;
+    font-family: 'Archivo Black';
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+.tarefa-relatorio p {
+    margin: 0;
+    white-space: pre-line;
+    line-height: 22px;
+}
+
 .tarefa-tentativas-wrapper {
     width: 100%;
     display: flex;
@@ -486,19 +507,16 @@
     font-weight: bold;
 }
 
-/* Estado para mostrar a correta DEPOIS que o usuário errou */
-.questao-alternativa.correta-depois {
-    background-color: #4E4E4E;
-    border: 2px solid #28a745; /* Apenas uma borda verde, sem piscar */
+.questao-alternativa.selecionada {
+    background-color: #9A30EB;
 }
-.questao-alternativa.correta-depois .alternativa-letra {
-    background-color: #28a745; /* Caixa da letra verde */
-    color: #F8EFFF;
+.questao-alternativa.selecionada .alternativa-letra {
+    background-color: #F8EFFF;
+    color: #9A30EB;
 }
-.questao-alternativa.correta-depois .alternativa-texto {
-    font-weight: bold;
+.questao-alternativa.selecionada .alternativa-texto {
+    font-weight: 600;
 }
-
 
 /* Ajuste no estado padrão da letra A, B, C */
 .questao-alternativa .alternativa-letra {
@@ -514,16 +532,11 @@
 }
 
 /* Não aplicar hover se a resposta já foi dada */
-.questao-alternativa.correta:hover,
-.questao-alternativa.incorreta:hover,
-.questao-alternativa.correta-depois:hover {
+.questao-alternativa.correta:hover {
     background-color: #28a745; /* Mantém o verde */
 }
 .questao-alternativa.incorreta:hover {
     background-color: #dc3545; /* Mantém o vermelho */
-}
-.questao-alternativa.correta-depois:hover {
-    background-color: #4E4E4E; /* Mantém o cinza */
 }
 
 .questao-alternativa.correta:hover .alternativa-letra {
@@ -533,8 +546,4 @@
 .questao-alternativa.incorreta:hover .alternativa-letra {
     background-color: #F8EFFF;
     color: #dc3545;
-}
-.questao-alternativa.correta-depois:hover .alternativa-letra {
-    background-color: #28a745;
-    color: #F8EFFF;
 }
