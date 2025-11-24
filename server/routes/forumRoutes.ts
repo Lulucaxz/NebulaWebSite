@@ -1,5 +1,5 @@
 import { Router } from "express";
-import type { Request } from "express";
+import type { Request, Response } from "express";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import { pool } from "../db";
 import { asyncHandler } from "../utils";
@@ -44,6 +44,11 @@ const ensureForumTables = () => {
       `);
 
       await pool.query(`
+        ALTER TABLE forum_post
+          MODIFY COLUMN imagem_url MEDIUMTEXT NULL;
+      `);
+
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS forum_resposta (
           id BIGINT NOT NULL AUTO_INCREMENT,
           post_id INT NOT NULL,
@@ -53,7 +58,7 @@ const ensureForumTables = () => {
           foto_perfil VARCHAR(1024) NOT NULL,
           assinatura ENUM('Universo','Galáxia','Órbita') NOT NULL DEFAULT 'Universo',
           conteudo TEXT NOT NULL,
-          imagem_url TEXT NULL,
+          imagem_url MEDIUMTEXT NULL,
           created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           PRIMARY KEY (id),
@@ -66,6 +71,11 @@ const ensureForumTables = () => {
       `);
 
       await pool.query(`
+        ALTER TABLE forum_resposta
+          MODIFY COLUMN imagem_url MEDIUMTEXT NULL;
+      `);
+
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS forum_post_like (
           post_id INT NOT NULL,
           usuario_id INT NOT NULL,
@@ -75,7 +85,6 @@ const ensureForumTables = () => {
           CONSTRAINT fk_forum_post_like_usuario FOREIGN KEY (usuario_id) REFERENCES usuario (id) ON DELETE CASCADE ON UPDATE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `);
-
       await pool.query(`
         CREATE TABLE IF NOT EXISTS forum_resposta_like (
           resposta_id BIGINT NOT NULL,
@@ -408,7 +417,7 @@ const fetchReplyById = async (replyId: number, currentUserId: number | null) => 
 
 router.get(
   "/posts",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const limit = getLimitFromQuery(req.query.limit);
     const cursorRaw = req.query.cursor;
 
@@ -482,7 +491,7 @@ router.get(
 
 router.post(
   "/posts",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const {
       temaPergunta,
       conteudoComentario,
@@ -550,7 +559,7 @@ router.post(
 
 router.put(
   "/posts/:id",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const postId = Number(req.params.id);
     if (!Number.isFinite(postId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -592,7 +601,7 @@ router.put(
 
 router.delete(
   "/posts/:id",
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const postId = Number(req.params.id);
     if (!Number.isFinite(postId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -615,7 +624,7 @@ router.delete(
 
 router.post(
   "/posts/:postId/replies",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const postId = Number(req.params.postId);
     if (!Number.isFinite(postId)) {
       res.status(400).json({ error: "ID de postagem inválido" });
@@ -695,7 +704,7 @@ router.post(
 
 router.put(
   "/replies/:id",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const replyId = Number(req.params.id);
     if (!Number.isFinite(replyId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -734,7 +743,7 @@ router.put(
 
 router.delete(
   "/replies/:id",
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const replyId = Number(req.params.id);
     if (!Number.isFinite(replyId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -757,7 +766,7 @@ router.delete(
 
 router.post(
   "/posts/:id/likes",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const postId = Number(req.params.id);
     if (!Number.isFinite(postId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -790,7 +799,7 @@ router.post(
 
 router.delete(
   "/posts/:id/likes",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const postId = Number(req.params.id);
     if (!Number.isFinite(postId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -811,7 +820,7 @@ router.delete(
 
 router.post(
   "/replies/:id/likes",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const replyId = Number(req.params.id);
     if (!Number.isFinite(replyId)) {
       res.status(400).json({ error: "ID inválido" });
@@ -844,7 +853,7 @@ router.post(
 
 router.delete(
   "/replies/:id/likes",
-  asyncHandler(async (req: Request, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const replyId = Number(req.params.id);
     if (!Number.isFinite(replyId)) {
       res.status(400).json({ error: "ID inválido" });

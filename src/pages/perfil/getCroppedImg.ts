@@ -8,6 +8,10 @@ export async function getCroppedImg(
   aspect: number,
   croppedAreaPixels: { width: number; height: number; x: number; y: number }
 ): Promise<Blob | null> {
+  void crop;
+  void zoom;
+  void aspect;
+
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
