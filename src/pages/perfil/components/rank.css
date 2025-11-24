@@ -10,7 +10,7 @@
 
 .prf-container-rank {
     overflow-y: scroll;
-    height: calc(100vh - 90px);
+    height: calc(100vh - 45px - 115px);
     background-color: var(--cinza-escuro3);
 }
 
@@ -18,15 +18,17 @@
     background-color: var(--roxo1);
     display: flex;
     flex-direction: column;
+    height: 115px;
+    box-sizing: border-box;
     overflow: hidden;
-    padding: 10px 25px;
+    padding: 25px 25px;
 }
 
 .prf-container3 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 90%;
+    width: 100%;
 
     font-family: "Questrial", sans-serif;
     color: var(--branco);
@@ -35,13 +37,12 @@
 }
 
 .prf-pesquisa-usuario {
-    background-color: var(--cinza-escuro1);
+    background-color: #AD7AD4;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 30px;
     width: 100%;
-    position: relative;
 }
 
 .prf-pesquisa-usuario input {
@@ -67,7 +68,7 @@
 }
 
 .prf-usuarios-rank {
-    background-color: var(--roxo2);
+    background-color: #7E28C0;
 }
 
 .prf-usuarios-rank, .prf-sticky-user{
@@ -79,7 +80,7 @@
 }
 
 .prf-usuarios-rank.prf-cor2 {
-    background-color: var(--roxo3);
+    background-color: #6C23A3;
 }
 
 .prf-sticky-user .prf-usuarios-rank {
@@ -90,7 +91,6 @@
     width: 90%;
     height: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 
@@ -100,6 +100,7 @@
     background-size: cover;
     background-position: center;
     border-radius: 50%;
+    margin-right: 25px;
 }
 
 .prf-container-rank::-webkit-scrollbar {
@@ -129,6 +130,7 @@
     width: 30%;
     overflow: hidden;
     white-space: nowrap;
+    margin-right: 20px;
 }
 
 .prf-sticky-user {

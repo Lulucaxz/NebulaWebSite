@@ -33,7 +33,7 @@ export function Rank() {
 
       <div className="prf-rank-header">
         <div className="prf-container3">
-          <span><svg
+          <span style={{display:"flex"}}><svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
               viewBox="0 -960 960 960"
@@ -47,13 +47,30 @@ export function Rank() {
             <input
               name="pesquisa"
               type="text"
-              placeholder={t('Pesquisar usuário...')}
               value={pesquisa}
               onChange={(e) => setPesquisa(e.target.value)}
             />
           </div>
         </div>
       </div>
+
+      <div className="prf-header-informacoes"
+        style={
+          {
+            backgroundColor: "#481A6B",
+            padding: "10px 25px",
+            fontFamily: "'Questrial', sans-serif",
+            fontSize: "20px",
+            color: "var(--branco)",
+            position: "relative",
+            height: "45px",
+            boxSizing: "border-box"
+          }
+        }>
+          <span style={{marginRight: "200px"}}>{t('Perfil')}</span>
+          <span>{t('Pontos')}</span>
+          <span style={{position:"absolute", right: "25px"}}>{t('Posição')}</span>
+        </div>
 
       <div className="prf-container-rank">
         {usuariosFiltrados.length > 0 ? (

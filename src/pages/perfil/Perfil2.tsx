@@ -11,8 +11,7 @@ import { useNavigate } from "react-router-dom";
 import ModalEditar from "./components/ModalEditar";
 import ModalSeguidores from "./components/ModalSeguidores";
 import ModalSeguindo from "./components/ModalSeguindo";
-import ModalAvaliarPlanos from "./components/ModalAvaliarPlanos";
-import i18n from "i18next";
+import ModalDenunciar from "./components/ModalDenunciar";
 
 type User = {
   name: string;
@@ -28,7 +27,7 @@ type User = {
   progresso3: number;
 };
 
-function Perfil() {
+function Perfil2() {
   const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true); // Adicionado para controle de carregamento
@@ -143,7 +142,12 @@ function Perfil() {
   const [mostrarSeguidores, setMostrarSeguidores] = useState(false);
   const [mostrarSeguindo, setMostrarSeguindo] = useState(false);
   const [mostrarEditor, setMostrarEditor] = useState(false);
-  const [mostrarAvaliarPlanos, setMostrarAvaliarPlanos] = useState(false);
+  const [seguindoConta, setSeguindoConta] = useState(false); // Estado para controlar o botão
+  const [mostrarModalDenunciar, setMostrarModalDenunciar] = useState(false); // Estado para controlar o modal
+
+  const toggleSeguirConta = () => {
+    setSeguindoConta((prev) => !prev);
+  };
 
   const [seguidores, setSeguidores] = useState([
     { nome: "NomeLegal", usuario: "@nomelegal" },
@@ -174,26 +178,6 @@ function Perfil() {
 
   const pararDeSeguir = (usuario: string) => {
     setSeguindo((prev) => prev.filter((pessoa) => pessoa.usuario !== usuario));
-  };
-
-  const logout = async () => {
-    try {
-      await axios.get(`http://localhost:4000/auth/logout`);
-      setUser(null);
-      navigate("/");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-    }
-  };
-
-  const handleLanguageChange = (language: string) => {
-    i18n.changeLanguage(language);
-    setIdioma(language);
-  };
-
-  const handleThemeChange = (theme: string) => {
-    setTema(theme);
-    // Aqui você pode adicionar lógica para salvar o tema no backend ou localStorage, se necessário
   };
 
   if (loading) {
@@ -254,86 +238,26 @@ function Perfil() {
                 style={{ color: "var(--branco)", minWidth: "300px" }}
               >
                 <span className="prf-titulo-informacoes">
-                  PREFERÊNCIA DA CONTA
+                  OPÇÕES PARA A CONTA
                 </span>
-                <div className="prf-linguagem">
-                  <span>Linguagem:</span>
-                  <div className="prf-option-group">
-                    <label className="prf-option" htmlFor="idioma-ptbr">
-                      <input
-                        className="prf-option-input"
-                        type="radio"
-                        name="idioma"
-                        id="idioma-ptbr"
-                        value="pt-br"
-                        checked={idioma === "pt-br"}
-                        onChange={() => handleLanguageChange("pt-br")}
-                      />
-                      <span className="prf-option-text">
-                        Português (Brasil)
-                      </span>
-                    </label>
-                    <label className="prf-option" htmlFor="idioma-en">
-                      <input
-                        className="prf-option-input"
-                        type="radio"
-                        name="idioma"
-                        id="idioma-en"
-                        value="en-us"
-                        checked={idioma === "en-us"}
-                        onChange={() => handleLanguageChange("en-us")}
-                      />
-                      <span className="prf-option-text">American English</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="prf-tema">
-                  <span>Tema:</span>
-                  <div className="prf-option-group">
-                    <label className="prf-option" htmlFor="tema-claro">
-                      <input
-                        className="prf-option-input"
-                        type="radio"
-                        name="tema"
-                        id="tema-claro"
-                        value="claro"
-                        checked={tema === "claro"}
-                        onChange={() => handleThemeChange("claro")}
-                      />
-                      <span className="prf-option-text">Claro</span>
-                    </label>
-                    <label className="prf-option" htmlFor="tema-escuro">
-                      <input
-                        className="prf-option-input"
-                        type="radio"
-                        name="tema"
-                        id="tema-escuro"
-                        value="escuro"
-                        checked={tema === "escuro"}
-                        onChange={() => handleThemeChange("escuro")}
-                      />
-                      <span className="prf-option-text">Escuro</span>
-                    </label>
-                  </div>
+                <div
+                  className="prf-btn-config"
+                  onClick={toggleSeguirConta}
+                  style={{
+                    backgroundColor: seguindoConta ? "var(--roxo1)" : "",
+                    cursor: "pointer",
+                  }}
+                >
+                  {seguindoConta ? "Seguindo" : "Seguir conta"}
                 </div>
                 <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
                 <div
                   className="prf-btn-config"
-                  onClick={() => {
-                    setNomeEditado(nome);
-                    setBioEditada(biografia);
-                    setMostrarEditor(true);
-                  }}
+                  onClick={() => setMostrarModalDenunciar(true)}
+                  style={{ cursor: "pointer" }}
                 >
-                  Editar perfil
+                  Denunciar conta
                 </div>
-                <div
-                  className="prf-btn-config"
-                  onClick={() => setMostrarAvaliarPlanos(true)}
-                >
-                  Avaliar planos
-                </div>
-                <div className="prf-btn-config" onClick={logout}>Sair</div>
               </div>
               <hr />
               <div className="prf-coluna2">
@@ -386,150 +310,11 @@ function Perfil() {
         />
       )}
 
-      {mostrarEditor && (
-        <ModalEditar
-          onClose={() => setMostrarEditor(false)}
-          t={t}
-          fotoPreview={fotoPreview}
-          fotoUrl={fotoUrl}
-          nomeEditado={nomeEditado}
-          setNomeEditado={setNomeEditado}
-          bioEditada={bioEditada}
-          setBioEditada={setBioEditada}
-          bioCharCount={bioCharCount}
-          setBioCharCount={setBioCharCount}
-          cropModalOpen={cropModalOpen}
-          cropImageSrc={cropImageSrc}
-          handleCropComplete={handleCropComplete}
-          salvarEdicao={salvarEdicao}
-          onFileChange={onFileChange}
-        >
-          <div className="prf-edicao">
-            <div
-              className="prf-editor-banner"
-              style={{
-                height: "180px",
-                backgroundImage: `url(nebulosaBanner.jpg)`,
-                position: "relative",
-              }}
-            >
-              <input
-                className="prf-editor-banner-btn"
-                type="button"
-                value={t("Alterar banner")}
-              />
-            </div>
-            <div className="prf-edicao-superior">
-              <div
-                className="prf-edicao-foto"
-                style={{ backgroundImage: `url(${fotoPreview ? fotoPreview : fotoUrl})` }}
-              ></div>
-              <div className="prf-editor-foto-info">
-                <span style={{ fontSize: "20px" }}>{t("Foto de perfil")}</span>
-                <span
-                  style={{
-                    fontSize: "16px",
-                    color: "var(--cinza-claro1)",
-                  }}
-                >
-                  {t("Escolha uma foto de perfil")}
-                </span>
-                <label
-                  className="prf-editar-foto-label"
-                  htmlFor="prf-editar-foto"
-                >
-                  <span>Alterar foto</span>
-                  <input
-                    hidden
-                    id="prf-editar-foto"
-                    className="prf-editar-foto-btn"
-                    type="file"
-                    accept="image/*"
-                    onChange={onFileChange}
-                  />
-                </label>
-              </div>
-
-              <div className="prf-editor-nome-info">
-                <span style={{ fontSize: "20px" }}>{t("Apelido")}</span>
-                <span
-                  style={{
-                    fontSize: "16px",
-                    color: "var(--cinza-claro1)",
-                  }}
-                >
-                  {t("Escolha seu apelido (usuário não pode ser alterado)")}
-                </span>
-                <input
-                  className="prf-editar-nome"
-                  type="text"
-                  value={nomeEditado}
-                  placeholder={t("Nome")}
-                  onChange={(e) => setNomeEditado(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <hr />
-            <div className="prf-editar-biografia-container">
-              <span style={{ fontSize: "20px" }}>Biografia</span>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  color: bioCharCount === 1000 ? "red" : "var(--cinza-claro1)",
-                }}
-              >
-                <span>Altere a sua biografia como quiser</span>
-                <span>{bioCharCount}/1000</span>
-              </div>
-
-              <textarea
-                className="prf-editar-biografia"
-                value={bioEditada}
-                placeholder={t("Biografia")}
-                rows={5}
-                maxLength={1000}
-                style={{ maxHeight: "400px", overflowY: "auto" }}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setBioEditada(value);
-                  setBioCharCount(value.length);
-                }}
-              />
-            </div>
-
-            {cropModalOpen && (
-              <CropImageModal
-                imageSrc={cropImageSrc}
-                onCancel={() => setMostrarEditor(false)}
-                onCropComplete={handleCropComplete}
-              />
-            )}
-
-            <div className="prf-editar-botoes">
-              <button
-                className="prf-botao-editar-enviar cancelar"
-                onClick={() => setMostrarEditor(false)}
-              >
-                {t("CANCELAR")}
-              </button>
-              <button
-                className="prf-botao-editar-enviar"
-                onClick={salvarEdicao}
-              >
-                {t("ENVIAR")}
-              </button>
-            </div>
-          </div>
-        </ModalEditar>
-      )}
-
-      {mostrarAvaliarPlanos && (
-        <ModalAvaliarPlanos onClose={() => setMostrarAvaliarPlanos(false)} />
+      {mostrarModalDenunciar && (
+        <ModalDenunciar onClose={() => setMostrarModalDenunciar(false)} />
       )}
     </div>
   );
 }
 
-export default Perfil;
+export default Perfil2;

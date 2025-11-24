@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AlertProvider } from './Alert';
 
 import Perfil from './pages/perfil/Perfil';
+import Perfil2 from './pages/perfil/Perfil2';
 import Home from './pages/home/paginaInicial';
 import Page404 from './pages/404/page404';
 import Anotacoes from './pages/anotacoes/Anotacoes';
@@ -23,6 +24,9 @@ function App() {
         } />
         <Route path="/perfil" element={
           <Perfil />
+        } />
+        <Route path="/perfil2" element={
+          <Perfil2 />
         } />
         <Route path="/anotacoes" element={
           <Anotacoes />

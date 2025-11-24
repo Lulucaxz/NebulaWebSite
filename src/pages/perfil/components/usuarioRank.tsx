@@ -10,15 +10,13 @@ const UsuarioRank = ({ fotoRank, nomeRank, pontosRank, posicaoRank }: usuarioRan
   const { t } = useTranslation();
   return (
     <div className={parseInt(posicaoRank) % 2 == 0 ? "prf-usuarios-rank" : "prf-usuarios-rank prf-cor2"}>
-      <div className="prf-container4">
+      <div className="prf-container4" style={{position:"relative"}}>
         <div className="prf-foto-rank" style={{ backgroundImage: `url(${fotoRank})` }}></div>
         <div className="prf-nome-rank">
           <span>{nomeRank}</span>
         </div>
-        <div className="prf-divisao-rank">|</div>
-        <div className="prf-pontos-rank"><span>{pontosRank} {t('pts')}</span></div>
-        <div className="prf-divisao-rank">|</div>
-        <div className="prf-posisao-rank"><span>{posicaoRank}</span></div>
+        <div className="prf-pontos-rank" style={{width:"100px", textAlign:"right"}}><span>{pontosRank} {t('pts')}</span></div>
+        <div className="prf-posisao-rank"style={{right: 0, position:"absolute", textAlign:"right"}}><span>{posicaoRank}</span></div>
       </div>
     </div>
   )
