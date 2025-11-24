@@ -17,6 +17,7 @@ import rankRoutes from "./rankRoutes";
 import anotacoesRoutes from "./anotacoesRoutes";
 import progressRoutes from "./progressRoutes";
 import forumRoutes from "./forumRoutes";
+import followRoutes from "./followRoutes";
 import { asyncHandler } from './utils';
 
 dotenv.config();
@@ -107,6 +108,7 @@ app.use(passport.session());
 
 // Rotas de ranking
 app.use("/api", rankRoutes);
+app.use("/api/follow", followRoutes);
 
 app.use("/api/anotacoes", anotacoesRoutes);
 app.use('/api/progress', progressRoutes);

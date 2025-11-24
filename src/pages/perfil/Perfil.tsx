@@ -1,6 +1,6 @@
 import "./perfil.css";
 import "../../index.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Menu } from "../../components/Menu";
 import { Rank } from "./components/rank";
@@ -26,6 +26,12 @@ type User = {
   progresso1?: number;
   progresso2?: number;
   progresso3?: number;
+};
+
+type FollowEntry = {
+  nome: string;
+  usuario: string;
+  foto?: string;
 };
 
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
@@ -71,6 +77,38 @@ function Perfil() {
 
   const navigate = useNavigate();
 
+  const fetchFollowData = useCallback(async (handle: string) => {
+    if (!handle) {
+      return;
+    }
+
+    const encodedHandle = encodeURIComponent(handle);
+
+    try {
+      const [followersRes, followingRes] = await Promise.all([
+        axios.get<FollowEntry[]>(
+          `http://localhost:4000/api/follow/${encodedHandle}/list`,
+          {
+            params: { type: "followers" },
+            withCredentials: true,
+          }
+        ),
+        axios.get<FollowEntry[]>(
+          `http://localhost:4000/api/follow/${encodedHandle}/list`,
+          {
+            params: { type: "following" },
+            withCredentials: true,
+          }
+        ),
+      ]);
+
+      setSeguidores(followersRes.data);
+      setSeguindo(followingRes.data);
+    } catch (error) {
+      console.error("Erro ao carregar seguidores:", error);
+    }
+  }, []);
+
   useEffect(() => {
     axios
       .get("http://localhost:4000/auth/me", { withCredentials: true })
@@ -97,6 +135,12 @@ function Perfil() {
         navigate("/cadastrar");
       });
   }, [navigate]);
+
+  useEffect(() => {
+    if (usuario) {
+      fetchFollowData(usuario);
+    }
+  }, [usuario, fetchFollowData]);
 
   useEffect(() => {
     if (!mostrarEditor) {
@@ -189,35 +233,43 @@ function Perfil() {
     );
   };
 
-  const [seguidores, setSeguidores] = useState([
-    { nome: "NomeLegal", usuario: "@nomelegal" },
-    { nome: "Lucas Leite de Souza", usuario: "@lucasleitedesouza" },
-    { nome: "Samuel Oliveira", usuario: "@samumu" },
-    { nome: "João Marcelo", usuario: "@sheldon" },
-    { nome: "Marcos Rocha", usuario: "@mtrouxa" },
-    { nome: "Luiz Henrique", usuario: "@luizhenriquetavares" },
-  ]);
+  const [seguidores, setSeguidores] = useState<FollowEntry[]>([]);
+  const [seguindo, setSeguindo] = useState<FollowEntry[]>([]);
 
-  const [seguindo, setSeguindo] = useState([
-    { nome: "Ana Clara", usuario: "@anaclara" },
-    { nome: "Pedro Silva", usuario: "@pedrosilva" },
-    { nome: "Maria Oliveira", usuario: "@mariaoliveira" },
-    { nome: "João Souza", usuario: "@joaosouza" },
-    { nome: "Carla Mendes", usuario: "@carlamendes" },
-    { nome: "Lucas Pereira", usuario: "@lucaspereira" },
-    { nome: "Lucas Pereira", usuario: "@lucaspereira" },
-    { nome: "Lucas Pereira", usuario: "@lucaspereira" },
-    { nome: "Lucas Pereira", usuario: "@lucaspereira" },
-    { nome: "Lucas Pereira", usuario: "@lucaspereira" },
-    { nome: "Lucas Pereira", usuario: "@lucaspereira" },
-  ]);
-
-  const removerSeguidor = (usuario: string) => {
-    setSeguidores((prev) => prev.filter((seguidor) => seguidor.usuario !== usuario));
+  const removerSeguidor = async (handle: string) => {
+    if (!handle) {
+      return;
+    }
+    try {
+      await axios.post(
+        "http://localhost:4000/api/follow/manage",
+        { targetHandle: handle, action: "removeFollower" },
+        { withCredentials: true }
+      );
+      if (usuario) {
+        fetchFollowData(usuario);
+      }
+    } catch (error) {
+      console.error("Erro ao remover seguidor:", error);
+    }
   };
 
-  const pararDeSeguir = (usuario: string) => {
-    setSeguindo((prev) => prev.filter((pessoa) => pessoa.usuario !== usuario));
+  const pararDeSeguir = async (handle: string) => {
+    if (!handle) {
+      return;
+    }
+    try {
+      await axios.post(
+        "http://localhost:4000/api/follow/manage",
+        { targetHandle: handle, action: "unfollow" },
+        { withCredentials: true }
+      );
+      if (usuario) {
+        fetchFollowData(usuario);
+      }
+    } catch (error) {
+      console.error("Erro ao deixar de seguir:", error);
+    }
   };
 
   const logout = async () => {

@@ -1,19 +1,28 @@
 interface usuarioRankProps {
   fotoRank: string;
-  nomeRank: string;    // nome real
+  nomeRank: string;
   pontosRank: number;
   posicaoRank: string;
+  userHandle: string;
+  userId: number;
+  isCurrentUser?: boolean;
 }
 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-const UsuarioRank = ({ fotoRank, nomeRank, pontosRank, posicaoRank }: usuarioRankProps) => {
+const UsuarioRank = ({ fotoRank, nomeRank, pontosRank, posicaoRank, userHandle, userId, isCurrentUser = false }: usuarioRankProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleUserClick = () => {
-    navigate('/perfil2');
+    if (isCurrentUser) {
+      navigate('/perfil');
+      return;
+    }
+
+    const queryParams = new URLSearchParams({ user: userHandle }).toString();
+    navigate(`/perfil2?${queryParams}`, { state: { userTag: userHandle, userId } });
   };
 
   return (

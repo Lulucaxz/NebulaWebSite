@@ -134,21 +134,25 @@ export function Rank() {
 
       <div className="prf-container-rank">
         {usuariosFiltrados.length > 0 ? (
-          usuariosFiltrados.map((user) => (
-            <div
-              key={user.id}
-              className={
-                usuarioLogado && user.user === usuarioLogado.user ? "prf-sticky-user" : ""
-              }
-            >
-              <UsuarioRank
-                fotoRank={user.icon}
-                nomeRank={user.username}
-                pontosRank={user.pontos}
-                posicaoRank={user.posicao.toString()}
-              />
-            </div>
-          ))
+          usuariosFiltrados.map((user) => {
+            const isCurrentUser = usuarioLogado && user.user === usuarioLogado.user;
+            return (
+              <div
+                key={user.id}
+                className={isCurrentUser ? "prf-sticky-user" : ""}
+              >
+                <UsuarioRank
+                  fotoRank={user.icon}
+                  nomeRank={user.username}
+                  pontosRank={user.pontos}
+                  posicaoRank={user.posicao.toString()}
+                  userHandle={user.user}
+                  userId={user.id}
+                  isCurrentUser={Boolean(isCurrentUser)}
+                />
+              </div>
+            );
+          })
         ) : (
           <div className="prf-container-rank-nao-encontrado">
             <p className="prf-sem-resultado">{t('Nenhum usuário encontrado.')}</p>

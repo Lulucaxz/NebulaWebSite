@@ -32,13 +32,36 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario` (
   `idioma` ENUM("pt-br", "en-us") NOT NULL,
   `tema` ENUM("dark", "light") NOT NULL,
   `provider` ENUM("local","google") NULL,
-  `seguidores` INT NOT NULL,
-  `seguindo` INT NOT NULL,
+  `seguidores` INT NOT NULL DEFAULT 0,
+  `seguindo` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `user_UNIQUE` (`user` ASC) VISIBLE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   UNIQUE INDEX `colocacao_UNIQUE` (`colocacao` ASC) VISIBLE,
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `NEBULA`.`usuario_follow`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `NEBULA`.`usuario_follow` ;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario_follow` (
+  `seguidor_id` INT NOT NULL,
+  `seguido_id` INT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`seguidor_id`, `seguido_id`),
+  INDEX `idx_follow_seguido` (`seguido_id` ASC) VISIBLE,
+  CONSTRAINT `fk_follow_seguidor`
+    FOREIGN KEY (`seguidor_id`)
+    REFERENCES `NEBULA`.`usuario` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_follow_seguido`
+    FOREIGN KEY (`seguido_id`)
+    REFERENCES `NEBULA`.`usuario` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------

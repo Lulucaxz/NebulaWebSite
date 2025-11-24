@@ -3,12 +3,19 @@ import "./ModalSeguidores.css";
 
 const imagemPerfilExemplo = "/img/users/icones-usuarios/FotoPerfil1.jpg";
 
+type FollowEntry = {
+  nome: string;
+  usuario: string;
+  foto?: string;
+};
+
 interface ModalSeguidoresProps {
   onCloseSeguidores: () => void;
   onOpenSeguindo: () => void;
-  seguidores: { nome: string; usuario: string }[]; 
-  seguindo: { nome: string; usuario: string }[];
-  removerSeguidor: (usuario: string) => void; // Adicionada a propriedade removerSeguidor
+  seguidores: FollowEntry[];
+  seguindo: FollowEntry[];
+  removerSeguidor?: (usuario: string) => void;
+  canManage?: boolean;
 }
 
 const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
@@ -16,7 +23,8 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
   onOpenSeguindo,
   seguidores,
   seguindo,
-  removerSeguidor, // Recebendo a função removerSeguidor
+  removerSeguidor,
+  canManage = true,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -69,17 +77,23 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
                 key={index}
                 className={`seguidor-item ${index % 2 === 0 ? "seguidor-item-par" : "seguidor-item-impar"}`}
               >
-                <img className="seguidor-foto" src={imagemPerfilExemplo} alt="FotoPerfil" />
+                <img
+                  className="seguidor-foto"
+                  src={seguidor.foto || imagemPerfilExemplo}
+                  alt="Foto do seguidor"
+                />
                 <div className="seguidor-info">
                   <span className="seguidor-nome">{seguidor.nome}</span>
                   <span className="seguidor-usuario">{seguidor.usuario}</span>
                 </div>
-                <button
-                  className="seguidor-botao"
-                  onClick={() => removerSeguidor(seguidor.usuario)} // Chama a função removerSeguidor
-                >
-                  Remover
-                </button>
+                {canManage && removerSeguidor && (
+                  <button
+                    className="seguidor-botao"
+                    onClick={() => removerSeguidor(seguidor.usuario)}
+                  >
+                    Remover
+                  </button>
+                )}
               </div>
             ))
           ) : (
