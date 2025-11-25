@@ -210,6 +210,72 @@ const normalizeScore = (value: unknown): number | undefined => {
   return Math.min(Math.max(numeric, 0), 10);
 };
 
+const normalizeAttempts = (value: unknown): number | undefined => {
+  if (value === null || value === undefined) return undefined;
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numeric)) return undefined;
+  if (numeric <= 0) return 1;
+  const rounded = Math.floor(numeric);
+  return Math.min(rounded || 1, 20);
+};
+
+const getStoredAttempts = async (userId: number, assinatura: string, moduloId: number, atividadeId: number): Promise<number> => {
+  const [rows] = await pool.query<RowDataPacket[]>(
+    'SELECT tentativas FROM atividade_tentativas WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ? AND atividade_id = ? LIMIT 1',
+    [userId, assinatura, moduloId, atividadeId]
+  );
+
+  if (!rows || rows.length === 0) {
+    return 0;
+  }
+
+  const raw = rows[0]?.tentativas;
+  const numeric = typeof raw === 'number' ? raw : Number(raw);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : 0;
+};
+
+const upsertAttempts = async (userId: number, assinatura: string, moduloId: number, atividadeId: number, attempts: unknown) => {
+  const normalized = normalizeAttempts(attempts);
+  if (!normalized) {
+    return;
+  }
+
+  await pool.query<ResultSetHeader>(
+    `INSERT INTO atividade_tentativas (usuario_id, assinatura, modulo_id, atividade_id, tentativas)
+     VALUES (?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE tentativas = GREATEST(tentativas, VALUES(tentativas)), updated_at = CURRENT_TIMESTAMP`,
+    [userId, assinatura, moduloId, atividadeId, normalized]
+  );
+};
+
+const calculatePointsForActivity = (basePoints: number, score: number | undefined, attempts: number | undefined): number => {
+  if (!Number.isFinite(basePoints) || basePoints <= 0) {
+    return 0;
+  }
+
+  if (typeof score !== 'number') {
+    return Math.round(basePoints);
+  }
+
+  const normalizedScore = Math.min(Math.max(score, 0), 10) / 10;
+  if (normalizedScore <= 0) {
+    return 0;
+  }
+
+  const blendedAccuracy = 0.5 + (normalizedScore * 0.5);
+  const attemptCount = normalizeAttempts(attempts) ?? 1;
+  const attemptFactor = Math.max(0.6, Math.min(1, 1.1 - 0.15 * (attemptCount - 1)));
+  const rawPoints = basePoints * normalizedScore * blendedAccuracy * attemptFactor;
+  const capped = Math.min(basePoints, rawPoints);
+
+  if (capped <= 0) {
+    return 0;
+  }
+
+  const rounded = Math.round(capped);
+  return Math.max(1, Math.min(basePoints, rounded));
+};
+
 // Module completion
 router.post('/module/:assinatura/:moduloId', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
   const r = req as AuthenticatedRequest;
@@ -305,6 +371,9 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
   // accept optional totalActivities in body to determine module completion
   const totalActivities = typeof req.body?.totalActivities === 'number' ? Number(req.body.totalActivities) : undefined;
   const score = normalizeScore(req.body?.score);
+  const attemptsFromBody = normalizeAttempts(req.body?.attempts);
+  const storedAttempts = await getStoredAttempts(userId, assinatura, Number(moduloId), Number(atividadeId));
+  const attempts = attemptsFromBody ?? (storedAttempts > 0 ? storedAttempts : 1);
 
   const [result] = await pool.query<ResultSetHeader>('INSERT IGNORE INTO atividades_concluidas (usuario_id, assinatura, modulo_id, atividade_id) VALUES (?, ?, ?, ?)', [userId, assinatura, Number(moduloId), Number(atividadeId)]);
 
@@ -313,10 +382,7 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
   if (result.affectedRows && result.affectedRows > 0) {
     addedPoints = true;
     const basePoints = getPointsPerActivity(assinatura);
-    const scaledPoints = typeof score === 'number'
-      ? Math.round(basePoints * (score / 10))
-      : basePoints;
-    const safePoints = Math.max(0, scaledPoints);
+    const safePoints = calculatePointsForActivity(basePoints, score, attempts);
     if (safePoints > 0) {
       await pool.query<ResultSetHeader>(
         `UPDATE usuario SET pontos = pontos + ? WHERE id = ?`,
@@ -325,6 +391,8 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
       pointsAwarded = safePoints;
     }
   }
+
+  await upsertAttempts(userId, assinatura, Number(moduloId), Number(atividadeId), attempts);
 
   // If caller provided totalActivities, check whether the module is now complete
   let moduleCompleted = false;
@@ -342,14 +410,38 @@ router.post('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHan
     }
   }
 
-  res.status(201).json({ success: true, addedPoints, pointsAwarded, moduleCompleted });
+  res.status(201).json({ success: true, addedPoints, pointsAwarded, moduleCompleted, attemptsConsidered: attempts });
 }));
 
+router.get('/activity/:assinatura/:moduloId/:atividadeId/attempts', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
+  const r = req as AuthenticatedRequest;
+  const userId = r.user!.id;
+  const { assinatura, moduloId, atividadeId } = req.params;
+
+  const attempts = await getStoredAttempts(userId, assinatura, Number(moduloId), Number(atividadeId));
+  res.json({ tentativas: attempts });
+}));
+
+router.post('/activity/:assinatura/:moduloId/:atividadeId/attempts', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
+  const r = req as AuthenticatedRequest;
+  const userId = r.user!.id;
+  const { assinatura, moduloId, atividadeId } = req.params;
+  const attemptsValue = normalizeAttempts(req.body?.attempts ?? req.body?.tentativas ?? req.body?.attempt);
+
+  if (!attemptsValue) {
+    res.status(400).json({ error: 'Número de tentativas inválido.' });
+    return;
+  }
+
+  await upsertAttempts(userId, assinatura, Number(moduloId), Number(atividadeId), attemptsValue);
+  res.status(201).json({ tentativas: attemptsValue });
+}));
 router.delete('/activity/:assinatura/:moduloId/:atividadeId', ensureAuth, asyncHandler(async (req: Request, res: Response) => {
   const r = req as AuthenticatedRequest;
   const userId = r.user!.id;
   const { assinatura, moduloId, atividadeId } = req.params;
   await pool.query<ResultSetHeader>('DELETE FROM atividades_concluidas WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ? AND atividade_id = ?', [userId, assinatura, Number(moduloId), Number(atividadeId)]);
+  await pool.query<ResultSetHeader>('DELETE FROM atividade_tentativas WHERE usuario_id = ? AND assinatura = ? AND modulo_id = ? AND atividade_id = ?', [userId, assinatura, Number(moduloId), Number(atividadeId)]);
 
   // If caller provided totalActivities in body, and now the count is below total, remove module completion
   const totalActivities = typeof req.body?.totalActivities === 'number' ? Number(req.body.totalActivities) : undefined;

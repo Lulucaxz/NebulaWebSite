@@ -530,3 +530,15 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`atividades_concluidas` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_user_act` (`usuario_id`, `assinatura`, `modulo_id`, `atividade_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`atividade_tentativas` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `usuario_id` INT NOT NULL,
+  `assinatura` VARCHAR(255) NOT NULL,
+  `modulo_id` INT NOT NULL,
+  `atividade_id` INT NOT NULL,
+  `tentativas` INT NOT NULL DEFAULT 0,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_tentativa_user_act` (`usuario_id`, `assinatura`, `modulo_id`, `atividade_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
