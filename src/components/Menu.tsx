@@ -124,6 +124,20 @@ export function Menu() {
             <span className="texto-barra">{t('FÓRUM')}</span>
         </NavLink>
 
+        <NavLink to="/chat" className={({ isActive }) => getMenuItemClass(isActive)} id="chat-icone">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#FFFFFF"
+            >
+              <path d="M80-160v-560q0-33 23-56.5t57-23.5h640q33 0 56.5 23.5T880-720v400q0 33-23.5 56.5T800-240H240L80-160Zm160-240h480v-80H240v80Zm0-160h480v-80H240v80Z" />
+            </svg>
+
+            <span className="texto-barra">{t('CHAT')}</span>
+        </NavLink>
+
         <NavLink to="/planos" className={({ isActive }) => getMenuItemClass(isActive)} id="carrinho-icone">
             <svg
               xmlns="http://www.w3.org/2000/svg"

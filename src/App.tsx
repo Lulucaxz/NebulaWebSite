@@ -13,6 +13,8 @@ import Modulos from './pages/cursos/modulos';
 import Atividades from './pages/cursos/atividades';
 import Planos from './pages/planos/planos';
 import Forum from './pages/forum/forum';
+import Chat from './pages/chat/Chat';
+import ChatConversation from './pages/chat/ChatConversation';
 
 function App() {
   return (
@@ -42,6 +44,12 @@ function App() {
         } />
         <Route path="/forum" element={
           <Forum />
+        } />
+        <Route path="/chat" element={
+          <Chat />
+        } />
+        <Route path="/chat/:chatId" element={
+          <ChatConversation />
         } />
         <Route path="/planos" element={
           <Planos />
