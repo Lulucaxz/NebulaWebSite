@@ -207,6 +207,77 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_post_like` (
     ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
+  -- -----------------------------------------------------
+  -- Table `NEBULA`.`chat_room`
+  -- -----------------------------------------------------
+  DROP TABLE IF EXISTS `NEBULA`.`chat_room` ;
+
+  CREATE TABLE IF NOT EXISTS `NEBULA`.`chat_room` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `owner_id` INT NOT NULL,
+    `name` VARCHAR(200) NOT NULL,
+    `tag` VARCHAR(40) NULL DEFAULT NULL,
+    `is_group` TINYINT(1) NOT NULL DEFAULT 0,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_chat_room_owner` (`owner_id` ASC) VISIBLE,
+    CONSTRAINT `fk_chat_room_owner`
+      FOREIGN KEY (`owner_id`)
+      REFERENCES `NEBULA`.`usuario` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1000;
+
+  -- -----------------------------------------------------
+  -- Table `NEBULA`.`chat_room_participant`
+  -- -----------------------------------------------------
+  DROP TABLE IF EXISTS `NEBULA`.`chat_room_participant` ;
+
+  CREATE TABLE IF NOT EXISTS `NEBULA`.`chat_room_participant` (
+    `room_id` BIGINT NOT NULL,
+    `user_id` INT NOT NULL,
+    `added_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`room_id`, `user_id`),
+    INDEX `idx_chat_participant_user` (`user_id` ASC) VISIBLE,
+    CONSTRAINT `fk_chat_participant_room`
+      FOREIGN KEY (`room_id`)
+      REFERENCES `NEBULA`.`chat_room` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+    CONSTRAINT `fk_chat_participant_user`
+      FOREIGN KEY (`user_id`)
+      REFERENCES `NEBULA`.`usuario` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
+  ) ENGINE = InnoDB;
+
+  -- -----------------------------------------------------
+  -- Table `NEBULA`.`chat_message`
+  -- -----------------------------------------------------
+  DROP TABLE IF EXISTS `NEBULA`.`chat_message` ;
+
+  CREATE TABLE IF NOT EXISTS `NEBULA`.`chat_message` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `room_id` BIGINT NOT NULL,
+    `author_id` INT NOT NULL,
+    `content` TEXT NOT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_chat_message_room` (`room_id` ASC, `created_at` DESC) VISIBLE,
+    INDEX `idx_chat_message_author` (`author_id` ASC) VISIBLE,
+    CONSTRAINT `fk_chat_message_room`
+      FOREIGN KEY (`room_id`)
+      REFERENCES `NEBULA`.`chat_room` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+    CONSTRAINT `fk_chat_message_author`
+      FOREIGN KEY (`author_id`)
+      REFERENCES `NEBULA`.`usuario` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
+  ) ENGINE = InnoDB;
+
 -- -----------------------------------------------------
 -- Table `NEBULA`.`forum_resposta_like`
 -- -----------------------------------------------------
@@ -269,6 +340,8 @@ DEALLOCATE PREPARE stmt_banner;
 
 -- MEXE SO DAQUI PRA FRENTE!!!!!!!!!!
 SELECT * FROM usuario;
+SELECT * FROM chat_room;
+SELECT * FROM chat_message;
 
 -- Usuários de teste para ranking
 INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)

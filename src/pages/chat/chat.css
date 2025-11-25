@@ -189,7 +189,6 @@
 .chat-stat-card {
   min-width: 120px;
   padding: 14px;
-  border-radius: 8px;
   background: var(--cinza-escuro2);
   border: 1px solid rgba(248, 239, 255, 0.08);
   display: flex;
@@ -321,7 +320,6 @@
 
 .chat-tag {
   padding: 2px 6px;
-  border-radius: 4px;
   background: rgba(248, 239, 255, 0.1);
   font-size: 11px;
 }
@@ -381,7 +379,6 @@
 .chat-main-tag span {
   background: rgba(126, 40, 192, 0.18);
   border: 1px solid rgba(126, 40, 192, 0.3);
-  border-radius: 6px;
   padding: 4px 10px;
   font-size: 12px;
 }
@@ -394,23 +391,39 @@
   overflow-y: auto;
   padding-right: 6px;
   min-height: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .chat-message {
   padding: 12px 14px;
   max-width: 70%;
   background: rgba(255, 255, 255, 0.05);
-
+  align-self: flex-start;
   animation: chatSlideUp 0.25s ease;
 }
 
 .chat-message.sent {
   align-self: flex-end;
   background: var(--roxo1);
+  color: var(--branco);
+}
+
+.chat-message.sent p {
+  color: var(--branco);
+}
+
+.chat-message.sent .chat-message-author {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .chat-message.received {
-  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .chat-message-author {
@@ -479,7 +492,6 @@
 
 .chat-detail-card {
   padding: 16px;
-  border-radius: 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(248, 239, 255, 0.05);
   display: flex;
@@ -506,7 +518,6 @@
 
 .chat-detail-grid div {
   padding: 12px;
-  border-radius: 8px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(248, 239, 255, 0.05);
   display: flex;
@@ -522,7 +533,6 @@
 
 .chat-quick-actions button {
   padding: 10px 14px;
-  border-radius: 6px;
   border: 1px solid rgba(245, 245, 245, 0.08);
   background: transparent;
   color: var(--branco);
@@ -537,7 +547,6 @@
 
 .chat-tip {
   padding: 16px;
-  border-radius: 10px;
   background: var(--cinza-escuro2);
   border: 1px solid rgba(248, 239, 255, 0.05);
 }
@@ -680,7 +689,6 @@
   padding: 24px;
   text-align: center;
   border: 1px dashed rgba(248, 239, 255, 0.2);
-  border-radius: 8px;
   color: var(--cinza-claro2);
 }
 
@@ -717,11 +725,18 @@
 .chat-modal-secondary,
 .chat-modal-primary {
   padding: 10px 18px;
-  border-radius: 8px;
-  border: 1px solid rgba(248, 239, 255, 0.12);
-  background: transparent;
+  border: none;
+  background: var(--cinza-escuro2);
   color: var(--branco);
   cursor: pointer;
+}
+
+.chat-modal-primary:hover {
+  background: var(--roxo2);
+}
+
+.chat-modal-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .chat-modal-primary {

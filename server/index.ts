@@ -1,4 +1,5 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
+import http from "http";
 import dotenv from 'dotenv';
 import passport from 'passport';
 import session from 'express-session';
@@ -10,6 +11,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { Server as SocketIOServer, Socket } from "socket.io";
 
 import { pool } from "./db";
 
@@ -19,7 +21,9 @@ import progressRoutes from "./routes/progressRoutes";
 import forumRoutes from "./routes/forumRoutes";
 import followRoutes from "./routes/followRoutes";
 import avaliacoesRoutes from "./routes/avaliacoesRoutes";
+import chatRoutes from "./routes/chatRoutes";
 import { asyncHandler } from './utils';
+import { setSocketServerInstance } from "./socketInstance";
 
 dotenv.config();
 
@@ -53,6 +57,7 @@ const recalculateRankingQuery = `
 `;
 
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
+const DEFAULT_AVATAR = "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png";
 
 const uploadBufferToCloudinary = (fileBuffer: Buffer, folder: string) => {
   return new Promise<string>((resolve, reject) => {
@@ -70,6 +75,19 @@ const uploadBufferToCloudinary = (fileBuffer: Buffer, folder: string) => {
   });
 };
 
+const uploadRemoteImageToCloudinary = async (url: string, folder: string) => {
+  if (!url) {
+    return DEFAULT_AVATAR;
+  }
+  try {
+    const result = await cloudinary.uploader.upload(url, { folder });
+    return result.secure_url;
+  } catch (error) {
+    console.error("Falha ao importar avatar remoto", error);
+    return DEFAULT_AVATAR;
+  }
+};
+
 
 
 
@@ -82,7 +100,7 @@ app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use(session({
+const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'uma-chave-muito-secreta',
   resave: false,
   saveUninitialized: true,
@@ -90,7 +108,9 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000, // 1 dia
     httpOnly: true,
   }
-}));
+});
+
+app.use(sessionMiddleware);
 
 const allowedOrigins = [CLIENT_URL];
 
@@ -105,13 +125,17 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+const passportInitialize = passport.initialize();
+const passportSession = passport.session();
+
+app.use(passportInitialize);
+app.use(passportSession);
 
 // Rotas de ranking
 app.use("/api", rankRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/avaliacoes", avaliacoesRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.use("/api/anotacoes", anotacoesRoutes);
 app.use('/api/progress', progressRoutes);
@@ -134,9 +158,17 @@ passport.use(new GoogleStrategy({
     // Verifica se já existe no banco
     const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE email = ?", [email]);
     if (rows.length > 0) {
-      return done(null, rows[0]);
+      const existingUser = rows[0];
+      const shouldRefreshIcon = !existingUser.icon || existingUser.icon.includes("googleusercontent.com");
+      if (shouldRefreshIcon && photo) {
+        const refreshedIcon = await uploadRemoteImageToCloudinary(photo, "NEBULA_PFP_IMGS");
+        await pool.query("UPDATE usuario SET icon = ? WHERE id = ?", [refreshedIcon, existingUser.id]);
+        existingUser.icon = refreshedIcon;
+      }
+      return done(null, existingUser);
     }
 
+    const storedPhoto = await uploadRemoteImageToCloudinary(photo, "NEBULA_PFP_IMGS");
     // Cria novo usuário
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
@@ -146,7 +178,7 @@ passport.use(new GoogleStrategy({
         profile.displayName,
         `@${profile.displayName.replace(/\s/g, '')}${Date.now()}`,
         0,
-  photo || "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png",
+  storedPhoto,
   DEFAULT_BANNER,
         "...",
         email
@@ -465,7 +497,70 @@ app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: "Erro interno do servidor", details: err.message });
 });
 
+const httpServer = http.createServer(app);
+
+const io = new SocketIOServer(httpServer, {
+  cors: {
+    origin: CLIENT_URL,
+    credentials: true,
+  },
+});
+
+setSocketServerInstance(io);
+
+const wrap = (middleware: RequestHandler) => (socket: Socket, next: (err?: Error) => void) => {
+  const request = socket.request as Request & { res?: Response };
+  const response = request.res ?? ({} as Response);
+  middleware(request, response, next as NextFunction);
+};
+
+io.use(wrap(sessionMiddleware));
+io.use(wrap(passportInitialize));
+io.use(wrap(passportSession));
+
+io.on("connection", (socket: Socket) => {
+  const authReq = socket.request as AuthenticatedRequest;
+  const userId = authReq.user?.id;
+
+  if (!userId) {
+    socket.emit("chat:error", { message: "Não autenticado" });
+    socket.disconnect(true);
+    return;
+  }
+
+  socket.on("chat:join", async ({ conversationId }: { conversationId?: number }) => {
+    if (!conversationId || !Number.isInteger(conversationId)) {
+      socket.emit("chat:error", { message: "Conversa inválida" });
+      return;
+    }
+
+    try {
+      const [membership] = await pool.query<RowDataPacket[]>(
+        `SELECT 1 FROM chat_room_participant WHERE room_id = ? AND user_id = ? LIMIT 1`,
+        [conversationId, userId]
+      );
+
+      if (!membership.length) {
+        socket.emit("chat:error", { message: "Acesso negado" });
+        return;
+      }
+
+      socket.join(`chat:${conversationId}`);
+      socket.emit("chat:joined", { conversationId });
+    } catch (error) {
+      console.error("Failed to join chat room", error);
+      socket.emit("chat:error", { message: "Não foi possível entrar na conversa." });
+    }
+  });
+
+  socket.on("chat:leave", ({ conversationId }: { conversationId?: number }) => {
+    if (conversationId && Number.isInteger(conversationId)) {
+      socket.leave(`chat:${conversationId}`);
+    }
+  });
+});
+
 // Start server
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Servidor backend em http://localhost:${PORT}`);
 });

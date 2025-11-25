@@ -35,6 +35,7 @@ type FollowEntry = {
 };
 
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
+const DEFAULT_AVATAR = "/img/fotoUsuario.png";
 
 function Perfil() {
   const { t } = useTranslation();
@@ -45,7 +46,7 @@ function Perfil() {
   const [biografia, setBiografia] = useState("");
   const [usuario, setUsuario] = useState("");
   const [rank, setRank] = useState<number | null>(null);
-  const [fotoUrl, setFotoUrl] = useState("");
+  const [fotoUrl, setFotoUrl] = useState(DEFAULT_AVATAR);
   const [bannerUrl, setBannerUrl] = useState(DEFAULT_BANNER);
   const [idioma, setIdioma] = useState("pt-br");
   const [tema, setTema] = useState("escuro");
@@ -119,7 +120,7 @@ function Perfil() {
     setUsuario(userData.user);
     const colocacaoNumerica = Number(userData.colocacao);
     setRank(Number.isFinite(colocacaoNumerica) ? colocacaoNumerica : null);
-  setFotoUrl(userData.icon);
+  setFotoUrl(userData.icon || DEFAULT_AVATAR);
   setBannerUrl(userData.banner || DEFAULT_BANNER);
         const idiomaNormalizado = (userData.idioma || "").toLowerCase();
         setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
@@ -323,7 +324,7 @@ function Perfil() {
           <div className="prf-usuario-barra">
             <div className="prf-container">
               <div className="prf-informacoes-header">
-                <img className="prf-foto" src={fotoUrl} alt="Foto de perfil" />
+                <img className="prf-foto" src={fotoUrl || DEFAULT_AVATAR} alt="Foto de perfil" />
 
                 <div className="prf-infomacoes">
                   <div className="prf-nome-usuario">
