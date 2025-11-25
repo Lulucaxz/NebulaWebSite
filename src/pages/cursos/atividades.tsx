@@ -28,9 +28,6 @@ function Atividades() {
     const curso = (initial_cursos as unknown as Record<string, ModuloType[]>)[assinatura ?? ''];
     const modulo = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
     const atividade = modulo?.atividades?.[Number(atividadeInd)] as AtividadeType;
-    const tentativaKey = assinatura && modulo && atividade
-        ? `atividade-${assinatura}-${modulo.id}-${atividade.id}-tentativas`
-        : undefined;
     
     // --- ESTADO ATUALIZADO ---
     
@@ -63,27 +60,64 @@ function Atividades() {
     const [atividadeFinalizada, setAtividadeFinalizada] = useState(false);
     const [relatorioAtividade, setRelatorioAtividade] = useState<string | null>(null);
 
-    const [tentativas, setTentativas] = useState<number>(() => {
-        if (typeof window === 'undefined' || !tentativaKey) return 0;
-        const stored = window.localStorage.getItem(tentativaKey);
-        const parsed = stored !== null ? Number(stored) : 0;
-        return Number.isFinite(parsed) ? parsed : 0;
-    });
+    const [tentativas, setTentativas] = useState<number>(0);
+    const [tentativasCarregadas, setTentativasCarregadas] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!tentativaKey || typeof window === 'undefined') return;
-        const stored = window.localStorage.getItem(tentativaKey);
-        const parsed = stored !== null ? Number(stored) : 0;
-        const normalized = Number.isFinite(parsed) ? parsed : 0;
-        setTentativas(normalized);
-    }, [tentativaKey]);
+        let ativo = true;
+        setTentativasCarregadas(false);
+        setTentativas(0);
+        const carregarTentativas = async () => {
+            if (!assinatura || !modulo || !atividade) {
+                if (ativo) {
+                    setTentativas(0);
+                    setTentativasCarregadas(true);
+                }
+                return;
+            }
 
-    useEffect(() => {
-        if (!tentativaKey || typeof window === 'undefined') return;
-        window.localStorage.setItem(tentativaKey, String(tentativas));
-    }, [tentativas, tentativaKey]);
-    
-    console.log(atividadeInd);
+            try {
+                const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}/attempts`);
+                const data = await res.json().catch(() => ({}));
+                const valor = Number(data?.tentativas);
+                if (ativo && Number.isFinite(valor) && valor >= 0) {
+                    setTentativas(valor);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar tentativas da atividade', error);
+            } finally {
+                if (ativo) {
+                    setTentativasCarregadas(true);
+                }
+            }
+        };
+
+        carregarTentativas();
+        return () => {
+            ativo = false;
+        };
+    }, [assinatura, modulo?.id, atividade?.id]);
+
+    const registrarTentativa = async (valor: number) => {
+        if (!assinatura || !modulo || !atividade) {
+            return;
+        }
+
+        try {
+            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}/attempts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ attempts: valor })
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                console.error('Falha ao registrar tentativa:', data?.error || res.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao registrar tentativa da atividade', error);
+        }
+    };
 
     // --- Verificação de Módulo (como estava) ---
     if (!modulo || !atividade) {
@@ -283,7 +317,10 @@ function Atividades() {
         const overrideObjetivas = avaliarQuestoesObjetivas();
 
         const tentativaAtual = tentativas + 1;
+
+        await registrarTentativa(tentativaAtual);
         setTentativas(tentativaAtual);
+        setTentativasCarregadas(true);
 
         const { pontos, percentual } = calcularPontuacao(overrideDissertativas, overrideObjetivas);
         const mensagemResultado = `Tentativa ${tentativaAtual}: Você acertou ${percentual.toFixed(0)}% da atividade (${pontos.toFixed(2)}/10).`;
@@ -447,7 +484,7 @@ function Atividades() {
                     </div>
                 )}
                 <div className='tarefa-tentativas-wrapper'>
-                    <span className='tarefa-tentativas'>Tentativas registradas: {tentativas}</span>
+                    <span className='tarefa-tentativas'>Tentativas registradas: {tentativasCarregadas ? tentativas : '...'}</span>
                 </div>
             </div>
             <Footer />
