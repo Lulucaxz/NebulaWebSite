@@ -22,6 +22,7 @@ import forumRoutes from "./routes/forumRoutes";
 import followRoutes from "./routes/followRoutes";
 import avaliacoesRoutes from "./routes/avaliacoesRoutes";
 import chatRoutes from "./routes/chatRoutes";
+import paletteRoutes from "./routes/paletteRoutes";
 import { asyncHandler } from './utils';
 import { setSocketServerInstance } from "./socketInstance";
 import { markUserInConversation, markUserLeftConversation } from "./presenceStore";
@@ -137,6 +138,7 @@ app.use("/api", rankRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/avaliacoes", avaliacoesRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/palettes", paletteRoutes);
 
 app.use("/api/anotacoes", anotacoesRoutes);
 app.use('/api/progress', progressRoutes);
@@ -257,7 +259,10 @@ app.get('/auth/me', asyncHandler(async (req: Request, res: Response) => {
     await connection.query(recalculateRankingQuery);
 
     const [rows] = await connection.query<RowDataPacket[]>(
-      "SELECT * FROM usuario WHERE id = ?",
+      `SELECT u.*, up.primary_hex AS active_primary_hex, up.base AS active_palette_base
+         FROM usuario u
+         LEFT JOIN usuario_palette up ON up.id = u.active_palette_id
+        WHERE u.id = ?`,
       [authReq.user.id]
     );
 
@@ -439,8 +444,19 @@ app.put(
       values.push(idioma);
     }
     if (tema) {
-      fields.push("tema = ?");
-      values.push(tema);
+      const normalizedTema = `${tema}`.toLowerCase();
+      const temaDb =
+        normalizedTema === "light" || normalizedTema === "dark"
+          ? normalizedTema
+          : normalizedTema === "claro"
+            ? "light"
+            : normalizedTema === "escuro"
+              ? "dark"
+              : null;
+      if (temaDb) {
+        fields.push("tema = ?");
+        values.push(temaDb);
+      }
     }
     if (typeof progresso1 !== 'undefined') {
       fields.push("progresso1 = ?");

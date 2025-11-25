@@ -1,8 +1,9 @@
 import "./menu.css";
 import { NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import { useTheme } from "../theme/useTheme";
 
 interface User {
   idsite: string;
@@ -19,8 +20,8 @@ export function Menu() {
   const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-
-  const [temaClaro, setTemaClaro] = useState(false);
+  const { palette } = useTheme();
+  const temaClaro = palette.base === "branco";
 
   useEffect(() => {
     let isMounted = true;
@@ -31,13 +32,11 @@ export function Menu() {
         if (!isMounted) return;
         setUser(res.data);
         setIsAuthenticated(true);
-        setTemaClaro(res.data?.tema === "light");
       })
       .catch(() => {
         if (!isMounted) return;
         setUser(null);
         setIsAuthenticated(false);
-        setTemaClaro(false);
       });
 
     return () => {
@@ -50,8 +49,13 @@ export function Menu() {
       .filter(Boolean)
       .join(" ");
 
+  const menuClassName = useMemo(
+    () => ["menu-barra-lateral", temaClaro ? "claro" : ""].filter(Boolean).join(" "),
+    [temaClaro]
+  );
+
   return (
-    <div className={"menu-barra-lateral"}>
+    <div className={menuClassName}>
       <div id="menu-principais-icones">
         <NavLink
           to="/perfil"

@@ -4,7 +4,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: var(--cinza-escuro3);
+  background-color: var(--surface-muted);
   display: flex;
 
   flex-direction: column;
@@ -17,7 +17,7 @@
 }
 
 .menu-barra-lateral.claro {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
 }
 
 #menu-principais-icones {
@@ -37,7 +37,7 @@
   width: 20px;
   height: 20px;
   padding-left: 15px;
-  fill: var(--roxo1);
+  fill: var(--primary-500);
 }
 
 .menu-icones img {
@@ -55,28 +55,28 @@
 }
 
 .menu-icones:hover {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   cursor: pointer;
 
   & svg {
-    fill: var(--cinza-escuro3);
+    fill: var(--palette-base);
   }
 
   & span {
-    color: var(--cinza-escuro3);
+    color: var(--palette-base);
   }
 }
 
 .menu-icones.active {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
 }
 
 .menu-icones.active svg {
-  fill: var(--cinza-escuro3);
+  fill: var(--palette-base);
 }
 
 .menu-icones.active span {
-  color: var(--cinza-escuro3);
+  color: var(--palette-base);
 }
 
 #imgperfil_menu {
@@ -86,40 +86,40 @@
 }
 
 .menu-icones.claro svg {
-  fill: var(--roxo1);
+  fill: var(--primary-500);
 }
 
 .menu-icones.claro span {
-  color: var(--branco);
+  color: var(--text-primary);
 }
 
 .menu-icones.claro:hover {
-  background-color: var(--branco);
+  background-color: var(--text-primary);
   cursor: pointer;
 }
 
 .menu-icones.claro:hover svg {
-  fill: var(--roxo1);
+  fill: var(--primary-500);
 }
 
 .menu-icones.claro:hover span {
-  color: var(--roxo1);
+  color: var(--primary-500);
 }
 
 .menu-icones.claro.active {
-  background-color: var(--branco);
+  background-color: var(--text-primary);
 }
 
 .menu-icones.claro.active svg {
-  fill: var(--roxo1);
+  fill: var(--primary-500);
 }
 
 .menu-icones.claro.active span {
-  color: var(--roxo1);
+  color: var(--primary-500);
 }
 
 .menu-icones span {
-  color: var(--roxo1);
+  color: var(--primary-500);
 }
 
 @media screen and (max-width: 425px) {

@@ -12,6 +12,8 @@ import ModalSeguidores from "./components/ModalSeguidores";
 import ModalSeguindo from "./components/ModalSeguindo";
 import ModalAvaliarPlanos from "./components/ModalAvaliarPlanos";
 import i18n from "i18next";
+import { useTheme } from "../../theme/useTheme";
+import { PalettePanel } from "./components/PalettePanel";
 
 type User = {
   username: string;
@@ -49,7 +51,8 @@ function Perfil() {
   const [fotoUrl, setFotoUrl] = useState(DEFAULT_AVATAR);
   const [bannerUrl, setBannerUrl] = useState(DEFAULT_BANNER);
   const [idioma, setIdioma] = useState("pt-br");
-  const [tema, setTema] = useState("escuro");
+  const { palette, setBase } = useTheme();
+  const [tema, setTema] = useState(palette.base === "branco" ? "claro" : "escuro");
   const [progresso1, setProgresso1] = useState(0);
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
@@ -59,6 +62,7 @@ function Perfil() {
   const [mostrarSeguindo, setMostrarSeguindo] = useState(false);
   const [mostrarEditor, setMostrarEditor] = useState(false);
   const [mostrarAvaliarPlanos, setMostrarAvaliarPlanos] = useState(false);
+  const [mostrarPaletaPanel, setMostrarPaletaPanel] = useState(false);
 
   // Estados para edição
   const [nomeEditado, setNomeEditado] = useState("");
@@ -77,6 +81,10 @@ function Perfil() {
   const bannerPreviewUrlRef = useRef<string | null>(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTema(palette.base === "branco" ? "claro" : "escuro");
+  }, [palette.base]);
 
   const fetchFollowData = useCallback(async (handle: string) => {
     if (!handle) {
@@ -125,7 +133,9 @@ function Perfil() {
         const idiomaNormalizado = (userData.idioma || "").toLowerCase();
         setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
         const temaNormalizado = (userData.tema || "").toLowerCase();
-        setTema(temaNormalizado === "claro" ? "claro" : "escuro");
+        const resolvedTheme = temaNormalizado === "claro" ? "claro" : "escuro";
+        setTema(resolvedTheme);
+        setBase(resolvedTheme === "claro" ? "branco" : "preto");
         setProgresso1(userData.progresso1 || 0);
         setProgresso2(userData.progresso2 || 0);
         setProgresso3(userData.progresso3 || 0);
@@ -289,6 +299,7 @@ function Perfil() {
 
   const handleThemeChange = (theme: string) => {
     setTema(theme);
+    setBase(theme === "claro" ? "branco" : "preto");
     // Aqui você pode adicionar lógica para salvar o tema no backend ou localStorage, se necessário
   };
 
@@ -425,6 +436,12 @@ function Perfil() {
                     </label>
                   </div>
                 </div>
+                <div
+                  className="prf-btn-config"
+                  onClick={() => setMostrarPaletaPanel(true)}
+                >
+                  Personalizar paleta
+                </div>
                 <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
                 <div
                   className="prf-btn-config"
@@ -520,6 +537,13 @@ function Perfil() {
 
       {mostrarAvaliarPlanos && (
         <ModalAvaliarPlanos onClose={() => setMostrarAvaliarPlanos(false)} />
+      )}
+
+      {mostrarPaletaPanel && (
+        <PalettePanel
+          onClose={() => setMostrarPaletaPanel(false)}
+          onCommit={() => {}}
+        />
       )}
     </div>
   );

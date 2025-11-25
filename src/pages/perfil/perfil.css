@@ -2,10 +2,10 @@
 .crop-modal-content input[type="range"] {
   width: 80%;
   margin: 0 10%;
-  accent-color: #8e5cff;
+  accent-color: var(--primary-400);
   height: 4px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #8e5cff 0%, #6c47ff 100%);
+  background: linear-gradient(90deg, var(--primary-400) 0%, var(--primary-500) 100%);
   outline: none;
   box-shadow: 0 1px 4px rgba(80, 60, 180, 0.10);
 }
@@ -29,7 +29,7 @@
   width: 0;
   height: 0;
   margin: auto;
-  border-left: 14px solid #8e5cff;
+  border-left: 14px solid var(--primary-400);
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
   border-radius: 2px;
@@ -38,7 +38,7 @@
   top: 4px;
 }
 .crop-modal-content input[type="range"]:focus::-webkit-slider-thumb::before {
-  border-left: 14px solid #6c47ff;
+  border-left: 14px solid var(--primary-500);
 }
 /* Thumb setinha para Firefox */
 .crop-modal-content input[type="range"]::-moz-range-thumb {
@@ -59,7 +59,7 @@
   width: 0;
   height: 0;
   margin: auto;
-  border-left: 14px solid #8e5cff;
+  border-left: 14px solid var(--primary-400);
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
   border-radius: 2px;
@@ -68,7 +68,7 @@
   top: 4px;
 }
 .crop-modal-content input[type="range"]:focus::-moz-range-thumb:before {
-  border-left: 14px solid #6c47ff;
+  border-left: 14px solid var(--primary-500);
 }
 /* Thumb setinha para Edge/IE */
 .crop-modal-content input[type="range"]::-ms-thumb {
@@ -83,13 +83,13 @@
 .crop-modal-content input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #8e5cff 0%, #6c47ff 100%);
+  background: linear-gradient(90deg, var(--primary-400) 0%, var(--primary-500) 100%);
 }
 .crop-modal-content input[type="range"]::-ms-fill-lower {
-  background: #8e5cff;
+  background: var(--primary-400);
 }
 .crop-modal-content input[type="range"]::-ms-fill-upper {
-  background: #6c47ff;
+  background: var(--primary-500);
 }
 .crop-modal-content input[type="range"]:focus {
   outline: none;
@@ -109,7 +109,7 @@
 }
 
 .crop-modal-content {
-  background: #222;
+  background: var(--surface-muted);
   padding: 32px 24px 24px 24px;
   border-radius: 16px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.4);
@@ -128,8 +128,8 @@
 }
 
 .crop-modal-actions button {
-  background: #8e5cff;
-  color: #fff;
+  background: var(--primary-400);
+  color: var(--text-primary);
   border: none;
   border-radius: 0px;
   padding: 10px 28px;
@@ -140,7 +140,7 @@
   box-shadow: 0 2px 8px rgba(80, 60, 180, 0.10);
 }
 .crop-modal-actions button:hover {
-  background: #6c47ff;
+  background: var(--primary-500);
 }
 .container-perfil {
   min-height: 100vh;
@@ -165,7 +165,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: var(--cinza-escuro3);
+  background-color: var(--surface-muted);
 }
 
 .prf-usuario-barra {
@@ -175,7 +175,7 @@
   justify-content: center;
   padding: 25px 0;
 
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .prf-container {
@@ -202,12 +202,12 @@
 
 .prf-usuario span {
   font-size: 16px;
-  color: var(--cinza-claro1);
+  color: var(--text-secondary);
 }
 
 .prf-rank span {
   font-size: 16px;
-  color: var(--cinza-claro1);
+  color: var(--text-secondary);
 }
 
 .prf-foto {
@@ -259,29 +259,29 @@
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--cinza-claro1);
+  border: 2px solid var(--text-secondary);
   background: transparent;
   transition: background-color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 }
 
 .prf-option-input:checked {
-  background-color: var(--roxo1);
-  border-color: var(--roxo1);
+  background-color: var(--primary-500);
+  border-color: var(--primary-500);
 }
 
 .prf-option-input:focus-visible {
-  outline: 2px solid var(--roxo1);
+  outline: 2px solid var(--primary-500);
   outline-offset: 2px;
 }
 
 .prf-option-text {
-  color: var(--cinza-claro1);
+  color: var(--text-secondary);
   transition: color 0.2s ease;
 }
 
 .prf-option-input:checked + .prf-option-text {
-  color: var(--branco);
+  color: var(--text-primary);
 }
 
 .prf-titulo-informacoes {
@@ -292,7 +292,7 @@
   text-align: justify;
   width: 100%;
 
-  color: var(--branco);
+  color: var(--text-primary);
 
   font-family: "Questrial", sans-serif;
 
@@ -309,11 +309,11 @@
 }
 
 .prf-biografia::-webkit-scrollbar-track {
-    background: var(--cinza-claro1);
+    background: var(--text-secondary);
 }
 
 .prf-biografia::-webkit-scrollbar-thumb {
-    background-color: var(--roxo1);
+    background-color: var(--primary-500);
 }
 
 .prf-curso-estatistica {
@@ -331,27 +331,27 @@
   align-items: center;
   position: absolute;
 
-  color: var(--branco);
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   padding-left: 25px;
 }
 
 .prf-barra-estatistica {
-  background-color: var(--cinza-escuro1);
+  background-color: var(--surface-raised);
   height: 100%;
   width: 100%;
   overflow: hidden;
 }
 .prf-barra-estatistica::-webkit-progress-value {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
 }
 
 .prf-barra-estatistica::-webkit-progress-bar {
-  background-color: var(--cinza-escuro1);
+  background-color: var(--surface-raised);
 }
 
 .prf-porcentagem-estatistica {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   height: 100%;
 }
 
@@ -365,7 +365,7 @@
   position: absolute;
   right: 25px;
 
-  color: #fff;
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   font-size: 16px;
 }
@@ -413,7 +413,7 @@
 }
 
 .aba-editar {
-  background-color: var(--cinza-escuro2);
+  background-color: var(--surface-panel);
   max-width: 850px;
   width: 100%;
   display: flex;
@@ -431,10 +431,10 @@
 .prf-editar-nome {
   border: 0;
   font-size: 20px;
-  background-color: var(--cinza-claro1);
+  background-color: var(--text-secondary);
   width: calc(100% - 20px);
   padding: 10px;
-  color: var(--branco);
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   outline: none;
 }
@@ -443,10 +443,10 @@
   border: 0;
   height: 250px;
   font-size: 16px;
-  background-color: var(--cinza-escuro3);
+  background-color: var(--surface-muted);
   width: calc(100% - 20px);
   padding: 10px;
-  color: var(--branco);
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
 
   outline: none;
@@ -458,51 +458,51 @@
 }
 
 .prf-editar-biografia::-webkit-scrollbar-track {
-    background: var(--cinza-claro1);
+    background: var(--text-secondary);
 }
 
 .prf-editar-biografia::-webkit-scrollbar-thumb {
-    background-color: var(--roxo1);
+    background-color: var(--primary-500);
 }
 
 .prf-add-imagem {
   height: 35px;
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .prf-add-imagem:hover, .prf-add-imagem label:hover, .prf-add-imagem input:hover {
-  background-color: var(--cinza-escuro3);
+  background-color: var(--surface-muted);
   cursor: pointer;
 }
 
 .prf-botao-editar-enviar {
   padding: 10px 25px;
   font-family: "Questrial", sans-serif;
-  background-color: var(--roxo1);
-  color: var(--branco);
+  background-color: var(--primary-500);
+  color: var(--text-primary);
   width: auto;
   border: 0;
   font-size: 16px;
 }
 
 .prf-botao-editar-enviar.cancelar {
-  background-color: var(--cinza-claro1);
+  background-color: var(--text-secondary);
 }
 
 .prf-botao-editar-enviar:hover {
-  background-color: var(--branco);
-  color: var(--roxo1);
+  background-color: var(--text-primary);
+  color: var(--primary-500);
   cursor: pointer;
 }
 
 .prf-btn-config {
   padding: 10px;
   font-family: "Questrial", sans-serif;
-  background-color: var(--cinza-claro1);
-  color: var(--branco);
+  background-color: var(--text-secondary);
+  color: var(--text-primary);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -510,24 +510,24 @@
 }
 
 .prf-btn-config:hover {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   cursor: pointer;
 }
 
 .prf-editor-banner-btn {
-  background-color: var(--cinza-claro1);
+  background-color: var(--text-secondary);
   padding: 10px 25px;
   position: absolute;
   left: 25px;
   bottom: 25px;
   border: none;
-  color: var(--branco);
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   font-size: 20px;
 }
 
 .prf-editor-banner-btn:hover {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   cursor: pointer;
 }
 
@@ -537,15 +537,15 @@
   bottom: 25px;
   padding: 10px 25px;
   border: none;
-  background-color: var(--cinza-claro1);
-  color: var(--branco);
+  background-color: var(--text-secondary);
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   font-size: 20px;
   cursor: pointer;
 }
 
 .prf-banner-reset:hover {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
 }
 
 .prf-edicao-superior {
@@ -571,17 +571,17 @@
 .prf-editar-foto-label {
   display: flex;
   justify-content: center;
-  background-color: var(--cinza-claro1);
+  background-color: var(--text-secondary);
   padding: 10px 20px;
   box-sizing: border-box;
   width: 100%;
-  color: var(--branco);
+  color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   font-size: 20px;
 }
 
 .prf-editar-foto-label:hover {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   cursor: pointer;
 }
 
@@ -598,7 +598,7 @@
 }
 
 .aba-denunciar {
-  background-color: var(--cinza-escuro2);
+  background-color: var(--surface-panel);
   padding: 25px;
   box-sizing: border-box;
   max-width: 850px;
@@ -617,15 +617,15 @@
   padding: 10px 25px;
   width: auto;
   font-size: 14px;
-  background-color: var(--cinza-claro1);
-  color: var(--branco);
+  background-color: var(--text-secondary);
+  color: var(--text-primary);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .prf-denuncia-topico:hover {
-  background-color: var(--roxo1);
+  background-color: var(--primary-500);
   cursor: pointer;
 }
 
@@ -643,5 +643,6 @@
   gap: 25px;
   padding: 25px;
   box-sizing: border-box;
-  background-color: var(--cinza-escuro2);
+  background-color: var(--surface-panel);
 }
+

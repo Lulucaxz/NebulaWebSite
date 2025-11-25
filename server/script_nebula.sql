@@ -34,12 +34,44 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario` (
   `provider` ENUM("local","google") NULL,
   `seguidores` INT NOT NULL DEFAULT 0,
   `seguindo` INT NOT NULL DEFAULT 0,
+  `active_palette_id` INT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `user_UNIQUE` (`user` ASC) VISIBLE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   UNIQUE INDEX `colocacao_UNIQUE` (`colocacao` ASC) VISIBLE,
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
 ) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `NEBULA`.`usuario_palette`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `NEBULA`.`usuario_palette` ;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario_palette` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `usuario_id` INT NOT NULL,
+  `label` VARCHAR(60) NOT NULL,
+  `base` ENUM('preto','branco') NOT NULL DEFAULT 'preto',
+  `primary_hex` CHAR(7) NOT NULL,
+  `metadata` JSON NULL,
+  `is_default` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_usuario_palette_user` (`usuario_id` ASC) VISIBLE,
+  CONSTRAINT `fk_usuario_palette_user`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `NEBULA`.`usuario` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+ALTER TABLE `NEBULA`.`usuario`
+  ADD CONSTRAINT `fk_usuario_active_palette`
+    FOREIGN KEY (`active_palette_id`)
+    REFERENCES `NEBULA`.`usuario_palette` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
 
 -- -----------------------------------------------------
 -- Table `NEBULA`.`usuario_follow`

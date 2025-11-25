@@ -11,31 +11,16 @@ axios.defaults.withCredentials = true; // Importante para sessões
 
 const API_URL = "http://localhost:4000"; // Backend local
 
-
-interface User {
-  idsite: string;
-  id: string;
-  name: string;
-  email: string;
-  photo: string;
-  provider: string;
-  prf_user: string;
-  bio: string;
-}
-
-
 function Configuracoes() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   // true = pt, false = en
   const [idioma, setIdioma] = useState(i18n.language === 'pt');
   const [tema, setTema] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
 
   const logout = async () => {
     try{
       await axios.get(`${API_URL}/auth/logout`);
-      setUser(null);
       navigate('/');
     }
     catch (error) {

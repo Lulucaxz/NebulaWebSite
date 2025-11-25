@@ -11,20 +11,49 @@
 }
 
 :root {
-    --branco: #F8EFFF;
-    --preto: #070209;
+    --palette-base: #070209;
+    --palette-contrast: #F8EFFF;
 
-    --cinza-escuro1: #282828;
-    --cinza-escuro2: #1D1D1D;
-    --cinza-escuro3: #141414;
+    --surface-page: color-mix(in srgb, var(--palette-base) 92%, var(--palette-contrast) 8%);
+    --surface-panel: color-mix(in srgb, var(--palette-base) 85%, var(--palette-contrast) 15%);
+    --surface-raised: color-mix(in srgb, var(--palette-base) 78%, var(--palette-contrast) 22%);
+    --surface-muted: color-mix(in srgb, var(--palette-base) 65%, var(--palette-contrast) 35%);
+    --border-subtle: color-mix(in srgb, var(--palette-base) 55%, var(--palette-contrast) 45%);
+    --border-strong: color-mix(in srgb, var(--palette-base) 35%, var(--palette-contrast) 65%);
 
-    --cinza-claro1: #4E4E4E;
-    --cinza-claro2: #dbdbdb;
+    --text-primary: var(--palette-contrast);
+    --text-secondary: color-mix(in srgb, var(--palette-contrast) 72%, var(--palette-base) 28%);
+    --text-muted: color-mix(in srgb, var(--palette-contrast) 55%, var(--palette-base) 45%);
+    --text-on-primary: color-mix(in srgb, #ffffff 85%, var(--palette-base) 15%);
 
-    --roxo1: #7e28c0;
-    --roxo2: #6C23A3;
-    --roxo3: #51187c;
-    --roxo4: #2d0b47;
+    --primary-500: #7e28c0;
+    --primary-400: color-mix(in srgb, var(--primary-500) 80%, #ffffff 20%);
+    --primary-600: color-mix(in srgb, var(--primary-500) 85%, #000000 15%);
+    --primary-soft: color-mix(in srgb, var(--primary-500) 30%, var(--palette-contrast) 70%);
+
+    /* Aliases temporários para manter o site enquanto os estilos são ajustados */
+    --branco: var(--text-primary);
+    --preto: var(--palette-base);
+    --cinza-escuro1: var(--surface-raised);
+    --cinza-escuro2: var(--surface-panel);
+    --cinza-escuro3: var(--surface-muted);
+    --cinza-claro1: var(--text-secondary);
+    --cinza-claro2: var(--text-muted);
+    --roxo1: var(--primary-500);
+    --roxo2: var(--primary-600);
+    --roxo3: color-mix(in srgb, var(--primary-500) 65%, #000000 35%);
+    --roxo4: color-mix(in srgb, var(--primary-500) 45%, #000000 55%);
+}
+
+:root[data-base="branco"] {
+    --palette-base: #F8EFFF;
+    --palette-contrast: #070209;
+}
+
+body {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    font-family: 'Questrial', sans-serif;
 }
 
 body::-webkit-scrollbar {
@@ -32,11 +61,11 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-    background: var(--cinza-escuro3);
+    background: var(--surface-raised);
 }
 
 body::-webkit-scrollbar-thumb {
-    background-color: var(--roxo1);
+    background-color: var(--primary-500);
 }
 
 .container {
@@ -48,18 +77,18 @@ body::-webkit-scrollbar-thumb {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: var(--cinza-escuro2);
+    background-color: var(--surface-panel);
 }
 
 .pdr-descricao {
-    color: #fff;
+    color: var(--text-primary);
     margin: 40px 0;
     font-family: "Archivo Black", sans-serif;
     font-size: 28px;
 }
 
 .pdr-descricao-destaque {
-    color: var(--roxo1);
+    color: var(--primary-500);
     font-size: 36px;
 }
 
@@ -83,7 +112,7 @@ body::-webkit-scrollbar-thumb {
     font-size: 32px;
     line-height: 35px;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .sessao hr {
@@ -91,7 +120,7 @@ body::-webkit-scrollbar-thumb {
     flex-grow: 1;
     height: 1px;
     box-sizing: border-box;
-    background-color: #F8EFFF;
+    background-color: var(--border-strong);
 }
 
 @media screen and (max-width: 1024px) {
