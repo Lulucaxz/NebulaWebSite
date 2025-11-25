@@ -69,7 +69,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
             className="prf-banner-reset"
             onClick={onBannerReset}
           >
-            {t("USAR BANNER PADRÃO")}
+            {t("Usar banner padrão")}
           </button>
         </div>
 

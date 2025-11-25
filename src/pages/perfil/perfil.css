@@ -645,3 +645,122 @@
   box-sizing: border-box;
   background-color: var(--cinza-escuro2);
 }
+
+@media (max-width: 768px) {
+
+  .prf-usuario-barra {
+    height: auto;
+  }
+
+  .prf-colunas {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+    .rank-botao-puxar:hover {
+        cursor: pointer;
+        background-color: var(--branco);
+    }
+
+    .rank-botao-puxar:hover svg,
+    .rank-botao-puxar:focus-visible svg,
+    .rank-botao-puxar.ativo svg {
+        fill: var(--roxo1);
+    }
+
+    .rank-botao-puxar:focus-visible {
+        outline: 2px solid var(--branco);
+        outline-offset: 3px;
+    }
+
+    .rank-botao-puxar.ativo {
+        background-color: var(--branco);
+    }
+
+    #prf-rank-container {
+        display: none;
+    }
+
+    #prf-rank-container.rank-mobile-open {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: calc(100% - 150px);
+        height: 100vh;
+        z-index: 1;
+    }
+
+    #prf-containerAll {
+        width: 100%;
+    }
+
+    .prf-colunas {
+        flex-direction: column-reverse;
+    }
+
+    .prf-coluna1 {
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
+    .prf-container {
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+        
+        span {
+          position: relative;
+        }
+    }
+
+    .container-perfil {
+        width: calc(100vw - 150px);
+    }
+
+    .aba-editar {
+        max-width: 100vw;
+        height: 100vh;
+    }
+
+    .aba-avaliar-planos {
+        max-width: 100vw;
+        height: 100vh;
+    }
+
+    .aba-denunciar {
+        max-width: 100vw;
+        height: 100vh;
+    }
+}
+
+@media (max-width: 425px) {
+
+  .prf-containerAll {
+      width: 100%;
+  }
+
+  .container-perfil {
+      width: 100vw;
+  }
+
+  .prf-foto {
+      width: 60px;
+      height: 60px;
+  }
+
+  .prf-nome-usuario span {
+        font-size: 16px;
+  }
+
+  .prf-usuario span {
+      font-size: 12px;
+      top: -5px;
+  }
+
+  .prf-rank span {
+      font-size: 12px;
+      top: -10px;
+  }
+
+}
