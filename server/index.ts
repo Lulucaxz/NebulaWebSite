@@ -24,6 +24,7 @@ import avaliacoesRoutes from "./routes/avaliacoesRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import { asyncHandler } from './utils';
 import { setSocketServerInstance } from "./socketInstance";
+import { markUserInConversation, markUserLeftConversation } from "./presenceStore";
 
 dotenv.config();
 
@@ -528,6 +529,9 @@ io.on("connection", (socket: Socket) => {
     return;
   }
 
+  socket.join(`user:${userId}`);
+  const joinedConversations = new Map<number, number>();
+
   socket.on("chat:join", async ({ conversationId }: { conversationId?: number }) => {
     if (!conversationId || !Number.isInteger(conversationId)) {
       socket.emit("chat:error", { message: "Conversa inválida" });
@@ -546,6 +550,9 @@ io.on("connection", (socket: Socket) => {
       }
 
       socket.join(`chat:${conversationId}`);
+      const currentCount = joinedConversations.get(conversationId) ?? 0;
+      joinedConversations.set(conversationId, currentCount + 1);
+      markUserInConversation(userId, conversationId);
       socket.emit("chat:joined", { conversationId });
     } catch (error) {
       console.error("Failed to join chat room", error);
@@ -556,7 +563,24 @@ io.on("connection", (socket: Socket) => {
   socket.on("chat:leave", ({ conversationId }: { conversationId?: number }) => {
     if (conversationId && Number.isInteger(conversationId)) {
       socket.leave(`chat:${conversationId}`);
+      const currentCount = joinedConversations.get(conversationId);
+      if (!currentCount) {
+        return;
+      }
+      if (currentCount <= 1) {
+        joinedConversations.delete(conversationId);
+      } else {
+        joinedConversations.set(conversationId, currentCount - 1);
+      }
+      markUserLeftConversation(userId, conversationId);
     }
+  });
+
+  socket.on("disconnect", () => {
+    for (const [conversationId, count] of joinedConversations.entries()) {
+      markUserLeftConversation(userId, conversationId, count);
+    }
+    joinedConversations.clear();
   });
 });
 

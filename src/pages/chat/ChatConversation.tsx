@@ -5,7 +5,8 @@ import { Menu } from "../../components/Menu";
 import "./chat.css";
 import { API_BASE, fetchWithCredentials } from "../../api";
 import { ChatMessage, ConversationSummary } from "./chatData";
-import { io as createSocket, Socket } from "socket.io-client";
+import { getSocket } from "../../socket";
+import type { Socket } from "socket.io-client";
 
 interface AuthUserResponse {
   id?: number | string;
@@ -99,16 +100,17 @@ function ChatConversation() {
   }, [loadMessages]);
 
   useEffect(() => {
-    const socket = createSocket(API_BASE, { withCredentials: true });
+    const socket = getSocket();
     socketRef.current = socket;
 
-    socket.on("connect_error", (error: Error) => {
+    const handleError = (error: Error) => {
       console.error("Socket connection error", error);
-    });
+    };
+
+    socket.on("connect_error", handleError);
 
     return () => {
-      socket.disconnect();
-      socketRef.current = null;
+      socket.off("connect_error", handleError);
     };
   }, []);
 
@@ -306,7 +308,6 @@ function ChatConversation() {
             {!loadingMessages && !messagesError && messages.length === 0 && (
               <div className="chat-empty-messages">
                 <strong>{t("Nenhuma mensagem por aqui ainda.")}</strong>
-                <span>{t("Compartilhe insights sobre sua rotina de estudos e incentive a tripulação!")}</span>
               </div>
             )}
             {!loadingMessages && !messagesError && messages.map((item) => {

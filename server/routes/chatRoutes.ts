@@ -3,6 +3,7 @@ import { RowDataPacket, ResultSetHeader } from "mysql2";
 import { pool } from "../db";
 import { asyncHandler } from "../utils";
 import { getSocketServerInstance } from "../socketInstance";
+import { isUserActiveInConversation } from "../presenceStore";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -29,6 +30,17 @@ interface MessageRow extends RowDataPacket {
   created_at: Date | string;
   author_id: number;
   username: string;
+}
+
+interface NotificationRow extends RowDataPacket {
+  id: number;
+  conversation_id: number;
+  message_id: number;
+  author_id: number;
+  author_name: string;
+  conversation_name: string | null;
+  content_snapshot: string;
+  created_at: Date | string;
 }
 
 const router = Router();
@@ -354,6 +366,16 @@ router.post(
       return;
     }
 
+    const [conversationRows] = await pool.query<RowDataPacket[]>(
+      `SELECT name, is_group FROM chat_room WHERE id = ? LIMIT 1`,
+      [conversationId]
+    );
+
+    if (!conversationRows.length) {
+      res.status(404).json({ error: "Conversa não encontrada." });
+      return;
+    }
+
     const content = (req.body?.content ?? "").toString().trim();
     if (!content) {
       res.status(400).json({ error: "Mensagem vazia." });
@@ -374,6 +396,10 @@ router.post(
     );
 
     const authorName = authorRows[0]?.username ?? "Você";
+    const conversationRecord = conversationRows[0];
+    const notificationConversationName = conversationRecord.is_group
+      ? (conversationRecord.name as string) || "Conversa"
+      : authorName;
     const createdAt = new Date().toISOString();
 
     const messagePayload = {
@@ -390,6 +416,99 @@ router.post(
 
     const io = getSocketServerInstance();
     io?.to(`chat:${conversationId}`).emit("chat:new-message", { ...messagePayload, isMine: false });
+
+    const [participantRows] = await pool.query<RowDataPacket[]>(
+      `SELECT user_id FROM chat_room_participant WHERE room_id = ? AND user_id <> ?`,
+      [conversationId, userId]
+    );
+
+    for (const participant of participantRows) {
+      const participantId = Number(participant.user_id);
+      if (isUserActiveInConversation(participantId, conversationId)) {
+        continue;
+      }
+      const [notificationInsert] = await pool.query<ResultSetHeader>(
+        `INSERT INTO chat_notification (
+           user_id,
+           conversation_id,
+           message_id,
+           author_id,
+           conversation_name,
+           content_snapshot
+         )
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+          participantId,
+          conversationId,
+          messagePayload.id,
+          userId,
+          notificationConversationName,
+          limitedContent.slice(0, 255),
+        ]
+      );
+
+      const notificationPayload = {
+        ...messagePayload,
+        isMine: false,
+        conversationName: notificationConversationName,
+        notificationId: notificationInsert.insertId,
+      };
+
+      io?.to(`user:${participantId}`).emit("notification:new-message", notificationPayload);
+    }
+  })
+);
+
+router.get(
+  "/notifications",
+  asyncHandler(async (req: Request, res: Response) => {
+    const userId = ensureAuthenticated(req as AuthenticatedRequest, res);
+    if (!userId) {
+      return;
+    }
+
+    const [rows] = await pool.query<NotificationRow[]>(
+      `SELECT n.id,
+              n.conversation_id,
+              n.message_id,
+              n.author_id,
+              u.username AS author_name,
+              n.conversation_name,
+              n.content_snapshot,
+              n.created_at
+         FROM chat_notification n
+         JOIN usuario u ON u.id = n.author_id
+        WHERE n.user_id = ?
+        ORDER BY n.created_at DESC
+        LIMIT 50`,
+      [userId]
+    );
+
+    const notifications = rows.map((row) => ({
+      id: Number(row.id),
+      conversationId: Number(row.conversation_id),
+      messageId: Number(row.message_id),
+      conversationName: row.conversation_name ?? "",
+      authorName: row.author_name,
+      content: row.content_snapshot,
+      createdAt: row.created_at,
+    }));
+
+    res.json(notifications);
+  })
+);
+
+router.post(
+  "/notifications/clear",
+  asyncHandler(async (req: Request, res: Response) => {
+    const userId = ensureAuthenticated(req as AuthenticatedRequest, res);
+    if (!userId) {
+      return;
+    }
+
+    await pool.query(`DELETE FROM chat_notification WHERE user_id = ?`, [userId]);
+
+    res.json({ success: true });
   })
 );
 

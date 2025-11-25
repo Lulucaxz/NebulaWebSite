@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AlertProvider } from './Alert';
+import NotificationListener from "./NotificationListener";
 
 import Perfil from './pages/perfil/Perfil';
 import Perfil2 from './pages/perfil/Perfil2';
@@ -15,11 +16,13 @@ import Planos from './pages/planos/planos';
 import Forum from './pages/forum/forum';
 import Chat from './pages/chat/Chat';
 import ChatConversation from './pages/chat/ChatConversation';
+import Notificacoes from './pages/notificacoes/notificacoes';
 
 function App() {
   return (
     <AlertProvider>
     <Router>
+      <NotificationListener />
       <Routes>
         <Route path="/" element={
           <Home />
@@ -56,6 +59,9 @@ function App() {
         } />
         <Route path="/configuracoes" element={
           <Configuracoes />
+        } />
+        <Route path="/notificacoes" element={
+          <Notificacoes />
         } />
         <Route path="/cadastrar" element={
           <Login />

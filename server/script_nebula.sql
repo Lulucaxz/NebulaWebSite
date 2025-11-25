@@ -278,6 +278,41 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_post_like` (
       ON UPDATE CASCADE
   ) ENGINE = InnoDB;
 
+  -- -----------------------------------------------------
+  -- Table `NEBULA`.`chat_notification`
+  -- -----------------------------------------------------
+  DROP TABLE IF EXISTS `NEBULA`.`chat_notification` ;
+
+  CREATE TABLE IF NOT EXISTS `NEBULA`.`chat_notification` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `conversation_id` BIGINT NOT NULL,
+    `message_id` BIGINT NOT NULL,
+    `author_id` INT NOT NULL,
+    `conversation_name` VARCHAR(255) NOT NULL,
+    `content_snapshot` VARCHAR(2048) NOT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `read_at` DATETIME NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_chat_notification_user` (`user_id` ASC, `read_at` ASC, `created_at` DESC) VISIBLE,
+    INDEX `idx_chat_notification_message` (`message_id` ASC) VISIBLE,
+    CONSTRAINT `fk_chat_notification_user`
+      FOREIGN KEY (`user_id`)
+      REFERENCES `NEBULA`.`usuario` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+    CONSTRAINT `fk_chat_notification_conversation`
+      FOREIGN KEY (`conversation_id`)
+      REFERENCES `NEBULA`.`chat_room` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+    CONSTRAINT `fk_chat_notification_message`
+      FOREIGN KEY (`message_id`)
+      REFERENCES `NEBULA`.`chat_message` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
+  ) ENGINE = InnoDB;
+
 -- -----------------------------------------------------
 -- Table `NEBULA`.`forum_resposta_like`
 -- -----------------------------------------------------

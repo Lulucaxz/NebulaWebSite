@@ -16,6 +16,8 @@ export interface ChatMessage {
   authorName: string;
   isMine: boolean;
   roomId: number;
+  conversationName?: string;
+  notificationId?: number;
 }
 
 export interface FollowedUser {
