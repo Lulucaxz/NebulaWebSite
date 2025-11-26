@@ -12,7 +12,6 @@ import ModalSeguidores from "./components/ModalSeguidores";
 import ModalSeguindo from "./components/ModalSeguindo";
 import ModalAvaliarPlanos from "./components/ModalAvaliarPlanos";
 import i18n from "i18next";
-import { useTheme } from "../../theme/useTheme";
 import { PalettePanel } from "./components/PalettePanel";
 
 type User = {
@@ -51,8 +50,6 @@ function Perfil() {
   const [fotoUrl, setFotoUrl] = useState(DEFAULT_AVATAR);
   const [bannerUrl, setBannerUrl] = useState(DEFAULT_BANNER);
   const [idioma, setIdioma] = useState("pt-br");
-  const { palette, setBase } = useTheme();
-  const [tema, setTema] = useState(palette.base === "branco" ? "claro" : "escuro");
   const [progresso1, setProgresso1] = useState(0);
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
@@ -81,10 +78,6 @@ function Perfil() {
   const bannerPreviewUrlRef = useRef<string | null>(null);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setTema(palette.base === "branco" ? "claro" : "escuro");
-  }, [palette.base]);
 
   const fetchFollowData = useCallback(async (handle: string) => {
     if (!handle) {
@@ -125,17 +118,13 @@ function Perfil() {
         const userData: User = res.data;
         setNome(userData.username);
         setBiografia(userData.biografia || "");
-    setUsuario(userData.user);
-    const colocacaoNumerica = Number(userData.colocacao);
-    setRank(Number.isFinite(colocacaoNumerica) ? colocacaoNumerica : null);
-  setFotoUrl(userData.icon || DEFAULT_AVATAR);
-  setBannerUrl(userData.banner || DEFAULT_BANNER);
+        setUsuario(userData.user);
+        const colocacaoNumerica = Number(userData.colocacao);
+        setRank(Number.isFinite(colocacaoNumerica) ? colocacaoNumerica : null);
+        setFotoUrl(userData.icon || DEFAULT_AVATAR);
+        setBannerUrl(userData.banner || DEFAULT_BANNER);
         const idiomaNormalizado = (userData.idioma || "").toLowerCase();
         setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
-        const temaNormalizado = (userData.tema || "").toLowerCase();
-        const resolvedTheme = temaNormalizado === "claro" ? "claro" : "escuro";
-        setTema(resolvedTheme);
-        setBase(resolvedTheme === "claro" ? "branco" : "preto");
         setProgresso1(userData.progresso1 || 0);
         setProgresso2(userData.progresso2 || 0);
         setProgresso3(userData.progresso3 || 0);
@@ -297,12 +286,6 @@ function Perfil() {
     setIdioma(language);
   };
 
-  const handleThemeChange = (theme: string) => {
-    setTema(theme);
-    setBase(theme === "claro" ? "branco" : "preto");
-    // Aqui você pode adicionar lógica para salvar o tema no backend ou localStorage, se necessário
-  };
-
   const handleBannerReset = () => {
     if (bannerPreviewUrlRef.current) {
       URL.revokeObjectURL(bannerPreviewUrlRef.current);
@@ -404,35 +387,6 @@ function Perfil() {
                         onChange={() => handleLanguageChange("en-us")}
                       />
                       <span className="prf-option-text">American English</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="prf-tema">
-                  <span>Tema:</span>
-                  <div className="prf-option-group">
-                    <label className="prf-option" htmlFor="tema-claro">
-                      <input
-                        className="prf-option-input"
-                        type="radio"
-                        name="tema"
-                        id="tema-claro"
-                        value="claro"
-                        checked={tema === "claro"}
-                        onChange={() => handleThemeChange("claro")}
-                      />
-                      <span className="prf-option-text">Claro</span>
-                    </label>
-                    <label className="prf-option" htmlFor="tema-escuro">
-                      <input
-                        className="prf-option-input"
-                        type="radio"
-                        name="tema"
-                        id="tema-escuro"
-                        value="escuro"
-                        checked={tema === "escuro"}
-                        onChange={() => handleThemeChange("escuro")}
-                      />
-                      <span className="prf-option-text">Escuro</span>
                     </label>
                   </div>
                 </div>

@@ -11,6 +11,7 @@ axios.defaults.withCredentials = true; // Importante para sessões
 
 const API_URL = "http://localhost:4000"; // Backend local
 
+
 function Configuracoes() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();

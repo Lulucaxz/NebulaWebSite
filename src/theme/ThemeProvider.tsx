@@ -74,13 +74,13 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 const readStoredPalette = (): ThemePalette => {
   if (typeof window === "undefined") {
-    return { ...defaultPalette };
+    return defaultPalette;
   }
 
   try {
     const serialized = window.localStorage.getItem(STORAGE_KEY);
     if (!serialized) {
-      return { ...defaultPalette };
+      return defaultPalette;
     }
     const parsed = JSON.parse(serialized) as Partial<ThemePalette> & { baseTone?: number };
     const base: ThemeBase = parsed.base === "branco" ? "branco" : "preto";
@@ -88,7 +88,7 @@ const readStoredPalette = (): ThemePalette => {
     const primary = normalizeHex(parsed.primary || DEFAULT_PRIMARY);
     return { base, baseTone, primary, source: "local" };
   } catch {
-    return { ...defaultPalette };
+    return defaultPalette;
   }
 };
 

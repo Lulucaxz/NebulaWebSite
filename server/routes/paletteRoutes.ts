@@ -25,7 +25,7 @@ type PaletteRow = RowDataPacket & {
   label: string;
   base: ThemeBase;
   primary_hex: string;
-  metadata: string | null;
+  metadata: string | Buffer | null;
   is_default: number;
 };
 
@@ -38,10 +38,24 @@ const clamp01 = (value: number): number => {
   return Math.min(1, Math.max(0, value));
 };
 
-const parseMetadata = (payload: string | null): PaletteMetadata => {
+const parseMetadata = (payload: PaletteRow["metadata"]): PaletteMetadata => {
   if (!payload) return {};
+
+  const toJsonString = () => {
+    if (typeof payload === "string") {
+      return payload;
+    }
+    if (typeof Buffer !== "undefined" && Buffer.isBuffer(payload)) {
+      return payload.toString("utf8");
+    }
+    return JSON.stringify(payload);
+  };
+
   try {
-    const parsed = JSON.parse(payload);
+    if (typeof payload === "object" && !Buffer.isBuffer(payload)) {
+      return payload as PaletteMetadata;
+    }
+    const parsed = JSON.parse(toJsonString());
     if (typeof parsed === "object" && parsed !== null) {
       return parsed as PaletteMetadata;
     }
@@ -62,6 +76,8 @@ const toneFromRow = (row: PaletteRow): number => {
 };
 
 const toneToBase = (tone: number): ThemeBase => (tone >= 0.5 ? "branco" : "preto");
+
+const tonesAreEqual = (a: number, b: number): boolean => Math.abs(a - b) <= 0.01;
 
 const normalizeHex = (value: string | undefined): string => {
   if (!value) return "#7e28c0";
@@ -252,9 +268,26 @@ router.post(
         return;
       }
 
-      const normalizedTone = clamp01(
-        typeof baseTone === "number" ? baseTone : normalizedBase === "branco" ? 1 : 0
-      );
+        const normalizedTone = clamp01(
+          typeof baseTone === "number" ? baseTone : normalizedBase === "branco" ? 1 : 0
+        );
+
+        const [existingRows] = await connection.query<PaletteRow[]>(
+          `SELECT id, base, primary_hex, metadata, is_default FROM usuario_palette WHERE usuario_id = ?`,
+          [userId]
+        );
+
+        const hasDuplicate = existingRows.some((row) => {
+          const existingTone = toneFromRow(row);
+          const existingHex = normalizeHex(row.primary_hex);
+          return tonesAreEqual(existingTone, normalizedTone) && existingHex === normalizedHex;
+        });
+
+        if (hasDuplicate) {
+          await connection.rollback();
+          res.status(400).json({ error: "Você já possui uma paleta com estas cores" });
+          return;
+        }
 
       const [result] = await connection.query<ResultSetHeader>(
         `INSERT INTO usuario_palette (usuario_id, label, base, primary_hex, metadata, is_default)
