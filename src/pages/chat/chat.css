@@ -299,6 +299,22 @@
   margin-bottom: 4px;
 }
 
+.chat-conversation-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-conversation-unread {
+    background: var(--roxo1);
+  padding: 4px 6px;
+  border-radius: 1px;
+  font-size: 11px;
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .chat-conversation-meta {
   display: flex;
   align-items: center;

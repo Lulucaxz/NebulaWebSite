@@ -345,6 +345,29 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`forum_post_like` (
       ON UPDATE CASCADE
   ) ENGINE = InnoDB;
 
+  -- -----------------------------------------------------
+  -- Table `NEBULA`.`chat_unread_counter`
+  -- -----------------------------------------------------
+  DROP TABLE IF EXISTS `NEBULA`.`chat_unread_counter` ;
+
+  CREATE TABLE IF NOT EXISTS `NEBULA`.`chat_unread_counter` (
+    `user_id` INT NOT NULL,
+    `conversation_id` BIGINT NOT NULL,
+    `unread_count` INT NOT NULL DEFAULT 0,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`user_id`, `conversation_id`),
+    CONSTRAINT `fk_chat_unread_counter_user`
+      FOREIGN KEY (`user_id`)
+      REFERENCES `NEBULA`.`usuario` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+    CONSTRAINT `fk_chat_unread_counter_conversation`
+      FOREIGN KEY (`conversation_id`)
+      REFERENCES `NEBULA`.`chat_room` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
+  ) ENGINE = InnoDB;
+
 -- -----------------------------------------------------
 -- Table `NEBULA`.`forum_resposta_like`
 -- -----------------------------------------------------

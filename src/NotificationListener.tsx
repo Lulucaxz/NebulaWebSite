@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, matchPath } from "react-router-dom";
 import { getSocket } from "./socket";
 import { ChatMessage } from "./pages/chat/chatData";
 import { showAlert } from "./Alert";
+import { useUnread } from "./unreadContext";
 
 function NotificationListener() {
   const location = useLocation();
+  const { incrementConversationUnread, incrementNotificationsUnread } = useUnread();
+  const seenNotificationIdsRef = useRef<Set<number>>(new Set());
   useEffect(() => {
     const socket = getSocket();
 
@@ -19,6 +22,23 @@ function NotificationListener() {
       }
 
       const title = message.conversationName ?? message.authorName;
+      const notificationId = Number(message.notificationId);
+      if (Number.isFinite(notificationId)) {
+        const seenNotifications = seenNotificationIdsRef.current;
+        if (seenNotifications.has(notificationId)) {
+          return;
+        }
+        seenNotifications.add(notificationId);
+        if (seenNotifications.size > 500) {
+          const oldest = seenNotifications.values().next().value;
+          if (typeof oldest === "number") {
+            seenNotifications.delete(oldest);
+          }
+        }
+      }
+
+      incrementConversationUnread(message.roomId);
+      incrementNotificationsUnread();
       showAlert(`Nova mensagem em ${title}`);
     };
 
@@ -27,7 +47,7 @@ function NotificationListener() {
     return () => {
       socket.off("notification:new-message", handler);
     };
-  }, [location.pathname]);
+  }, [incrementConversationUnread, incrementNotificationsUnread, location.pathname]);
 
   return null;
 }

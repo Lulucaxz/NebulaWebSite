@@ -6,6 +6,7 @@ export interface ConversationSummary {
   participantCount: number;
   lastMessagePreview: string | null;
   lastMessageAt: string | null;
+  unreadCount?: number;
 }
 
 export interface ChatMessage {

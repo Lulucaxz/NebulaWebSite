@@ -22,6 +22,7 @@ interface ConversationRow extends RowDataPacket {
   created_at: Date | string;
   other_username: string | null;
   other_curso: string | null;
+  unread_count: number;
 }
 
 interface MessageRow extends RowDataPacket {
@@ -41,6 +42,11 @@ interface NotificationRow extends RowDataPacket {
   conversation_name: string | null;
   content_snapshot: string;
   created_at: Date | string;
+}
+
+interface UnreadRow extends RowDataPacket {
+  conversation_id: number;
+  unread_count: number;
 }
 
 const router = Router();
@@ -107,18 +113,26 @@ router.get(
               MAX(m.created_at) AS last_message_at,
               SUBSTRING_INDEX(MAX(CONCAT(m.created_at, '||', m.content)), '||', -1) AS last_message_preview,
               MAX(CASE WHEN p.user_id <> ? THEN u.username ELSE NULL END) AS other_username,
-              MAX(CASE WHEN p.user_id <> ? THEN u.curso ELSE NULL END) AS other_curso
+              MAX(CASE WHEN p.user_id <> ? THEN u.curso ELSE NULL END) AS other_curso,
+              COALESCE(MAX(uc.unread_count), MAX(notif.unread_count), 0) AS unread_count
          FROM chat_room r
          JOIN chat_room_participant p ON p.room_id = r.id
          JOIN usuario u ON u.id = p.user_id
          LEFT JOIN chat_message m ON m.room_id = r.id
+         LEFT JOIN chat_unread_counter uc ON uc.conversation_id = r.id AND uc.user_id = ?
+         LEFT JOIN (
+              SELECT conversation_id, COUNT(*) AS unread_count
+                FROM chat_notification
+               WHERE user_id = ?
+               GROUP BY conversation_id
+         ) notif ON notif.conversation_id = r.id
         WHERE EXISTS (
               SELECT 1 FROM chat_room_participant rp
               WHERE rp.room_id = r.id AND rp.user_id = ?
               )
-        GROUP BY r.id
+        GROUP BY r.id, r.name, r.tag, r.is_group, r.created_at
         ORDER BY COALESCE(MAX(m.created_at), r.created_at) DESC`,
-      [userId, userId, userId]
+      [userId, userId, userId, userId, userId]
     );
 
     const conversations = rows.map((row) => {
@@ -133,10 +147,56 @@ router.get(
         participantCount: Number(row.participant_count),
         lastMessagePreview: row.last_message_preview,
         lastMessageAt: row.last_message_at ?? row.created_at,
+        unreadCount: Number(row.unread_count ?? 0),
       };
     });
 
     res.json(conversations);
+  })
+);
+
+router.get(
+  "/unread",
+  asyncHandler(async (req: Request, res: Response) => {
+    const userId = ensureAuthenticated(req as AuthenticatedRequest, res);
+    if (!userId) {
+      return;
+    }
+
+    const [rows] = await pool.query<UnreadRow[]>(
+      `SELECT ids.conversation_id,
+              COALESCE(uc.unread_count, notif.unread_count, 0) AS unread_count
+         FROM (
+               SELECT conversation_id FROM chat_unread_counter WHERE user_id = ?
+               UNION
+               SELECT conversation_id FROM chat_notification WHERE user_id = ?
+         ) ids
+         LEFT JOIN chat_unread_counter uc
+           ON uc.conversation_id = ids.conversation_id AND uc.user_id = ?
+         LEFT JOIN (
+               SELECT conversation_id, COUNT(*) AS unread_count
+                 FROM chat_notification
+                WHERE user_id = ?
+                GROUP BY conversation_id
+         ) notif ON notif.conversation_id = ids.conversation_id`,
+      [userId, userId, userId, userId]
+    );
+
+    const payload = rows
+      .map((row) => ({
+      conversationId: Number(row.conversation_id),
+        unreadCount: Number(row.unread_count ?? 0),
+      }))
+      .filter((entry) => entry.unreadCount > 0);
+
+    const [notificationCountRows] = await pool.query<RowDataPacket[]>(
+      `SELECT COUNT(*) AS total FROM chat_notification WHERE user_id = ?`,
+      [userId]
+    );
+
+    const notificationsTotal = Number(notificationCountRows[0]?.total ?? 0);
+
+    res.json({ conversations: payload, notificationsTotal });
   })
 );
 
@@ -228,6 +288,7 @@ router.post(
       participantCount: participantSet.length,
       lastMessagePreview: null,
       lastMessageAt: null,
+      unreadCount: 0,
     });
   })
 );
@@ -325,6 +386,19 @@ router.get(
         WHERE m.room_id = ?
         ORDER BY m.created_at ASC`,
       [conversationId]
+    );
+
+    await pool.query(
+      `DELETE FROM chat_notification WHERE user_id = ? AND conversation_id = ?`,
+      [userId, conversationId]
+    );
+
+    await pool.query(
+      `INSERT INTO chat_unread_counter (user_id, conversation_id, unread_count)
+       VALUES (?, ?, 0)
+       ON DUPLICATE KEY UPDATE unread_count = 0,
+                               updated_at = CURRENT_TIMESTAMP`,
+      [userId, conversationId]
     );
 
     const messages = rows.map((row) => ({
@@ -453,6 +527,14 @@ router.post(
         conversationName: notificationConversationName,
         notificationId: notificationInsert.insertId,
       };
+
+      await pool.query(
+        `INSERT INTO chat_unread_counter (user_id, conversation_id, unread_count)
+         VALUES (?, ?, 1)
+         ON DUPLICATE KEY UPDATE unread_count = unread_count + 1,
+                                 updated_at = CURRENT_TIMESTAMP`,
+        [participantId, conversationId]
+      );
 
       io?.to(`user:${participantId}`).emit("notification:new-message", notificationPayload);
     }

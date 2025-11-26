@@ -7,6 +7,7 @@ import { API_BASE, fetchWithCredentials } from "../../api";
 import { ChatMessage, ConversationSummary } from "./chatData";
 import { getSocket } from "../../socket";
 import type { Socket } from "socket.io-client";
+import { useUnread } from "../../unreadContext";
 
 interface AuthUserResponse {
   id?: number | string;
@@ -29,6 +30,7 @@ function ChatConversation() {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const hasAutoScrolledRef = useRef(false);
   const socketRef = useRef<Socket | null>(null);
+  const { markConversationRead } = useUnread();
 
   const isInvalidConversation = Number.isNaN(conversationId);
 
@@ -82,6 +84,7 @@ function ChatConversation() {
       }
       const data: ChatMessage[] = await response.json();
       setMessages(data);
+      markConversationRead(conversationId);
     } catch (error) {
       console.error("Failed to load messages", error);
       setMessages([]);
@@ -89,7 +92,7 @@ function ChatConversation() {
     } finally {
       setLoadingMessages(false);
     }
-  }, [conversationId, isInvalidConversation, t]);
+  }, [conversationId, isInvalidConversation, markConversationRead, t]);
 
   useEffect(() => {
     void loadConversation();

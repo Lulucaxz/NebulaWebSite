@@ -4,7 +4,9 @@ import { Menu } from "../../components/Menu";
 import "./chat.css";
 import { useNavigate } from "react-router-dom";
 import { API_BASE, fetchWithCredentials } from "../../api";
-import { ConversationSummary, FollowedUser } from "./chatData";
+import { ConversationSummary, FollowedUser, ChatMessage } from "./chatData";
+import { useUnread } from "../../unreadContext";
+import { getSocket } from "../../socket";
 
 function Chat() {
   const { t } = useTranslation();
@@ -23,6 +25,7 @@ function Chat() {
   const [followersError, setFollowersError] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
+  const { refreshUnread, conversationUnread } = useUnread();
 
   const loadConversations = useCallback(async () => {
     setLoadingConversations(true);
@@ -35,6 +38,12 @@ function Chat() {
       }
       const data: ConversationSummary[] = await response.json();
       setConversations(data);
+      await refreshUnread({
+        conversations: data.map((conversation) => ({
+          conversationId: conversation.id,
+          unreadCount: conversation.unreadCount ?? 0,
+        })),
+      });
     } catch (error) {
       console.error("Failed to fetch conversations", error);
       setConversationsError(t("Não foi possível carregar as conversas."));
@@ -42,7 +51,7 @@ function Chat() {
     } finally {
       setLoadingConversations(false);
     }
-  }, [t]);
+  }, [refreshUnread, t]);
 
   const loadFollowers = useCallback(async () => {
     setLoadingFollowers(true);
@@ -68,6 +77,56 @@ function Chat() {
     void loadConversations();
     void loadFollowers();
   }, [loadConversations, loadFollowers]);
+
+  const updateConversationFromMessage = useCallback((incoming: ChatMessage) => {
+    if (!incoming || !incoming.roomId) {
+      return;
+    }
+
+    let didUpdate = false;
+    setConversations((prev) => {
+      const index = prev.findIndex((conversation) => conversation.id === incoming.roomId);
+      if (index === -1) {
+        return prev;
+      }
+
+      didUpdate = true;
+      const current = prev[index];
+      const updated: ConversationSummary = {
+        ...current,
+        lastMessagePreview: incoming.content,
+        lastMessageAt: incoming.createdAt,
+      };
+
+      const next = [...prev];
+      next.splice(index, 1);
+      return [updated, ...next];
+    });
+
+    if (!didUpdate) {
+      void loadConversations();
+    }
+  }, [loadConversations]);
+
+  useEffect(() => {
+    const socket = getSocket();
+
+    const handleChatMessage = (incoming: ChatMessage) => {
+      updateConversationFromMessage(incoming);
+    };
+
+    const handleNotificationMessage = (incoming: ChatMessage) => {
+      updateConversationFromMessage(incoming);
+    };
+
+    socket.on("chat:new-message", handleChatMessage);
+    socket.on("notification:new-message", handleNotificationMessage);
+
+    return () => {
+      socket.off("chat:new-message", handleChatMessage);
+      socket.off("notification:new-message", handleNotificationMessage);
+    };
+  }, [updateConversationFromMessage]);
 
   useEffect(() => {
     if (conversations.length === 0) {
@@ -197,25 +256,39 @@ function Chat() {
             {!loadingConversations && !conversationsError && filteredConversations.length === 0 && (
               <div className="chat-empty-list">{t("Nenhum canal encontrado.")}</div>
             )}
-            {!loadingConversations && !conversationsError && filteredConversations.map((conversation) => (
-              <button
-                key={conversation.id}
-                type="button"
-                className={`chat-conversation ${conversation.id === selectedConversationId ? "active" : ""}`}
-                onClick={() => handleSelectConversation(conversation.id)}
-              >
-                <div className="chat-conversation-header">
-                  <strong>{conversation.name}</strong>
-                  {!conversation.isGroup && (
-                    <span className="chat-conversation-tag">{t("Chat privado")}</span>
-                  )}
-                </div>
-                <p className="chat-conversation-preview">
-                  {conversation.lastMessagePreview ?? t("Conversa iniciada agora.")}
-                </p>
-                <small className="chat-conversation-meta">{formatLastActivity(conversation.lastMessageAt)}</small>
-              </button>
-            ))}
+            {!loadingConversations && !conversationsError && filteredConversations.map((conversation) => {
+              const unreadFromContext = conversationUnread[conversation.id];
+              const unreadCount = unreadFromContext ?? 0;
+              const hasUnread = unreadCount > 0;
+              const unreadLabel = hasUnread ? (unreadCount > 99 ? "99+" : String(unreadCount)) : null;
+
+              return (
+                <button
+                  key={conversation.id}
+                  type="button"
+                  className={`chat-conversation ${conversation.id === selectedConversationId ? "active" : ""}`}
+                  onClick={() => handleSelectConversation(conversation.id)}
+                >
+                  <div className="chat-conversation-header">
+                    <div className="chat-conversation-title">
+                      <strong>{conversation.name}</strong>
+                      {!conversation.isGroup && (
+                        <span className="chat-conversation-tag">{t("Chat privado")}</span>
+                      )}
+                    </div>
+                    {hasUnread && unreadLabel && (
+                      <span className="chat-conversation-unread" aria-label={t("Mensagens não lidas")}>
+                        {unreadLabel}
+                      </span>
+                    )}
+                  </div>
+                  <p className="chat-conversation-preview">
+                    {conversation.lastMessagePreview ?? t("Conversa iniciada agora.")}
+                  </p>
+                  <small className="chat-conversation-meta">{formatLastActivity(conversation.lastMessageAt)}</small>
+                </button>
+              );
+            })}
           </div>
         </aside>
         {isCreateModalOpen && (

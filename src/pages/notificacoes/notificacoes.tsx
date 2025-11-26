@@ -5,6 +5,7 @@ import "./notificacoes.css";
 import { API_BASE, fetchWithCredentials } from "../../api";
 import { ChatMessage } from "../chat/chatData";
 import { getSocket } from "../../socket";
+import { useUnread } from "../../unreadContext";
 
 interface NotificationEntry {
   notificationId?: number;
@@ -22,6 +23,7 @@ function Notificacoes() {
   const [loading, setLoading] = useState(true);
   const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { refreshUnread, clearNotificationsUnread } = useUnread();
 
   const formatTime = useCallback((value: string) => {
     const date = new Date(value);
@@ -66,6 +68,8 @@ function Notificacoes() {
           createdAt: item.createdAt,
         }))
       );
+
+      await refreshUnread({ notificationsTotal: data.length });
     } catch (err) {
       console.error("Failed to load notifications", err);
       setError(err instanceof Error ? err.message : t("Não foi possível carregar as notificações."));
@@ -73,7 +77,7 @@ function Notificacoes() {
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, [refreshUnread, t]);
 
   useEffect(() => {
     void loadNotifications();
@@ -122,6 +126,7 @@ function Notificacoes() {
         throw new Error(body?.error ?? t("Não foi possível limpar as notificações."));
       }
       setNotifications([]);
+      clearNotificationsUnread();
     } catch (err) {
       console.error("Failed to clear notifications", err);
       setError(err instanceof Error ? err.message : t("Não foi possível limpar as notificações."));

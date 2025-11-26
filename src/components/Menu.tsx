@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useTheme } from "../theme/useTheme";
+import { useUnread } from "../unreadContext";
 
 interface User {
   idsite: string;
@@ -21,6 +22,7 @@ export function Menu() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const { palette } = useTheme();
+  const { chatUnreadTotal, notificationsUnreadTotal, refreshUnread, clearAllUnread } = useUnread();
   const temaClaro = palette.base === "branco";
 
   useEffect(() => {
@@ -44,6 +46,14 @@ export function Menu() {
     };
   }, []);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      void refreshUnread();
+    } else {
+      clearAllUnread();
+    }
+  }, [isAuthenticated, refreshUnread, clearAllUnread]);
+
   const getMenuItemClass = (isActive: boolean) =>
     ["menu-icones", temaClaro ? "claro" : "", isActive ? "active" : ""]
       .filter(Boolean)
@@ -53,6 +63,10 @@ export function Menu() {
     () => ["menu-barra-lateral", temaClaro ? "claro" : ""].filter(Boolean).join(" "),
     [temaClaro]
   );
+
+  const formatBadgeValue = (value: number) => (value > 99 ? "99+" : String(value));
+  const chatBadge = chatUnreadTotal > 0 ? formatBadgeValue(chatUnreadTotal) : null;
+  const notificationBadge = notificationsUnreadTotal > 0 ? formatBadgeValue(notificationsUnreadTotal) : null;
 
   return (
     <div className={menuClassName}>
@@ -153,6 +167,9 @@ export function Menu() {
           </svg>
 
           <span className="texto-barra">{t("CHAT")}</span>
+          {chatBadge && (
+            <span className="menu-badge" aria-label={t("Novas mensagens")}>{chatBadge}</span>
+          )}
         </NavLink>
 
         <NavLink
@@ -191,6 +208,9 @@ export function Menu() {
           </svg>
 
           <span className="texto-barra">{t("Notificações")}</span>
+          {notificationBadge && (
+            <span className="menu-badge" aria-label={t("Novas notificações")}>{notificationBadge}</span>
+          )}
         </NavLink>
 
         <NavLink
