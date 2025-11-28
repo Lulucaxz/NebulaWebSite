@@ -15,6 +15,7 @@ interface User {
   provider: string;
   prf_user: string;
   tema?: string;
+  role?: 'aluno' | 'professor';
 }
 
 export function Menu() {
@@ -24,6 +25,7 @@ export function Menu() {
   const { palette } = useTheme();
   const { chatUnreadTotal, notificationsUnreadTotal, refreshUnread, clearAllUnread } = useUnread();
   const temaClaro = palette.base === "branco";
+  const isProfessor = user?.role === 'professor';
 
   useEffect(() => {
     let isMounted = true;
@@ -132,6 +134,25 @@ export function Menu() {
 
           <span className="texto-barra">{t("CURSOS")}</span>
         </NavLink>
+
+        {isProfessor && (
+          <NavLink
+            to="/professor"
+            className={({ isActive }) => getMenuItemClass(isActive)}
+            id="professor-icone"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#FFFFFF"
+            >
+              <path d="M160-200q-33 0-56.5-23.5T80-280v-200q0-17 6.5-31.5T105-534l160-160q13-13 30.5-19t35.5-2l177 36 147-147q12-12 28-12t28 12l128 128q12 12 12 28t-12 28L684-613l36 177q3 18-2 35.5T699-372L539-212q-12 12-28 12t-28-12L336-356l-176 88Zm0-80 140-69 69 140 140-140 160-160-23-127q-3-18 2-35.5t19-30.5l80-80-56-56-80 80q-13 13-30.5 19t-35.5 2l-127-23-160 160-140 140v120Z" />
+            </svg>
+            <span className="texto-barra">{t("PROFESSOR")}</span>
+          </NavLink>
+        )}
 
         <NavLink
           to="/forum"

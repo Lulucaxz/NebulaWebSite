@@ -13,6 +13,7 @@ import Configuracoes from './pages/configuracoes/configuracoes';
 import Cursos from './pages/cursos/cursos';
 import Modulos from './pages/cursos/modulos';
 import Atividades from './pages/cursos/atividades';
+import ProfessorWorkspace from './pages/cursos/ProfessorWorkspace';
 import Planos from './pages/planos/planos';
 import Forum from './pages/forum/forum';
 import Chat from './pages/chat/Chat';
@@ -40,6 +41,9 @@ function App() {
             } />
             <Route path="/cursos" element={
               <Cursos />
+            } />
+            <Route path="/professor" element={
+              <ProfessorWorkspace />
             } />
             <Route path="/modulos/:assinatura/:moduloId" element={
               <Modulos />

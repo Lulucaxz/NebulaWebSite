@@ -23,6 +23,7 @@ import followRoutes from "./routes/followRoutes";
 import avaliacoesRoutes from "./routes/avaliacoesRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import paletteRoutes from "./routes/paletteRoutes";
+import courseContentRoutes from "./routes/courseContentRoutes";
 import { asyncHandler } from './utils';
 import { setSocketServerInstance } from "./socketInstance";
 import { markUserInConversation, markUserLeftConversation } from "./presenceStore";
@@ -44,10 +45,10 @@ const PORT = 4000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 // const USERS_FILE = path.join(__dirname, 'users.json'); // not used
 
-interface User { id: number; [key: string]: unknown }
+interface User { id: number; role?: string | null; [key: string]: unknown }
 type AuthenticatedRequest = Request & { isAuthenticated?: () => boolean; user?: User };
 
-interface UsuarioRow extends RowDataPacket { id: number; senha?: string; [key: string]: unknown }
+interface UsuarioRow extends RowDataPacket { id: number; role?: string | null; senha?: string; [key: string]: unknown }
 
 const recalculateRankingQuery = `
   UPDATE usuario u
@@ -139,6 +140,7 @@ app.use("/api/follow", followRoutes);
 app.use("/api/avaliacoes", avaliacoesRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/palettes", paletteRoutes);
+app.use("/api/course-content", courseContentRoutes);
 
 app.use("/api/anotacoes", anotacoesRoutes);
 app.use('/api/progress', progressRoutes);
@@ -175,8 +177,8 @@ passport.use(new GoogleStrategy({
     // Cria novo usuário
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
-        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, seguidores, seguindo, provider)
-       VALUES (?, ?, 0, ?, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 0, 0, 'google')`,
+        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, seguidores, seguindo, provider)
+       VALUES (?, ?, 0, ?, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 'aluno', 0, 0, 'google')`,
       [
         profile.displayName,
         `@${profile.displayName.replace(/\s/g, '')}${Date.now()}`,
@@ -326,8 +328,8 @@ app.post('/auth/register', asyncHandler(async (req: Request, res: Response) => {
   try {
     await pool.query<ResultSetHeader>(
       `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
-        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
-       VALUES (?, ?, 0, ?, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','local', 0, 0)`,
+        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, seguidores, seguindo)
+       VALUES (?, ?, 0, ?, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','aluno','local', 0, 0)`,
       [
         name,
         userTag,

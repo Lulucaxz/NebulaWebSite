@@ -6,31 +6,69 @@ import { useState, useEffect } from 'react';
 import { VideoCard } from './videos';
 import { API_BASE, fetchWithCredentials } from '../../api';
 import { Link } from "react-router-dom";
+import { CUSTOM_MODULE_ID_OFFSET } from './courseContent.constants';
 
 function Modulos() {
   const { assinatura, moduloId } = useParams<{ assinatura: string; moduloId: string }>();
 
   // Minimal local types for this component to avoid `any` lint errors
-  type Video = { id: number; titulo?: string; video?: string; subtitulo?: string; descricao?: string };
-  type Atividade = { id: number; template?: { titulo?: string; descricao?: string }; terminado?: boolean };
-  type ModuloType = { id: number; introducao: { id: number; descricao: string; videoBackground: string; video: string }; atividades: Atividade[]; videoAulas: Video[] };
+  type Video = { id: number; titulo?: string; video?: string; subtitulo?: string; descricao?: string; backgroundImage?: string };
+  type Questao = { questao?: string; dissertativa?: boolean; alternativas?: string[]; respostaCorreta?: string };
+  type Atividade = { id: number; template?: { titulo?: string; descricao?: string }; terminado?: boolean; questoes?: Questao[] };
+  type ModuloType = {
+    id: number;
+    introducao: { id: number; descricao: string; videoBackground: string; video: string };
+    atividades: Atividade[];
+    videoAulas: Video[];
+  };
 
-  const curso = (initial_cursos as unknown as Record<string, ModuloType[]>)[assinatura ?? ''];
-  const modulo = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
+  const cloneModule = (mod?: ModuloType | null): ModuloType | null => {
+    if (!mod) return null;
+    return {
+      ...mod,
+      introducao: { ...mod.introducao },
+      atividades: Array.isArray(mod.atividades)
+        ? mod.atividades.map((atividade) => ({
+            ...atividade,
+            template: atividade.template ? { ...atividade.template } : undefined,
+            questoes: Array.isArray(atividade.questoes)
+              ? atividade.questoes.map((questao) => ({
+                  ...questao,
+                  alternativas: questao?.alternativas ? [...questao.alternativas] : undefined,
+                }))
+              : atividade.questoes,
+          }))
+        : [],
+      videoAulas: Array.isArray(mod.videoAulas) ? mod.videoAulas.map((video) => ({ ...video })) : [],
+    };
+  };
 
-  // Local copy to overlay per-user completion from /api/progress
-  const [moduloData, setModuloData] = useState<ModuloType | null>(modulo ?? null);
+  const cursos = (initial_cursos as unknown as Record<string, ModuloType[]>) || {};
+  const curso = cursos[assinatura ?? ''];
+  const moduloBase = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
+  const moduloNumericId = moduloId ? Number(moduloId) : Number.NaN;
+  const isCustomModule = Number.isFinite(moduloNumericId) && moduloNumericId >= CUSTOM_MODULE_ID_OFFSET;
 
-  // Avoid calling hooks conditionally: compute counts first and provide safe defaults
-  const videoCount = modulo?.videoAulas?.length ?? 0;
-  // atividadeCount removed (not needed)
+  const [moduloData, setModuloData] = useState<ModuloType | null>(cloneModule(moduloBase));
+  const [customModule, setCustomModule] = useState<ModuloType | null>(null);
+  const [loadingCustom, setLoadingCustom] = useState(false);
+  const [customError, setCustomError] = useState<string | null>(null);
+  const [progressSets, setProgressSets] = useState<{ moduleSet: Set<string>; activitySet: Set<string> } | null>(null);
 
   // Matriz para controlar destaque do carrossel
-  const [matrizVideos, setMatrizVideos] = useState<boolean[]>(() => Array.from({ length: Math.max(0, videoCount) }, (_, i) => i === 0));
+  const [matrizVideos, setMatrizVideos] = useState<boolean[]>([]);
   const [matrizVideoIndex, setMatrizVideoIndex] = useState<number>(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
 
   const [matrizAtividadesIndex, setMatrizAtividadesIndex] = useState<number>(1);
+
+  useEffect(() => {
+    const totalVideos = moduloData?.videoAulas?.length ?? 0;
+    setMatrizVideos(Array.from({ length: Math.max(0, totalVideos) }, (_, i) => i === 0));
+    setMatrizVideoIndex(0);
+    setActiveVideoIndex(null);
+    setMatrizAtividadesIndex(1);
+  }, [moduloData?.id]);
 
   function updateMatrizVideos(index: number) {
     setMatrizVideos(prev => prev.map((_, i) => i === index));
@@ -59,34 +97,116 @@ function Modulos() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  // Load per-user progress and overlay terminado for activities and module
   useEffect(() => {
-    const load = async () => {
-      if (!modulo) return;
+    if (!isCustomModule) {
+      setCustomModule(null);
+      setCustomError(null);
+      setLoadingCustom(false);
+    }
+  }, [isCustomModule]);
+
+  useEffect(() => {
+    if (!isCustomModule || !moduloId) {
+      return;
+    }
+    let active = true;
+    setLoadingCustom(true);
+    setCustomError(null);
+    const loadCustom = async () => {
       try {
-        const res = await fetchWithCredentials(`${API_BASE}/api/progress`);
-        if (!res.ok) { setModuloData(modulo); return; }
-        const data: { modules: Array<{ assinatura: string; modulo_id: number }>, activities: Array<{ assinatura: string; modulo_id: number; atividade_id: number }> } = await res.json();
-        const activitySet = new Set(data.activities.map(a => `${a.assinatura}:${a.modulo_id}:${a.atividade_id}`));
-        const updatedAtividades: Atividade[] = Array.isArray(modulo.atividades) ? modulo.atividades.map(a => ({
-          ...a,
-          terminado: activitySet.has(`${assinatura}:${modulo.id}:${a.id}`) || !!a.terminado
-        })) : [];
-        setModuloData({ ...modulo, atividades: updatedAtividades });
-      } catch {
-        setModuloData(modulo);
+        const res = await fetchWithCredentials(`${API_BASE}/api/course-content/modules/${moduloId}`);
+        const data = await res.json().catch(() => ({}));
+        if (!active) return;
+        if (!res.ok || !data.module) {
+          setCustomError(data.error || 'Não foi possível carregar este módulo.');
+          setCustomModule(null);
+          setModuloData(null);
+          return;
+        }
+        const normalized = cloneModule(data.module as ModuloType);
+        setCustomModule(normalized);
+      } catch (error) {
+        if (!active) return;
+        setCustomError('Erro ao carregar o módulo selecionado.');
+        setCustomModule(null);
+        setModuloData(null);
+      } finally {
+        if (active) {
+          setLoadingCustom(false);
+        }
       }
     };
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assinatura, moduloId]);
+    void loadCustom();
+    return () => {
+      active = false;
+    };
+  }, [isCustomModule, moduloId]);
 
-  // If modulo is not found, render a friendly message. Hooks above ensure consistent hook order.
-  if (!modulo) {
-    return <div>Módulo não encontrado.</div>;
+  useEffect(() => {
+    let active = true;
+    const loadProgress = async () => {
+      try {
+        const res = await fetchWithCredentials(`${API_BASE}/api/progress`);
+        if (!res.ok) {
+          if (active) setProgressSets(null);
+          return;
+        }
+        const data: { modules: Array<{ assinatura: string; modulo_id: number }>, activities: Array<{ assinatura: string; modulo_id: number; atividade_id: number }> } = await res.json();
+        if (!active) return;
+        setProgressSets({
+          moduleSet: new Set(data.modules.map(m => `${m.assinatura}:${m.modulo_id}`)),
+          activitySet: new Set(data.activities.map(a => `${a.assinatura}:${a.modulo_id}:${a.atividade_id}`)),
+        });
+      } catch {
+        if (active) setProgressSets(null);
+      }
+    };
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [assinatura]);
+
+  const sourceModule = isCustomModule ? customModule : moduloBase;
+
+  useEffect(() => {
+    if (!sourceModule) {
+      setModuloData(null);
+      return;
+    }
+    const cloned = cloneModule(sourceModule);
+    if (!cloned) {
+      setModuloData(null);
+      return;
+    }
+    if (!progressSets) {
+      setModuloData(cloned);
+      return;
+    }
+    const atividades = Array.isArray(cloned.atividades)
+      ? cloned.atividades.map((atividade) => ({
+          ...atividade,
+          terminado: progressSets.activitySet.has(`${assinatura}:${cloned.id}:${atividade.id}`) || atividade.terminado,
+        }))
+      : [];
+    setModuloData({ ...cloned, atividades });
+  }, [assinatura, sourceModule, progressSets]);
+
+  if (!moduloData) {
+    return (
+      <>
+        <Menu />
+        <div className="container">
+          <div className="cursos-espacamento">
+            {loadingCustom ? 'Carregando módulo...' : (customError || 'Módulo não encontrado.')}
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
   }
 
-  const m = moduloData ?? modulo;
+  const m = moduloData;
 
   function updateMatrizAtividades(index: number) {
     setMatrizAtividadesIndex(index);
@@ -139,7 +259,7 @@ function Modulos() {
                   scale: index < matrizAtividadesIndex - 1 || index > (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex - 1 : matrizAtividadesIndex : matrizAtividadesIndex + 1) ? '0.8' : '1',
                   filter: index < matrizAtividadesIndex - 1 || index > (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex - 1 : matrizAtividadesIndex : matrizAtividadesIndex + 1) ? 'brightness(0.7)' : 'none',
                 }} onClick={() => {
-                  if (index - 1 >= 0 && index < modulo.atividades.length) {
+                  if (index - 1 >= 0 && index < m.atividades.length) {
                     updateMatrizAtividades(index)
                   }
                 }}>
@@ -177,7 +297,7 @@ function Modulos() {
               }
             }}></div>
             <div className="videos-sessao-arrow-rigth" onClick={() => {
-              if (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex < modulo.atividades.length + 1 : matrizAtividadesIndex < modulo.atividades.length : matrizAtividadesIndex + 1 < modulo.atividades.length) {
+              if (itemsPerView < 3 ? itemsPerView < 2 ? matrizAtividadesIndex < m.atividades.length + 1 : matrizAtividadesIndex < m.atividades.length : matrizAtividadesIndex + 1 < m.atividades.length) {
                 updateMatrizAtividades(matrizAtividadesIndex + 1)
               }
             }}></div>

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { fetchWithCredentials, API_BASE } from '../../api';
 import { Link } from "react-router-dom";
 import { showAlert } from "../../Alert";
+import { CUSTOM_MODULE_ID_OFFSET } from './courseContent.constants';
 
 import './cursos.css'; 
 
@@ -25,40 +26,105 @@ function Atividades() {
     type DissertativaResultadoMap = Record<number, { score: number; isCorrect: boolean; explanation?: string }>;
 
     // --- Lógica de Busca de Dados (como estava) ---
-    const curso = (initial_cursos as unknown as Record<string, ModuloType[]>)[assinatura ?? ''];
-    const modulo = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
-    const atividade = modulo?.atividades?.[Number(atividadeInd)] as AtividadeType;
+    const cursos = (initial_cursos as unknown as Record<string, ModuloType[]>) || {};
+    const curso = cursos[assinatura ?? ''];
+    const moduloBase = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
+    const moduloNumericId = moduloId ? Number(moduloId) : Number.NaN;
+    const isCustomModule = Number.isFinite(moduloNumericId) && moduloNumericId >= CUSTOM_MODULE_ID_OFFSET;
+
+    const cloneModule = (mod?: ModuloType | null): ModuloType | null => {
+        if (!mod) return null;
+        return {
+            ...mod,
+            atividades: Array.isArray(mod.atividades)
+                ? mod.atividades.map((atividade) => ({
+                    ...atividade,
+                    questoes: Array.isArray(atividade.questoes)
+                        ? atividade.questoes.map((questao) => ({
+                            ...questao,
+                            alternativas: questao?.alternativas ? [...questao.alternativas] : undefined,
+                        }))
+                        : atividade.questoes,
+                }))
+                : [],
+        };
+    };
+
+    const [moduleData, setModuleData] = useState<ModuloType | null>(cloneModule(moduloBase));
+    const [loadingCustom, setLoadingCustom] = useState(false);
+    const [customError, setCustomError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isCustomModule) {
+            setCustomError(null);
+        }
+    }, [isCustomModule]);
+
+    useEffect(() => {
+        if (!isCustomModule) {
+            setModuleData(cloneModule(moduloBase));
+            return;
+        }
+        if (!moduloId) {
+            return;
+        }
+        let active = true;
+        setLoadingCustom(true);
+        setCustomError(null);
+        const loadCustom = async () => {
+            try {
+                const res = await fetchWithCredentials(`${API_BASE}/api/course-content/modules/${moduloId}`);
+                const data = await res.json().catch(() => ({}));
+                if (!active) return;
+                if (!res.ok || !data.module) {
+                    setModuleData(null);
+                    setCustomError(data.error || 'Módulo não encontrado.');
+                    return;
+                }
+                setModuleData(cloneModule(data.module as ModuloType));
+            } catch (error) {
+                if (!active) return;
+                setModuleData(null);
+                setCustomError('Erro ao carregar módulo personalizado.');
+            } finally {
+                if (active) {
+                    setLoadingCustom(false);
+                }
+            }
+        };
+        void loadCustom();
+        return () => {
+            active = false;
+        };
+    }, [isCustomModule, moduloBase, moduloId]);
+
+    const atividadeIndex = Number(atividadeInd ?? '0');
+    const atividade = moduleData?.atividades?.[atividadeIndex] as AtividadeType;
     
     // --- ESTADO ATUALIZADO ---
-    
-    // 1. MUDANÇA AQUI: O estado agora começa com string vazia
-    const [respostas, setRespostas] = useState<string[]>(() => (atividade?.questoes || []).map(() => ''));
+    const [respostas, setRespostas] = useState<string[]>([]);
+    const [selecoes, setSelecoes] = useState<(string | null)[]>([]);
+    const [statusRespostas, setStatusRespostas] = useState<StatusResposta[]>([]);
+    const [statusDissertativas, setStatusDissertativas] = useState<StatusResposta[]>([]);
+    const [notasDissertativas, setNotasDissertativas] = useState<(number | null)[]>([]);
+    const [feedbackDissertativas, setFeedbackDissertativas] = useState<(string | null)[]>([]);
 
-    // NOVO ESTADO: Armazena a *seleção* (o texto) do usuário para cada questão
-    const [selecoes, setSelecoes] = useState<(string | null)[]>(
-        () => Array(atividade?.questoes?.length || 0).fill(null)
-    );
-    
-    // NOVO ESTADO: Armazena o *status* ('neutro', 'correta', 'incorreta') para cada questão
-    const [statusRespostas, setStatusRespostas] = useState<StatusResposta[]>(
-        () => Array(atividade?.questoes?.length || 0).fill('neutro')
-    );
-
-    const [statusDissertativas, setStatusDissertativas] = useState<StatusResposta[]>(
-        () => Array(atividade?.questoes?.length || 0).fill('neutro')
-    );
-
-    const [notasDissertativas, setNotasDissertativas] = useState<(number | null)[]>(
-        () => Array(atividade?.questoes?.length || 0).fill(null)
-    );
-
-    const [feedbackDissertativas, setFeedbackDissertativas] = useState<(string | null)[]>(
-        () => Array(atividade?.questoes?.length || 0).fill(null)
-    );
 
     const [avaliandoDissertativas, setAvaliandoDissertativas] = useState(false);
     const [atividadeFinalizada, setAtividadeFinalizada] = useState(false);
     const [relatorioAtividade, setRelatorioAtividade] = useState<string | null>(null);
+
+    useEffect(() => {
+        const totalQuestoes = atividade?.questoes?.length ?? 0;
+        setRespostas(Array.from({ length: totalQuestoes }, () => ''));
+        setSelecoes(Array.from({ length: totalQuestoes }, () => null));
+        setStatusRespostas(Array.from({ length: totalQuestoes }, () => 'neutro'));
+        setStatusDissertativas(Array.from({ length: totalQuestoes }, () => 'neutro'));
+        setNotasDissertativas(Array.from({ length: totalQuestoes }, () => null));
+        setFeedbackDissertativas(Array.from({ length: totalQuestoes }, () => null));
+        setAtividadeFinalizada(false);
+        setRelatorioAtividade(null);
+    }, [atividade?.id]);
 
     const [tentativas, setTentativas] = useState<number>(0);
     const [tentativasCarregadas, setTentativasCarregadas] = useState<boolean>(false);
@@ -68,7 +134,7 @@ function Atividades() {
         setTentativasCarregadas(false);
         setTentativas(0);
         const carregarTentativas = async () => {
-            if (!assinatura || !modulo || !atividade) {
+            if (!assinatura || !moduleData || !atividade) {
                 if (ativo) {
                     setTentativas(0);
                     setTentativasCarregadas(true);
@@ -77,7 +143,7 @@ function Atividades() {
             }
 
             try {
-                const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}/attempts`);
+                const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${moduleData.id}/${atividade.id}/attempts`);
                 const data = await res.json().catch(() => ({}));
                 const valor = Number(data?.tentativas);
                 if (ativo && Number.isFinite(valor) && valor >= 0) {
@@ -96,15 +162,15 @@ function Atividades() {
         return () => {
             ativo = false;
         };
-    }, [assinatura, modulo?.id, atividade?.id]);
+    }, [assinatura, moduleData?.id, atividade?.id]);
 
     const registrarTentativa = async (valor: number) => {
-        if (!assinatura || !modulo || !atividade) {
+        if (!assinatura || !moduleData || !atividade) {
             return;
         }
 
         try {
-            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}/attempts`, {
+            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${moduleData.id}/${atividade.id}/attempts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ attempts: valor })
@@ -119,9 +185,30 @@ function Atividades() {
         }
     };
 
-    // --- Verificação de Módulo (como estava) ---
-    if (!modulo || !atividade) {
-        return <div>Módulo não encontrado.</div>;
+    if (!moduleData) {
+        return (
+            <>
+                <Menu />
+                <div className="container">
+                    <div className="cursos-espacamento">
+                        {loadingCustom ? 'Carregando módulo...' : (customError || 'Módulo não encontrado.')}
+                    </div>
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
+    if (!atividade) {
+        return (
+            <>
+                <Menu />
+                <div className="container">
+                    <div className="cursos-espacamento">Atividade não encontrada.</div>
+                </div>
+                <Footer />
+            </>
+        );
     }
 
     const totalQuestoes = atividade.questoes?.length ?? 0;
@@ -337,11 +424,11 @@ function Atividades() {
 
         try {
             const body = JSON.stringify({
-                totalActivities: modulo.atividades.length,
+                totalActivities: moduleData.atividades.length,
                 score: pontos,
                 attempts: tentativaAtual
             });
-            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${modulo.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
+            const res = await fetchWithCredentials(`${API_BASE}/api/progress/activity/${assinatura}/${moduleData.id}/${atividade.id}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
                 showAlert('Erro ao enviar atividade: ' + (data.error || res.statusText));
@@ -454,7 +541,7 @@ function Atividades() {
                     <p>
                         Você chegou ao fim desta tarefa. Certifique-se de que todas as questões então respondidas ou marcadas de forma correta, cuidados com palavras erradas e se atente as nomenclaturas e sinais utilizados.
                     </p>
-                    <Link className='tarefa-sessao-fim-button' to={`/modulos/${assinatura}/${modulo.id}`}>
+                    <Link className='tarefa-sessao-fim-button' to={`/modulos/${assinatura}/${moduleData.id}`}>
                         {atividadeFinalizada ? 'VOLTAR' : 'CANCELAR'}
                     </Link>
                     <div className='tarefa-sessao-fim-acoes'>

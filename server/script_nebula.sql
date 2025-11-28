@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario` (
   `curso` VARCHAR(45) NULL,
   `idioma` ENUM("pt-br", "en-us") NOT NULL,
   `tema` ENUM("dark", "light") NOT NULL,
+  `role` ENUM('aluno','professor') NOT NULL DEFAULT 'aluno',
   `provider` ENUM("local","google") NULL,
   `seguidores` INT NOT NULL DEFAULT 0,
   `seguindo` INT NOT NULL DEFAULT 0,
@@ -434,32 +435,37 @@ SELECT * FROM chat_room;
 SELECT * FROM chat_message;
 
 -- Usuários de teste para ranking
-INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
+INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, seguidores, seguindo)
 VALUES
-('Ana Souza', '@anasouza', 120, 1, 'https://randomuser.me/api/portraits/women/1.jpg', '/img/nebulosaBanner.jpg', 'Astrônoma apaixonada', 0, 0, 0, 'ana@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Bruno Lima', '@brunolima', 85, 2, 'https://randomuser.me/api/portraits/men/2.jpg', '/img/nebulosaBanner.jpg', 'Fã de estrelas', 0, 0, 0, 'bruno@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Carla Dias', '@carladias', 210, 3, 'https://randomuser.me/api/portraits/women/3.jpg', '/img/nebulosaBanner.jpg', 'Exploradora do universo', 0, 0, 0, 'carla@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Diego Alves', '@diegoalves', 45, 4, 'https://randomuser.me/api/portraits/men/4.jpg', '/img/nebulosaBanner.jpg', 'Caçador de cometas', 0, 0, 0, 'diego@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Elisa Martins', '@elisamartins', 300, 5, 'https://randomuser.me/api/portraits/women/5.jpg', '/img/nebulosaBanner.jpg', 'Aventureira espacial', 0, 0, 0, 'elisa@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Felipe Torres', '@felipetorres', 190, 6, 'https://randomuser.me/api/portraits/men/6.jpg', '/img/nebulosaBanner.jpg', 'Observador de galáxias', 0, 0, 0, 'felipe@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Giovana Rocha', '@giovanarocha', 75, 7, 'https://randomuser.me/api/portraits/women/7.jpg', '/img/nebulosaBanner.jpg', 'Curiosa do espaço', 0, 0, 0, 'giovana@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Henrique Melo', '@henriquemelo', 160, 8, 'https://randomuser.me/api/portraits/men/8.jpg', '/img/nebulosaBanner.jpg', 'Futuro astronauta', 0, 0, 0, 'henrique@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Isabela Nunes', '@isabelanunes', 230, 9, 'https://randomuser.me/api/portraits/women/9.jpg', '/img/nebulosaBanner.jpg', 'Amante da Via Láctea', 0, 0, 0, 'isabela@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('João Pedro', '@joaopedro', 55, 10, 'https://randomuser.me/api/portraits/men/10.jpg', '/img/nebulosaBanner.jpg', 'Descobridor de planetas', 0, 0, 0, 'joao@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0);
+('Ana Souza', '@anasouza', 120, 1, 'https://randomuser.me/api/portraits/women/1.jpg', '/img/nebulosaBanner.jpg', 'Astrônoma apaixonada', 0, 0, 0, 'ana@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Bruno Lima', '@brunolima', 85, 2, 'https://randomuser.me/api/portraits/men/2.jpg', '/img/nebulosaBanner.jpg', 'Fã de estrelas', 0, 0, 0, 'bruno@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Carla Dias', '@carladias', 210, 3, 'https://randomuser.me/api/portraits/women/3.jpg', '/img/nebulosaBanner.jpg', 'Exploradora do universo', 0, 0, 0, 'carla@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Diego Alves', '@diegoalves', 45, 4, 'https://randomuser.me/api/portraits/men/4.jpg', '/img/nebulosaBanner.jpg', 'Caçador de cometas', 0, 0, 0, 'diego@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Elisa Martins', '@elisamartins', 300, 5, 'https://randomuser.me/api/portraits/women/5.jpg', '/img/nebulosaBanner.jpg', 'Aventureira espacial', 0, 0, 0, 'elisa@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Felipe Torres', '@felipetorres', 190, 6, 'https://randomuser.me/api/portraits/men/6.jpg', '/img/nebulosaBanner.jpg', 'Observador de galáxias', 0, 0, 0, 'felipe@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Giovana Rocha', '@giovanarocha', 75, 7, 'https://randomuser.me/api/portraits/women/7.jpg', '/img/nebulosaBanner.jpg', 'Curiosa do espaço', 0, 0, 0, 'giovana@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Henrique Melo', '@henriquemelo', 160, 8, 'https://randomuser.me/api/portraits/men/8.jpg', '/img/nebulosaBanner.jpg', 'Futuro astronauta', 0, 0, 0, 'henrique@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Isabela Nunes', '@isabelanunes', 230, 9, 'https://randomuser.me/api/portraits/women/9.jpg', '/img/nebulosaBanner.jpg', 'Amante da Via Láctea', 0, 0, 0, 'isabela@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('João Pedro', '@joaopedro', 55, 10, 'https://randomuser.me/api/portraits/men/10.jpg', '/img/nebulosaBanner.jpg', 'Descobridor de planetas', 0, 0, 0, 'joao@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0);
 
 -- Mais usuários de teste para ranking
-INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, provider, seguidores, seguindo)
+INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, seguidores, seguindo)
 VALUES
-('Karen Silva', '@karensilva', 110, 11, 'https://randomuser.me/api/portraits/women/11.jpg', '/img/nebulosaBanner.jpg', 'Apaixonada por astronomia', 0, 0, 0, 'karen@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Lucas Pinto', '@lucaspinto', 95, 12, 'https://randomuser.me/api/portraits/men/12.jpg', '/img/nebulosaBanner.jpg', 'Viajante das estrelas', 0, 0, 0, 'lucas@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Marina Costa', '@marinacosta', 180, 13, 'https://randomuser.me/api/portraits/women/13.jpg', '/img/nebulosaBanner.jpg', 'Estudante de física', 0, 0, 0, 'marina@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Nicolas Ramos', '@nicolasramos', 60, 14, 'https://randomuser.me/api/portraits/men/14.jpg', '/img/nebulosaBanner.jpg', 'Fã de buracos negros', 0, 0, 0, 'nicolas@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Olivia Teixeira', '@oliviateixeira', 250, 15, 'https://randomuser.me/api/portraits/women/15.jpg', '/img/nebulosaBanner.jpg', 'Aventureira do espaço', 0, 0, 0, 'olivia@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Paulo Vieira', '@paulovieira', 130, 16, 'https://randomuser.me/api/portraits/men/16.jpg', '/img/nebulosaBanner.jpg', 'Observador de planetas', 0, 0, 0, 'paulo@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Quésia Lopes', '@quesialopes', 170, 17, 'https://randomuser.me/api/portraits/women/17.jpg', '/img/nebulosaBanner.jpg', 'Curiosa do universo', 0, 0, 0, 'quesia@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Rafael Souza', '@rafaelsouza', 80, 18, 'https://randomuser.me/api/portraits/men/18.jpg', '/img/nebulosaBanner.jpg', 'Futuro cientista', 0, 0, 0, 'rafael@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Sofia Castro', '@sofiacastro', 220, 19, 'https://randomuser.me/api/portraits/women/19.jpg', '/img/nebulosaBanner.jpg', 'Exploradora de galáxias', 0, 0, 0, 'sofia@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0),
-('Thiago Gomes', '@thiagogomes', 140, 20, 'https://randomuser.me/api/portraits/men/20.jpg', '/img/nebulosaBanner.jpg', 'Amante do céu noturno', 0, 0, 0, 'thiago@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'local', 0, 0);
+('Karen Silva', '@karensilva', 110, 11, 'https://randomuser.me/api/portraits/women/11.jpg', '/img/nebulosaBanner.jpg', 'Apaixonada por astronomia', 0, 0, 0, 'karen@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Lucas Pinto', '@lucaspinto', 95, 12, 'https://randomuser.me/api/portraits/men/12.jpg', '/img/nebulosaBanner.jpg', 'Viajante das estrelas', 0, 0, 0, 'lucas@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Marina Costa', '@marinacosta', 180, 13, 'https://randomuser.me/api/portraits/women/13.jpg', '/img/nebulosaBanner.jpg', 'Estudante de física', 0, 0, 0, 'marina@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Nicolas Ramos', '@nicolasramos', 60, 14, 'https://randomuser.me/api/portraits/men/14.jpg', '/img/nebulosaBanner.jpg', 'Fã de buracos negros', 0, 0, 0, 'nicolas@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Olivia Teixeira', '@oliviateixeira', 250, 15, 'https://randomuser.me/api/portraits/women/15.jpg', '/img/nebulosaBanner.jpg', 'Aventureira do espaço', 0, 0, 0, 'olivia@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Paulo Vieira', '@paulovieira', 130, 16, 'https://randomuser.me/api/portraits/men/16.jpg', '/img/nebulosaBanner.jpg', 'Observador de planetas', 0, 0, 0, 'paulo@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Quésia Lopes', '@quesialopes', 170, 17, 'https://randomuser.me/api/portraits/women/17.jpg', '/img/nebulosaBanner.jpg', 'Curiosa do universo', 0, 0, 0, 'quesia@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Rafael Souza', '@rafaelsouza', 80, 18, 'https://randomuser.me/api/portraits/men/18.jpg', '/img/nebulosaBanner.jpg', 'Futuro cientista', 0, 0, 0, 'rafael@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Sofia Castro', '@sofiacastro', 220, 19, 'https://randomuser.me/api/portraits/women/19.jpg', '/img/nebulosaBanner.jpg', 'Exploradora de galáxias', 0, 0, 0, 'sofia@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0),
+('Thiago Gomes', '@thiagogomes', 140, 20, 'https://randomuser.me/api/portraits/men/20.jpg', '/img/nebulosaBanner.jpg', 'Amante do céu noturno', 0, 0, 0, 'thiago@email.com', NULL, 'Astronomia', 'pt-br', 'dark', 'aluno', 'local', 0, 0);
+
+-- Conta professor oficial
+INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, seguidores, seguindo)
+VALUES
+('Nebula Professor', '@professornebula', 0, 21, 'https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png', '/img/nebulosaBanner.jpg', 'Conta oficial da equipe acadêmica Nebula.', 0, 0, 0, 'nebula.academy.brasil@gmail.com', '$2b$10$Za58iKqVd/MhEfkfmDfn8uLWdjtN7pM/JXiFlOoMlFnQJ15G7S90q', 'Astrofísica', 'pt-br', 'dark', 'professor', 'local', 0, 0);
 
 -- Repita/adapte para até 50 usuários se desejar mais exemplos
 
@@ -564,4 +570,68 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`atividade_tentativas` (
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_tentativa_user_act` (`usuario_id`, `assinatura`, `modulo_id`, `atividade_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- -----------------------------------------------------
+-- Course builder tables for professores
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `NEBULA`.`curso_modulo_custom` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `assinatura` VARCHAR(255) NOT NULL,
+  `titulo` VARCHAR(255) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  `introducao_descricao` TEXT NOT NULL,
+  `introducao_video` VARCHAR(1024) NOT NULL,
+  `introducao_background` VARCHAR(1024) NOT NULL,
+  `ordem` INT NOT NULL DEFAULT 0,
+  `created_by` INT NOT NULL,
+  `updated_by` INT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_curso_modulo_assinatura` (`assinatura`),
+  CONSTRAINT `fk_curso_modulo_usuario_criador`
+    FOREIGN KEY (`created_by`) REFERENCES `NEBULA`.`usuario`(`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_curso_modulo_usuario_editor`
+    FOREIGN KEY (`updated_by`) REFERENCES `NEBULA`.`usuario`(`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`curso_modulo_atividade` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `modulo_id` INT NOT NULL,
+  `titulo` VARCHAR(255) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  `questoes` JSON NULL,
+  `ordem` INT NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_curso_modulo_atividade_modulo` (`modulo_id`),
+  CONSTRAINT `fk_curso_modulo_atividade_modulo`
+    FOREIGN KEY (`modulo_id`) REFERENCES `NEBULA`.`curso_modulo_custom`(`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `NEBULA`.`curso_modulo_video` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `modulo_id` INT NOT NULL,
+  `titulo` VARCHAR(255) NOT NULL,
+  `subtitulo` VARCHAR(255) NULL,
+  `descricao` TEXT NULL,
+  `video_url` VARCHAR(1024) NOT NULL,
+  `background_url` VARCHAR(1024) NULL,
+  `ordem` INT NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_curso_modulo_video_modulo` (`modulo_id`),
+  CONSTRAINT `fk_curso_modulo_video_modulo`
+    FOREIGN KEY (`modulo_id`) REFERENCES `NEBULA`.`curso_modulo_custom`(`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

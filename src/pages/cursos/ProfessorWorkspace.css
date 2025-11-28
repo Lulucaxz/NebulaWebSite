@@ -1,0 +1,100 @@
+.professor-card {
+  background-color: rgba(12, 12, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px;
+  margin-bottom: 32px;
+  color: #fff;
+}
+
+.professor-card h2 {
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9B3BD2;
+}
+
+.professor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.professor-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  gap: 8px;
+}
+
+.professor-form input,
+.professor-form select,
+.professor-form textarea {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.professor-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.professor-form button {
+  align-self: flex-start;
+  background-color: #9B3BD2;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.professor-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.professor-questions {
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.professor-question-item {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.professor-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.professor-danger {
+  background-color: transparent;
+  border: 1px solid #ff5f5f;
+  color: #ff5f5f;
+}
+
+.professor-modulos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.professor-modulo-item {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
