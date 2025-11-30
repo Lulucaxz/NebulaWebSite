@@ -24,7 +24,7 @@
     line-height: 25px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .cursos-video-sessao {
@@ -58,7 +58,7 @@
     cursor: pointer;
     padding: 10px 60px;
     margin-top: 40px;
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
     align-self: center;
     letter-spacing: 2px;
     white-space: pre-wrap;
@@ -71,7 +71,7 @@
     line-height: 26px;
     text-align: justify;
 
-    color: #FFFFFF;
+    color: var(--text-on-primary);
 }
 
 .videos-sessao-card-titulo,
@@ -124,7 +124,7 @@
     line-height: 26px;
     text-align: justify;
 
-    color: #FFFFFF;
+    color: var(--text-primary);
 
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
@@ -148,7 +148,7 @@
     font-size: 24px;
     line-height: 25px;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .videos-sessao-descricao {
@@ -161,7 +161,7 @@
     font-size: 16px;
     line-height: 21px;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .videos-sessao-arrow-left {
@@ -264,7 +264,7 @@
     line-height: 18px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .carrocel-atividades-card-butao {
@@ -284,7 +284,7 @@
     line-height: 21px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .questao-disertativa {
@@ -293,7 +293,7 @@
     margin-top: 25px;
     padding: 30px;
     box-sizing: border-box;
-    background-color: #4E4E4E;
+    background-color: var(--surface-muted);
     border: none;
     white-space: pre-wrap;
     word-break: break-word;
@@ -305,7 +305,7 @@
     line-height: 25px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .questao-feedback {
@@ -315,7 +315,7 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 20px;
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .questao-feedback.correta {
@@ -340,7 +340,7 @@
 }
 
 .questao-alternativa {
-    background-color: #4E4E4E;
+    background-color: var(--surface-muted);
     display: flex;
     align-items: flex-start;
     cursor: pointer;
@@ -352,13 +352,13 @@
 }
 
 .questao-alternativa.selecionada {
-    background-color: #F8EFFF;
+    background-color: var(--text-primary);
     color: #323232;
 }
 
 .questao-alternativa.selecionada .alternativa-letra {
     background-color: #F1D9FF;
-    color: #9A30EB;
+    color: var(--primary-500);
 }
 
 .questao-alternativa.selecionada .alternativa-texto {
@@ -367,7 +367,7 @@
 }
 
 .alternativa-letra {
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
     padding: 20px;
     height: 100%;
     width: 60px;
@@ -382,7 +382,7 @@
     font-size: 28px;
     line-height: 35px;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 
@@ -397,7 +397,7 @@
     line-height: 19px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .tarefa-sessao-fim {
@@ -414,7 +414,7 @@
     line-height: 21px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .tarefa-sessao-fim-button {
@@ -423,7 +423,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #4E4E4E;
+    background-color: var(--surface-muted);
     transition: all 0.3s;
 
     font-family: 'Questrial';
@@ -433,11 +433,11 @@
     line-height: 21px;
     text-align: justify;
 
-    color: #F8EFFF;
+    color: var(--text-primary);
 }
 
 .tarefa-sessao-fim-button:hover {
-    background-color: #F8EFFF !important;
+    background-color: var(--text-primary) !important;
     color: #323232;
 }
 
@@ -451,8 +451,8 @@
 .tarefa-relatorio {
     margin-top: 20px;
     padding: 20px;
-    background-color: #4E4E4E;
-    color: #F8EFFF;
+    background-color: var(--surface-muted);
+    color: var(--text-primary);
     font-family: 'Questrial';
 }
 
@@ -510,11 +510,11 @@
     animation: pulse-green 1s ease-in-out;
 }
 .questao-alternativa.correta .alternativa-letra {
-    background-color: #F8EFFF;
+    background-color: var(--text-primary);
     color: #28a745; /* Letra verde */
 }
 .questao-alternativa.correta .alternativa-texto {
-    color: #F8EFFF;
+    color: var(--text-primary);
     font-weight: bold;
 }
 
@@ -525,20 +525,20 @@
     animation: shake-red 0.5s ease;
 }
 .questao-alternativa.incorreta .alternativa-letra {
-    background-color: #F8EFFF;
+    background-color: var(--text-primary);
     color: #dc3545; /* Letra vermelha */
 }
 .questao-alternativa.incorreta .alternativa-texto {
-    color: #F8EFFF;
+    color: var(--text-primary);
     font-weight: bold;
 }
 
 .questao-alternativa.selecionada {
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
 }
 .questao-alternativa.selecionada .alternativa-letra {
-    background-color: #F8EFFF;
-    color: #9A30EB;
+    background-color: var(--text-primary);
+    color: var(--primary-500);
 }
 .questao-alternativa.selecionada .alternativa-texto {
     font-weight: 600;
@@ -546,15 +546,15 @@
 
 /* Ajuste no estado padrão da letra A, B, C */
 .questao-alternativa .alternativa-letra {
-    background-color: #9A30EB;
-    color: #F8EFFF;
+    background-color: var(--primary-500);
+    color: var(--text-primary);
     transition: all 0.3s;
 }
 
 /* Ajuste no hover para não conflitar com respostas dadas */
 .questao-alternativa:hover .alternativa-letra {
-    background-color: #F8EFFF;
-    color: #9A30EB;
+    background-color: var(--text-primary);
+    color: var(--primary-500);
 }
 
 /* Não aplicar hover se a resposta já foi dada */
@@ -566,10 +566,10 @@
 }
 
 .questao-alternativa.correta:hover .alternativa-letra {
-    background-color: #F8EFFF;
+    background-color: var(--text-primary);
     color: #28a745;
 }
 .questao-alternativa.incorreta:hover .alternativa-letra {
-    background-color: #F8EFFF;
+    background-color: var(--text-primary);
     color: #dc3545;
 }

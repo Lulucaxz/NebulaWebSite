@@ -181,9 +181,7 @@ function Perfil2() {
 
   if (loading) {
     return (
-      <div
-        style={{ background: "#070209", width: "100vw", height: "100vh" }}
-      ></div>
+      <div style={{ background: "var(--preto)", width: "100vw", height: "100vh" }}></div>
     ); // Ou um spinner
   }
 

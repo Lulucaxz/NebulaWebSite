@@ -46,7 +46,7 @@ export const CropImageModal: React.FC<CropImageModalProps> = ({ imageSrc, onCanc
           />
         </div>
         <div style={{ width: '100%', margin: '16px 0' }}>
-          <label style={{ color: '#fff', fontSize: '1rem' }}>Zoom:</label>
+          <label style={{ color: 'var(--text-primary)', fontSize: '1rem' }}>Zoom:</label>
           <input
             type="range"
             min={1}
@@ -57,7 +57,7 @@ export const CropImageModal: React.FC<CropImageModalProps> = ({ imageSrc, onCanc
             style={{ width: '80%', marginLeft: 8 }}
           />
         </div>
-        <div style={{ color: '#fff', fontSize: '0.95rem', marginBottom: 8 }}>
+        <div style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: 8 }}>
           Arraste a imagem para enquadrar e ajuste o zoom.
         </div>
         <div className="crop-modal-actions">

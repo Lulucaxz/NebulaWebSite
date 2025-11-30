@@ -36,7 +36,7 @@
 }
 
 .resposta-detalhes h3 {
-    color: #FFFFFF;
+    color: var(--text-primary);
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 600;
@@ -45,7 +45,7 @@
 }
 
 .resposta-detalhes span {
-    color: #A4A4A4;
+    color: var(--forum-text-soft);
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 400;
@@ -73,7 +73,7 @@
 }
 
 .resposta-conteudo p {
-    color: #FFFFFF;
+    color: var(--text-primary);
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 400;
@@ -86,7 +86,7 @@
     width: 100%;
     border-radius: 10px;
     overflow: hidden;
-    background-color: #1F1F1F;
+    background-color: var(--forum-surface-overlay);
     margin-top: 10px;
 }
 
@@ -119,22 +119,22 @@
     padding: 5px 8px;
     display: flex;
     align-items: center;
-    background-color: #363636;
+    background-color: var(--forum-surface-strong);
     transition: all 0.2s;
     gap: 6px;
 }
 
 .resposta-botao-like:hover,
 .resposta-botao-comentar:hover {
-    background-color: #4A4A4A;
+    background-color: var(--forum-surface-hover);
 }
 
 .resposta-botao-like.liked {
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
 }
 
 .resposta-botao-like.liked:hover {
-    background-color: #8a27d6;
+    background-color: var(--forum-accent-strong);
 }
 
 .resposta-botao-like.liked img {
@@ -142,17 +142,17 @@
 }
 
 .resposta-botao-like.liked span {
-    color: #FFFFFF;
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
 /* Estado ativo para botão de comentar */
 .resposta-botao-comentar.active {
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
 }
 
 .resposta-botao-comentar.active:hover {
-    background-color: #8a27d6;
+    background-color: var(--forum-accent-strong);
 }
 
 .resposta-botao-comentar.active img {
@@ -160,7 +160,7 @@
 }
 
 .resposta-botao-comentar.active span {
-    color: #FFFFFF;
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
@@ -174,7 +174,7 @@
 
 .resposta-botao-like span,
 .resposta-botao-comentar span {
-    color: #A4A4A4;
+    color: var(--forum-text-soft);
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 500;
@@ -184,8 +184,8 @@
 .resposta-botao-responder {
     background: none;
     border: none;
-    color: #ACACAC;
-    background-color: #363636;
+    color: var(--forum-text-soft);
+    background-color: var(--forum-surface-strong);
     font-family: 'Questrial';
     font-style: normal;
     font-weight: 400;
@@ -200,17 +200,17 @@
 }
 
 .resposta-botao-responder:hover {
-    background-color: #414141;
+    background-color: var(--forum-surface-hover);
 }
 
 /* Estado ativo para botão de responder */
 .resposta-botao-responder.active {
-    background-color: #9A30EB;
-    color: #FFFFFF;
+    background-color: var(--primary-500);
+    color: var(--text-on-primary);
 }
 
 .resposta-botao-responder.active:hover {
-    background-color: #8a27d6;
+    background-color: var(--forum-accent-strong);
 }
 
 .resposta-filhas {

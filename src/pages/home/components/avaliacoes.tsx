@@ -254,7 +254,7 @@ function Avaliacoes() {
 
         </div>
         {erroAvaliacoes && (
-          <p style={{ marginTop: "16px", color: "#ff6b6b", textAlign: "center" }}>{erroAvaliacoes}</p>
+          <p style={{ marginTop: "16px", color: "var(--status-error)", textAlign: "center" }}>{erroAvaliacoes}</p>
         )}
         {carregandoAvaliacoes && (
           <p style={{ marginTop: "16px", color: "var(--cinza-claro1)", textAlign: "center" }}>
@@ -270,7 +270,6 @@ function Avaliacoes() {
               height="24px"
               viewBox="0 -960 960 960"
               width="24px"
-              fill="#FFFFFF"
               style={{ transform: "rotate(180deg)" }}
             >
               <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
@@ -284,7 +283,6 @@ function Avaliacoes() {
               height="24px"
               viewBox="0 -960 960 960"
               width="24px"
-              fill="#FFFFFF"
             >
               <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
             </svg>

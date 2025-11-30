@@ -74,7 +74,7 @@
 
 .plano h2 {
     margin: 25px 30px 0 30px;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 32px;
     
     font-family: "Archivo black", sans-serif;
@@ -82,7 +82,7 @@
 
 .plano p {
     margin: 0 30px;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 20px;
     
     font-family: "Questrial", sans-serif;
@@ -99,8 +99,8 @@
 .plano-button {
     width: calc(100% - (30px * 2));
     margin: 0 30px 25px 30px;
-    color: #ffffff;
-    background-color: #585858;
+    color: var(--text-primary);
+    background-color: var(--surface-muted);
     font-size: 40px;
     font-weight: 600;
     padding: 10px 0;
@@ -133,7 +133,7 @@
 
 /* Plano: universo */
 .plano {
-    background-color: #A751D9;
+    background-color: var(--primary-500);
 }
 
 .plano h2 {
@@ -145,15 +145,15 @@
 }
 
 .plano .plano-button {
-    background-color: #ffffff;
-    color: #A751D9;
+    background-color: var(--text-primary);
+    color: var(--primary-500);
     height: 35px;
 }
 
 .planos-mini-texto {
     font-family: "Questrial", sans-serif;
     font-size: 20px;
-    color: #fff;
+    color: var(--text-primary);
     margin: 25px 0;
     text-align: center;
 }

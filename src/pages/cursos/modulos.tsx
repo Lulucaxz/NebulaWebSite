@@ -313,16 +313,16 @@ function Modulos() {
                       backgroundColor: atividade.terminado ? '#C9BDD3' : '#222222'
                     }}></div>
                   </div>
-                  <div className="carrocel-atividades-card">
+                    <div className="carrocel-atividades-card">
                     <div className="carrocel-atividades-card-cima" style={{
-                      backgroundColor: atividade.terminado ? '#9A30EB' : '#4E4E4E'
+                      backgroundColor: atividade.terminado ? 'var(--primary-500)' : 'var(--surface-muted)'
                     }}>
                       <div className="carrocel-atividades-card-titulo">{atividade.template?.titulo ?? ''}</div>
                       <div className="carrocel-atividades-card-descricao">{atividade.template?.descricao ?? ''}</div>
                     </div>
 
                     <Link to={`/modulos/${assinaturaSlug}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
-                      backgroundColor: atividade.terminado ? '#F8EFFF' : '#323232',
+                      backgroundColor: atividade.terminado ? 'var(--text-primary)' : '#323232',
                       cursor: 'pointer'
                     }}>
                       <div className="carrocel-atividades-card-butao" style={{

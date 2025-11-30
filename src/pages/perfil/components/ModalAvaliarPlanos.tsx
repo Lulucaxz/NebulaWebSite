@@ -109,7 +109,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
           />
         </div>
         {mensagemErro && (
-          <span style={{ color: "#ff6b6b", fontSize: "14px" }}>{mensagemErro}</span>
+          <span style={{ color: "var(--status-error)", fontSize: "14px" }}>{mensagemErro}</span>
         )}
         {mensagemSucesso && (
           <span style={{ color: "var(--roxo1)", fontSize: "14px" }}>{mensagemSucesso}</span>

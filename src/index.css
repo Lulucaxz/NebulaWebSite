@@ -14,40 +14,56 @@
     --palette-base: #070209;
     --palette-contrast: #F8EFFF;
 
-    --surface-page: color-mix(in srgb, var(--palette-base) 92%, var(--palette-contrast) 8%);
-    --surface-panel: color-mix(in srgb, var(--palette-base) 85%, var(--palette-contrast) 15%);
-    --surface-raised: color-mix(in srgb, var(--palette-base) 78%, var(--palette-contrast) 22%);
-    --surface-muted: color-mix(in srgb, var(--palette-base) 65%, var(--palette-contrast) 35%);
-    --border-subtle: color-mix(in srgb, var(--palette-base) 55%, var(--palette-contrast) 45%);
-    --border-strong: color-mix(in srgb, var(--palette-base) 35%, var(--palette-contrast) 65%);
+    --surface-page: #141414;
+    --surface-panel: #1d1d1d;
+    --surface-raised: #282828;
+    --surface-muted: #4e4e4e;
+    --border-subtle: #4e4e4e;
+    --border-strong: #F8EFFF;
 
     --text-primary: var(--palette-contrast);
-    --text-secondary: color-mix(in srgb, var(--palette-contrast) 72%, var(--palette-base) 28%);
-    --text-muted: color-mix(in srgb, var(--palette-contrast) 55%, var(--palette-base) 45%);
-    --text-on-primary: color-mix(in srgb, #ffffff 85%, var(--palette-base) 15%);
+    --text-secondary: #dbdbdb;
+    --text-muted: #b5b5b5;
+    --text-on-primary: #070209;
+    --static-white: #ffffff;
+
+    /* Semantic states */
+    --status-success: #57E38A;
+    --status-error: #FF7A7A;
+    --status-neutral: #CFC3D8;
+    --status-success-on: var(--preto);
+    --status-error-on: var(--preto);
+    --status-neutral-on: var(--preto);
+    --status-success-strong: #28A745;
+    --status-success-muted: #D4EDDA;
+    --status-error-strong: #DC3545;
+    --status-error-muted: #F8D7DA;
 
     --primary-500: #7e28c0;
     --primary-400: color-mix(in srgb, var(--primary-500) 80%, #ffffff 20%);
-    --primary-600: color-mix(in srgb, var(--primary-500) 85%, #000000 15%);
-    --primary-soft: color-mix(in srgb, var(--primary-500) 30%, var(--palette-contrast) 70%);
+    --primary-600: color-mix(in srgb, var(--primary-500) 86.04%, #000000 13.96%);
+    --primary-soft: color-mix(in srgb, var(--primary-500) 32%, var(--text-primary) 68%);
 
-    /* Aliases temporários para manter o site enquanto os estilos são ajustados */
     --branco: var(--text-primary);
-    --preto: var(--palette-base);
+    --preto: #070209;
     --cinza-escuro1: var(--surface-raised);
     --cinza-escuro2: var(--surface-panel);
-    --cinza-escuro3: var(--surface-muted);
-    --cinza-claro1: var(--text-secondary);
-    --cinza-claro2: var(--text-muted);
+    --cinza-escuro3: var(--surface-page);
+    --cinza-claro1: var(--surface-muted);
+    --cinza-claro2: var(--text-secondary);
     --roxo1: var(--primary-500);
-    --roxo2: var(--primary-600);
-    --roxo3: color-mix(in srgb, var(--primary-500) 65%, #000000 35%);
-    --roxo4: color-mix(in srgb, var(--primary-500) 45%, #000000 55%);
+    --roxo2: color-mix(in srgb, var(--primary-500) 86.04%, #000000 13.96%);
+    --roxo3: color-mix(in srgb, var(--primary-500) 62.96%, #000000 37.04%);
+    --roxo4: color-mix(in srgb, var(--primary-500) 33.4%, #000000 66.6%);
 }
 
 :root[data-base="branco"] {
-    --palette-base: #F8EFFF;
+    --palette-base: #ffffff;
     --palette-contrast: #070209;
+    --text-primary: var(--palette-contrast);
+    --text-on-primary: #F8EFFF;
+    --border-strong: #070209;
+    --branco: var(--text-primary);
 }
 
 body {

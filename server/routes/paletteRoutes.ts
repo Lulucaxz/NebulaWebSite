@@ -25,7 +25,7 @@ type PaletteRow = RowDataPacket & {
   label: string;
   base: ThemeBase;
   primary_hex: string;
-  metadata: string | null;
+  metadata: string | Buffer | PaletteMetadata | null;
   is_default: number;
 };
 
@@ -38,10 +38,14 @@ const clamp01 = (value: number): number => {
   return Math.min(1, Math.max(0, value));
 };
 
-const parseMetadata = (payload: string | null): PaletteMetadata => {
+const parseMetadata = (payload: string | Buffer | PaletteMetadata | null): PaletteMetadata => {
   if (!payload) return {};
+  if (typeof payload === "object" && !(payload instanceof Buffer)) {
+    return payload as PaletteMetadata;
+  }
   try {
-    const parsed = JSON.parse(payload);
+    const serialized = typeof payload === "string" ? payload : payload.toString("utf8");
+    const parsed = JSON.parse(serialized);
     if (typeof parsed === "object" && parsed !== null) {
       return parsed as PaletteMetadata;
     }

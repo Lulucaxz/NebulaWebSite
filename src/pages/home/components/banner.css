@@ -9,7 +9,7 @@
 .bnn-filtro {
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #000000,  #00000000);
+    background: linear-gradient(90deg, var(--preto), transparent);
     display: flex;
     justify-content: center;
 }

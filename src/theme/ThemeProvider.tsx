@@ -45,23 +45,107 @@ const DEFAULT_PRIMARY = "#7e28c0";
 const DEFAULT_BASE: ThemeBase = "preto";
 const DEFAULT_BASE_TONE = 0;
 const STORAGE_KEY = "nebula.themePalette";
+const DARK_BASE_HEX = "#070209";
+const LIGHT_BASE_HEX = "#F8EFFF";
+
+const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
+
+const GRAYSCALE_NEUTRALS: Record<string, string> = {
+  "--surface-page": "#141414",
+  "--surface-panel": "#1d1d1d",
+  "--surface-raised": "#282828",
+  "--surface-muted": "#4e4e4e",
+  "--border-subtle": "#4e4e4e",
+  "--text-secondary": "#dbdbdb",
+  "--text-muted": "#b5b5b5",
+};
+
+const STATUS_BASE_COLORS: Record<string, string> = {
+  "--status-success": "#57E38A",
+  "--status-error": "#FF7A7A",
+  "--status-neutral": "#CFC3D8",
+  "--status-success-strong": "#28A745",
+  "--status-success-muted": "#D4EDDA",
+  "--status-error-strong": "#DC3545",
+  "--status-error-muted": "#F8D7DA",
+};
+
+const clampWeight = (value: number) => Math.min(1, Math.max(0, value));
+
+const hexToRgb = (hex: string): [number, number, number] => {
+  const normalized = hex.replace("#", "");
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return [r, g, b];
+};
+
+const rgbToHex = ([r, g, b]: [number, number, number]): string =>
+  `#${[r, g, b]
+    .map((channel) => Math.round(Math.max(0, Math.min(255, channel))))
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("")}`;
+
+const mixHexColors = (hexA: string, hexB: string, weightB: number): string => {
+  const ratio = clamp01(weightB);
+  const colorA = hexToRgb(hexA);
+  const colorB = hexToRgb(hexB);
+  const mixed = colorA.map((value, index) => value * (1 - ratio) + colorB[index] * ratio) as [
+    number,
+    number,
+    number,
+  ];
+  return rgbToHex(mixed);
+};
+
+const grayscaleValueFromHex = (hex: string): number => {
+  const normalized = hex.replace("#", "");
+  const channel = parseInt(normalized.slice(0, 2), 16);
+  return clampWeight(channel / 255);
+};
+
+const grayscaleHexFromValue = (value: number): string => {
+  const clamped = clampWeight(value);
+  const channel = Math.round(clamped * 255)
+    .toString(16)
+    .padStart(2, "0");
+  return `#${channel}${channel}${channel}`;
+};
+
+const neutralWeights = Object.fromEntries(
+  Object.entries(GRAYSCALE_NEUTRALS).map(([variable, hex]) => [variable, grayscaleValueFromHex(hex)])
+);
 
 const clamp01 = (value: number): number => {
   if (!Number.isFinite(value)) return DEFAULT_BASE_TONE;
   return Math.min(1, Math.max(0, value));
 };
 
-const toneToHex = (tone: number): string => {
-  const normalized = clamp01(tone);
-  const value = Math.round(normalized * 255)
-    .toString(16)
-    .padStart(2, "0");
-  return `#${value}${value}${value}`;
-};
-
 const toneToBase = (tone: number): ThemeBase => (tone >= 0.5 ? "branco" : "preto");
 
-const contrastFromTone = (tone: number): string => (tone >= 0.5 ? "#070209" : "#F8EFFF");
+const toneToBaseColor = (tone: number): string => mixHexColors(DARK_BASE_HEX, LIGHT_BASE_HEX, clamp01(tone));
+
+const contrastFromTone = (tone: number): string => mixHexColors(LIGHT_BASE_HEX, DARK_BASE_HEX, clamp01(tone));
+
+const applyNeutralScale = (tone: number, root: HTMLElement) => {
+  const targetTone = clamp01(tone);
+  Object.entries(neutralWeights).forEach(([variable, baseWeight]) => {
+    const lightWeight = lerp(baseWeight, 1 - baseWeight, targetTone);
+    root.style.setProperty(variable, grayscaleHexFromValue(lightWeight));
+  });
+};
+
+const tintStatusColor = (hex: string, tone: number): string => {
+  const contrast = contrastFromTone(tone);
+  const adjustment = tone >= 0.5 ? 0.18 : 0.08;
+  return mixHexColors(hex, contrast, adjustment);
+};
+
+const applyStatusColors = (tone: number, root: HTMLElement) => {
+  Object.entries(STATUS_BASE_COLORS).forEach(([variable, hex]) => {
+    root.style.setProperty(variable, tintStatusColor(hex, tone));
+  });
+};
 
 const defaultPalette: ThemePalette = {
   base: DEFAULT_BASE,
@@ -111,8 +195,10 @@ const applyPaletteToDocument = (palette: ThemePalette) => {
   const tone = clamp01(typeof palette.baseTone === "number" ? palette.baseTone : palette.base === "branco" ? 1 : 0);
   root.dataset.base = palette.base;
   root.style.setProperty("--primary-500", palette.primary);
-  root.style.setProperty("--palette-base", toneToHex(tone));
+  root.style.setProperty("--palette-base", toneToBaseColor(tone));
   root.style.setProperty("--palette-contrast", contrastFromTone(tone));
+  applyNeutralScale(tone, root);
+  applyStatusColors(tone, root);
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

@@ -18,7 +18,7 @@ export function ModuloItem({
     assinatura,
     locked = false
 }: ModuloItemProps) {
-    const backgroundColor = locked ? '#2C2C2C' : (terminado ? '#9A30EB' : '#4E4E4E');
+    const backgroundColor = locked ? 'var(--surface-raised)' : (terminado ? 'var(--primary-500)' : 'var(--surface-muted)');
     const cardClassName = ["modulo-item", locked ? "modulo-item-locked" : ""].filter(Boolean).join(" ");
 
     const card = (

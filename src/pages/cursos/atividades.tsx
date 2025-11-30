@@ -549,10 +549,10 @@ function Atividades() {
                                 onClick={handleEnviarAtividade}
                                 disabled={avaliandoDissertativas}
                                 style={{
-                                    backgroundColor: '#9A30EB',
+                                    backgroundColor: 'var(--primary-500)',
                                     border: 'none',
                                     padding: '10px 16px',
-                                    color: '#fff',
+                                    color: 'var(--text-primary)',
                                     cursor: avaliandoDissertativas ? 'not-allowed' : 'pointer',
                                     opacity: avaliandoDissertativas ? 0.7 : 1
                                 }}

@@ -37,7 +37,7 @@
 }
 
 .prf-pesquisa-usuario {
-    background-color: #AD7AD4;
+    background-color: var(--primary-400);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -49,7 +49,7 @@
     border: 0;
     height: 100%;
     font-size: 16px;
-    background-color: #ffffff00;
+    background-color: transparent;
     width: 100%;
     padding: 0 0 0 10px;
     color: var(--branco);
@@ -68,7 +68,7 @@
 }
 
 .prf-usuarios-rank {
-    background-color: #7E28C0;
+    background-color: var(--primary-500);
 }
 
 .prf-usuarios-rank:hover, .prf-usuarios-rank.prf-cor2:hover {
@@ -81,16 +81,16 @@
     display: flex;
     height: 60px;
     width: 100%;
-    color: #fff;
+    color: var(--text-on-primary);
     justify-content: center;
 }
 
 .prf-usuarios-rank.prf-cor2 {
-    background-color: #6C23A3;
+    background-color: var(--primary-600);
 }
 
 .prf-sticky-user .prf-usuarios-rank {
-    background-color: #00000000;
+    background-color: transparent;
 }
 
 .prf-container4 {
@@ -114,7 +114,7 @@
 }
 
 .prf-container-rank::-webkit-scrollbar-track {
-    background: #3b393b;
+    background: var(--surface-muted);
 }
 
 .prf-container-rank::-webkit-scrollbar-thumb {

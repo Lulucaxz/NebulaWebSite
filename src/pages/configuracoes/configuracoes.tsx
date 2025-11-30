@@ -38,7 +38,7 @@ function Configuracoes() {
         <div className="cnfg-botoes">
           <div
             className="cnfg-btn"
-            style={{ backgroundColor: idioma ? "#9A30EB" : "#282828" }}
+            style={{ backgroundColor: idioma ? "var(--primary-500)" : "var(--surface-raised)" }}
             onClick={() => {
               setIdioma(true);
               i18n.changeLanguage('pt');
@@ -48,7 +48,7 @@ function Configuracoes() {
           </div>
           <div
             className="cnfg-btn"
-            style={{ backgroundColor: !idioma ? "#9A30EB" : "#282828" }}
+            style={{ backgroundColor: !idioma ? "var(--primary-500)" : "var(--surface-raised)" }}
             onClick={() => {
               setIdioma(false);
               i18n.changeLanguage('en');
@@ -62,7 +62,7 @@ function Configuracoes() {
         <div className="cnfg-botoes">
           <div
             className="cnfg-btn"
-            style={{ backgroundColor: tema ? "#9A30EB" : "#282828" }}
+            style={{ backgroundColor: tema ? "var(--primary-500)" : "var(--surface-raised)" }}
             onClick={() => {
               setTema(true);
             }}
@@ -71,7 +71,7 @@ function Configuracoes() {
           </div>
           <div
             className="cnfg-btn"
-            style={{ backgroundColor: !tema ? "#9A30EB" : "#282828" }}
+            style={{ backgroundColor: !tema ? "var(--primary-500)" : "var(--surface-raised)" }}
             onClick={() => {
               setTema(false);
             }}

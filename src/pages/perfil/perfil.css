@@ -195,6 +195,14 @@
   gap: 25px;
 }
 
+.prf-social-header span {
+  transition: all 0.2s;
+}
+
+.prf-social-header span:hover {
+  color: var(--primary-400);
+}
+
 .prf-nome-usuario span {
   font-family: "Questrial", sans-serif;
   font-size: 32px;
@@ -506,6 +514,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.2s;
   font-size: 20px;
 }
 

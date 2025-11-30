@@ -55,11 +55,11 @@
 }
 
 .seguidor-item-par {
-    background-color: #373737;
+    background-color: var(--surface-panel);
 }
 
 .seguidor-item-impar {
-    background-color: #454545;
+    background-color: var(--surface-muted);
 }
 
 .seguidor-info {

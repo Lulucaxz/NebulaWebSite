@@ -36,7 +36,7 @@
 }
 
 .frm-comentario-detalhes-usuario h3 {
-    color: #FFFFFF;
+    color: var(--text-primary);
     font-family: "Inter", sans-serif;
     font-size: 16px; /* Fonte menor para o nome */
     font-weight: 500;
@@ -44,13 +44,13 @@
 }
 
 .frm-comentario-detalhes-usuario span {
-    color: #A4A4A4;
+    color: var(--forum-text-soft);
     font-family: "Inter", sans-serif;
     font-size: 12px; /* Fonte menor para a data */
 }
 .frm-comentario-editado {
     font-size: 12px;
-    color: #c9c9c9;
+    color: var(--forum-text-muted);
     margin-left: 4px;
     font-family: "Inter", sans-serif;
 }
@@ -84,20 +84,20 @@
 
 .frm-comentario-tag {
     padding: 4px 12px;
-    background-color: #4A2E5D; /* Cor da tag 'Dúvida' */
-    color: #E1C9FF; /* Cor do texto da tag */
+    background-color: var(--forum-tag-duvida-bg);
+    color: var(--forum-tag-duvida-text);
     font-family: "Inter", sans-serif;
     font-size: 13px;
     font-weight: 500;
 }
 
 .frm-comentario-tag:nth-child(2) {
-    background-color: #6A2573; /* Cor da tag 'Universo' */
+    background-color: var(--forum-tag-universo-bg);
 }
 
 .frm-comentario-tag:nth-child(3) {
-    background-color: #BCA0EA; /* Cor da tag 'Observação' */
-    color: #3A2D4C;
+    background-color: var(--forum-tag-observacao-bg);
+    color: var(--forum-tag-observacao-text);
 }
 
 /* Título do comentário */
@@ -106,7 +106,7 @@
 }
 
 .frm-comentario-titulo h2 {
-    color: #FFFFFF;
+    color: var(--text-primary);
     font-family: "Inter", sans-serif;
     font-size: 24px; /* Tamanho do título */
     font-weight: 700;
@@ -133,7 +133,7 @@
     font-weight: 400; /* Peso da fonte do parágrafo */
     font-size: 16px; /* Tamanho da fonte do parágrafo */
     text-align: justify;
-    color: #DCDCDC; /* Cor do texto do parágrafo */
+    color: var(--text-secondary);
     font-family: "Inter", sans-serif;
     line-height: 1.6;
     margin: 0;
@@ -147,14 +147,14 @@
     width: 100%;
     height: 150px;
     box-sizing: border-box;
-    background-color: #252525;
-    border: 1px solid #555;
+    background-color: var(--forum-surface-overlay);
+    border: 1px solid var(--forum-border-strong);
     border-radius: 5px;
     padding: 10px;
     font-weight: 400;
     font-size: 16px;
     text-align: justify;
-    color: #DCDCDC;
+    color: var(--text-secondary);
     font-family: "Inter", sans-serif;
     resize: vertical;
 }
@@ -182,23 +182,23 @@
     padding: 5px 10px;
     display: flex;
     align-items: center;
-    background-color: #363636;
+    background-color: var(--forum-surface-strong);
     transition: all 0.2s;
     gap: 8px;
 }
 
 .frm-comentario-botao-avaliacao:hover,
 .frm-comentario-botao-respostas:hover {
-    background-color: #4A4A4A;
+    background-color: var(--forum-surface-hover);
 }
 
 /* Estado do botão quando já avaliado (liked) */
 .frm-comentario-botao-avaliacao.liked {
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
 }
 
 .frm-comentario-botao-avaliacao.liked:hover {
-    background-color: #8a27d6;
+    background-color: var(--forum-accent-strong);
 }
 
 .frm-comentario-botao-avaliacao.liked img {
@@ -206,17 +206,17 @@
 }
 
 .frm-comentario-botao-avaliacao.liked .frm-comentario-numero-avaliacao {
-    color: #FFFFFF;
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
 /* Estado ativo para botão de respostas */
 .frm-comentario-botao-respostas.active {
-    background-color: #9A30EB;
+    background-color: var(--primary-500);
 }
 
 .frm-comentario-botao-respostas.active:hover {
-    background-color: #8a27d6;
+    background-color: var(--forum-accent-strong);
 }
 
 .frm-comentario-botao-respostas.active img {
@@ -224,7 +224,7 @@
 }
 
 .frm-comentario-botao-respostas.active .frm-comentario-numero-respostas {
-    color: #FFFFFF;
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
@@ -238,7 +238,7 @@
 
 .frm-comentario-numero-avaliacao,
 .frm-comentario-numero-respostas {
-    color: #A4A4A4;
+    color: var(--forum-text-soft);
     font-family: "Inter", sans-serif;
     font-size: 15px;
     font-weight: 500;
@@ -252,7 +252,7 @@
 /* Linha divisória final */
 .frm-comentario-divisor {
     border: none;
-    background-color: #DCDCDC;
+    background-color: var(--text-secondary);
     height: 2px;
     width: 100%;
 }
@@ -268,7 +268,7 @@
 
 .ver-respostas-form {
     width: calc(800px - (50px * 2)); /* Ajustado para a nova largura */
-    background-color: #363636;
+    background-color: var(--forum-surface-strong);
     overflow: hidden;
     border-radius: 0 0 10px 10px;
     display: flex;
@@ -280,20 +280,20 @@
 .ver-respostas-form textarea {
     width: calc(100% - 125px);
     height: 130px;
-    background-color: #555555;
-    border: 2px solid #A4A4A4;
+    background-color: var(--forum-surface-strong);
+    border: 2px solid var(--forum-border-strong);
     border-radius: 7px;
     padding: 20px 20px 0 20px;
     font-weight: 400;
     font-size: 32px;
-    color: #e7e7e7;
+    color: var(--text-primary);
     font-family: 'Inter';
 }
 
 .ver-respostas-form button {
     width: 75px;
     height: 75px;
-    background-color: #555555;
+    background-color: var(--forum-surface-strong);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -304,11 +304,11 @@
 }
 
 .ver-respostas-form button:hover {
-    background-color: #454545;
+    background-color: var(--forum-surface-hover);
 }
 
 .ver-respostas-form button:active {
-    background-color: #2c2c2c;
+    background-color: var(--forum-surface-pressed);
 }
 
 .ver-respostas-form button img {
@@ -334,7 +334,7 @@
 }
 
 .ver-respostas-container::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: var(--forum-scroll-thumb);
     border-radius: 999px;
 }
 

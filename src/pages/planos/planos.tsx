@@ -39,7 +39,6 @@ interface Plan {
   description: string;
   benefits: string[];
   price: number;
-  color: string;
 }
 
 interface PaymentMethod {
@@ -66,7 +65,6 @@ const PLAN_OPTIONS: Plan[] = [
       "Customização avançada",
     ],
     price: 79.9,
-    color: "#7e28c0",
   },
   {
     slug: "galaxia",
@@ -82,7 +80,6 @@ const PLAN_OPTIONS: Plan[] = [
       "Customização avançada",
     ],
     price: 129.9,
-    color: "#7e28c0",
   },
   {
     slug: "universo",
@@ -98,7 +95,6 @@ const PLAN_OPTIONS: Plan[] = [
       "Customização avançada",
     ],
     price: 179.9,
-    color: "#7e28c0",
   },
 ];
 

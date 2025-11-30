@@ -16,8 +16,8 @@ html {
   max-width: 100%;
   margin: 0 auto;
   padding: 100px 0;
-  color: #fff;
-  background-color: var(--cinza-escuro1);
+  color: var(--text-primary);
+  background-color: var(--surface-raised);
   min-height: 100vh;
   font-family: "Questrial", sans-serif;
   user-select: none;
@@ -85,19 +85,19 @@ html {
   width: 15px !important;
   height: 15px !important;
   border-radius: 50%;
-  background-color: rgb(255, 255, 255) !important;
+  background-color: var(--text-primary) !important;
 }
 
 .slick-dots li.slick-active div {
-  background-color: #9A30EB !important;
+  background-color: var(--primary-500) !important;
 }
 
 .plan-card {
   padding: 25px;
   height: 400px;
-  color: #fff;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  background: #7e28c0;
+  color: var(--text-primary);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--palette-base) 30%, transparent);
+  background: var(--primary-500);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -111,8 +111,7 @@ html {
 .plan-card-orbita,
 .plan-card-galaxia,
 .plan-card-universo {
-  background-color: #7e28c0
-;
+  background-color: var(--primary-500);
 }
 
 .plan-card-title {
@@ -177,8 +176,8 @@ html {
 }
 
 .plan-card-button {
-  background-color: #610EA1;
-  color: #fff;
+  background-color: var(--primary-600);
+  color: var(--text-primary);
   border: none;
   padding: 12px 24px;
   cursor: pointer;
@@ -211,7 +210,7 @@ html {
 }
 
 .payment-section-title-highlight {
-  color: #9A30EB;
+  color: var(--primary-500);
   text-transform: uppercase;
 }
 
@@ -224,18 +223,18 @@ html {
 
 .payment-method-card {
   overflow: hidden;
-  background-color: #454545;
+  background-color: var(--surface-muted);
   transition: all 0.3s ease;
 }
 
 .payment-method-card.is-active {
-  background-color: #454545;
+  background-color: var(--surface-muted);
 }
 
 .payment-method-button {
   width: 100%;
   padding: 15px;
-  background-color: #454545;
+  background-color: var(--surface-muted);
   border: none;
   text-align: left;
   cursor: pointer;
@@ -244,12 +243,12 @@ html {
   align-items: center;
   font-weight: bold;
   font-size: 1.1rem;
-  color: #fff;
+  color: var(--text-primary);
   transition: background-color 0.3s ease;
 }
 
 .payment-method-button:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: color-mix(in srgb, var(--text-primary) 5%, transparent);
 }
 
 .payment-method-info {
@@ -290,7 +289,7 @@ html {
 }
 
 input::placeholder {
-  color: rgb(197, 193, 193);
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
@@ -305,8 +304,8 @@ input:focus {
   padding: 10px;
   font-family: "Questrial";
   font-size: 18px;
-  background-color: #7E7E7E;
-  color: #fff;
+  background-color: color-mix(in srgb, var(--surface-muted) 65%, var(--text-primary) 35%);
+  color: var(--text-primary);
   border: none;
   text-transform: uppercase;
 }
@@ -364,8 +363,8 @@ input:focus {
   padding: 10px;
   font-family: "Questrial";
   font-size: 18px;
-  background-color: #7E7E7E;
-  color: #fff;
+  background-color: color-mix(in srgb, var(--surface-muted) 65%, var(--text-primary) 35%);
+  color: var(--text-primary);
   border: none;
   text-transform: uppercase;
 }
@@ -382,7 +381,7 @@ input:focus {
 }
 
 .pix-qrcode {
-  background-color: #f0f0f0;
+  background-color: var(--text-primary);
   height: 350px;
   width: 350px;
   display: flex;
@@ -416,8 +415,8 @@ input:focus {
 }
 
 .btn-hover {
-  background-color: white;
-  color: #9B3BD2;
+  background-color: var(--text-primary);
+  color: var(--primary-400);
 }
 
 .pix-copy-button {
@@ -425,8 +424,8 @@ input:focus {
   width: 100%;
   font-size: 16px;
   font-family: "Questrial";
-  color: white;
-  background-color: #9030eb;
+  color: var(--text-primary);
+  background-color: var(--primary-500);
   border: none;
   margin-top: 10px;
   cursor: pointer;
@@ -437,7 +436,7 @@ input:focus {
 }
 
 .plan-span {
-  color: white;
+  color: var(--text-primary);
   font-family: "Archivo black";
   font-size: 20px;
 }
@@ -447,10 +446,10 @@ input:focus {
 }
 
 .btn-pay {
-  background-color: #9030eb;
+  background-color: var(--primary-500);
   font-size: 20px;
   font-family: "Archivo black";
-  color: white;
+  color: var(--text-primary);
   border: none;
   padding: 12px 24px;
   cursor: pointer;
@@ -472,8 +471,8 @@ input:focus {
 }
 
 option:hover {
-  background-color: #9B3BD2;
-  color: white;
+  background-color: var(--primary-400);
+  color: var(--text-primary);
 }
 
 .strong-pay {
@@ -490,11 +489,11 @@ option:hover {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #9030eb;
-  color: white;
+  background-color: var(--primary-500);
+  color: var(--text-primary);
   padding: 12px 24px;
   font-family: "Questrial";
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--palette-base) 20%, transparent);
   z-index: 1000;
   animation: toastSlideIn 0.5s forwards, toastFadeOut 0.5s 1.5s forwards;
 }

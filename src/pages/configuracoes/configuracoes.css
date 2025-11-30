@@ -22,7 +22,7 @@
     font-weight: 400;
     font-size: 44px;
     line-height: 70px;
-    color: #9A30EB;
+    color: var(--primary-500);
 }
 
 #container-config p {
@@ -45,7 +45,7 @@
     width: calc(100% - 40px);
     padding: 20px;
     border-radius: 10px;
-    background-color: #282828;
+    background-color: var(--surface-raised);
     margin: 5px 0;
     text-align: center;
     font-family: 'Archivo Black';

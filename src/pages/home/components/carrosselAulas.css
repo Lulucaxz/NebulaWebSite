@@ -57,12 +57,12 @@
 }
 
 .bloqueado a {
-    background-color: #3D3D3D;
+    background-color: var(--surface-muted);
     cursor: default;
 }
 
 .bloqueado a:hover {
-    background-color: #3D3D3D;
+    background-color: var(--surface-muted);
 }
 
 
@@ -75,7 +75,7 @@
 }
 
 .container-carrossel::-webkit-scrollbar-track {
-    background: #3b393b;
+    background: var(--surface-panel);
     border-radius: 20px;
 }
 

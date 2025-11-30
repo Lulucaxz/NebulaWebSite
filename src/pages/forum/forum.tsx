@@ -1176,24 +1176,40 @@ function Forum() {
                   onClick={() => setTagsAbertas(!tagsAbertas)}
                   style={
                     tagsAbertas ?
-                      { padding: '12px 18px 33px 18px', marginBottom: '-21px', transition: 'all 0.3s', backgroundColor: '#F8EFFF', color: '#282828' }
+                      {
+                        padding: '12px 18px 33px 18px',
+                        marginBottom: '-21px',
+                        transition: 'all 0.3s',
+                        backgroundColor: 'var(--text-primary)',
+                        color: 'var(--surface-page)'
+                      }
                       :
-                      { padding: '12px 18px 12px 18px', transition: 'all 0.3s 0.4s', backgroundColor: '#4E4E4E', color: '#ACACAC' }
+                      {
+                        padding: '12px 18px 12px 18px',
+                        transition: 'all 0.3s 0.4s',
+                        backgroundColor: 'var(--surface-muted)',
+                        color: 'var(--text-muted)'
+                      }
                   }
                 >
                   <span className="forum-tags-titulo">Etiquetas</span>
                   <span className="forum-tags-arrow"
                     style={
                       tagsAbertas ?
-                        { transform: 'rotateZ(0deg)', color: '#282828', transition: 'all 0.3s' }
+                        { transform: 'rotateZ(0deg)', color: 'var(--surface-page)', transition: 'all 0.3s' }
                         :
-                        { transform: 'rotateZ(180deg)', color: '#ACACAC', transition: 'all 0.3s 0.4s' }
+                        { transform: 'rotateZ(180deg)', color: 'var(--text-muted)', transition: 'all 0.3s 0.4s' }
                     }
                   >▲</span>
                 </div>
                 <div className="forum-tags" style={
                   tagsAbertas ?
-                    { height: '472px', boxShadow: '0 8px 18px rgba(0,0,0,0.6)', padding: '6px 0', transition: 'all 0.5s 0.2s' }
+                    {
+                      height: '472px',
+                      boxShadow: '0 8px 18px color-mix(in srgb, var(--preto) 10%, transparent)',
+                      padding: '6px 0',
+                      transition: 'all 0.5s 0.2s'
+                    }
                     :
                     { height: '0px', boxShadow: 'none', padding: '0px', transition: 'all 0.5s' }
                 }>

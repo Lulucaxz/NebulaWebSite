@@ -1,4 +1,5 @@
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import type { AxiosError } from "axios";
 import "./PalettePanel.css";
 import { useTheme } from "../../../theme/useTheme";
 
@@ -12,26 +13,54 @@ const clamp01 = (value: number) => {
   return Math.min(1, Math.max(0, value));
 };
 
+const DARK_BASE_HEX = "#070209";
+const LIGHT_BASE_HEX = "#F8EFFF";
+
+const hexChannel = (hex: string, start: number) => parseInt(hex.slice(start, start + 2), 16);
+
 const toneToHex = (tone: number) => {
   const normalized = clamp01(tone);
-  const channel = Math.round(normalized * 255)
+  const r = Math.round(hexChannel(DARK_BASE_HEX, 1) * (1 - normalized) + hexChannel(LIGHT_BASE_HEX, 1) * normalized)
     .toString(16)
     .padStart(2, "0");
-  return `#${channel}${channel}${channel}`;
+  const g = Math.round(hexChannel(DARK_BASE_HEX, 3) * (1 - normalized) + hexChannel(LIGHT_BASE_HEX, 3) * normalized)
+    .toString(16)
+    .padStart(2, "0");
+  const b = Math.round(hexChannel(DARK_BASE_HEX, 5) * (1 - normalized) + hexChannel(LIGHT_BASE_HEX, 5) * normalized)
+    .toString(16)
+    .padStart(2, "0");
+  return `#${r}${g}${b}`;
 };
 
-const hueToHex = (hue: number, saturation = 0.72, lightness = 0.45) => {
+const hexToHue = (hex: string): number => {
+  const normalized = hex.replace("#", "").padEnd(6, "0");
+  if (normalized.length !== 6) return 270;
+  const r = parseInt(normalized.slice(0, 2), 16) / 255;
+  const g = parseInt(normalized.slice(2, 4), 16) / 255;
+  const b = parseInt(normalized.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+  if (delta === 0) return 0;
+  let hue = 0;
+  if (max === r) hue = ((g - b) / delta) % 6;
+  else if (max === g) hue = (b - r) / delta + 2;
+  else hue = (r - g) / delta + 4;
+  return (Math.round(hue * 60) + 360) % 360;
+};
+
+const hueToHex = (hue: number, saturation = 0.75, lightness = 0.5) => {
   const h = ((hue % 360) + 360) % 360;
   const s = clamp01(saturation);
   const l = clamp01(lightness);
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = l - c / 2;
-  let r = 0,
-    g = 0,
-    b = 0;
+  let r = 0;
+  let g = 0;
+  let b = 0;
 
-  if (h >= 0 && h < 60) {
+  if (h < 60) {
     r = c;
     g = x;
   } else if (h < 120) {
@@ -55,30 +84,8 @@ const hueToHex = (hue: number, saturation = 0.72, lightness = 0.45) => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
-const hexToHue = (hex: string): number => {
-  const normalized = hex.replace("#", "");
-  if (normalized.length !== 6) {
-    return 270;
-  }
-  const r = parseInt(normalized.substring(0, 2), 16) / 255;
-  const g = parseInt(normalized.substring(2, 4), 16) / 255;
-  const b = parseInt(normalized.substring(4, 6), 16) / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const delta = max - min;
-  if (delta === 0) return 0;
-  let hue = 0;
-  if (max === r) {
-    hue = ((g - b) / delta) % 6;
-  } else if (max === g) {
-    hue = (b - r) / delta + 2;
-  } else {
-    hue = (r - g) / delta + 4;
-  }
-  return (Math.round(hue * 60) + 360) % 360;
-};
-
 const buildDefaultName = (count: number) => `Paleta ${count + 1}`;
+const TONE_DUPLICATE_EPSILON = 0.01;
 
 export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
   const {
@@ -94,8 +101,10 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
 
   const customCount = useMemo(() => palettes.filter((p) => !p.isDefault).length, [palettes]);
 
-  const [draftBaseTone, setDraftBaseTone] = useState(() => clamp01(palette.baseTone));
-  const [draftPrimaryHue, setDraftPrimaryHue] = useState(() => hexToHue(palette.primary));
+  const [draftBaseTone, setDraftBaseTone] = useState(
+    () => clamp01(palette.baseTone ?? (palette.base === "branco" ? 1 : 0))
+  );
+  const [draftHue, setDraftHue] = useState(() => hexToHue(palette.primary));
   const [paletteName, setPaletteName] = useState(() => buildDefaultName(customCount));
   const [error, setError] = useState<string>("");
   const [creating, setCreating] = useState(false);
@@ -104,19 +113,13 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
   const wheelRef = useRef<HTMLDivElement | null>(null);
   const [wheelActive, setWheelActive] = useState(false);
 
-  const primaryPreview = useMemo(() => hueToHex(draftPrimaryHue), [draftPrimaryHue]);
+  const primaryPreview = useMemo(() => hueToHex(draftHue), [draftHue]);
   const baseTonePercent = useMemo(() => Math.round(clamp01(draftBaseTone) * 100), [draftBaseTone]);
 
   useEffect(() => {
-    setDraftBaseTone(clamp01(palette.baseTone));
-    setDraftPrimaryHue(hexToHue(palette.primary));
-  }, [palette.baseTone, palette.primary]);
-
-  useEffect(() => {
-    if (!paletteName) {
-      setPaletteName(buildDefaultName(customCount));
-    }
-  }, [customCount, paletteName]);
+    setDraftBaseTone(clamp01(palette.baseTone ?? (palette.base === "branco" ? 1 : 0)));
+    setDraftHue(hexToHue(palette.primary));
+  }, [palette.base, palette.baseTone, palette.primary]);
 
   const handleBaseChange = (value: number) => {
     const normalized = clamp01(value / 100);
@@ -126,7 +129,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
 
   const handleHueChange = (value: number) => {
     const normalized = ((value % 360) + 360) % 360;
-    setDraftPrimaryHue(normalized);
+    setDraftHue(normalized);
     setPrimary(hueToHex(normalized));
   };
 
@@ -162,16 +165,36 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
 
   const handleCreatePalette = async () => {
     if (creating) return;
-    setCreating(true);
     setError("");
+
+    const trimmedName = paletteName.trim();
+    if (!trimmedName) {
+      setError("Digite um nome para salvar a paleta.");
+      return;
+    }
+
+    const normalizedTone = clamp01(draftBaseTone);
+    const normalizedPrimary = primaryPreview.toLowerCase();
+    const paletteAlreadyExists = palettes.some((item) => {
+      const toneDiff = Math.abs(clamp01(item.baseTone) - normalizedTone);
+      return toneDiff <= TONE_DUPLICATE_EPSILON && item.primary.toLowerCase() === normalizedPrimary;
+    });
+
+    if (paletteAlreadyExists) {
+      setError("Você já possui uma paleta com estas cores.");
+      return;
+    }
+
+    setCreating(true);
     try {
-      const label = paletteName.trim() || buildDefaultName(customCount);
-      await createPalette({ label, baseTone: draftBaseTone, primary: primaryPreview, setActive: true });
+      await createPalette({ label: trimmedName, baseTone: normalizedTone, primary: primaryPreview, setActive: true });
       onCommit();
       setPaletteName("");
       onClose();
-    } catch {
-      setError("Não foi possível salvar a paleta agora. Tente novamente.");
+    } catch (err) {
+      const axiosError = err as AxiosError<{ error?: string }>;
+      const serverMessage = axiosError.response?.data?.error;
+      setError(serverMessage || "Não foi possível salvar a paleta agora. Tente novamente.");
     } finally {
       setCreating(false);
     }
@@ -230,12 +253,12 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
               onChange={(event) => handleBaseChange(Number(event.target.value))}
               className="palette-panel__slider"
               style={{
-                background: "linear-gradient(90deg, #070209 0%, #F8EFFF 100%)",
+                background: "linear-gradient(90deg, var(--preto) 0%, var(--text-primary) 100%)",
               }}
             />
             <div className="palette-panel__slider-labels">
               <span>Preto</span>
-              <span>{baseTonePercent}%</span>
+              <span className="palette-panel__slider-value">{baseTonePercent}%</span>
               <span>Branco</span>
             </div>
           </div>
@@ -254,13 +277,12 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
                 }
                 setWheelActive(false);
               }}
-              style={{"--wheel-angle": `${draftPrimaryHue}deg`} as CSSProperties}
+              style={{ "--wheel-angle": `${draftHue}deg`, "--wheel-primary": primaryPreview } as CSSProperties}
             >
               <span
                 className="palette-panel__wheel-indicator"
-                style={{"--wheel-angle": `${draftPrimaryHue}deg`} as CSSProperties}
+                style={{ "--wheel-angle": `${draftHue}deg` } as CSSProperties}
               />
-              <span className="palette-panel__wheel-center" style={{ background: primaryPreview }} />
             </div>
           </div>
 
@@ -279,7 +301,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
             <button
               className="palette-panel__save"
               onClick={handleCreatePalette}
-              disabled={creating}
+              disabled={creating || !paletteName.trim()}
             >
               {creating ? "Salvando..." : "Selecionar"}
             </button>
@@ -301,7 +323,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
               >
                 <div className="palette-card__swatch">
                   <span
-                    style={{ background: toneToHex(item.baseTone) }}
+                    style={{ background: toneToHex(item.baseTone ?? (item.base === "branco" ? 1 : 0)) }}
                     aria-label={`Base ${item.base}`}
                   />
                   <span

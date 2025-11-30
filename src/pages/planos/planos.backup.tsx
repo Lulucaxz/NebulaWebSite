@@ -830,10 +830,10 @@ const PLAN_OPTIONS: Plan[] = [
           }
 
           .slick-dots li.slick-active div {
-      background-color: #9A30EB !important; /* Roxo quando ativo */
+      background-color: var(--primary-500) !important; /* Roxo quando ativo */
     }
     .slick-dots li div {
-      background-color: rgb(255, 255, 255) !important; /* Roxo claro quando inativo */
+      background-color: var(--static-white) !important; /* Roxo claro quando inativo */
     }
         `}
           </style>
@@ -919,7 +919,7 @@ const PLAN_OPTIONS: Plan[] = [
                       <button
                         style={{
                           backgroundColor: selectedPlanIndex === index ? "#fff" : "#610EA1",
-                          color: selectedPlanIndex === index ? "#9A30EB" : "white",
+                          color: selectedPlanIndex === index ? "var(--primary-500)" : "white",
                           border: "none",
                           padding: "12px 24px",
 
@@ -959,7 +959,7 @@ const PLAN_OPTIONS: Plan[] = [
               }}
             >
               Escolha seu método de <span style={{
-                color: '#9A30EB',
+                color: 'var(--primary-500)',
                 textTransform: 'uppercase'
               }}>Pagamento</span>
             </h2>

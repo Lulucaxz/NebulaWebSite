@@ -104,7 +104,7 @@ const LoginPage: React.FC = () => {
 
 
 
-              <span style={{ color: '#9B3BD2' }}>{t('faça login de forma manual:')}</span>
+              <span style={{ color: 'var(--primary-500)' }}>{t('faça login de forma manual:')}</span>
               <input
                 type="email"
                 placeholder={t('Email')}
@@ -119,7 +119,7 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <a href="#" style={{ color: '#9B3BD2' }}>{t('Esqueceu sua senha?')}</a>
+              <a href="#" style={{ color: 'var(--primary-500)' }}>{t('Esqueceu sua senha?')}</a>
               <button type="submit">{t('Entrar')}</button>
 
               <button
@@ -167,7 +167,7 @@ const LoginPage: React.FC = () => {
         }
 
         .login-page {
-          background-color: #070209;
+          background-color: var(--preto);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -177,7 +177,7 @@ const LoginPage: React.FC = () => {
         }
 
         .user-logged-in {
-          background-color: rgb(41, 41, 41);
+          background-color: var(--surface-raised);
           padding: 40px;
           
           text-align: center;
@@ -187,12 +187,12 @@ const LoginPage: React.FC = () => {
         }
 
         .user-logged-in h1 {
-          color: #9B3BD2;
+          color: var(--primary-500);
           margin-bottom: 20px;
         }
 
         .user-logged-in button {
-          background-color: #9B3BD2;
+          background-color: var(--primary-500);
           color: white;
           border: none;
           padding: 10px 20px;
@@ -230,7 +230,7 @@ const LoginPage: React.FC = () => {
         }
 
         button {
-          background-color: #9B3BD2;
+          background-color: var(--primary-500);
           color: #fff;
           font-size: 12px;
           padding: 10px 45px;
@@ -248,7 +248,7 @@ const LoginPage: React.FC = () => {
         }
 
         .login-container form {
-          background-color: rgb(41, 41, 41);
+          background-color: var(--surface-raised);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -269,7 +269,7 @@ const LoginPage: React.FC = () => {
         }
 
         form h1 {
-          color: #9B3BD2;
+          color: var(--primary-500);
           font-family: 'Archivo black', sans-serif;
           text-transform: uppercase;
         }
@@ -285,7 +285,7 @@ const LoginPage: React.FC = () => {
           margin-top: 30px;
           padding: 10px 20px;
           width: 100%;
-          color: #9B3BD2;
+          color: var(--primary-500);
         }
 
         .login-google img {
@@ -297,7 +297,7 @@ const LoginPage: React.FC = () => {
           top: 0;
           height: 100%;
           transition: all 0.6s ease-in-out;
-          background-color: #070209;
+          background-color: var(--preto);
         }
 
         .sign-in {
@@ -368,7 +368,7 @@ const LoginPage: React.FC = () => {
         }
 
         .toggle {
-          background-color: #9B3BD2;
+          background-color: var(--primary-500);
           height: 100%;
           color: #fff;
           position: relative;
@@ -416,7 +416,7 @@ const LoginPage: React.FC = () => {
         }
 
         .voltar {
-          color: #9B3BD2;
+          color: var(--primary-500);
           position: absolute;
           top: 5%;
           left: 10%;
