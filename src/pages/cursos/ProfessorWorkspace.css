@@ -97,4 +97,12 @@
   flex-direction: column;
   gap: 4px;
   font-size: 14px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.professor-modulo-item span,
+.professor-modulo-item strong {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }

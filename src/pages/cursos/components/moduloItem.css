@@ -21,6 +21,8 @@
     font-size: 20px;
     line-height: 22px;
 
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .mudolo-item-descricao {
@@ -30,4 +32,7 @@
     font-size: 16px;
     line-height: 16px;
     text-align: justify;
+
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }

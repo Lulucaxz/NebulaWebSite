@@ -74,6 +74,17 @@
     color: #FFFFFF;
 }
 
+.videos-sessao-card-titulo,
+.videos-sessao-subtitulo,
+.videos-sessao-descricao,
+.carrocel-atividades-card-titulo,
+.carrocel-atividades-card-descricao,
+.questao-descricao,
+.alternativa-texto {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
 
 .videos-sessao-container {
     width: 100%;
