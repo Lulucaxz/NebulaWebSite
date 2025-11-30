@@ -27,6 +27,7 @@ type User = {
   progresso1?: number;
   progresso2?: number;
   progresso3?: number;
+  role?: string;
 };
 
 type FollowEntry = {
@@ -36,7 +37,7 @@ type FollowEntry = {
 };
 
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
-const DEFAULT_AVATAR = "/img/fotoUsuario.png";
+const DEFAULT_AVATAR = "/img/defaultUser.png";
 
 function Perfil() {
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ function Perfil() {
   const [progresso1, setProgresso1] = useState(0);
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
+  const [isProfessor, setIsProfessor] = useState(false);
 
   const [bioCharCount, setBioCharCount] = useState(0);
   const [mostrarSeguidores, setMostrarSeguidores] = useState(false);
@@ -128,6 +130,7 @@ function Perfil() {
         setProgresso1(userData.progresso1 || 0);
         setProgresso2(userData.progresso2 || 0);
         setProgresso3(userData.progresso3 || 0);
+        setIsProfessor((userData.role || "").toLowerCase() === "professor");
         setLoading(false); // Finaliza carregamento
       })
       .catch((err) => {
@@ -304,6 +307,7 @@ function Perfil() {
   }
 
   const bannerDisplay = bannerPreview || bannerUrl || DEFAULT_BANNER;
+  const isStudentView = !isProfessor;
 
   return (
     <div className="container">
@@ -325,26 +329,30 @@ function Perfil() {
                   <div className="prf-usuario">
                     <span>{usuario}</span>
                   </div>
-                  <div className="prf-rank">
-                    <span>{rank !== null ? `#${rank}` : '#-'}</span>
-                  </div>
+                  {isStudentView && (
+                    <div className="prf-rank">
+                      <span>{rank !== null ? `#${rank}` : '#-'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="prf-social-header">
-                <span
-                  onClick={() => setMostrarSeguidores(true)}
-                  style={{ cursor: "pointer" }}
-                >
-                  Seguidores: {seguidores.length}
-                </span>
-                <span
-                  onClick={() => setMostrarSeguindo(true)}
-                  style={{ cursor: "pointer" }}
-                >
-                  Seguindo: {seguindo.length}
-                </span>
-              </div>
+              {isStudentView && (
+                <div className="prf-social-header">
+                  <span
+                    onClick={() => setMostrarSeguidores(true)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Seguidores: {seguidores.length}
+                  </span>
+                  <span
+                    onClick={() => setMostrarSeguindo(true)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Seguindo: {seguindo.length}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -354,9 +362,11 @@ function Perfil() {
                 className="prf-coluna1"
                 style={{ color: "var(--branco)", minWidth: "300px" }}
               >
-                <span className="prf-titulo-informacoes">
-                  PREFERÊNCIA DA CONTA
-                </span>
+                {isStudentView && (
+                  <span className="prf-titulo-informacoes">
+                    PREFERÊNCIA DA CONTA
+                  </span>
+                )}
                 <div className="prf-linguagem">
                   <span>Linguagem:</span>
                   <div className="prf-option-group">
@@ -394,7 +404,9 @@ function Perfil() {
                 >
                   Personalizar paleta
                 </div>
-                <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
+                {isStudentView && (
+                  <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
+                )}
                 <div
                   className="prf-btn-config"
                   onClick={() => {
@@ -405,12 +417,14 @@ function Perfil() {
                 >
                   Editar perfil
                 </div>
-                <div
-                  className="prf-btn-config"
-                  onClick={() => setMostrarAvaliarPlanos(true)}
-                >
-                  Avaliar planos
-                </div>
+                {isStudentView && (
+                  <div
+                    className="prf-btn-config"
+                    onClick={() => setMostrarAvaliarPlanos(true)}
+                  >
+                    Avaliar planos
+                  </div>
+                )}
                 <div className="prf-btn-config" onClick={logout}>Sair</div>
               </div>
               <hr />
@@ -425,12 +439,16 @@ function Perfil() {
                 >
                   <span>{biografia}</span>
                 </div>
-                <span className="prf-titulo-informacoes">PROGRESSO</span>
-                <BarraDeProgresso
-                  progresso1={progresso1}
-                  progresso2={progresso2}
-                  progresso3={progresso3}
-                />
+                {isStudentView && (
+                  <>
+                    <span className="prf-titulo-informacoes">PROGRESSO</span>
+                    <BarraDeProgresso
+                      progresso1={progresso1}
+                      progresso2={progresso2}
+                      progresso3={progresso3}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -487,7 +505,7 @@ function Perfil() {
         />
       )}
 
-      {mostrarAvaliarPlanos && (
+      {isStudentView && mostrarAvaliarPlanos && (
         <ModalAvaliarPlanos onClose={() => setMostrarAvaliarPlanos(false)} />
       )}
 

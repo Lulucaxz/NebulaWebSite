@@ -1,16 +1,16 @@
 .professor-card {
-  background-color: rgba(12, 12, 20, 0.8);
+  background-color: var(--surface-panel);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 24px;
   margin-bottom: 32px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .professor-card h2 {
   margin-bottom: 16px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #9B3BD2;
+  color: var(--primary-500);
 }
 
 .professor-form {
@@ -29,9 +29,9 @@
 .professor-form input,
 .professor-form select,
 .professor-form textarea {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--surface-muted);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--text-primary);
   padding: 10px;
   font-size: 14px;
 }
@@ -43,8 +43,8 @@
 
 .professor-form button {
   align-self: flex-start;
-  background-color: #9B3BD2;
-  color: #fff;
+  background-color: var(--primary-500);
+  color: var(--text-secondary);
   border: none;
   padding: 10px 24px;
   cursor: pointer;

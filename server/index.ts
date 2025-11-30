@@ -46,10 +46,10 @@ const PORT = 4000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 // const USERS_FILE = path.join(__dirname, 'users.json'); // not used
 
-interface User { id: number; role?: string | null; [key: string]: unknown }
+interface User { id: number; role?: string | null; google_id?: string | null; [key: string]: unknown }
 type AuthenticatedRequest = Request & { isAuthenticated?: () => boolean; user?: User };
 
-interface UsuarioRow extends RowDataPacket { id: number; role?: string | null; senha?: string; [key: string]: unknown }
+interface UsuarioRow extends RowDataPacket { id: number; role?: string | null; senha?: string; google_id?: string | null; [key: string]: unknown }
 
 const recalculateRankingQuery = `
   UPDATE usuario u
@@ -61,7 +61,7 @@ const recalculateRankingQuery = `
 `;
 
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
-const DEFAULT_AVATAR = "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png";
+const DEFAULT_AVATAR = "/img/defaultUser.png";
 
 const PLAN_NAME_BY_SLUG = {
   orbita: 'Órbita',
@@ -97,6 +97,15 @@ const normalizeCheckoutPlan = (value: unknown): CheckoutPlanSlug | null => {
     return normalized as CheckoutPlanSlug;
   }
   return null;
+};
+
+const PROFESSOR_PLAN_LABEL = 'Universo';
+
+const normalizeEmail = (value: unknown) => {
+  if (!value) {
+    return '';
+  }
+  return String(value).trim().toLowerCase();
 };
 
 const uploadBufferToCloudinary = (fileBuffer: Buffer, folder: string) => {
@@ -188,53 +197,96 @@ const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
 if (googleClientId && googleClientSecret) {
-passport.use(new GoogleStrategy({
-  clientID: googleClientId,
-  clientSecret: googleClientSecret,
-  callbackURL: "/auth/google/callback"
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    const email = profile.emails?.[0].value || '';
-    const photo = profile.photos?.[0].value || '';
+  passport.use(new GoogleStrategy(
+    {
+      clientID: googleClientId,
+      clientSecret: googleClientSecret,
+      callbackURL: "/auth/google/callback",
+    },
+    async (_accessToken, _refreshToken, profile, done) => {
+      try {
+        const googleId = profile.id;
+        const email = normalizeEmail(profile.emails?.[0]?.value);
+        const photo = profile.photos?.[0]?.value || "";
 
-    // Verifica se já existe no banco
-    const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE email = ?", [email]);
-    if (rows.length > 0) {
-      const existingUser = rows[0];
-      const shouldRefreshIcon = !existingUser.icon || existingUser.icon.includes("googleusercontent.com");
-      if (shouldRefreshIcon && photo) {
-        const refreshedIcon = await uploadRemoteImageToCloudinary(photo, "NEBULA_PFP_IMGS");
-        await pool.query("UPDATE usuario SET icon = ? WHERE id = ?", [refreshedIcon, existingUser.id]);
-        existingUser.icon = refreshedIcon;
+        if (!googleId) {
+          return done(new Error("Conta do Google inválida"));
+        }
+
+        if (!email) {
+          return done(new Error("Não foi possível obter o email da conta Google"));
+        }
+
+        const maybeRefreshIcon = async (user: RowDataPacket) => {
+          const shouldRefreshIcon = !user.icon || user.icon.includes("googleusercontent.com");
+          if (shouldRefreshIcon && photo) {
+            const refreshedIcon = await uploadRemoteImageToCloudinary(photo, "NEBULA_PFP_IMGS");
+            await pool.query("UPDATE usuario SET icon = ? WHERE id = ?", [refreshedIcon, user.id]);
+            user.icon = refreshedIcon;
+          }
+        };
+
+        const [googleIdRows] = await pool.query<RowDataPacket[]>(
+          "SELECT * FROM usuario WHERE google_id = ?",
+          [googleId]
+        );
+
+        if (googleIdRows.length > 0) {
+          const linkedUser = googleIdRows[0];
+          await maybeRefreshIcon(linkedUser);
+          return done(null, linkedUser);
+        }
+
+        const [emailRows] = await pool.query<RowDataPacket[]>(
+          "SELECT * FROM usuario WHERE email = ?",
+          [email]
+        );
+
+        if (emailRows.length > 0) {
+          const existingUser = emailRows[0];
+          if (existingUser.google_id !== googleId) {
+            await pool.query("UPDATE usuario SET google_id = ? WHERE id = ?", [googleId, existingUser.id]);
+            existingUser.google_id = googleId;
+          }
+
+          await maybeRefreshIcon(existingUser);
+          return done(null, existingUser);
+        }
+
+        const storedPhoto = await uploadRemoteImageToCloudinary(photo, "NEBULA_PFP_IMGS");
+        const displayName = profile.displayName?.trim() || email.split("@")[0];
+        const generatedHandleBase = displayName.replace(/\s/g, '') || 'usuario';
+        const generatedHandle = `@${generatedHandleBase}${Date.now()}`;
+
+        const [[colocacaoRow]] = await pool.query<RowDataPacket[]>(
+          "SELECT IFNULL(MAX(colocacao), 0) + 1 AS nextCol FROM usuario"
+        );
+        const nextColocacao = Number(colocacaoRow?.nextCol) || 1;
+
+        const [result] = await pool.query<ResultSetHeader>(
+          `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
+            progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, google_id, seguidores, seguindo)
+           VALUES (?, ?, 0, ?, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 'aluno', 'google', ?, 0, 0)`,
+          [
+            displayName,
+            generatedHandle,
+            nextColocacao,
+            storedPhoto,
+            DEFAULT_BANNER,
+            "...",
+            email,
+            googleId,
+          ]
+        );
+
+        const newUserId = result.insertId;
+        const [newUserRows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE id = ?", [newUserId]);
+        return done(null, newUserRows[0]);
+      } catch (error) {
+        return done(error as Error);
       }
-      return done(null, existingUser);
     }
-
-    const storedPhoto = await uploadRemoteImageToCloudinary(photo, "NEBULA_PFP_IMGS");
-    // Cria novo usuário
-    const [result] = await pool.query<ResultSetHeader>(
-      `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
-        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, seguidores, seguindo, provider)
-       VALUES (?, ?, 0, ?, ?, ?, ?, 0, 0, 0, ?, NULL, '', 'pt-br', 'dark', 'aluno', 0, 0, 'google')`,
-      [
-        profile.displayName,
-        `@${profile.displayName.replace(/\s/g, '')}${Date.now()}`,
-        0,
-  storedPhoto,
-  DEFAULT_BANNER,
-        "...",
-        email
-      ]
-    );
-
-    const newUserId = result.insertId;
-    const [newUserRows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE id = ?", [newUserId]);
-    done(null, newUserRows[0]);
-  } catch (error) {
-    done(error as Error);
-  }
-
-}));
+  ));
 } else {
   console.warn('Google OAuth não configurado: defina GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET para habilitar o login com Google.');
 }
@@ -312,6 +364,17 @@ app.get('/auth/me', asyncHandler(async (req: Request, res: Response) => {
     }
 
     userRow = rows[0];
+
+    if (userRow) {
+      const shouldForceProfessorPlan = `${userRow.role ?? ''}`.toLowerCase() === 'professor';
+      if (shouldForceProfessorPlan && userRow.curso !== PROFESSOR_PLAN_LABEL) {
+        await connection.query(
+          'UPDATE usuario SET curso = ? WHERE id = ?',
+          [PROFESSOR_PLAN_LABEL, authReq.user.id]
+        );
+        userRow.curso = PROFESSOR_PLAN_LABEL;
+      }
+    }
     await connection.commit();
   } catch (err) {
     await connection.rollback();
@@ -343,9 +406,15 @@ app.get('/auth/logout', (req, res, next) => {
 
 app.post('/auth/register', asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
+  const normalizedEmail = normalizeEmail(email);
+
+  if (!normalizedEmail || !password || !name) {
+    res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' });
+    return;
+  }
 
   // Verifica se email já existe
-  const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE email = ?", [email]);
+  const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE email = ?", [normalizedEmail]);
   if (rows.length > 0) {
     res.status(409).json({ error: 'Email já cadastrado' });
     return;
@@ -365,15 +434,15 @@ app.post('/auth/register', asyncHandler(async (req: Request, res: Response) => {
   try {
     await pool.query<ResultSetHeader>(
       `INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia,
-        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, seguidores, seguindo)
-       VALUES (?, ?, 0, ?, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','aluno','local', 0, 0)`,
+        progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, google_id, seguidores, seguindo)
+       VALUES (?, ?, 0, ?, ?, ?, '', 0, 0, 0, ?, ?, '', 'pt-br', 'dark','aluno','local', NULL, 0, 0)`,
       [
         name,
         userTag,
         nextColocacao,
-  "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png",
-  DEFAULT_BANNER,
-        email,
+        DEFAULT_AVATAR,
+        DEFAULT_BANNER,
+        normalizedEmail,
         hashedPassword
       ]
     );
@@ -392,8 +461,14 @@ app.post('/auth/register', asyncHandler(async (req: Request, res: Response) => {
 // Login local
 app.post('/auth/login', asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  const normalizedEmail = normalizeEmail(email);
 
-  const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE email = ?", [email]);
+  if (!normalizedEmail || !password) {
+    res.status(400).json({ error: 'Email e senha são obrigatórios.' });
+    return;
+  }
+
+  const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE email = ?", [normalizedEmail]);
   if (rows.length === 0){ 
     res.status(401).json({ error: 'Usuário não encontrado' });
     return;
@@ -415,6 +490,13 @@ app.post('/api/planos/checkout', asyncHandler(async (req: Request, res: Response
   const authReq = req as AuthenticatedRequest;
   if (!authReq.isAuthenticated || !authReq.isAuthenticated() || !authReq.user) {
     res.status(401).json({ error: 'Não autenticado' });
+    return;
+  }
+
+  const isProfessorAccount = `${authReq.user.role ?? ''}`.toLowerCase() === 'professor';
+  if (isProfessorAccount) {
+    await pool.query('UPDATE usuario SET curso = ? WHERE id = ?', [PROFESSOR_PLAN_LABEL, authReq.user.id]);
+    res.status(400).json({ error: 'Contas de professor já possuem o plano Universo ativo.' });
     return;
   }
 
@@ -477,6 +559,7 @@ app.put(
     const photoFile = files?.photo?.[0];
     const bannerFile = files?.banner?.[0];
     const userId = authReq.user.id;
+    const isProfessorAccount = `${authReq.user.role ?? ''}`.toLowerCase() === 'professor';
 
     let photoUrl: string | undefined;
     if (photoFile) {
@@ -519,7 +602,10 @@ app.put(
       fields.push("biografia = ?");
       values.push(bio);
     }
-    if (curso) {
+    if (isProfessorAccount) {
+      fields.push("curso = ?");
+      values.push(PROFESSOR_PLAN_LABEL);
+    } else if (curso) {
       fields.push("curso = ?");
       values.push(curso);
     }
@@ -575,6 +661,9 @@ app.put(
       );
       // Retorna usuário atualizado
       const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM usuario WHERE id = ?", [userId]);
+      if (isProfessorAccount) {
+        (authReq.user as User & { curso?: string }).curso = PROFESSOR_PLAN_LABEL;
+      }
       res.json({ success: true, user: rows[0] });
     } catch (err) {
       const e = err as { code?: string; message?: string };

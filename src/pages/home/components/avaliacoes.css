@@ -51,6 +51,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    color: var(--cinza-escuro1);
 }
 
 .estrela-icon {
@@ -171,6 +172,7 @@
     background-color: var(--branco);
     display: flex;
     justify-content: center;
+    color: var(--cinza-escuro1);
 }
 
 .comentario-content {

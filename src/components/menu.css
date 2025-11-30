@@ -4,7 +4,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: var(--surface-muted);
+  background-color: var(--surface-page);
   display: flex;
 
   flex-direction: column;

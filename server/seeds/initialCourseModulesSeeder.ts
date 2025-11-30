@@ -6,7 +6,7 @@ import { ALLOWED_ASSINATURAS } from '../courseConstants';
 const DEFAULT_BACKGROUND = '/img/ceu-estrelado.jpg';
 const DEFAULT_VIDEO = '/videos/placeholder.mp4';
 const SYSTEM_SEED_EMAIL = 'seed-initial-modulos@nebula.local';
-const DEFAULT_AVATAR = 'https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png';
+const DEFAULT_AVATAR = '/img/defaultUser.png';
 const DEFAULT_BANNER = '/img/nebulosaBanner.jpg';
 
 const MAX_TEXT = {

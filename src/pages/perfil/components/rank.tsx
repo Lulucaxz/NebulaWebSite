@@ -21,6 +21,7 @@ type UsuarioLogado = {
   icon: string;
   pontos: number;
   colocacao?: number | string;
+  role?: 'aluno' | 'professor';
 };
 
 type RankEntry = RankUsuario & { posicao: number };
@@ -51,9 +52,18 @@ export function Rank() {
       return normalizados;
     }
 
-    const jaListada = normalizados.some((usuario) => usuario.user === usuarioLogado.user);
+    const isProfessor = (usuarioLogado.role || "").toLowerCase() === "professor";
+    const baseList = isProfessor
+      ? normalizados.filter((usuario) => usuario.user !== usuarioLogado.user)
+      : normalizados;
+
+    if (isProfessor) {
+      return baseList;
+    }
+
+    const jaListada = baseList.some((usuario) => usuario.user === usuarioLogado.user);
     if (jaListada) {
-      return normalizados;
+      return baseList;
     }
 
     const posicaoLogadoRaw = Number(usuarioLogado.colocacao);
@@ -62,7 +72,7 @@ export function Rank() {
       : normalizados.length + 1;
 
     return [
-      ...normalizados,
+      ...baseList,
       {
         id: usuarioLogado.id,
         username: usuarioLogado.username,

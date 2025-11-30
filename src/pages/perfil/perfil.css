@@ -439,7 +439,7 @@
 .prf-editar-nome {
   border: 0;
   font-size: 20px;
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
   width: calc(100% - 20px);
   padding: 10px;
   color: var(--text-primary);
@@ -497,7 +497,7 @@
 }
 
 .prf-botao-editar-enviar.cancelar {
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
 }
 
 .prf-botao-editar-enviar:hover {
@@ -509,7 +509,7 @@
 .prf-btn-config {
   padding: 10px;
   font-family: "Questrial", sans-serif;
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
   color: var(--text-primary);
   display: flex;
   justify-content: center;
@@ -524,7 +524,7 @@
 }
 
 .prf-editor-banner-btn {
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
   padding: 10px 25px;
   position: absolute;
   left: 25px;
@@ -546,7 +546,7 @@
   bottom: 25px;
   padding: 10px 25px;
   border: none;
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
   color: var(--text-primary);
   font-family: "Questrial", sans-serif;
   font-size: 20px;
@@ -580,7 +580,7 @@
 .prf-editar-foto-label {
   display: flex;
   justify-content: center;
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
   padding: 10px 20px;
   box-sizing: border-box;
   width: 100%;

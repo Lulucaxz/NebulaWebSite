@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario` (
   `tema` ENUM("dark", "light") NOT NULL,
   `role` ENUM('aluno','professor') NOT NULL DEFAULT 'aluno',
   `provider` ENUM("local","google") NULL,
+  `google_id` VARCHAR(255) NULL,
   `seguidores` INT NOT NULL DEFAULT 0,
   `seguindo` INT NOT NULL DEFAULT 0,
   `active_palette_id` INT NULL,
@@ -40,7 +41,8 @@ CREATE TABLE IF NOT EXISTS `NEBULA`.`usuario` (
   UNIQUE INDEX `user_UNIQUE` (`user` ASC) VISIBLE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   UNIQUE INDEX `colocacao_UNIQUE` (`colocacao` ASC) VISIBLE,
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `google_id_UNIQUE` (`google_id` ASC) VISIBLE
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -465,7 +467,7 @@ VALUES
 -- Conta professor oficial
 INSERT INTO usuario (username, user, pontos, colocacao, icon, banner, biografia, progresso1, progresso2, progresso3, email, senha, curso, idioma, tema, role, provider, seguidores, seguindo)
 VALUES
-('Nebula Professor', '@professornebula', 0, 21, 'https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png', '/img/nebulosaBanner.jpg', 'Conta oficial da equipe acadêmica Nebula.', 0, 0, 0, 'nebula.academy.brasil@gmail.com', '$2b$10$Za58iKqVd/MhEfkfmDfn8uLWdjtN7pM/JXiFlOoMlFnQJ15G7S90q', 'Astrofísica', 'pt-br', 'dark', 'professor', 'local', 0, 0);
+('Nebula Professor', '@professornebula', 0, 21, '/img/defaultUser.png', '/img/nebulosaBanner.jpg', 'Conta oficial da equipe acadêmica Nebula.', 0, 0, 0, 'nebula.academy.brasil@gmail.com', '$2b$10$Za58iKqVd/MhEfkfmDfn8uLWdjtN7pM/JXiFlOoMlFnQJ15G7S90q', 'Astrofísica', 'pt-br', 'dark', 'professor', 'local', 0, 0);
 
 -- Repita/adapte para até 50 usuários se desejar mais exemplos
 
