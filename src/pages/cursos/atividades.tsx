@@ -1,12 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
-import { initial_cursos } from './components/cursosDados';
 import { useEffect, useState } from 'react'; 
 import { fetchWithCredentials, API_BASE } from '../../api';
 import { Link } from "react-router-dom";
 import { showAlert } from "../../Alert";
-import { CUSTOM_MODULE_ID_OFFSET } from './courseContent.constants';
 
 import './cursos.css'; 
 
@@ -26,12 +24,6 @@ function Atividades() {
     type DissertativaResultadoMap = Record<number, { score: number; isCorrect: boolean; explanation?: string }>;
 
     // --- Lógica de Busca de Dados (como estava) ---
-    const cursos = (initial_cursos as unknown as Record<string, ModuloType[]>) || {};
-    const curso = cursos[assinatura ?? ''];
-    const moduloBase = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
-    const moduloNumericId = moduloId ? Number(moduloId) : Number.NaN;
-    const isCustomModule = Number.isFinite(moduloNumericId) && moduloNumericId >= CUSTOM_MODULE_ID_OFFSET;
-
     const cloneModule = (mod?: ModuloType | null): ModuloType | null => {
         if (!mod) return null;
         return {
@@ -50,53 +42,59 @@ function Atividades() {
         };
     };
 
-    const [moduleData, setModuleData] = useState<ModuloType | null>(cloneModule(moduloBase));
-    const [loadingCustom, setLoadingCustom] = useState(false);
-    const [customError, setCustomError] = useState<string | null>(null);
+    const [baseModule, setBaseModule] = useState<ModuloType | null>(null);
+    const [moduleData, setModuleData] = useState<ModuloType | null>(null);
+    const [loadingModule, setLoadingModule] = useState(false);
+    const [moduleError, setModuleError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!isCustomModule) {
-            setCustomError(null);
-        }
-    }, [isCustomModule]);
-
-    useEffect(() => {
-        if (!isCustomModule) {
-            setModuleData(cloneModule(moduloBase));
-            return;
-        }
         if (!moduloId) {
+            setBaseModule(null);
+            setModuleData(null);
+            setModuleError('Módulo não encontrado.');
+            setLoadingModule(false);
             return;
         }
+
         let active = true;
-        setLoadingCustom(true);
-        setCustomError(null);
-        const loadCustom = async () => {
+        setLoadingModule(true);
+        setModuleError(null);
+
+        const loadModule = async () => {
             try {
                 const res = await fetchWithCredentials(`${API_BASE}/api/course-content/modules/${moduloId}`);
                 const data = await res.json().catch(() => ({}));
                 if (!active) return;
                 if (!res.ok || !data.module) {
+                    setBaseModule(null);
                     setModuleData(null);
-                    setCustomError(data.error || 'Módulo não encontrado.');
+                    setModuleError(data.error || 'Módulo não encontrado.');
                     return;
                 }
-                setModuleData(cloneModule(data.module as ModuloType));
+                const normalized = cloneModule(data.module as ModuloType);
+                setBaseModule(normalized);
             } catch (error) {
                 if (!active) return;
+                console.error('Erro ao carregar módulo', error);
+                setBaseModule(null);
                 setModuleData(null);
-                setCustomError('Erro ao carregar módulo personalizado.');
+                setModuleError('Erro ao carregar módulo.');
             } finally {
                 if (active) {
-                    setLoadingCustom(false);
+                    setLoadingModule(false);
                 }
             }
         };
-        void loadCustom();
+
+        void loadModule();
         return () => {
             active = false;
         };
-    }, [isCustomModule, moduloBase, moduloId]);
+    }, [moduloId]);
+
+    useEffect(() => {
+        setModuleData(cloneModule(baseModule));
+    }, [baseModule]);
 
     const atividadeIndex = Number(atividadeInd ?? '0');
     const atividade = moduleData?.atividades?.[atividadeIndex] as AtividadeType;
@@ -191,7 +189,7 @@ function Atividades() {
                 <Menu />
                 <div className="container">
                     <div className="cursos-espacamento">
-                        {loadingCustom ? 'Carregando módulo...' : (customError || 'Módulo não encontrado.')}
+                        {loadingModule ? 'Carregando módulo...' : (moduleError || 'Módulo não encontrado.')}
                     </div>
                 </div>
                 <Footer />

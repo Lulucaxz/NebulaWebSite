@@ -660,7 +660,7 @@ const questoesFormacaoGalaxias = [
     }
 ];
 
-export const initial_cursos = {
+export const initialCourseModules = {
     universo: [
         {
             id: 4526672,

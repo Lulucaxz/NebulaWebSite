@@ -1,7 +1,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ModuloItem } from "./moduloItem";
-import { initial_cursos } from "./cursosDados";
 import { API_BASE, fetchWithCredentials } from "../../../api";
 
 interface TemplateModulosProps {
@@ -23,8 +22,31 @@ export function TemplateModulos({ assinatura }: TemplateModulosProps) {
         videoAulas: VideoAula[];
     }
 
-    const [customModules, setCustomModules] = useState<CursoTemplate[]>([]);
+    const [modules, setModules] = useState<CursoTemplate[]>([]);
     const [progressData, setProgressData] = useState<{ moduleSet: Set<string>; activitySet: Set<string> } | null>(null);
+    const [loadingModules, setLoadingModules] = useState(false);
+    const [loadError, setLoadError] = useState<string | null>(null);
+
+    const cloneModule = (mod: CursoTemplate): CursoTemplate => ({
+        ...mod,
+        template: { ...mod.template },
+        introducao: { ...mod.introducao },
+        atividades: Array.isArray(mod.atividades)
+            ? mod.atividades.map((act) => ({
+                ...act,
+                template: { ...act.template },
+                questoes: Array.isArray(act.questoes)
+                    ? act.questoes.map((questao) => ({
+                        ...questao,
+                        alternativas: questao.alternativas ? [...questao.alternativas] : undefined,
+                    }))
+                    : act.questoes,
+            }))
+            : [],
+        videoAulas: Array.isArray(mod.videoAulas)
+            ? mod.videoAulas.map((video) => ({ ...video }))
+            : [],
+    });
 
     useEffect(() => {
         const loadProgress = async () => {
@@ -45,53 +67,41 @@ export function TemplateModulos({ assinatura }: TemplateModulosProps) {
 
     useEffect(() => {
         let active = true;
-        const loadCustomModules = async () => {
+        setLoadingModules(true);
+        setLoadError(null);
+
+        const loadModules = async () => {
             try {
                 const res = await fetchWithCredentials(`${API_BASE}/api/course-content/assinaturas/${assinatura}`);
-                if (!res.ok) return;
                 const data = await res.json().catch(() => ({ modules: [] }));
                 if (!active) return;
-                const mods = Array.isArray(data.modules) ? data.modules : [];
-                setCustomModules(mods as CursoTemplate[]);
+                if (!res.ok) {
+                    setLoadError(data?.error || 'Não foi possível carregar os módulos desta assinatura.');
+                    setModules([]);
+                    return;
+                }
+                const mods = Array.isArray(data.modules) ? (data.modules as CursoTemplate[]) : [];
+                setModules(mods.map((mod) => cloneModule(mod)));
             } catch (err) {
-                console.error('Erro ao carregar módulos personalizados', err);
+                if (!active) return;
+                console.error('Erro ao carregar módulos', err);
+                setLoadError('Erro ao carregar os módulos desta assinatura.');
+                setModules([]);
+            } finally {
+                if (active) {
+                    setLoadingModules(false);
+                }
             }
         };
-        loadCustomModules();
+
+        loadModules();
         return () => {
             active = false;
         };
     }, [assinatura]);
 
     const modulesForAssinatura = useMemo(() => {
-        const baseList = Array.isArray((initial_cursos as unknown as Record<string, CursoTemplate[]>)[assinatura])
-            ? (initial_cursos as unknown as Record<string, CursoTemplate[]>)[assinatura].map(mod => ({
-                ...mod,
-                template: { ...mod.template },
-                introducao: { ...mod.introducao },
-                atividades: Array.isArray(mod.atividades)
-                    ? mod.atividades.map(act => ({ ...act, template: { ...act.template } }))
-                    : [],
-                videoAulas: Array.isArray(mod.videoAulas)
-                    ? mod.videoAulas.map(video => ({ ...video }))
-                    : [],
-            }))
-            : [];
-
-        const customList = customModules.map(mod => ({
-            ...mod,
-            assinatura,
-            template: { ...mod.template },
-            introducao: { ...mod.introducao },
-            atividades: Array.isArray(mod.atividades)
-                ? mod.atividades.map(act => ({ ...act, template: { ...act.template } }))
-                : [],
-            videoAulas: Array.isArray(mod.videoAulas)
-                ? mod.videoAulas.map(video => ({ ...video }))
-                : [],
-        }));
-
-        const combined = [...baseList, ...customList];
+        const combined = modules.map((mod) => ({ ...mod }));
         if (!progressData) {
             return combined;
         }
@@ -107,7 +117,15 @@ export function TemplateModulos({ assinatura }: TemplateModulosProps) {
             const modDone = progressData.moduleSet.has(modKey) || (atividades.length > 0 && atividades.every(a => a.terminado));
             return { ...mod, atividades, terminado: modDone };
         });
-    }, [assinatura, customModules, progressData]);
+    }, [assinatura, modules, progressData]);
+    
+    if (loadError) {
+        return <div className="modulos-erro">{loadError}</div>;
+    }
+    
+    if (loadingModules && modulesForAssinatura.length === 0) {
+        return <div className="modulos-loading">Carregando módulos...</div>;
+    }
 
     return (
         <>

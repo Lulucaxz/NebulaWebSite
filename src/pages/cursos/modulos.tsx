@@ -1,12 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
-import { initial_cursos } from './components/cursosDados';
 import { useState, useEffect } from 'react';
 import { VideoCard } from './videos';
 import { API_BASE, fetchWithCredentials } from '../../api';
 import { Link } from "react-router-dom";
-import { CUSTOM_MODULE_ID_OFFSET } from './courseContent.constants';
 
 function Modulos() {
   const { assinatura, moduloId } = useParams<{ assinatura: string; moduloId: string }>();
@@ -43,16 +41,10 @@ function Modulos() {
     };
   };
 
-  const cursos = (initial_cursos as unknown as Record<string, ModuloType[]>) || {};
-  const curso = cursos[assinatura ?? ''];
-  const moduloBase = curso?.find((mod: ModuloType) => mod.id === Number(moduloId));
-  const moduloNumericId = moduloId ? Number(moduloId) : Number.NaN;
-  const isCustomModule = Number.isFinite(moduloNumericId) && moduloNumericId >= CUSTOM_MODULE_ID_OFFSET;
-
-  const [moduloData, setModuloData] = useState<ModuloType | null>(cloneModule(moduloBase));
-  const [customModule, setCustomModule] = useState<ModuloType | null>(null);
-  const [loadingCustom, setLoadingCustom] = useState(false);
-  const [customError, setCustomError] = useState<string | null>(null);
+  const [baseModule, setBaseModule] = useState<ModuloType | null>(null);
+  const [moduloData, setModuloData] = useState<ModuloType | null>(null);
+  const [loadingModule, setLoadingModule] = useState(false);
+  const [moduleError, setModuleError] = useState<string | null>(null);
   const [progressSets, setProgressSets] = useState<{ moduleSet: Set<string>; activitySet: Set<string> } | null>(null);
 
   // Matriz para controlar destaque do carrossel
@@ -98,49 +90,49 @@ function Modulos() {
   }, []);
 
   useEffect(() => {
-    if (!isCustomModule) {
-      setCustomModule(null);
-      setCustomError(null);
-      setLoadingCustom(false);
-    }
-  }, [isCustomModule]);
-
-  useEffect(() => {
-    if (!isCustomModule || !moduloId) {
+    if (!moduloId) {
+      setBaseModule(null);
+      setModuloData(null);
+      setModuleError('Módulo não encontrado.');
+      setLoadingModule(false);
       return;
     }
+
     let active = true;
-    setLoadingCustom(true);
-    setCustomError(null);
-    const loadCustom = async () => {
+    setLoadingModule(true);
+    setModuleError(null);
+
+    const loadModule = async () => {
       try {
         const res = await fetchWithCredentials(`${API_BASE}/api/course-content/modules/${moduloId}`);
         const data = await res.json().catch(() => ({}));
         if (!active) return;
         if (!res.ok || !data.module) {
-          setCustomError(data.error || 'Não foi possível carregar este módulo.');
-          setCustomModule(null);
+          setBaseModule(null);
           setModuloData(null);
+          setModuleError(data.error || 'Não foi possível carregar este módulo.');
           return;
         }
         const normalized = cloneModule(data.module as ModuloType);
-        setCustomModule(normalized);
+        setBaseModule(normalized);
       } catch (error) {
         if (!active) return;
-        setCustomError('Erro ao carregar o módulo selecionado.');
-        setCustomModule(null);
+        console.error('Erro ao carregar módulo', error);
+        setBaseModule(null);
         setModuloData(null);
+        setModuleError('Erro ao carregar o módulo selecionado.');
       } finally {
         if (active) {
-          setLoadingCustom(false);
+          setLoadingModule(false);
         }
       }
     };
-    void loadCustom();
+
+    void loadModule();
     return () => {
       active = false;
     };
-  }, [isCustomModule, moduloId]);
+  }, [moduloId]);
 
   useEffect(() => {
     let active = true;
@@ -167,14 +159,12 @@ function Modulos() {
     };
   }, [assinatura]);
 
-  const sourceModule = isCustomModule ? customModule : moduloBase;
-
   useEffect(() => {
-    if (!sourceModule) {
+    if (!baseModule) {
       setModuloData(null);
       return;
     }
-    const cloned = cloneModule(sourceModule);
+    const cloned = cloneModule(baseModule);
     if (!cloned) {
       setModuloData(null);
       return;
@@ -186,11 +176,13 @@ function Modulos() {
     const atividades = Array.isArray(cloned.atividades)
       ? cloned.atividades.map((atividade) => ({
           ...atividade,
-          terminado: progressSets.activitySet.has(`${assinatura}:${cloned.id}:${atividade.id}`) || atividade.terminado,
+          terminado:
+            progressSets.activitySet.has(`${assinatura}:${cloned.id}:${atividade.id}`) ||
+            atividade.terminado,
         }))
       : [];
     setModuloData({ ...cloned, atividades });
-  }, [assinatura, sourceModule, progressSets]);
+  }, [assinatura, baseModule, progressSets]);
 
   if (!moduloData) {
     return (
@@ -198,7 +190,7 @@ function Modulos() {
         <Menu />
         <div className="container">
           <div className="cursos-espacamento">
-            {loadingCustom ? 'Carregando módulo...' : (customError || 'Módulo não encontrado.')}
+            {loadingModule ? 'Carregando módulo...' : (moduleError || 'Módulo não encontrado.')}
           </div>
         </div>
         <Footer />

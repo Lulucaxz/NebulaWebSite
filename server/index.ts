@@ -27,6 +27,7 @@ import courseContentRoutes from "./routes/courseContentRoutes";
 import { asyncHandler } from './utils';
 import { setSocketServerInstance } from "./socketInstance";
 import { markUserInConversation, markUserLeftConversation } from "./presenceStore";
+import { seedInitialCourseModules } from "./seeds/initialCourseModulesSeeder";
 
 dotenv.config();
 
@@ -602,7 +603,52 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
-// Start server
-httpServer.listen(PORT, () => {
-  console.log(`Servidor backend em http://localhost:${PORT}`);
-});
+const parseSeedAuthorFromEnv = (): number | undefined => {
+  const raw = process.env.SEED_COURSE_AUTHOR_ID ?? process.env.SEED_MODULE_AUTHOR_ID;
+  if (!raw) {
+    return undefined;
+  }
+  const numeric = Number(raw);
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    return undefined;
+  }
+  return Math.floor(numeric);
+};
+
+const shouldAutoSeedInitialModules = () => {
+  const flag = `${process.env.AUTO_SEED_INITIAL_MODULES ?? ''}`.trim().toLowerCase();
+  if (!flag) {
+    return true;
+  }
+  return flag === '1' || flag === 'true' || flag === 'yes';
+};
+
+const bootstrapInitialModules = async () => {
+  if (!shouldAutoSeedInitialModules()) {
+    console.log('[Cursos] Seed inicial automático desativado (AUTO_SEED_INITIAL_MODULES=false).');
+    return;
+  }
+
+  try {
+    const authorOverride = parseSeedAuthorFromEnv();
+    const { summary } = await seedInitialCourseModules({ authorId: authorOverride, logger: console });
+    const total = summary.reduce((acc, entry) => acc + entry.updatedModuleIds.length, 0);
+    console.log(`[Cursos] Sincronização inicial concluída (${total} módulos base atualizados).`);
+  } catch (error) {
+    console.error('[Cursos] Falha ao sincronizar módulos base', error);
+  }
+};
+
+const startServer = () => {
+  httpServer.listen(PORT, () => {
+    console.log(`Servidor backend em http://localhost:${PORT}`);
+  });
+};
+
+bootstrapInitialModules()
+  .catch((error) => {
+    console.error('[Cursos] Erro inesperado ao executar seed inicial', error);
+  })
+  .finally(() => {
+    startServer();
+  });
