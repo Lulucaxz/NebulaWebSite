@@ -5,11 +5,42 @@
     color: #F8EFFF;
     transition: all 0.2s;
     cursor: pointer;
+    position: relative;
 }
 
 .modulo-item:hover {
     background-color: #F8EFFF !important;
     color: #9A30EB;
+}
+
+.modulo-item-link {
+    text-decoration: none;
+    display: block;
+}
+
+.modulo-item-locked-wrapper {
+    pointer-events: none;
+}
+
+.modulo-item-locked {
+    cursor: not-allowed;
+    color: #C8C8C8;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-image: linear-gradient(135deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
+}
+
+.modulo-item-locked:hover {
+    background-color: #2C2C2C !important;
+    color: #C8C8C8;
+}
+
+.modulo-item-locked-indicator {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mudolo-item-titulo {

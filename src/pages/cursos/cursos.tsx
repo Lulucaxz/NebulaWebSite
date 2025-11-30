@@ -3,9 +3,11 @@ import Footer from "../../components/footer"
 import { TemplateModulos } from './components/templateModulos'
 import './cursos.css'
 import { useTranslation } from 'react-i18next';
+import { useUserAssinatura } from '../../hooks/useUserAssinatura';
 
 function Cursos() {
   const { t } = useTranslation();
+  const { planSlug, isLoading: isLoadingPlan } = useUserAssinatura();
   
   return (
     <>
@@ -17,7 +19,7 @@ function Cursos() {
             <hr />
           </div>
           <div className="cursos-alinhar-tamplates">
-            <TemplateModulos assinatura='universo' />
+            <TemplateModulos assinatura='universo' userPlan={planSlug} planLoading={isLoadingPlan} />
           </div>
 
           <div className="sessao">
@@ -25,7 +27,7 @@ function Cursos() {
             <hr />
           </div>
           <div className="cursos-alinhar-tamplates">
-            <TemplateModulos assinatura='galaxia' />
+            <TemplateModulos assinatura='galaxia' userPlan={planSlug} planLoading={isLoadingPlan} />
           </div>
 
           <div className="sessao">
@@ -33,7 +35,7 @@ function Cursos() {
             <hr />
           </div>
           <div className="cursos-alinhar-tamplates">
-            <TemplateModulos assinatura='orbita' />
+            <TemplateModulos assinatura='orbita' userPlan={planSlug} planLoading={isLoadingPlan} />
           </div>
 
         </div>

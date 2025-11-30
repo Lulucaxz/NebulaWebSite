@@ -5,9 +5,17 @@ import { useState, useEffect } from 'react';
 import { VideoCard } from './videos';
 import { API_BASE, fetchWithCredentials } from '../../api';
 import { Link } from "react-router-dom";
+import { useUserAssinatura } from '../../hooks/useUserAssinatura';
+import { ASSINATURA_LABEL_BY_SLUG, hasAccessToAssinatura, normalizeAssinaturaValue } from '../../utils/assinaturaAccess';
 
 function Modulos() {
-  const { assinatura, moduloId } = useParams<{ assinatura: string; moduloId: string }>();
+  const params = useParams<{ assinatura: string; moduloId: string }>();
+  const assinaturaParam = params.assinatura ?? '';
+  const moduloId = params.moduloId;
+  const assinaturaSlug = normalizeAssinaturaValue(assinaturaParam);
+  const assinaturaKey = assinaturaSlug ?? assinaturaParam;
+  const { planSlug, isLoading: isLoadingPlan } = useUserAssinatura();
+  const canAccessCourse = assinaturaSlug ? hasAccessToAssinatura(planSlug, assinaturaSlug) : false;
 
   // Minimal local types for this component to avoid `any` lint errors
   type Video = { id: number; titulo?: string; video?: string; subtitulo?: string; descricao?: string; backgroundImage?: string };
@@ -157,7 +165,7 @@ function Modulos() {
     return () => {
       active = false;
     };
-  }, [assinatura]);
+  }, [assinaturaKey]);
 
   useEffect(() => {
     if (!baseModule) {
@@ -177,12 +185,54 @@ function Modulos() {
       ? cloned.atividades.map((atividade) => ({
           ...atividade,
           terminado:
-            progressSets.activitySet.has(`${assinatura}:${cloned.id}:${atividade.id}`) ||
+            progressSets.activitySet.has(`${assinaturaKey}:${cloned.id}:${atividade.id}`) ||
             atividade.terminado,
         }))
       : [];
     setModuloData({ ...cloned, atividades });
-  }, [assinatura, baseModule, progressSets]);
+  }, [assinaturaKey, baseModule, progressSets]);
+
+  if (!assinaturaSlug) {
+    return (
+      <>
+        <Menu />
+        <div className="container">
+          <div className="cursos-espacamento">
+            Assinatura informada não é válida.
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (isLoadingPlan) {
+    return (
+      <>
+        <Menu />
+        <div className="container">
+          <div className="cursos-espacamento">Verificando sua assinatura...</div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (!isLoadingPlan && !canAccessCourse) {
+    return (
+      <>
+        <Menu />
+        <div className="container">
+          <div className="cursos-espacamento">
+            <div className="modulos-  ">
+              Este conteúdo é exclusivo do plano {ASSINATURA_LABEL_BY_SLUG[assinaturaSlug]}.
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   if (!moduloData) {
     return (
@@ -271,7 +321,7 @@ function Modulos() {
                       <div className="carrocel-atividades-card-descricao">{atividade.template?.descricao ?? ''}</div>
                     </div>
 
-                    <Link to={`/modulos/${assinatura}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
+                    <Link to={`/modulos/${assinaturaSlug}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
                       backgroundColor: atividade.terminado ? '#F8EFFF' : '#323232',
                       cursor: 'pointer'
                     }}>

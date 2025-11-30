@@ -63,6 +63,42 @@ const recalculateRankingQuery = `
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
 const DEFAULT_AVATAR = "https://images.vexels.com/media/users/3/235233/isolated/preview/be93f74201bee65ad7f8678f0869143a-cracha-de-perfil-de-capacete-de-astronauta.png";
 
+const PLAN_NAME_BY_SLUG = {
+  orbita: 'Órbita',
+  galaxia: 'Galáxia',
+  universo: 'Universo',
+} as const;
+
+const PLAN_PRICE_BY_SLUG = {
+  orbita: 79.9,
+  galaxia: 129.9,
+  universo: 179.9,
+} as const;
+
+const PLAN_ORDER = ['orbita', 'galaxia', 'universo'] as const;
+
+const PLAN_RANK = PLAN_ORDER.reduce<Record<typeof PLAN_ORDER[number], number>>((acc, slug, index) => {
+  acc[slug] = index;
+  return acc;
+}, {} as Record<typeof PLAN_ORDER[number], number>);
+
+type CheckoutPlanSlug = keyof typeof PLAN_NAME_BY_SLUG;
+
+const normalizeCheckoutPlan = (value: unknown): CheckoutPlanSlug | null => {
+  if (!value) {
+    return null;
+  }
+  const normalized = String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+  if (normalized === 'orbita' || normalized === 'galaxia' || normalized === 'universo') {
+    return normalized as CheckoutPlanSlug;
+  }
+  return null;
+};
+
 const uploadBufferToCloudinary = (fileBuffer: Buffer, folder: string) => {
   return new Promise<string>((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -372,6 +408,51 @@ app.post('/auth/login', asyncHandler(async (req: Request, res: Response) => {
   req.login(user, (err: unknown) => {
     if (err) return res.status(500).json({ error: 'Erro ao autenticar' });
     res.json({ message: 'Login bem-sucedido', user });
+  });
+}));
+
+app.post('/api/planos/checkout', asyncHandler(async (req: Request, res: Response) => {
+  const authReq = req as AuthenticatedRequest;
+  if (!authReq.isAuthenticated || !authReq.isAuthenticated() || !authReq.user) {
+    res.status(401).json({ error: 'Não autenticado' });
+    return;
+  }
+
+  const plano = normalizeCheckoutPlan(req.body?.plan ?? req.body?.slug ?? req.body?.assinatura ?? req.body?.curso);
+  if (!plano) {
+    res.status(400).json({ error: 'Plano inválido.' });
+    return;
+  }
+
+  const [[userRow]] = await pool.query<RowDataPacket[]>(
+    'SELECT curso FROM usuario WHERE id = ? LIMIT 1',
+    [authReq.user.id]
+  );
+
+  const currentLabel = userRow?.curso as string | undefined;
+  const currentPlanSlug = normalizeCheckoutPlan(currentLabel);
+  const targetRank = PLAN_RANK[plano];
+  const currentRank = currentPlanSlug ? PLAN_RANK[currentPlanSlug] : -1;
+
+  if (currentPlanSlug && currentRank >= targetRank) {
+    res.status(400).json({ error: 'Você já possui este plano ou um superior.' });
+    return;
+  }
+
+  const targetPrice = PLAN_PRICE_BY_SLUG[plano];
+  const currentPrice = currentPlanSlug ? PLAN_PRICE_BY_SLUG[currentPlanSlug] ?? 0 : 0;
+  const amountDifference = currentPlanSlug ? targetPrice - currentPrice : targetPrice;
+  const normalizedAmount = Math.max(Number(amountDifference.toFixed(2)), 0);
+
+  const label = PLAN_NAME_BY_SLUG[plano];
+  await pool.query<ResultSetHeader>('UPDATE usuario SET curso = ? WHERE id = ?', [label, authReq.user.id]);
+  (authReq.user as User & { curso?: string }).curso = label;
+
+  res.json({
+    message: currentPlanSlug ? 'Upgrade realizado com sucesso.' : 'Plano ativado com sucesso.',
+    curso: label,
+    previousCurso: currentPlanSlug ? PLAN_NAME_BY_SLUG[currentPlanSlug] : null,
+    amountCharged: normalizedAmount,
   });
 }));
 

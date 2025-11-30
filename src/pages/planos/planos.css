@@ -1,132 +1,519 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Questrial&display=swap');    
-    
-    html {
-        overflow-x: hidden;
-        user-select: none !important;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Questrial&display=swap');
 
-    .container-planos {
-      width: calc(100% - 220px);
-      position: relative;
-      right: 0;
-    }
+html {
+  overflow-x: hidden;
+  user-select: none !important;
+}
 
+.container-planos {
+  width: calc(100% - 220px);
+  position: relative;
+  right: 0;
+}
 
-    input::placeholder {
-      color: rgb(197, 193, 193);
-      text-transform: uppercase;
-    }
+.planos-wrapper {
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 100px 0;
+  color: #fff;
+  background-color: var(--cinza-escuro1);
+  min-height: 100vh;
+  font-family: "Questrial", sans-serif;
+  user-select: none;
+  transform: scale(1.1);
+}
 
-    input:focus {
-      border: none;
-    }
+.plan-carousel {
+  margin: 0 auto 60px;
+  max-width: 1000px;
+}
 
-    .pay-input{
-      border: none;
-    }
+.plan-slide {
+  padding: 20px;
+  outline: none;
+}
 
-   
-    .qrcode-content{
-      display: flex;
-    }
-    
-  
+.slider-dots-wrapper {
+  margin-top: 5%;
+  position: relative;
+  bottom: -25px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .plan-span{
-      color: white;
-      font-family: "Archivo black";
-      font-size: 20px;
-    
-    }
+.slick-dots {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
-    .plan-select {
-      font-family: "Archivo black";
-    }
+.slick-dots li button:before {
+  content: none !important;
+}
 
-    .btn-hover {
-      background-color: white;
-      color: #9B3BD2;
-    }
+.slick-dots li {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+}
 
-  
-    .strong-pay {
-      font-family: "Archivo black";
-    }
+.slick-dots li div {
+  width: 15px !important;
+  height: 15px !important;
+  border-radius: 50%;
+  background-color: rgb(255, 255, 255) !important;
+}
 
-    
-    .slick-center {
-      transform: scale(1.05) !important;
-      z-index: 2 !important;
- 
-    }
-    
-    .slick-slide:not(.slick-center) {
-      transform: scale(0.9) translateY(10px) !important;
-      
-    }
+.slick-dots li.slick-active div {
+  background-color: #9A30EB !important;
+}
 
-    .payment-method-container {
-      transition: all 0.3s ease;
-    }
-    
-    .payment-content {
-      transition: height 0.3s ease, padding 0.3s ease;
-      will-change: height;
-    }
-    
-    .payment-toggle-icon {
-      transition: transform 0.3s ease;
-    }
-    
-    .payment-method-button:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
+.plan-card {
+  padding: 25px;
+  border-radius: 15px;
+  height: 400px;
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  background: rgb(95, 61, 196);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
+}
 
-    .qrcode-content {
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-    
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .qrcode-content {
-      animation: fadeIn 0.3s ease-out;
-    }
-  
+.plan-card-orbita,
+.plan-card-galaxia,
+.plan-card-universo {
+  background-color: #5F3DC4;
+}
 
+.plan-card-title {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  font-family: "Archivo black";
+}
 
-    @media screen and (min-width:1025px ) {
-        .slick-list {
-     
-      margin: 0 -10px !important;
-      overflow: visible !important;
-    }
-    }
+.plan-card-description {
+  margin-bottom: 20px;
+  flex-grow: 1;
+  font-size: 18px;
+}
 
-    @keyframes toastSlideIn {
-      from { 
-        opacity: 0;
-        transform: translateX(-50%) translateY(-30px);
-      }
-      to { 
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-    }
-    
-    @keyframes toastFadeOut {
-      from { 
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-      to { 
-        opacity: 0;
-        transform: translateX(-50%) translateY(-30px);
-      }
-    }
-    
-   
+.plan-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 15px;
+  margin-bottom: 60px;
+  font-weight: bold;
+  font-size: 20px;
+  font-family: "Archivo black";
+  list-style: none;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.benefit-icon {
+  width: 25px;
+  height: 25px;
+  background-size: cover;
+}
+
+.benefit-icon--active {
+  background-image: url(/icons/check-claro2.svg);
+}
+
+.benefit-icon--inactive {
+  background-image: url(/icons/cancel.svg);
+}
+
+.plan-card-footer {
+  margin-top: auto;
+}
+
+.plan-card-price-label {
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+.plan-card-price-value {
+  font-size: 2.3rem;
+  margin-bottom: 20px;
+}
+
+.plan-card-button {
+  background-color: #610EA1;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.plan-card-button:disabled {
+  cursor: default;
+}
+
+.payment-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.payment-section-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-family: "Archivo black";
+}
+
+.payment-section-title-highlight {
+  color: #9A30EB;
+  text-transform: uppercase;
+}
+
+.payment-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.payment-method-card {
+  overflow: hidden;
+  background-color: #454545;
+  transition: all 0.3s ease;
+}
+
+.payment-method-card.is-active {
+  background-color: #454545;
+}
+
+.payment-method-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #454545;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.payment-method-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.payment-method-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-method-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.payment-method-toggle-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.payment-content {
+  overflow: hidden;
+  transition: height 0.5s ease;
+}
+
+.payment-content-inner {
+  padding: 20px;
+}
+
+.payment-heading {
+  font-weight: 100;
+}
+
+.payment-description {
+  font-size: 16px;
+}
+
+.payment-description-spaced {
+  margin-top: 1.5rem;
+}
+
+input::placeholder {
+  color: rgb(197, 193, 193);
+  text-transform: uppercase;
+}
+
+input:focus {
+  border: none;
+  outline: none;
+}
+
+.pay-input {
+  width: 97%;
+  height: 2rem;
+  padding: 10px;
+  font-family: "Questrial";
+  font-size: 18px;
+  background-color: #7E7E7E;
+  color: #fff;
+  border: none;
+  text-transform: uppercase;
+}
+
+.pay-input-validade {
+  width: 70%;
+}
+
+.pay-input-cvv {
+  width: 50%;
+}
+
+.form-field {
+  margin: 15px 0;
+}
+
+.form-field--spaced {
+  margin-top: 5%;
+}
+
+.form-field-select {
+  margin: 20px 0;
+}
+
+.form-field--stacked {
+  margin-top: 1.5rem;
+}
+
+.form-field--stacked .pay-input {
+  margin-top: 0.5rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.form-row--spaced {
+  margin-top: 5%;
+}
+
+.form-column {
+  flex: 1;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.payment-select {
+  width: 50%;
+  height: 3rem;
+  padding: 10px;
+  font-family: "Questrial";
+  font-size: 18px;
+  background-color: #7E7E7E;
+  color: #fff;
+  border: none;
+  text-transform: uppercase;
+}
+
+.qrcode-content {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  gap: 2.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  flex-wrap: wrap;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.pix-qrcode {
+  background-color: #f0f0f0;
+  height: 350px;
+  width: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(/img/UdYkGR.jpg);
+  background-size: cover;
+}
+
+.pix-key-card {
+  white-space: pre-wrap;
+  word-break: break-word;
+  height: 350px;
+  width: 350px;
+  margin-top: 20px;
+  margin-left: 2.5rem;
+  text-align: justify;
+}
+
+.pix-key-title {
+  font-family: "Archivo black";
+}
+
+.pix-key-wrapper {
+  position: relative;
+}
+
+.pix-key-text {
+  max-width: 100%;
+  text-align: justify;
+}
+
+.btn-hover {
+  background-color: white;
+  color: #9B3BD2;
+}
+
+.pix-copy-button {
+  height: 2rem;
+  width: 100%;
+  font-size: 16px;
+  font-family: "Questrial";
+  color: white;
+  background-color: #9030eb;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.plan-span {
+  color: white;
+  font-family: "Archivo black";
+  font-size: 20px;
+}
+
+.plan-select {
+  font-family: "Archivo black";
+}
+
+.btn-pay {
+  background-color: #9030eb;
+  font-size: 20px;
+  font-family: "Archivo black";
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.3s ease;
+}
+
+.btn-pay:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-pay--spaced {
+  margin-top: 5%;
+}
+
+.btn-pay--margin {
+  margin-top: 20px;
+}
+
+option:hover {
+  background-color: #9B3BD2;
+  color: white;
+}
+
+.strong-pay {
+  font-family: "Archivo black";
+}
+
+.payment-highlight {
+  font-family: "Archivo black";
+  font-weight: 400;
+}
+
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #9030eb;
+  color: white;
+  padding: 12px 24px;
+  font-family: "Questrial";
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: toastSlideIn 0.5s forwards, toastFadeOut 0.5s 1.5s forwards;
+}
+
+.slick-center {
+  transform: scale(1.05) !important;
+  z-index: 2 !important;
+}
+
+.slick-slide:not(.slick-center) {
+  transform: scale(0.9) translateY(10px) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .slick-list {
+    margin: 0 -10px !important;
+    overflow: visible !important;
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes toastFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px);
+  }
+}
+

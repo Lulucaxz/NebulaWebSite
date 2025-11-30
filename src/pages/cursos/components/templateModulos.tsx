@@ -2,12 +2,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { ModuloItem } from "./moduloItem";
 import { API_BASE, fetchWithCredentials } from "../../../api";
+import { AssinaturaSlug, hasAccessToAssinatura } from "../../../utils/assinaturaAccess";
 
 interface TemplateModulosProps {
-    assinatura: string;
+    assinatura: AssinaturaSlug;
+    userPlan: AssinaturaSlug | null;
+    planLoading?: boolean;
 }
 
-export function TemplateModulos({ assinatura }: TemplateModulosProps) {
+export function TemplateModulos({ assinatura, userPlan, planLoading = false }: TemplateModulosProps) {
     interface Questao { questao: string; dissertativa?: boolean; alternativas?: string[]; respostaCorreta?: string }
     interface Atividade { id: number; terminado?: boolean; template: { titulo: string; descricao: string }; questoes?: Questao[] }
     interface VideoAula { id: number; titulo?: string; subtitulo?: string; descricao?: string; video?: string; backgroundImage?: string }
@@ -127,6 +130,9 @@ export function TemplateModulos({ assinatura }: TemplateModulosProps) {
         return <div className="modulos-loading">Carregando módulos...</div>;
     }
 
+    const hasAccess = hasAccessToAssinatura(userPlan, assinatura);
+    const courseLocked = !planLoading && !hasAccess;
+
     return (
         <>
             {modulesForAssinatura.map((templateModulo: CursoTemplate) => (
@@ -137,6 +143,7 @@ export function TemplateModulos({ assinatura }: TemplateModulosProps) {
                     descricao={templateModulo.template.descricao}
                     terminado={!!templateModulo.terminado}
                     assinatura={assinatura}
+                    locked={courseLocked}
                 />
             ))}
         </>

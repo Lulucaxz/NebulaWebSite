@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import Slider from "react-slick";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Slider, { type Settings as SlickSettings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Menu } from "../../components/Menu";
 import './planos.css'
+import { API_BASE, fetchWithCredentials } from "../../api";
+import { AssinaturaSlug } from "../../utils/assinaturaAccess";
+import { useUserAssinatura } from "../../hooks/useUserAssinatura";
 
 /* Dependências principais (já devem estar no seu package.json):
 bash
@@ -31,6 +34,7 @@ npm install react react-dom typescript react-slick slick-carousel styled-compone
 */
 
 interface Plan {
+  slug: AssinaturaSlug;
   name: string;
   description: string;
   benefits: string[];
@@ -45,79 +49,130 @@ interface PaymentMethod {
   component: React.ReactNode;
 }
 
+const PIX_KEY = 'pix.nebula@pagamentos.com.br | CNPJ 45.123.987/0001-55 | Banco 260 - NU Pagamentos S.A.';
+
+const PLAN_OPTIONS: Plan[] = [
+  {
+    slug: "orbita",
+    name: "ÓRBITA",
+    description:
+      "Para quem está começando a explorar astronomia.",
+    benefits: [
+      "Certificados oficiais de conclusão",
+      "Comunidade exclusiva",
+      "Lives mensais / encontros ao vivo",
+      "Suporte prioritário",
+      "Acesso antecipado a novos módulos",
+      "Customização avançada",
+    ],
+    price: 79.9,
+    color: "#5F3DC4",
+  },
+  {
+    slug: "galaxia",
+    name: "GALÁXIA",
+    description:
+      "Plano para quem já domina os fundamentos e quer acelerar. Inclui estudos avançados, desafios práticos e feedback individual.",
+    benefits: [
+      "Certificados oficiais de conclusão",
+      "Comunidade exclusiva",
+      "Lives mensais / encontros ao vivo",
+      "Suporte prioritário",
+      "Acesso antecipado a novos módulos",
+      "Customização avançada",
+    ],
+    price: 129.9,
+    color: "#5F3DC4",
+  },
+  {
+    slug: "universo",
+    name: "UNIVERSO",
+    description:
+      "Experiência completa: conteúdo avançado, projetos autorais acompanhados e suporte prioritário direto com professores da equipe Nebula.",
+    benefits: [
+      "Certificados oficiais de conclusão",
+      "Comunidade exclusiva",
+      "Lives mensais / encontros ao vivo",
+      "Suporte prioritário",
+      "Acesso antecipado a novos módulos",
+      "Customização avançada",
+    ],
+    price: 179.9,
+    color: "#5F3DC4",
+  },
+];
+
+const PLAN_HIERARCHY: AssinaturaSlug[] = ["orbita", "galaxia", "universo"];
+
+const PLAN_RANK = PLAN_HIERARCHY.reduce<Record<AssinaturaSlug, number>>((acc, slug, index) => {
+  acc[slug] = index;
+  return acc;
+}, {} as Record<AssinaturaSlug, number>);
+
+const PLAN_PRICE_BY_SLUG = PLAN_OPTIONS.reduce<Record<AssinaturaSlug, number>>((acc, plan) => {
+  acc[plan.slug] = plan.price;
+  return acc;
+}, {} as Record<AssinaturaSlug, number>);
+
+const BRL_FORMATTER = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+  minimumFractionDigits: 2,
+});
+
+const formatCurrency = (value: number) => BRL_FORMATTER.format(value);
+
 
 //estilos
 
 function Planos() {
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
-  // const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const toastTimerRef = useRef<number | null>(null);
+  const sliderRef = useRef<Slider | null>(null);
+  const { planSlug, refresh: refreshAssinatura } = useUserAssinatura();
 
-  const copyPixKey = () => {
-    const pixKey = document.getElementById('pixKey')?.textContent;
-    if (pixKey) {
-      navigator.clipboard.writeText(pixKey.trim())
-        .then(() => {
-          setToastMessage("Chave PIX copiada com sucesso!");
-          setTimeout(() => setToastMessage(null), 2000); // Some após 2 segundos
-        })
-        .catch(() => {
-          setToastMessage("Erro ao copiar a chave!");
-          setTimeout(() => setToastMessage(null), 2000);
-        });
+  const showToast = useCallback((message: string, duration = 3000) => {
+    setToastMessage(message);
+    if (toastTimerRef.current) {
+      window.clearTimeout(toastTimerRef.current);
     }
-  };
-  // Configurações do carrossel para slides grandes
-  const settings = {
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, duration);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handlePlanSelection = useCallback((index: number) => {
+    setSelectedPlanIndex(index);
+    sliderRef.current?.slickGoTo(index, true);
+  }, []);
+
+  const sliderSettings = useMemo<SlickSettings>(() => ({
     dots: true,
     arrows: false,
     infinite: false,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1,
     centerMode: true,
-    centerPadding: "100px",
-  beforeChange: (_current: number, next: number) => setSelectedPlanIndex(next),
-    // Personalização completa dos dots
-    customPaging: (i: number) => (
-      <div
-        style={{
-          width: "8px",
-          height: "8px",
-          borderRadius: "50%",
-
-          backgroundColor:
-            i === selectedPlanIndex ? "#ffffff" : "rgba(69, 69, 69, 1)",
-          transition: "all 0.3s ease",
-          transform: i === selectedPlanIndex ? "scale(1.4)" : "scale(1)",
-        }}
-      />
-    ),
-    appendDots: (dots: React.ReactNode[]) => (
-      <div
-        style={{
-          marginTop: '5%',
-          position: "relative",
-          bottom: "-25px",
-          left: 0,
-          right: 0,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-
-        }}
-      >
-        <ul
-          style={{
-            margin: 0,
-            padding: 0,
-            display: "flex",
-            gap: "12px",
-
-          }}
-        >
-          {dots}
-        </ul>
+    centerPadding: "120px",
+    adaptiveHeight: true,
+    customPaging: () => <div />,
+    beforeChange: (_current, next) => {
+      setSelectedPlanIndex(next);
+    },
+    appendDots: (dots) => (
+      <div className="slider-dots-wrapper">
+        {dots}
       </div>
     ),
     responsive: [
@@ -134,511 +189,292 @@ function Planos() {
         },
       },
     ],
-  };
+  }), [setSelectedPlanIndex]);
 
-  // Dados dos planos
-  const plans: Plan[] = [
-    {
-      name: "ÓRBITA",
-      description: "O nosso melhor plano Lorem ipsum dolor sit amet. Et debitis laudantium ea internos inventore aut impedit iste sit expedita facere ut..",
-      benefits: [
-        "Benefício 1", "Benefício 2", "Benefício 3",
-        "Benefício 4", "Benefício 5", "Benefício 6"
-      ],
-      price: 900.99,
-      color: "#9a30eb"
-    },
-    {
-      name: "GALAXIA",
-      description: "O nosso melhor plano Lorem ipsum dolor sit amet. Et debitis laudantium ea internos inventore aut impedit iste sit expedita facere ut..",
-      benefits: [
-        "Benefício 1", "Benefício 2", "Benefício 3",
-        "Benefício 4", "Benefício 5", "Benefício 6"
-      ],
-      price: 990.99,
-      color: "#9a30eb",
-    },
-    {
-      name: "UNIVERSO",
-      description: "O nosso melhor plano Lorem ipsum dolor sit amet. Et debitis laudantium ea internos inventore aut impedit iste sit expedita facere ut..",
-      benefits: [
-        "Benefício 1", "Benefício 2", "Benefício 3",
-        "Benefício 4", "Benefício 5", "Benefício 6"
-      ],
-      price: 1299.90,
-      color: "#9a30eb",
-    },
-  ];
+  const plans = PLAN_OPTIONS;
+  const selectedPlan = (plans[selectedPlanIndex] ?? plans[0]) as Plan;
+  const selectedPlanSlug = selectedPlan.slug;
+  const userCurrentPlan = planSlug
+    ? plans.find((planOption) => planOption.slug === planSlug) ?? null
+    : null;
+  const currentPlanRank = planSlug ? PLAN_RANK[planSlug] ?? null : null;
+  const selectedPlanRank = PLAN_RANK[selectedPlanSlug] ?? null;
+  const isSamePlan = Boolean(planSlug && planSlug === selectedPlanSlug);
+  const isDowngrade = Boolean(
+    planSlug && currentPlanRank !== null && selectedPlanRank !== null && selectedPlanRank < currentPlanRank
+  );
+  const purchaseDisabled = isSamePlan || isDowngrade;
+  const rawDifference = planSlug
+    ? (PLAN_PRICE_BY_SLUG[selectedPlanSlug] ?? selectedPlan.price) - (PLAN_PRICE_BY_SLUG[planSlug] ?? 0)
+    : selectedPlan.price;
+  const amountToCharge = planSlug ? Math.max(rawDifference, 0) : selectedPlan.price;
+  const formattedPlanPrice = formatCurrency(selectedPlan.price);
+  const formattedAmountToCharge = formatCurrency(amountToCharge);
 
-  const selectedPlan = plans[selectedPlanIndex];
+  const installmentBreakdown = useMemo(() => {
+    return [1, 2, 3].map((count) => (
+      <option key={count} value={count}>
+        {count}x de {formatCurrency(amountToCharge / count)} sem juros
+      </option>
+    ));
+  }, [amountToCharge]);
+
+  const upgradeNote = useMemo(() => {
+    if (!planSlug) {
+      return 'Valor integral para novos cadastros ou usuários sem assinatura ativa.';
+    }
+    if (isSamePlan) {
+      return `Você já possui o plano ${userCurrentPlan?.name ?? 'atual'}.`;
+    }
+    if (isDowngrade) {
+      return `Seu plano atual (${userCurrentPlan?.name ?? 'atual'}) já inclui esses conteúdos. Escolha um plano superior para fazer upgrade.`;
+    }
+    return `Upgrade a partir do plano ${userCurrentPlan?.name ?? ''}. Vamos cobrar agora ${formattedAmountToCharge} (apenas a diferença).`;
+  }, [formattedAmountToCharge, isDowngrade, isSamePlan, planSlug, userCurrentPlan]);
+
+  const isCheckoutDisabled = isProcessing || purchaseDisabled;
+
+  const copyPixKey = useCallback(async () => {
+    try {
+      const clipboard = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
+      if (!clipboard?.writeText) {
+        throw new Error('Clipboard API indisponível.');
+      }
+      await clipboard.writeText(PIX_KEY);
+      showToast('Chave PIX copiada!');
+    } catch (error) {
+      console.error('Erro ao copiar chave PIX:', error);
+      showToast('Não foi possível copiar a chave PIX. Copie manualmente.');
+    }
+  }, [showToast]);
+
+  const renderChargeBreakdown = useCallback(() => (
+    <div className="plan-charge-breakdown">
+      <p>
+        PREÇO DO PLANO: <strong className="strong-pay">{formattedPlanPrice}</strong>
+      </p>
+      <p>
+        VALOR COBRADO AGORA:{' '}
+        <strong className="strong-pay plan-charge-highlight">{formattedAmountToCharge}</strong>
+      </p>
+      {upgradeNote && <p className="plan-upgrade-note">{upgradeNote}</p>}
+    </div>
+  ), [formattedAmountToCharge, formattedPlanPrice, upgradeNote]);
+
+  const handleCheckout = useCallback(async (paymentMethod: string) => {
+    if (isProcessing) {
+      return;
+    }
+
+    if (purchaseDisabled) {
+      const restrictionMessage = isDowngrade
+        ? 'Seu plano atual já é superior a este.'
+        : 'Você já possui este plano ativo.';
+      showToast(restrictionMessage);
+      return;
+    }
+
+    const checkoutPlan = plans[selectedPlanIndex];
+    setIsProcessing(true);
+
+    try {
+      const response = await fetchWithCredentials(`${API_BASE}/api/planos/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: checkoutPlan.slug, paymentMethod }),
+      });
+
+      const body = await response.json().catch(() => null);
+      if (!response.ok) {
+        const fallbackMessage = response.status === 401
+          ? 'Faça login para concluir sua assinatura.'
+          : body?.error ?? 'Não foi possível finalizar o checkout agora.';
+        throw new Error(fallbackMessage);
+      }
+
+      const amountCharged = typeof body?.amountCharged === 'number' ? body.amountCharged : null;
+      const successMessage = amountCharged !== null
+        ? `Pagamento confirmado! Valor cobrado agora: ${formatCurrency(amountCharged)}.`
+        : body?.message ?? `Plano ${checkoutPlan.name} ativado com sucesso!`;
+      showToast(successMessage);
+      refreshAssinatura();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro inesperado ao finalizar a compra.';
+      showToast(message);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [isProcessing, purchaseDisabled, isDowngrade, plans, selectedPlanIndex, showToast, refreshAssinatura]);
 
   // Métodos de pagamento
   const paymentMethods: PaymentMethod[] = [
-    {
-      id: "pix",
-      name: "PIX",
-  icon: "/icons/icons8-pix-50.png",
-      component: (
-        <div className="pix-form">
-          <h3 style={{ fontWeight: 100 }}>PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span> </h3>
-          <p>
-            PREÇO TOTAL:{" "}
-            <strong className="strong-pay">
-              {selectedPlan.price.toFixed(2).replace(".", ",")}
-            </strong>
-          </p>
-          <p style={{ marginTop: '1.5rem' }}>O pagamento por pix é feito por meio de QRCODE ou CHAVE PIX. O pagamento tem até 24 horas para ser aceito e você poderá usar este seu plano.</p>
-          <div className="qrcode-content" >
-            <div
-              style={{
-                backgroundColor: "#f0f0f0",
-                height: "350px",
-                width: "350px",
-                left: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "20px 0",
-                backgroundImage: 'url(/img/UdYkGR.jpg)',
-                backgroundSize: 'cover'
-
-              }}
-            >
-
-            </div>
-
-            <div className="ABAAA" style={{
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-
-              height: "350px",
-              width: "350px",
-              left: "50%",
-              marginLeft: '2.5rem',
-              marginTop: '20px',
-              textAlign: 'justify',
-            }}>
-              <h3 style={{ fontFamily: 'Archivo black' }}>CHAVE PIX</h3>
-              <div style={{ position: 'relative' }}>
-                <p id="pixKey" style={{ maxWidth: '100%', textAlign: 'justify' }}>
-                omasd82sdmn29hsoijdf8jsdd9f8nmssdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfarg dfgaf987gya sdfughba9 SD786YFGH sd8y7hg9a8s7dfhg 98S7DHG0A 8sdfyng0 87df
-                </p>
-                <button
-                  onClick={() => copyPixKey()}
-                  className="btn-hover"
-                  style={{
-                    height: '2rem',
-                    width: '100%',
-                    fontSize: '16px',
-                    fontFamily: 'Questrial',
-                    color: 'white',
-                    backgroundColor: "#9030eb",
-                    border: 'none',
-
-                    marginTop: '10px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '5px'
-                  }}
-                >
-                  <span>Copiar chave PIX</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"></path>
-                  </svg>
-                </button>
+        {
+          id: "pix",
+          name: "PIX",
+          icon: "/icons/icons8-pix-50.png",
+          component: (
+            <div className="pix-form">
+              <h3 className="payment-heading">
+                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
+              </h3>
+              {renderChargeBreakdown()}
+              <p className="payment-description payment-description-spaced">
+                Pague via QR Code ou chave copia/cola. Assim que o PIX for compensado (até 24h), o curso escolhido é liberado automaticamente e você recebe a confirmação por e-mail.
+              </p>
+              <div className="qrcode-content">
+                <div className="pix-qrcode" />
+                <div className="pix-key-card">
+                  <h3 className="pix-key-title">CHAVE PIX</h3>
+                  <div className="pix-key-wrapper">
+                    <p id="pixKey" className="pix-key-text">
+                      {PIX_KEY}
+                    </p>
+                    <button
+                      onClick={copyPixKey}
+                      className="btn-hover pix-copy-button"
+                    >
+                      <span>Copiar chave PIX</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
+              <button
+                className="btn-pay"
+                disabled={isCheckoutDisabled}
+                onClick={() => { void handleCheckout('pix'); }}
+              >
+                CONFIRMAR ASSINATURA VIA PIX
+              </button>
             </div>
-          </div>
-          <button className="btn-pay"
-            style={{
-              backgroundColor: "#9030eb",
-              fontSize: "20px",
-              fontFamily: 'Archivo black',
-              color: "white",
-              border: "none",
-              padding: "12px 24px",
-
-              cursor: "pointer",
-              width: "100%",
-
-            }}
-          >
-            GERAR CHAVE PIX
-          </button>
-        </div>
-      ),
-    },
-    {
-      id: "credit",
-      name: "CARTÃO DE CRÉDITO",
-  icon: "/icons/icons8-cartão-50.png",
-      component: (
-        <div className="credit-card-form">
-          < h3 style={{ fontWeight: '100' }}>PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span></h3>
-          <p>
-            PREÇO TOTAL:{" "}
-            <strong className="strong-pay">
-              R$ {selectedPlan.price.toFixed(2).replace(".", ",")}
-            </strong>
-          </p>
-
-          <p style={{ marginTop: '1.5rem' }}>O pagamento por cartão de crédito é preciso das seguintes informações:</p>
-
-          <div style={{ margin: "15px 0" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>
-              Número do cartão:
-            </label>
-            <input className="pay-input"
-              type="text"
-              placeholder="1234 5678 9012 3456"
-              style={{
-                width: "97%",
-                height: '2rem',
-                padding: "10px",
-
-                fontFamily: "Questrial",
-                fontSize: '18px',
-                backgroundColor: '#7E7E7E',
-                color: "white",
-                borderBlock: 'none',
-                textTransform: 'uppercase'
-              }}
-            />
-          </div>
-
-          <div style={{ margin: "15px 0" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>
-              Nome no cartão:
-            </label>
-            <input className="pay-input"
-              type="text"
-              placeholder="Nome como está no cartão"
-              style={{
-                width: "97%",
-                height: '2rem',
-                padding: "10px",
-
-                fontFamily: "Questrial",
-                fontSize: '18px',
-                backgroundColor: '#7E7E7E',
-                color: "white",
-                borderBlock: 'none',
-                textTransform: 'uppercase'
-              }}
-            />
-          </div>
-
-          <div style={{ display: "flex", gap: "15px", margin: "15px 0", }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                Validade:
-              </label>
-              <input className="pay-input"
-                type="text"
-                placeholder="MM/AA"
-                style={{
-                  width: "70%",
-                  height: '2rem',
-                  padding: "10px",
-
-                  fontFamily: "Questrial",
-                  fontSize: '18px',
-                  backgroundColor: '#7E7E7E',
-                  color: "white",
-                  borderBlock: 'none',
-                  textTransform: 'uppercase'
-                }}
-              />
+          ),
+        },
+        {
+          id: "credit",
+          name: "CARTÃO DE CRÉDITO",
+          icon: "/icons/icons8-cartão-50.png",
+          component: (
+            <div className="credit-card-form">
+              <h3 className="payment-heading">
+                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
+              </h3>
+              {renderChargeBreakdown()}
+              <p className="payment-description payment-description-spaced">
+                Preencha os dados abaixo para processar o pagamento com segurança. Utilizamos checkout tokenizado e seu acesso é liberado na hora.
+              </p>
+              <div className="form-field">
+                <label className="form-label">Número do cartão:</label>
+                <input className="pay-input" type="text" placeholder="1234 5678 9012 3456" />
+              </div>
+              <div className="form-field">
+                <label className="form-label">Nome impresso no cartão:</label>
+                <input className="pay-input" type="text" placeholder="Nome como está no cartão" />
+              </div>
+              <div className="form-row">
+                <div className="form-column">
+                  <label className="form-label">Validade:</label>
+                  <input className="pay-input pay-input-validade" type="text" placeholder="MM/AA" />
+                </div>
+                <div className="form-column">
+                  <label className="form-label">CVV:</label>
+                  <input className="pay-input pay-input-cvv" type="text" placeholder="123" />
+                </div>
+              </div>
+              <p className="payment-description payment-description-spaced">
+                Use seu cartão de crédito para confirmar a assinatura imediatamente. Todos os dados são criptografados e não ficam salvos na plataforma.
+              </p>
+              <div className="form-field form-field-select">
+                <label className="form-label">Parcelamento:</label>
+                <select className="payment-select">
+                  {installmentBreakdown}
+                </select>
+              </div>
+              <button
+                className="btn-pay"
+                disabled={isCheckoutDisabled}
+                onClick={() => { void handleCheckout('credit-card'); }}
+              >
+                FINALIZAR COMPRA
+              </button>
             </div>
-
-            <div style={{ flex: 1, marginLeft: "5%" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                CVV:
-              </label>
-              <input className="pay-input"
-                type="text"
-                placeholder="123"
-                style={{
-                  width: "50%",
-                  height: '2rem',
-                  padding: "10px",
-
-                  fontFamily: "Questrial",
-                  fontSize: '18px',
-                  backgroundColor: '#7E7E7E',
-                  color: "white",
-                  borderBlock: 'none',
-                  textTransform: 'uppercase',
-                }}
-              />
+          ),
+        },
+        {
+          id: "debit",
+          name: "CARTÃO DE DÉBITO",
+          icon: "/icons/icons8-cartão-50.png",
+          component: (
+            <div className="debit-card-form">
+              <h3 className="payment-heading">
+                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
+              </h3>
+              {renderChargeBreakdown()}
+              <p className="payment-description payment-description-spaced">
+                O pagamento por cartão de débito solicita os dados abaixo. A confirmação acontece em poucos minutos após a autenticação do banco.
+              </p>
+              <div className="form-field form-field--spaced">
+                <label className="form-label">Número do cartão:</label>
+                <input className="pay-input" type="text" placeholder="1234 5678 9012 3456" />
+              </div>
+              <div className="form-field form-field--spaced">
+                <label className="form-label">Nome no cartão:</label>
+                <input className="pay-input" type="text" placeholder="Nome como está no cartão" />
+              </div>
+              <div className="form-row form-row--spaced">
+                <div className="form-column">
+                  <label className="form-label">Validade:</label>
+                  <input className="pay-input pay-input-validade" type="text" placeholder="MM/AA" />
+                </div>
+                <div className="form-column">
+                  <label className="form-label">CVV:</label>
+                  <input className="pay-input pay-input-cvv" type="text" placeholder="123" />
+                </div>
+              </div>
+              <button
+                className="btn-pay btn-pay--spaced"
+                disabled={isCheckoutDisabled}
+                onClick={() => { void handleCheckout('debit-card'); }}
+              >
+                FINALIZAR COMPRA
+              </button>
             </div>
-          </div>
-
-          <div style={{ margin: "20px 0" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>
-              Parcelamento:
-            </label>
-            <select
-              style={{
-                width: "50%",
-                height: '3rem',
-                padding: "10px",
-
-                fontFamily: "Questrial",
-                fontSize: '18px',
-                backgroundColor: '#7E7E7E',
-                color: "white",
-                borderBlock: 'none',
-                textTransform: 'uppercase',
-              }}
-            >
-              <option>
-                1x de R$ {selectedPlan.price.toFixed(2).replace(".", ",")} sem
-                juros
-              </option>
-              <option>
-                2x de R$ {(selectedPlan.price / 2).toFixed(2).replace(".", ",")}{" "}
-                sem juros
-              </option>
-              <option>
-                3x de R$ {(selectedPlan.price / 3).toFixed(2).replace(".", ",")}{" "}
-                sem juros
-              </option>
-            </select>
-          </div>
-
-          <button className="btn-pay"
-            style={{
-              backgroundColor: "#9030eb",
-              fontSize: "20px",
-              fontFamily: 'Archivo black',
-              color: "white",
-              border: "none",
-              padding: "12px 24px",
-
-              cursor: "pointer",
-              width: "100%",
-
-
-            }}
-          >
-            FINALIZAR COMPRA
-          </button>
-        </div>
-      ),
-    },
-    {
-      id: "debit",
-      name: "CARTÃO DE DÉBITO",
-  icon: "/icons/icons8-cartão-50.png",
-      component: (
-        <div className="debit-card-form">
-          <h3 style={{ fontWeight: '100' }}>PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span></h3>
-
-          <p>
-            PREÇO TOTAL:{" "}
-            <strong className="strong-pay">
-              R$ {selectedPlan.price.toFixed(2).replace(".", ",")}
-            </strong>
-          </p>
-
-          <p style={{ marginTop: '1.5rem' }}> O pagamento por cartão de crédito é preciso das seguintes informações:</p>
-
-          <div style={{ marginTop: '5%' }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>
-              Número do cartão:
-            </label>
-            <input className="pay-input"
-              type="text"
-              placeholder="1234 5678 9012 3456"
-              style={{
-                width: "97%",
-                height: '2rem',
-                padding: "10px",
-
-                fontFamily: "Questrial",
-                fontSize: '18px',
-                backgroundColor: '#7E7E7E',
-                color: "white",
-                borderBlock: 'none',
-                textTransform: 'uppercase'
-              }}
-            />
-          </div>
-
-          <div style={{ marginTop: '5%' }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>
-              Nome no cartão:
-            </label>
-            <input className="pay-input"
-              type="text"
-              placeholder="Nome como está no cartão"
-              style={{
-                width: "97%",
-                height: '2rem',
-                padding: "10px",
-
-                fontFamily: "Questrial",
-                fontSize: '18px',
-                backgroundColor: '#7E7E7E',
-                color: "white",
-                borderBlock: 'none',
-                textTransform: 'uppercase'
-              }}
-            />
-          </div>
-
-          <div style={{ display: "flex", gap: "15px", marginTop: '5%' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                Validade:
-              </label>
-              <input className="pay-input"
-                type="text"
-                placeholder="MM/AA"
-                style={{
-                  width: "70%",
-                  height: '2rem',
-                  padding: "10px",
-
-                  fontFamily: "Questrial",
-                  fontSize: '18px',
-                  backgroundColor: '#7E7E7E',
-                  color: "white",
-                  borderBlock: 'none',
-                  textTransform: 'uppercase'
-                }}
-              />
+          ),
+        },
+        {
+          id: "boleto",
+          name: "BOLETO",
+          icon: "/icons/icons8-código-de-barras-50.png",
+          component: (
+            <div className="boleto-form">
+              <h3 className="payment-heading">
+                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
+              </h3>
+              {renderChargeBreakdown()}
+              <p className="payment-description payment-description-spaced">
+                O boleto deve ser pago em até <span className="payment-highlight">24 HORAS</span>. A liberação acontece em até dois dias úteis após a compensação bancária.
+              </p>
+              <p className="payment-description">Informe seus dados para gerar o documento:</p>
+              <div className="form-field form-field--stacked">
+                <label className="form-label">Nome completo:</label>
+                <input className="pay-input" type="text" placeholder="Nome completo como exibido no seu documento" />
+              </div>
+              <div className="form-field form-field--stacked">
+                <label className="form-label">CPF:</label>
+                <input className="pay-input" type="text" placeholder="000.000.000-00" />
+              </div>
+              <button
+                className="btn-pay btn-pay--margin"
+                disabled={isCheckoutDisabled}
+                onClick={() => { void handleCheckout('boleto'); }}
+              >
+                GERAR BOLETO
+              </button>
             </div>
-
-            <div style={{ flex: 1 }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>
-                CVV:
-              </label>
-              <input className="pay-input"
-                type="text"
-                placeholder="123"
-                style={{
-                  width: "50%",
-                  height: '2rem',
-                  padding: "10px",
-
-                  fontFamily: "Questrial",
-                  fontSize: '18px',
-                  backgroundColor: '#7E7E7E',
-                  color: "white",
-                  borderBlock: 'none',
-                  textTransform: 'uppercase',
-
-
-                }}
-              />
-
-
-            </div>
-
-          </div>
-          <button className="btn-pay"
-            style={{
-              backgroundColor: "#9030eb",
-              fontSize: "20px",
-              fontFamily: 'Archivo black',
-              color: "white",
-              border: "none",
-              padding: "12px 24px",
-
-              cursor: "pointer",
-              width: "100%",
-              marginTop: '5%'
-
-            }}
-          >
-            FINALIZAR COMPRA
-          </button>
-        </div>
-
-      ),
-    },
-    {
-      id: "boleto",
-      name: "BOLETO",
-  icon: "/icons/icons8-código-de-barras-50.png",
-      component: (
-        <div className="boleto-form">
-          <h3 style={{ fontWeight: '100' }} >PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span></h3>
-          <p>
-            PREÇO TOTAL:{" "}
-            <strong className="strong-pay">
-              R$ {selectedPlan.price.toFixed(2).replace(".", ",")}
-            </strong>
-          </p>
-          <p style={{ marginTop: '1.5rem' }}>O boleto deve ser pago em até <span style={{ fontFamily: 'Archivo black', fontWeight: '150' }}>24 HORAS</span> e poderá ser confirmado sua compra em até dois dias. Para o boleto ser gerado, precisamos das seguintes informações:</p>
-
-          <label style={{ display: "block", marginTop: "1.5rem" }}>
-            Nome completo:
-          </label>
-
-          <input className="pay-input"
-            type="text"
-            placeholder="Nome completo como exibido no seu documento"
-            style={{
-              width: "97%",
-              height: '2rem',
-              padding: "10px",
-              marginTop: '0.5rem',
-              fontFamily: "Questrial",
-              fontSize: '18px',
-              backgroundColor: '#7E7E7E',
-              color: "white",
-              borderBlock: 'none',
-              textTransform: 'uppercase'
-            }}
-          />
-
-          <label style={{ display: "block", marginTop: "1.5rem" }}>
-            CPF:
-          </label>
-
-          <input className="pay-input"
-            type="text"
-            placeholder="000.000.000 - 00"
-            style={{
-              width: "97%",
-              height: '2rem',
-              padding: "10px",
-              marginTop: '0.5rem',
-              fontFamily: "Questrial",
-              fontSize: '18px',
-              backgroundColor: '#7E7E7E',
-              color: "white",
-              borderBlock: 'none',
-              textTransform: 'uppercase'
-            }}
-          />
-
-          <button className="btn-pay"
-            style={{
-              backgroundColor: "#9030eb",
-              fontSize: "20px",
-              fontFamily: 'Archivo black',
-              color: "white",
-              border: "none",
-              padding: "12px 24px",
-
-              cursor: "pointer",
-              width: "100%",
-              marginTop: "20px",
-
-            }}
-          >
-            GERAR BOLETO
-          </button>
-        </div>
-      ),
-    },
-  ];
+          ),
+        },
+      ];
 
   const [activePaymentMethod, setActivePaymentMethod] = useState<string | null>(null);
   const [contentHeight, setContentHeight] = useState<{ [key: string]: number }>({});
@@ -657,240 +493,84 @@ function Planos() {
     <>
       <Menu />
       <div className="container-planos">
-
-        <div
-          style={{
-            maxWidth: "100vw",
-            margin: "0 auto",
-            padding: "100px 0",
-            color: "#fff",
-            backgroundColor: "var(--cinza-escuro1)",
-            minHeight: "100vh",
-            fontFamily: '"Questrial", sans-serif',
-            userSelect: 'none',
-            transform: 'scale(1.1)',
-          }}
-        >
-          <style>
-            {`
-
-        
-
-
-          .slick-dots li button:before {
-            content: none !important;
-          }
-          .slick-dots li {
-            width: auto !important;
-            height: auto !important;
-            margin: 0 !important;
-          }
-
-          .slick-dots li div {
-          width: 15px !important;
-          height: 15px !important;
-          }
-
-          .slick-dots li.slick-active div {
-      background-color: #9A30EB !important; /* Roxo quando ativo */
-    }
-    .slick-dots li div {
-      background-color: rgb(255, 255, 255) !important; /* Roxo claro quando inativo */
-    }
-        `}
-          </style>
-
-
-
-          
-
-          {/* Carrossel de Planos */}
-          <div style={{ margin: "0 auto 60px", maxWidth: "1000px" }}>
-            <Slider {...settings}>
-              {plans.map((plan, index) => (
-                <div
-                  key={index}
-                  style={{
-                    padding: "20px",
-                    outline: "none",
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: plan.color,
-                      padding: "25px",
-                      borderRadius: selectedPlanIndex === index ? "10px" : "15px !important",
-                      height: "400px",
-                      color: "white",
-                      boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
-                      transform: selectedPlanIndex === index ? "scale(1.05)" : "scale(0.95)",
-                      transition: "all 0.3s ease",
-                      opacity: selectedPlanIndex === index ? 1 : 0.8,
-                      display: "flex",
-                      flexDirection: "column",
-                      position: 'relative'
-                    }}
-                  >
-                    <h2 style={{ fontSize: "2rem", marginBottom: "15px", fontFamily: 'Archivo black' }}>
-                      {plan.name}
-                    </h2>
-                    <p style={{ marginBottom: "20px", flexGrow: 1, fontSize: '18px' }}>
-                      {plan.description}
-                    </p>
-
-                    {/* Grade de benefícios - 2 linhas x 3 colunas */}
-                    <div className="ben-gri" style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, 1fr)", // 3 colunas
-                      gridTemplateRows: "repeat(2, auto)",  // 2 linhas
-                      gap: "15px",
-                      marginBottom: "60px",
-                      fontWeight: 'bold',
-                      fontSize: '20px',
-                      fontFamily: 'Archivo black',
-                      listStyle: 'none'
-                    }}>
-                      {plan.benefits.map((benefit, i) => (
-                        <div key={i} style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px"
-                        }}>
-                          <div style={{
-                            width: "25px",
-                            height: "25px",
-                            backgroundSize: 'cover',
-
-                            backgroundImage:
-                              (index === 0 && i < 2) ||
-                                (index === 1 && i < 3) ||
-                                (index === 2)
-                                ? 'url(/icons/check-claro2.svg)'
-                                : 'url(/icons/cancel.svg)'
-                          }}></div>
-                          <span>{benefit}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div style={{ marginTop: "auto" }}>
-                      <p style={{ marginBottom: "5px", fontSize: '20px' }}>No valor:</p>
-                      <h3 style={{ fontSize: "2.3rem", marginBottom: "20px" }}>
-                        R$ {plan.price.toFixed(2).replace(".", ",")}
-                      </h3>
-                      <button
-                        style={{
-                          backgroundColor: selectedPlanIndex === index ? "#fff" : "#610EA1",
-                          color: selectedPlanIndex === index ? "#9A30EB" : "white",
-                          border: "none",
-                          padding: "12px 24px",
-
-                          cursor: "pointer",
-                          fontWeight: "bold",
-                          width: "100%",
-                          fontSize: "1rem",
-                          transition: "all 0.3s ease",
-                          marginTop: ''
-                        }}
-                      >
-                        {selectedPlanIndex === index ? "PLANO SELECIONADO" : "SELECIONAR ESTE PLANO"}
-                      </button>
+        <div className="planos-wrapper">
+          <div className="plan-carousel">
+            <Slider ref={sliderRef} {...sliderSettings}>
+              {plans.map((plan, index) => {
+                const isSelected = selectedPlanIndex === index;
+                return (
+                  <div key={plan.slug} className="plan-slide">
+                    <div className={`plan-card plan-card-${plan.slug}`}>
+                      <h2 className="plan-card-title">{plan.name}</h2>
+                      <p className="plan-card-description">{plan.description}</p>
+                      <div className="ben-gri plan-benefits-grid">
+                        {plan.benefits.map((benefit, benefitIndex) => {
+                          const hasBenefit =
+                            (index === 0 && benefitIndex < 2) ||
+                            (index === 1 && benefitIndex < 3) ||
+                            index === 2;
+                          return (
+                            <div key={`${plan.slug}-${benefitIndex}`} className="benefit-item">
+                              <div
+                                className={`benefit-icon ${hasBenefit ? "benefit-icon--active" : "benefit-icon--inactive"}`}
+                              />
+                              <span>{benefit}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="plan-card-footer">
+                        <p className="plan-card-price-label">No valor:</p>
+                        <h3 className="plan-card-price-value">
+                          R$ {plan.price.toFixed(2).replace('.', ',')}
+                        </h3>
+                        <button
+                          className="plan-card-button"
+                          disabled={isSelected}
+                          onClick={() => handlePlanSelection(index)}
+                        >
+                          {isSelected ? "PLANO SELECIONADO" : "SELECIONAR ESTE PLANO"}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Slider>
           </div>
 
-          {/* Seção de Pagamento */}
-          <div
-            style={{
-              maxWidth: "800px",
-              margin: "0 auto",
-              padding: "0 20px",
-            }}
-          >
-            <h2
-              style={{
-                textAlign: "center",
-                marginBottom: "30px",
-                fontSize: "2rem",
-                fontFamily: 'Archivo black'
-              }}
-            >
-              Escolha seu metodo de <span style={{
-                color: '#9A30EB',
-                textTransform: 'uppercase'
-              }}>Pagamento</span>
+          <div className="payment-section">
+            <h2 className="payment-section-title">
+              Escolha seu metodo de <span className="payment-section-title-highlight">Pagamento</span>
             </h2>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-              }}
-            >
+            <div className="payment-methods-list">
               {paymentMethods.map((method) => (
                 <div
                   key={method.id}
-                  style={{
-
-
-                    overflow: "hidden",
-                    backgroundColor: activePaymentMethod === method.id ? "#454545" : "#454545",
-                    transition: "all 0.3s ease",
-                  }}
+                  className={`payment-method-card${activePaymentMethod === method.id ? ' is-active' : ''}`}
                 >
-
-
                   <button
+                    className="payment-method-button"
                     onClick={() =>
                       setActivePaymentMethod(
                         activePaymentMethod === method.id ? null : method.id
                       )
                     }
-                    style={{
-                      width: "100%",
-                      padding: "15px",
-                      backgroundColor: "#454545",
-                      border: "none",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      fontWeight: "bold",
-                      fontSize: "1.1rem",
-                      color: "#fff",
-                      transition: "all 10s ease",
-                    }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <img
-                        src={method.icon}
-                        alt={method.name}
-                        style={{ width: "24px", height: "24px" }}
-                      />
+                    <div className="payment-method-info">
+                      <img src={method.icon} alt={method.name} className="payment-method-icon" />
                       <span>{method.name}</span>
                     </div>
-                    <span style={{ fontSize: "1.5rem", transition: "transform 0.3s ease" }}>
-
-                    </span>
+                    <span className="payment-method-toggle-icon" />
                   </button>
-
                   <div
                     ref={(ref) => measureRef(method.id, ref)}
+                    className="payment-content"
                     style={{
-                      height: activePaymentMethod === method.id ? `${contentHeight[method.id]}px` : "0",
-                      overflow: "hidden",
-                      transition: "height 0.5s ease",
-
+                      height: activePaymentMethod === method.id ? `${contentHeight[method.id]}px` : '0',
                     }}
                   >
-                    <div style={{ padding: "20px" }}>
-                      {method.component}
-                    </div>
+                    <div className="payment-content-inner">{method.component}</div>
                   </div>
                 </div>
               ))}
@@ -899,22 +579,10 @@ function Planos() {
         </div>
 
         {toastMessage && (
-  <div style={{
-    position: "fixed",
-    top: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    backgroundColor: "#9030eb",
-    color: "white",
-    padding: "12px 24px",
-    fontFamily: 'Questrial',
-    boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-    zIndex: 1000,
-    animation: "toastSlideIn 0.5s forwards, toastFadeOut 0.5s 1.5s forwards"
-  }}>
-    {toastMessage}
-  </div>
-)}
+          <div className="toast-notification">
+            {toastMessage}
+          </div>
+        )}
       </div>
     </>
   );
