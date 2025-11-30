@@ -60,45 +60,45 @@ const PLAN_OPTIONS: Plan[] = [
     benefits: [
       "Certificados oficiais de conclusão",
       "Comunidade exclusiva",
-      "Lives mensais / encontros ao vivo",
+      "Fórum de dúvidas",
       "Suporte prioritário",
       "Acesso antecipado a novos módulos",
       "Customização avançada",
     ],
     price: 79.9,
-    color: "#5F3DC4",
+    color: "#7e28c0",
   },
   {
     slug: "galaxia",
     name: "GALÁXIA",
     description:
-      "Plano para quem já domina os fundamentos e quer acelerar. Inclui estudos avançados, desafios práticos e feedback individual.",
+      "Plano para quem já domina os fundamentos e quer acelerar.",
     benefits: [
       "Certificados oficiais de conclusão",
       "Comunidade exclusiva",
-      "Lives mensais / encontros ao vivo",
+      "",
       "Suporte prioritário",
       "Acesso antecipado a novos módulos",
       "Customização avançada",
     ],
     price: 129.9,
-    color: "#5F3DC4",
+    color: "#7e28c0",
   },
   {
     slug: "universo",
     name: "UNIVERSO",
     description:
-      "Experiência completa: conteúdo avançado, projetos autorais acompanhados e suporte prioritário direto com professores da equipe Nebula.",
+      "Experiência completa, todos os recursos e conteúdos avançados.",
     benefits: [
       "Certificados oficiais de conclusão",
       "Comunidade exclusiva",
-      "Lives mensais / encontros ao vivo",
+      "",
       "Suporte prioritário",
       "Acesso antecipado a novos módulos",
       "Customização avançada",
     ],
     price: 179.9,
-    color: "#5F3DC4",
+    color: "#7e28c0",
   },
 ];
 

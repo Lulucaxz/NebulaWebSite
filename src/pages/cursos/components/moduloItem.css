@@ -23,15 +23,15 @@
 }
 
 .modulo-item-locked {
-    cursor: not-allowed;
     color: #C8C8C8;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background-image: linear-gradient(135deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
+    background-color: rgba(0,0,0,0.35);
+    cursor: not-allowed;
 }
 
 .modulo-item-locked:hover {
     background-color: #2C2C2C !important;
     color: #C8C8C8;
+    cursor: not-allowed;
 }
 
 .modulo-item-locked-indicator {
