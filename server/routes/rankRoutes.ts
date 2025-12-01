@@ -12,6 +12,8 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
+const SYSTEM_SEED_EMAIL = 'seed-initial-modulos@nebula.local';
+
 
 // Limita o ranking a no máximo 50 usuários
 router.get('/rank', asyncHandler(async (_req, res) => {
@@ -19,20 +21,26 @@ router.get('/rank', asyncHandler(async (_req, res) => {
   try {
     await connection.beginTransaction();
 
-    await connection.query(`
+    await connection.query(
+      `
       UPDATE usuario u
       JOIN (
         SELECT id, ROW_NUMBER() OVER (ORDER BY pontos DESC, id ASC) AS posicao
         FROM usuario
+        WHERE role <> 'professor' AND email <> ?
       ) ranked ON ranked.id = u.id
       SET u.colocacao = ranked.posicao
-    `);
+    `,
+      [SYSTEM_SEED_EMAIL]
+    );
 
     const [rows] = await connection.query<RowDataPacket[]>(
       `SELECT id, username, user, icon, pontos, colocacao
        FROM usuario
+       WHERE role <> 'professor' AND email <> ?
        ORDER BY colocacao ASC
-       LIMIT 50`
+       LIMIT 50`,
+      [SYSTEM_SEED_EMAIL]
     );
 
     await connection.commit();

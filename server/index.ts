@@ -51,15 +51,6 @@ type AuthenticatedRequest = Request & { isAuthenticated?: () => boolean; user?: 
 
 interface UsuarioRow extends RowDataPacket { id: number; role?: string | null; senha?: string; google_id?: string | null; [key: string]: unknown }
 
-const recalculateRankingQuery = `
-  UPDATE usuario u
-  JOIN (
-    SELECT id, ROW_NUMBER() OVER (ORDER BY pontos DESC, id ASC) AS posicao
-    FROM usuario
-  ) ranked ON ranked.id = u.id
-  SET u.colocacao = ranked.posicao
-`;
-
 const DEFAULT_BANNER = "/img/nebulosaBanner.jpg";
 const DEFAULT_AVATAR = "/img/defaultUser.png";
 
@@ -341,50 +332,24 @@ app.get('/auth/me', asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const connection = await pool.getConnection();
-  let userRow: RowDataPacket | null = null;
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT u.*, up.primary_hex AS active_primary_hex, up.base AS active_palette_base
+       FROM usuario u
+       LEFT JOIN usuario_palette up ON up.id = u.active_palette_id
+      WHERE u.id = ?`,
+    [authReq.user.id]
+  );
 
-  try {
-    await connection.beginTransaction();
-
-    await connection.query(recalculateRankingQuery);
-
-    const [rows] = await connection.query<RowDataPacket[]>(
-      `SELECT u.*, up.primary_hex AS active_primary_hex, up.base AS active_palette_base
-         FROM usuario u
-         LEFT JOIN usuario_palette up ON up.id = u.active_palette_id
-        WHERE u.id = ?`,
-      [authReq.user.id]
-    );
-
-    if (rows.length === 0) {
-      await connection.rollback();
-      res.status(404).json({ error: "Usuário não encontrado" });
-      return;
-    }
-
-    userRow = rows[0];
-
-    if (userRow) {
-      const shouldForceProfessorPlan = `${userRow.role ?? ''}`.toLowerCase() === 'professor';
-      if (shouldForceProfessorPlan && userRow.curso !== PROFESSOR_PLAN_LABEL) {
-        await connection.query(
-          'UPDATE usuario SET curso = ? WHERE id = ?',
-          [PROFESSOR_PLAN_LABEL, authReq.user.id]
-        );
-        userRow.curso = PROFESSOR_PLAN_LABEL;
-      }
-    }
-    await connection.commit();
-  } catch (err) {
-    await connection.rollback();
-    throw err;
-  } finally {
-    connection.release();
+  if (rows.length === 0) {
+    res.status(404).json({ error: "Usuário não encontrado" });
+    return;
   }
 
-  if (!userRow) {
-    return;
+  const userRow = rows[0];
+  const shouldForceProfessorPlan = `${userRow.role ?? ''}`.toLowerCase() === 'professor';
+  if (shouldForceProfessorPlan && userRow.curso !== PROFESSOR_PLAN_LABEL) {
+    await pool.query('UPDATE usuario SET curso = ? WHERE id = ?', [PROFESSOR_PLAN_LABEL, authReq.user.id]);
+    userRow.curso = PROFESSOR_PLAN_LABEL;
   }
 
   res.json(userRow);
