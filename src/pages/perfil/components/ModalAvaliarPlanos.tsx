@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "../perfil.css";
 import { API_BASE, fetchWithCredentials } from "../../../api";
 import type { AvaliacaoCard } from "../../../types/avaliacao";
@@ -8,6 +9,7 @@ interface ModalAvaliarPlanosProps {
 }
 
 const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0); // Estado para a avaliação
   const [feedback, setFeedback] = useState(""); // Estado para o feedback
   const [submitting, setSubmitting] = useState(false);
@@ -26,12 +28,12 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
     if (submitting) return;
 
     if (rating === 0) {
-      setMensagemErro("Selecione uma quantidade de estrelas.");
+      setMensagemErro(t("perfil.reviewModal.error.noStars"));
       return;
     }
 
     if (feedback.trim().length < 10) {
-      setMensagemErro("Conte pelo menos 10 caracteres sobre sua experiência.");
+      setMensagemErro(t("perfil.reviewModal.error.minChars"));
       return;
     }
 
@@ -48,13 +50,13 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
       const payload = await response.json().catch(() => null);
 
       if (!response.ok || !payload) {
-        throw new Error((payload as { error?: string } | null)?.error || "Não foi possível enviar sua avaliação agora.");
+        throw new Error((payload as { error?: string } | null)?.error || t("perfil.reviewModal.error.submit"));
       }
 
       const avaliacaoCriada = payload as AvaliacaoCard;
       window.dispatchEvent(new CustomEvent("nebula-avaliacao-criada", { detail: avaliacaoCriada }));
 
-      setMensagemSucesso("Agradecemos pela avaliação!");
+      setMensagemSucesso(t("perfil.reviewModal.success"));
       setTimeout(() => {
         setRating(0);
         setFeedback("");
@@ -62,7 +64,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
         onClose();
       }, 2000);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Erro inesperado ao enviar sua avaliação.";
+      const message = error instanceof Error ? error.message : t("perfil.reviewModal.error.unexpected");
       setMensagemErro(message);
     } finally {
       setSubmitting(false);
@@ -73,13 +75,13 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
     <div className="prf-modal-backdrop" onClick={onClose}>
       <div className="aba-avaliar-planos" onClick={(e) => e.stopPropagation()}>
         <span style={{ fontSize: "20px", color: "var(--branco)" }}>
-          Avalie nossos planos
+          {t("perfil.reviewModal.title")}
         </span>
         <span style={{ color: "var(--cinza-claro1)", fontSize: "16px" }}>
-          Aqui no nosso curso de astronomia, acreditamos que aprender vai além das aulas — é também sobre ouvir quem está do outro lado da tela: você!
-            <br /><br /> Sua avaliação nos ajuda a melhorar, entender o que está funcionando e ajustar aquilo que pode ser ainda melhor. Se você curtiu as aulas, os materiais, o suporte ou teve qualquer experiência marcante durante o curso, conta pra gente!</span>
+          {t("perfil.reviewModal.description")}
+        </span>
         <span style={{ fontSize: "20px", color: "var(--branco)" }}>
-          De 1 a 5, quanto você avalia o nosso site?
+          {t("perfil.reviewModal.ratingPrompt")}
         </span>
         <div className="prf-avaliar-planos-rating">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -100,7 +102,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
         <div className="prf-avaliar-planos-feedback">
           <textarea
             className="prf-editar-biografia"
-            placeholder="Deixe seu feedback aqui..."
+            placeholder={t("perfil.reviewModal.placeholder")}
             rows={5}
             maxLength={1000}
             style={{ maxHeight: "400px", overflowY: "auto" }}
@@ -122,7 +124,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             className="prf-botao-editar-enviar cancelar"
             onClick={onClose}
           >
-            CANCELAR
+            {t("common.cancel")}
           </button>
           <button
             className="prf-botao-editar-enviar"
@@ -130,7 +132,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             disabled={submitting}
             style={submitting ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
           >
-            {submitting ? "ENVIANDO..." : "ENVIAR AVALIAÇÃO"}
+            {submitting ? t("perfil.reviewModal.sending") : t("perfil.reviewModal.submit")}
           </button>
         </div>
       </div>

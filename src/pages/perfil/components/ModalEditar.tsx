@@ -55,7 +55,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
           }}
         >
           <label className="prf-editor-banner-btn" htmlFor="prf-editar-banner">
-            <span>{t("Alterar banner")}</span>
+            <span>{t("perfil.editor.changeBanner")}</span>
             <input
               id="prf-editar-banner"
               hidden
@@ -92,13 +92,13 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
                   color: "var(--cinza-claro1)",
                 }}
               >
-                {t("Escolha uma foto de perfil")}
+                {t("perfil.editor.choosePhoto")}
               </span>
               <label
                 className="prf-editar-foto-label"
                 htmlFor="prf-editar-foto"
               >
-                <span>Alterar foto</span>
+                <span>{t("perfil.editor.changePhoto")}</span>
                 <input
                   hidden
                   id="prf-editar-foto"
@@ -111,14 +111,14 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
             </div>
 
             <div className="prf-editor-nome-info">
-              <span style={{ fontSize: "20px", color:"var(--branco)"}}>{t("Apelido")}</span>
+              <span style={{ fontSize: "20px", color:"var(--branco)"}}>{t("perfil.editor.nickname")}</span>
               <span
                 style={{
                   fontSize: "16px",
                   color: "var(--cinza-claro1)",
                 }}
               >
-                {t("Escolha seu apelido (usuário não pode ser alterado)")}
+                {t("perfil.editor.nicknameHint")}
               </span>
               <input
                 className="prf-editar-nome"
@@ -132,7 +132,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
 
           <hr style={{margin:"25px 0"}}/>
           <div className="prf-editar-biografia-container" style={{marginBottom:"25px"}}>
-            <span style={{ fontSize: "20px", color:"var(--branco)" }}>Biografia</span>
+            <span style={{ fontSize: "20px", color:"var(--branco)" }}>{t("Biografia")}</span>
             <div
               style={{
                 display: "flex",
@@ -140,7 +140,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
                 color: bioCharCount === 1000 ? "red" : "var(--cinza-claro1)",
               }}
             >
-              <span>Altere a sua biografia como quiser</span>
+              <span>{t("perfil.editor.bioHint")}</span>
               <span>{bioCharCount}/1000</span>
             </div>
 
@@ -163,7 +163,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
             className="prf-botao-editar-enviar cancelar"
             onClick={onClose}
           >
-            {t("CANCELAR")}
+            {t("common.cancel")}
           </button>
           <button
             className="prf-botao-editar-enviar"

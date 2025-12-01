@@ -3,6 +3,7 @@ import { Menu } from "../../components/Menu";
 import "./Anotacoes.css"
 // 1. Importe useState E useEffect
 import { useState, useEffect } from "react"; 
+import { useTranslation } from "react-i18next";
 
 import SidebarControle from "./components/SidebarControle";
 import AnotacoesColunas from "./components/AnotacoesColunas";
@@ -23,6 +24,7 @@ export type Anotacao = {
 };
 
 function Anotacoes2() {
+  const { t } = useTranslation();
   // 3. USE O NOVO TIPO NO ESTADO
   const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);
   const [editando, setEditando] = useState<{ anotacao: Anotacao, colIdx: number, idx: number } | null>(null);
@@ -192,7 +194,7 @@ function Anotacoes2() {
       {carregando ? (
         <div className="anotacoes-loading">
           <div className="anotacoes-loading__spinner" role="status" aria-live="polite">
-            <span className="anotacoes-loading__sr-only">Carregando anotações</span>
+            <span className="anotacoes-loading__sr-only">{t("anotacoes.loading")}</span>
           </div>
         </div>
       ) : (
@@ -232,7 +234,7 @@ function Anotacoes2() {
             flexDirection: 'column',
           }}>
             <span style={{ fontSize: 24, color: 'var(--branco)', fontFamily: '"Questrial", sans-serif', marginBottom: "25px", textAlign: 'center' }}>
-              Você tem certeza que deseja deletar está anotação?
+              {t("anotacoes.confirmDelete.title")}
             </span>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
               <button
@@ -251,25 +253,25 @@ function Anotacoes2() {
                   outline: 'none',
                   borderColor: 'var(--roxo1)'
                 }}
-                aria-label="Não mostrar mais confirmação"
+                aria-label={t("anotacoes.confirmDelete.skipAria")}
               >
                 {skipDeleteConfirm && (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                 )}
               </button>
               <span style={{ fontSize: "16px", color: 'var(--branco)', fontFamily: '"Questrial", sans-serif' }}>
-                Não mostrar mais esta confirmação
+                {t("anotacoes.confirmDelete.skipLabel")}
               </span>
               
             </div>
             <div style={{ display: 'flex', gap: "25px", justifyContent: 'end' }}>
               <button className="antc-btn-cancelar"
                 onClick={() => setConfirmDelete(null)}
-              >Cancelar</button>
+              >{t("common.cancel")}</button>
               {/* 8. ATUALIZE O ONCLICK AQUI */}
               <button className="antc-btn-deletar"
                 onClick={() => executeDelete(confirmDelete.anotacao)}
-              >Deletar</button>
+              >{t("anotacoes.actions.delete")}</button>
             </div>
           </div>
         </div>

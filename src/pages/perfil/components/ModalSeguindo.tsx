@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./ModalSeguidores.css";
 
 const imagemPerfilExemplo = "/img/users/icones-usuarios/FotoPerfil1.jpg";
@@ -26,6 +27,7 @@ const ModalSeguindo: React.FC<ModalSeguindoProps> = ({
   pararDeSeguir,
   canManage = true,
 }) => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredSeguindo = seguindo.filter((pessoa) =>
@@ -38,7 +40,7 @@ const ModalSeguindo: React.FC<ModalSeguindoProps> = ({
         <input
           className="prf-editor-banner-btn"
           type="button"
-          value="Fechar"
+          value={t("common.close")}
           onClick={onCloseSeguindo}
         />
         <div className="seguidores-header">
@@ -51,21 +53,21 @@ const ModalSeguindo: React.FC<ModalSeguindoProps> = ({
               onOpenSeguidores();
             }}
           >
-            <span>SEGUIDORES: {seguidores.length}</span>
+            <span>{t("perfil.followersCount", { count: seguidores.length })}</span>
           </div>
           <div
             className="prf-segui-op"
             id="prf-segui-op-seguindo"
             style={{ backgroundColor: "var(--roxo1)" }}
           >
-            <span>SEGUINDO: {seguindo.length}</span>
+            <span>{t("perfil.followingCount", { count: seguindo.length })}</span>
           </div>
         </div>
         <div className="prf-segui-pesquisar">
           <input
             className="seguidores-search"
             type="text"
-            placeholder="Pesquise aqui..."
+            placeholder={t("common.searchHere")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -80,7 +82,7 @@ const ModalSeguindo: React.FC<ModalSeguindoProps> = ({
                 <img
                   className="seguidor-foto"
                   src={pessoa.foto || imagemPerfilExemplo}
-                  alt="Foto do usuário seguido"
+                  alt={t("perfil.followingModal.followingPhotoAlt")}
                 />
                 <div className="seguidor-info">
                   <span className="seguidor-nome">{pessoa.nome}</span>
@@ -91,13 +93,13 @@ const ModalSeguindo: React.FC<ModalSeguindoProps> = ({
                     className="seguidor-botao"
                     onClick={() => pararDeSeguir(pessoa.usuario)}
                   >
-                    Deixar de seguir
+                    {t("perfil.followingModal.unfollow")}
                   </button>
                 )}
               </div>
             ))
           ) : (
-            <div className="perfil-nao-encontrado">Perfil não encontrado</div>
+            <div className="perfil-nao-encontrado">{t("perfil.profileNotFound")}</div>
           )}
         </div>
       </div>

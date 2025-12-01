@@ -8,9 +8,9 @@ function Banner() {
     <div className="banner">
       <div className="bnn-filtro">
         <div className="bnn-container">
-          <span className="bnn-subtitulo">{t('SEJA MUITO BEM-VINDO AO')}</span>
-          <span className="bnn-titulo">{t('NEBULA')}</span>
-          <span className="bnn-descricao">{t('Você já olhou para o céu noturno e se perguntou sobre os mistérios do cosmos? Na NEBULA, somos apaixonados por astronomia e astrofísica, e nossa missão é transformar essa curiosidade em conhecimento profundo.')}</span>
+          <span className="bnn-subtitulo">{t('home.banner.subtitle')}</span>
+          <span className="bnn-titulo">{t('home.banner.title')}</span>
+          <span className="bnn-descricao">{t('home.banner.description')}</span>
         </div>
       </div>
     </div>

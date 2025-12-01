@@ -1,92 +1,45 @@
 import "./carrosselAulas.css";
+import { useTranslation } from "react-i18next";
+
+const videos = [
+  { key: "video1", image: "/img/videos/video1.jpg", locked: false, link: "pages/video1.html" },
+  { key: "video2", image: "/img/videos/video2.jpg", locked: true },
+  { key: "video3", image: "/img/videos/video3.jpg", locked: true },
+  { key: "video4", image: "/img/videos/video4.jpg", locked: true },
+  { key: "video5", image: "/img/videos/video5.jpg", locked: true },
+  { key: "video6", image: "/img/videos/video6.jpg", locked: true },
+  { key: "video7", image: "/img/videos/video7.jpg", locked: true },
+];
 
 function CarrosselAulas() {
-  
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="sessao sessao-descentralizada">
-        <h1>VÍDEOS GRATUITOS</h1>
+        <h1>{t("home.carousel.title")}</h1>
         <hr />
       </div>
 
       <div className="container-carrossel">
-        <div className="carrosel-card">
+        {videos.map((video) => (
           <div
-            style={{ backgroundImage: "url(/img/videos/video1.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>O QUE É A ASTRONOMIA?</h3>
-            <h4>Prof° Luiz Tavares</h4>
+            key={video.key}
+            className={`carrosel-card ${video.locked ? "bloqueado" : ""}`.trim()}
+          >
+            <div
+              style={{ backgroundImage: `url(${video.image})` }}
+              className="imagem-card-carrossel"
+            ></div>
+            <div className="grupo-informacao">
+              <h3>{t(`home.carousel.videos.${video.key}.title`)}</h3>
+              <h4>{t("home.carousel.teacher")}</h4>
+            </div>
+            <a href={video.link ?? "#"}>
+              {video.locked ? t("home.carousel.locked") : t("home.carousel.watch")}
+            </a>
           </div>
-          <a href="pages/video1.html">ASSISTIR</a>
-        </div>
-        <div className="carrosel-card bloqueado">
-          <div
-            style={{ backgroundImage: "url(/img/videos/video2.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>COMO TUDO SURGIU?</h3>
-            <h4>Prof° Luiz Tavares</h4>
-          </div>
-          <a href="#">BLOQUEADO</a>
-        </div>
-        <div className="carrosel-card bloqueado">
-          <div
-            style={{ backgroundImage: "url(/img/videos/video3.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>PROBLEMA DOS 3 CORPOS</h3>
-            <h4>Prof° Luiz Tavares</h4>
-          </div>
-          <a href="#">BLOQUEADO</a>
-        </div>
-        <div className="carrosel-card bloqueado">
-          <div
-            style={{ backgroundImage: "url(/img/videos/video4.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>SISTEMAS INTERPLANETÁRIOS</h3>
-            <h4>Prof° Luiz Tavares</h4>
-          </div>
-          <a href="#">BLOQUEADO</a>
-        </div>
-        <div className="carrosel-card bloqueado">
-          <div
-            style={{ backgroundImage: "url(/img/videos/video5.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>RELATIVIDADE GERAL</h3>
-            <h4>Prof° Luiz Tavares</h4>
-          </div>
-          <a href="#">BLOQUEADO</a>
-        </div>
-        <div className="carrosel-card bloqueado">
-          <div
-            style={{ backgroundImage: "url(/img/videos/video6.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>ONDAS DE SCHRODINGER</h3>
-            <h4>Prof° Luiz Tavares</h4>
-          </div>
-          <a href="#">BLOQUEADO</a>
-        </div>
-        <div className="carrosel-card bloqueado">
-          <div
-            style={{ backgroundImage: "url(/img/videos/video7.jpg)" }}
-            className="imagem-card-carrossel"
-          ></div>
-          <div className="grupo-informacao">
-            <h3>LEIS DE KEPLER</h3>
-            <h4>Prof° Luiz Tavares</h4>
-          </div>
-          <a href="#">BLOQUEADO</a>
-        </div>
+        ))}
       </div>
     </>
   );

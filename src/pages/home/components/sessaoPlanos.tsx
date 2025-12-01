@@ -1,74 +1,77 @@
-import "./sessaoPlanos.css"
-import "../../../index.css"
+import "./sessaoPlanos.css";
+import "../../../index.css";
 import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 
+const PLAN_BENEFITS = ["videos", "tasks", "routine", "whatsapp", "mentoring", "certificate"] as const;
+type BenefitKey = typeof PLAN_BENEFITS[number];
+
+type PlanConfig = {
+    key: "orbit" | "galaxy" | "universe";
+    included: Record<BenefitKey, boolean>;
+    price: string;
+};
+
+const plans: PlanConfig[] = [
+    {
+        key: "orbit",
+        included: { videos: true, tasks: true, routine: false, whatsapp: false, mentoring: false, certificate: false },
+        price: "home.plans.tiers.orbit.price"
+    },
+    {
+        key: "galaxy",
+        included: { videos: true, tasks: true, routine: true, whatsapp: false, mentoring: false, certificate: false },
+        price: "home.plans.tiers.galaxy.price"
+    },
+    {
+        key: "universe",
+        included: { videos: true, tasks: true, routine: true, whatsapp: true, mentoring: true, certificate: true },
+        price: "home.plans.tiers.universe.price"
+    },
+] as const;
+
 function SessaoPlanos() {
     const { t } = useTranslation();
-    
+
     return (
         <>
             <div id="ssp-container">
                 <div className="sessao">
-                    <h1>{t('ENCONTRE O MELHOR PLANO PARA VOCÊ')}</h1>
+                    <h1>{t('home.plans.title')}</h1>
                     <hr />
                 </div>
 
                 <div className="video-planos">
                     <div>
                         <div className="video-planos-background"></div>
-                        <img alt={t('Iniciar video sobre planos')} src="/icons/play.svg" />
+                        <img alt={t('home.plans.playAlt')} src="/icons/play.svg" />
                     </div>
                 </div>
                 <div className="planos-mini-texto">
                     <span>
-                        {t('Após assistir o vídeo acima e entender como os nossos cursos funcionam, agora você poderá escolher qual o melhor plano para você.')}
+                        {t('home.plans.description')}
                     </span>
                 </div>
                 <div className="container-planos-pagIni">
-                    <div className="plano">
-                        <h2>ÓRBITA</h2>
-                        <p>Para iniciantes, aborda conceitos básicos de física e astronomia, como o Sistema Solar e leis fundamentais. Ideal para quem está começando sua jornada no universo científico.</p>
-                        <div className="plano-nav-beneficios">
-                            <div className="nav-beneficio"><p>Video aulas e PDFs</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Tarefas</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Planejamento de rotina</p> <img src="/icons/cancel.svg" /></div>
-                            <div className="nav-beneficio"><p>Grupo no Whatsapp</p> <img src="/icons/cancel.svg" /></div>
-                            <div className="nav-beneficio"><p>Mentorial semanal particular</p> <img src="/icons/cancel.svg" /></div>
-                            <div className="nav-beneficio"><p>Emissão de certificado digital</p> <img src="/icons/cancel.svg" /></div>
+                    {plans.map((plan) => (
+                        <div className="plano" key={plan.key}>
+                            <h2>{t(`home.plans.tiers.${plan.key}.name`)}</h2>
+                            <p>{t(`home.plans.tiers.${plan.key}.description`)}</p>
+                            <div className="plano-nav-beneficios">
+                                {PLAN_BENEFITS.map((benefit) => (
+                                    <div className="nav-beneficio" key={benefit}>
+                                        <p>{t(`home.plans.benefits.${benefit}`)}</p>
+                                        <img src={plan.included[benefit] ? "/icons/check-claro2.svg" : "/icons/cancel.svg"} />
+                                    </div>
+                                ))}
+                            </div>
+                            <Link to="/planos" className="plano-button">{t(plan.price)}</Link>
                         </div>
-                        <Link to="Planos" className="plano-button">R$900.99</Link>
-                    </div>
-                    <div className="plano">
-                        <h2>GALÁXIA</h2>
-                        <p>Explora temas intermediários como leis de Newton, estrelas, galáxias e introdução à relatividade. Perfeito para quem já conhece o básico e quer se aprofundar.</p>
-                        <div className="plano-nav-beneficios">
-                            <div className="nav-beneficio"><p>Video aulas e PDFs</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Tarefas</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Planejamento de rotina</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Grupo no Whatsapp</p> <img src="/icons/cancel.svg" /></div>
-                            <div className="nav-beneficio"><p>Mentorial semanal particular</p> <img src="/icons/cancel.svg" /></div>
-                            <div className="nav-beneficio"><p>Emissão de certificado digital</p> <img src="/icons/cancel.svg" /></div>
-                        </div>
-                        <Link to="Planos" className="plano-button">R$990.99</Link>
-                    </div>
-                    <div className="plano">
-                        <h2>UNIVERSO</h2>
-                        <p>Plano avançado com conteúdos sobre física quântica, buracos negros, energia escura e cosmologia. Recomendado para quem busca uma formação completa e aprofundada.</p>
-                        <div className="plano-nav-beneficios">
-                            <div className="nav-beneficio"><p>Video aulas e PDFs</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Tarefas</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Planejamento de rotina</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Grupo no Whatsapp</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Mentorial semanal particular</p> <img src="/icons/check-claro2.svg" /></div>
-                            <div className="nav-beneficio"><p>Emissão de certificado digital</p> <img src="/icons/check-claro2.svg" /></div>
-                        </div>
-                        <Link to="Planos" className="plano-button">R$1299.90</Link>
-                    </div>
+                    ))}
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default SessaoPlanos;

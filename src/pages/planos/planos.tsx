@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Slider, { type Settings as SlickSettings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -33,11 +34,11 @@ npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-pret
 npm install react react-dom typescript react-slick slick-carousel styled-components @types/react @types/react-dom @types/react-slick @types/styled-components --save
 */
 
-interface Plan {
+interface PlanConfig {
   slug: AssinaturaSlug;
-  name: string;
-  description: string;
-  benefits: string[];
+  nameKey: string;
+  descriptionKey: string;
+  benefitsKeys: (string | null)[];
   price: number;
 }
 
@@ -50,49 +51,46 @@ interface PaymentMethod {
 
 const PIX_KEY = 'pix.nebula@pagamentos.com.br | CNPJ 45.123.987/0001-55 | Banco 260 - NU Pagamentos S.A.';
 
-const PLAN_OPTIONS: Plan[] = [
+const PLAN_OPTIONS: PlanConfig[] = [
   {
     slug: "orbita",
-    name: "ÓRBITA",
-    description:
-      "Para quem está começando a explorar astronomia.",
-    benefits: [
-      "Certificados oficiais de conclusão",
-      "Comunidade exclusiva",
-      "Fórum de dúvidas",
-      "Suporte prioritário",
-      "Acesso antecipado a novos módulos",
-      "Customização avançada",
+    nameKey: "plans.options.orbita.name",
+    descriptionKey: "plans.options.orbita.description",
+    benefitsKeys: [
+      "plans.benefits.certificates",
+      "plans.benefits.community",
+      "plans.benefits.forum",
+      "plans.benefits.prioritySupport",
+      "plans.benefits.earlyAccess",
+      "plans.benefits.customization",
     ],
     price: 79.9,
   },
   {
     slug: "galaxia",
-    name: "GALÁXIA",
-    description:
-      "Plano para quem já domina os fundamentos e quer acelerar.",
-    benefits: [
-      "Certificados oficiais de conclusão",
-      "Comunidade exclusiva",
-      "",
-      "Suporte prioritário",
-      "Acesso antecipado a novos módulos",
-      "Customização avançada",
+    nameKey: "plans.options.galaxia.name",
+    descriptionKey: "plans.options.galaxia.description",
+    benefitsKeys: [
+      "plans.benefits.certificates",
+      "plans.benefits.community",
+      "plans.benefits.forum",
+      "plans.benefits.prioritySupport",
+      "plans.benefits.earlyAccess",
+      "plans.benefits.customization",
     ],
     price: 129.9,
   },
   {
     slug: "universo",
-    name: "UNIVERSO",
-    description:
-      "Experiência completa, todos os recursos e conteúdos avançados.",
-    benefits: [
-      "Certificados oficiais de conclusão",
-      "Comunidade exclusiva",
-      "",
-      "Suporte prioritário",
-      "Acesso antecipado a novos módulos",
-      "Customização avançada",
+    nameKey: "plans.options.universo.name",
+    descriptionKey: "plans.options.universo.description",
+    benefitsKeys: [
+      "plans.benefits.certificates",
+      "plans.benefits.community",
+      "plans.benefits.forum",
+      "plans.benefits.prioritySupport",
+      "plans.benefits.earlyAccess",
+      "plans.benefits.customization",
     ],
     price: 179.9,
   },
@@ -122,6 +120,7 @@ const formatCurrency = (value: number) => BRL_FORMATTER.format(value);
 //estilos
 
 function Planos() {
+  const { t } = useTranslation();
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -188,11 +187,13 @@ function Planos() {
   }), [setSelectedPlanIndex]);
 
   const plans = PLAN_OPTIONS;
-  const selectedPlan = (plans[selectedPlanIndex] ?? plans[0]) as Plan;
+  const selectedPlan = (plans[selectedPlanIndex] ?? plans[0]) as PlanConfig;
   const selectedPlanSlug = selectedPlan.slug;
   const userCurrentPlan = planSlug
     ? plans.find((planOption) => planOption.slug === planSlug) ?? null
     : null;
+  const selectedPlanName = t(selectedPlan.nameKey);
+  const userCurrentPlanName = userCurrentPlan ? t(userCurrentPlan.nameKey) : null;
   const currentPlanRank = planSlug ? PLAN_RANK[planSlug] ?? null : null;
   const selectedPlanRank = PLAN_RANK[selectedPlanSlug] ?? null;
   const isSamePlan = Boolean(planSlug && planSlug === selectedPlanSlug);
@@ -210,23 +211,30 @@ function Planos() {
   const installmentBreakdown = useMemo(() => {
     return [1, 2, 3].map((count) => (
       <option key={count} value={count}>
-        {count}x de {formatCurrency(amountToCharge / count)} sem juros
+        {t("plans.installments.option", {
+          count,
+          value: formatCurrency(amountToCharge / count),
+        })}
       </option>
     ));
-  }, [amountToCharge]);
+  }, [amountToCharge, t]);
 
   const upgradeNote = useMemo(() => {
+    const fallbackPlanName = userCurrentPlanName ?? t("plans.general.currentPlan");
     if (!planSlug) {
-      return 'Valor integral para novos cadastros ou usuários sem assinatura ativa.';
+      return t("plans.notes.newCustomer");
     }
     if (isSamePlan) {
-      return `Você já possui o plano ${userCurrentPlan?.name ?? 'atual'}.`;
+      return t("plans.notes.samePlan", { plan: fallbackPlanName });
     }
     if (isDowngrade) {
-      return `Seu plano atual (${userCurrentPlan?.name ?? 'atual'}) já inclui esses conteúdos. Escolha um plano superior para fazer upgrade.`;
+      return t("plans.notes.downgrade", { plan: fallbackPlanName });
     }
-    return `Upgrade a partir do plano ${userCurrentPlan?.name ?? ''}. Vamos cobrar agora ${formattedAmountToCharge} (apenas a diferença).`;
-  }, [formattedAmountToCharge, isDowngrade, isSamePlan, planSlug, userCurrentPlan]);
+    return t("plans.notes.upgrade", {
+      plan: fallbackPlanName,
+      amount: formattedAmountToCharge,
+    });
+  }, [formattedAmountToCharge, isDowngrade, isSamePlan, planSlug, t, userCurrentPlanName]);
 
   const isCheckoutDisabled = isProcessing || purchaseDisabled;
 
@@ -234,28 +242,28 @@ function Planos() {
     try {
       const clipboard = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
       if (!clipboard?.writeText) {
-        throw new Error('Clipboard API indisponível.');
+        throw new Error(t('plans.errors.clipboardUnavailable'));
       }
       await clipboard.writeText(PIX_KEY);
-      showToast('Chave PIX copiada!');
+      showToast(t('plans.pix.copySuccess'));
     } catch (error) {
-      console.error('Erro ao copiar chave PIX:', error);
-      showToast('Não foi possível copiar a chave PIX. Copie manualmente.');
+      console.error(t('plans.errors.copyPixKey'), error);
+      showToast(t('plans.pix.copyError'));
     }
-  }, [showToast]);
+  }, [showToast, t]);
 
   const renderChargeBreakdown = useCallback(() => (
     <div className="plan-charge-breakdown">
       <p>
-        PREÇO DO PLANO: <strong className="strong-pay">{formattedPlanPrice}</strong>
+        {t('plans.charge.fullPrice')} <strong className="strong-pay">{formattedPlanPrice}</strong>
       </p>
       <p>
-        VALOR COBRADO AGORA:{' '}
+        {t('plans.charge.amountNow')}{' '}
         <strong className="strong-pay plan-charge-highlight">{formattedAmountToCharge}</strong>
       </p>
       {upgradeNote && <p className="plan-upgrade-note">{upgradeNote}</p>}
     </div>
-  ), [formattedAmountToCharge, formattedPlanPrice, upgradeNote]);
+  ), [formattedAmountToCharge, formattedPlanPrice, t, upgradeNote]);
 
   const handleCheckout = useCallback(async (paymentMethod: string) => {
     if (isProcessing) {
@@ -264,8 +272,8 @@ function Planos() {
 
     if (purchaseDisabled) {
       const restrictionMessage = isDowngrade
-        ? 'Seu plano atual já é superior a este.'
-        : 'Você já possui este plano ativo.';
+        ? t('plans.messages.downgradeShort')
+        : t('plans.messages.samePlanShort');
       showToast(restrictionMessage);
       return;
     }
@@ -283,194 +291,202 @@ function Planos() {
       const body = await response.json().catch(() => null);
       if (!response.ok) {
         const fallbackMessage = response.status === 401
-          ? 'Faça login para concluir sua assinatura.'
-          : body?.error ?? 'Não foi possível finalizar o checkout agora.';
+          ? t('plans.messages.loginRequired')
+          : body?.error ?? t('plans.messages.checkoutError');
         throw new Error(fallbackMessage);
       }
 
       const amountCharged = typeof body?.amountCharged === 'number' ? body.amountCharged : null;
       const successMessage = amountCharged !== null
-        ? `Pagamento confirmado! Valor cobrado agora: ${formatCurrency(amountCharged)}.`
-        : body?.message ?? `Plano ${checkoutPlan.name} ativado com sucesso!`;
+        ? t('plans.messages.paymentConfirmed', { amount: formatCurrency(amountCharged) })
+        : body?.message ?? t('plans.messages.planActivated', { plan: t(checkoutPlan.nameKey) });
       showToast(successMessage);
       refreshAssinatura();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro inesperado ao finalizar a compra.';
+      const message = error instanceof Error ? error.message : t('plans.messages.checkoutUnexpected');
       showToast(message);
     } finally {
       setIsProcessing(false);
     }
-  }, [isProcessing, purchaseDisabled, isDowngrade, plans, selectedPlanIndex, showToast, refreshAssinatura]);
+  }, [isProcessing, purchaseDisabled, isDowngrade, plans, selectedPlanIndex, showToast, refreshAssinatura, t]);
 
   // Métodos de pagamento
-  const paymentMethods: PaymentMethod[] = [
-        {
-          id: "pix",
-          name: "PIX",
-          icon: "/icons/icons8-pix-50.png",
-          component: (
-            <div className="pix-form">
-              <h3 className="payment-heading">
-                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
-              </h3>
-              {renderChargeBreakdown()}
-              <p className="payment-description payment-description-spaced">
-                Pague via QR Code ou chave copia/cola. Assim que o PIX for compensado (até 24h), o curso escolhido é liberado automaticamente e você recebe a confirmação por e-mail.
-              </p>
-              <div className="qrcode-content">
-                <div className="pix-qrcode" />
-                <div className="pix-key-card">
-                  <h3 className="pix-key-title">CHAVE PIX</h3>
-                  <div className="pix-key-wrapper">
-                    <p id="pixKey" className="pix-key-text">
-                      {PIX_KEY}
-                    </p>
-                    <button
-                      onClick={copyPixKey}
-                      className="btn-hover pix-copy-button"
-                    >
-                      <span>Copiar chave PIX</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+  const paymentMethods = useMemo<PaymentMethod[]>(() => ([
+    {
+      id: "pix",
+      name: t('plans.payment.pix.name'),
+      icon: "/icons/icons8-pix-50.png",
+      component: (
+        <div className="pix-form">
+          <h3 className="payment-heading">
+            {t('plans.payment.selectedPlanLabel')} <span className="plan-span">{selectedPlanName}</span>
+          </h3>
+          {renderChargeBreakdown()}
+          <p className="payment-description payment-description-spaced">
+            {t('plans.payment.pix.description')}
+          </p>
+          <div className="qrcode-content">
+            <div className="pix-qrcode" />
+            <div className="pix-key-card">
+              <h3 className="pix-key-title">{t('plans.payment.pix.keyTitle')}</h3>
+              <div className="pix-key-wrapper">
+                <p id="pixKey" className="pix-key-text">
+                  {PIX_KEY}
+                </p>
+                <button
+                  onClick={copyPixKey}
+                  className="btn-hover pix-copy-button"
+                >
+                  <span>{t('plans.payment.pix.copyButton')}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"></path>
+                  </svg>
+                </button>
               </div>
-              <button
-                className="btn-pay"
-                disabled={isCheckoutDisabled}
-                onClick={() => { void handleCheckout('pix'); }}
-              >
-                CONFIRMAR ASSINATURA VIA PIX
-              </button>
             </div>
-          ),
-        },
-        {
-          id: "credit",
-          name: "CARTÃO DE CRÉDITO",
-          icon: "/icons/icons8-cartão-50.png",
-          component: (
-            <div className="credit-card-form">
-              <h3 className="payment-heading">
-                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
-              </h3>
-              {renderChargeBreakdown()}
-              <p className="payment-description payment-description-spaced">
-                Preencha os dados abaixo para processar o pagamento com segurança. Utilizamos checkout tokenizado e seu acesso é liberado na hora.
-              </p>
-              <div className="form-field">
-                <label className="form-label">Número do cartão:</label>
-                <input className="pay-input" type="text" placeholder="1234 5678 9012 3456" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">Nome impresso no cartão:</label>
-                <input className="pay-input" type="text" placeholder="Nome como está no cartão" />
-              </div>
-              <div className="form-row">
-                <div className="form-column">
-                  <label className="form-label">Validade:</label>
-                  <input className="pay-input pay-input-validade" type="text" placeholder="MM/AA" />
-                </div>
-                <div className="form-column">
-                  <label className="form-label">CVV:</label>
-                  <input className="pay-input pay-input-cvv" type="text" placeholder="123" />
-                </div>
-              </div>
-              <p className="payment-description payment-description-spaced">
-                Use seu cartão de crédito para confirmar a assinatura imediatamente. Todos os dados são criptografados e não ficam salvos na plataforma.
-              </p>
-              <div className="form-field form-field-select">
-                <label className="form-label">Parcelamento:</label>
-                <select className="payment-select">
-                  {installmentBreakdown}
-                </select>
-              </div>
-              <button
-                className="btn-pay"
-                disabled={isCheckoutDisabled}
-                onClick={() => { void handleCheckout('credit-card'); }}
-              >
-                FINALIZAR COMPRA
-              </button>
+          </div>
+          <button
+            className="btn-pay"
+            disabled={isCheckoutDisabled}
+            onClick={() => { void handleCheckout('pix'); }}
+          >
+            {t('plans.payment.pix.confirmButton')}
+          </button>
+        </div>
+      ),
+    },
+    {
+      id: "credit",
+      name: t('plans.payment.credit.name'),
+      icon: "/icons/icons8-cartão-50.png",
+      component: (
+        <div className="credit-card-form">
+          <h3 className="payment-heading">
+            {t('plans.payment.selectedPlanLabel')} <span className="plan-span">{selectedPlanName}</span>
+          </h3>
+          {renderChargeBreakdown()}
+          <p className="payment-description payment-description-spaced">
+            {t('plans.payment.credit.descriptionPrimary')}
+          </p>
+          <div className="form-field">
+            <label className="form-label">{t('plans.payment.fields.cardNumber')}</label>
+            <input className="pay-input" type="text" placeholder="1234 5678 9012 3456" />
+          </div>
+          <div className="form-field">
+            <label className="form-label">{t('plans.payment.fields.cardHolder')}</label>
+            <input className="pay-input" type="text" placeholder={t('plans.payment.placeholders.cardHolder')} />
+          </div>
+          <div className="form-row">
+            <div className="form-column">
+              <label className="form-label">{t('plans.payment.fields.validity')}</label>
+              <input className="pay-input pay-input-validade" type="text" placeholder="MM/AA" />
             </div>
-          ),
-        },
-        {
-          id: "debit",
-          name: "CARTÃO DE DÉBITO",
-          icon: "/icons/icons8-cartão-50.png",
-          component: (
-            <div className="debit-card-form">
-              <h3 className="payment-heading">
-                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
-              </h3>
-              {renderChargeBreakdown()}
-              <p className="payment-description payment-description-spaced">
-                O pagamento por cartão de débito solicita os dados abaixo. A confirmação acontece em poucos minutos após a autenticação do banco.
-              </p>
-              <div className="form-field form-field--spaced">
-                <label className="form-label">Número do cartão:</label>
-                <input className="pay-input" type="text" placeholder="1234 5678 9012 3456" />
-              </div>
-              <div className="form-field form-field--spaced">
-                <label className="form-label">Nome no cartão:</label>
-                <input className="pay-input" type="text" placeholder="Nome como está no cartão" />
-              </div>
-              <div className="form-row form-row--spaced">
-                <div className="form-column">
-                  <label className="form-label">Validade:</label>
-                  <input className="pay-input pay-input-validade" type="text" placeholder="MM/AA" />
-                </div>
-                <div className="form-column">
-                  <label className="form-label">CVV:</label>
-                  <input className="pay-input pay-input-cvv" type="text" placeholder="123" />
-                </div>
-              </div>
-              <button
-                className="btn-pay btn-pay--spaced"
-                disabled={isCheckoutDisabled}
-                onClick={() => { void handleCheckout('debit-card'); }}
-              >
-                FINALIZAR COMPRA
-              </button>
+            <div className="form-column">
+              <label className="form-label">{t('plans.payment.fields.cvv')}</label>
+              <input className="pay-input pay-input-cvv" type="text" placeholder="123" />
             </div>
-          ),
-        },
-        {
-          id: "boleto",
-          name: "BOLETO",
-          icon: "/icons/icons8-código-de-barras-50.png",
-          component: (
-            <div className="boleto-form">
-              <h3 className="payment-heading">
-                PLANO SELECIONADO: <span className="plan-span">{selectedPlan.name}</span>
-              </h3>
-              {renderChargeBreakdown()}
-              <p className="payment-description payment-description-spaced">
-                O boleto deve ser pago em até <span className="payment-highlight">24 HORAS</span>. A liberação acontece em até dois dias úteis após a compensação bancária.
-              </p>
-              <p className="payment-description">Informe seus dados para gerar o documento:</p>
-              <div className="form-field form-field--stacked">
-                <label className="form-label">Nome completo:</label>
-                <input className="pay-input" type="text" placeholder="Nome completo como exibido no seu documento" />
-              </div>
-              <div className="form-field form-field--stacked">
-                <label className="form-label">CPF:</label>
-                <input className="pay-input" type="text" placeholder="000.000.000-00" />
-              </div>
-              <button
-                className="btn-pay btn-pay--margin"
-                disabled={isCheckoutDisabled}
-                onClick={() => { void handleCheckout('boleto'); }}
-              >
-                GERAR BOLETO
-              </button>
+          </div>
+          <p className="payment-description payment-description-spaced">
+            {t('plans.payment.credit.descriptionSecondary')}
+          </p>
+          <div className="form-field form-field-select">
+            <label className="form-label">{t('plans.payment.fields.installments')}</label>
+            <select className="payment-select">
+              {installmentBreakdown}
+            </select>
+          </div>
+          <button
+            className="btn-pay"
+            disabled={isCheckoutDisabled}
+            onClick={() => { void handleCheckout('credit-card'); }}
+          >
+            {t('plans.payment.credit.submit')}
+          </button>
+        </div>
+      ),
+    },
+    {
+      id: "debit",
+      name: t('plans.payment.debit.name'),
+      icon: "/icons/icons8-cartão-50.png",
+      component: (
+        <div className="debit-card-form">
+          <h3 className="payment-heading">
+            {t('plans.payment.selectedPlanLabel')} <span className="plan-span">{selectedPlanName}</span>
+          </h3>
+          {renderChargeBreakdown()}
+          <p className="payment-description payment-description-spaced">
+            {t('plans.payment.debit.description')}
+          </p>
+          <div className="form-field form-field--spaced">
+            <label className="form-label">{t('plans.payment.fields.cardNumber')}</label>
+            <input className="pay-input" type="text" placeholder="1234 5678 9012 3456" />
+          </div>
+          <div className="form-field form-field--spaced">
+            <label className="form-label">{t('plans.payment.fields.cardName')}</label>
+            <input className="pay-input" type="text" placeholder={t('plans.payment.placeholders.cardHolder')} />
+          </div>
+          <div className="form-row form-row--spaced">
+            <div className="form-column">
+              <label className="form-label">{t('plans.payment.fields.validity')}</label>
+              <input className="pay-input pay-input-validade" type="text" placeholder="MM/AA" />
             </div>
-          ),
-        },
-      ];
+            <div className="form-column">
+              <label className="form-label">{t('plans.payment.fields.cvv')}</label>
+              <input className="pay-input pay-input-cvv" type="text" placeholder="123" />
+            </div>
+          </div>
+          <button
+            className="btn-pay btn-pay--spaced"
+            disabled={isCheckoutDisabled}
+            onClick={() => { void handleCheckout('debit-card'); }}
+          >
+            {t('plans.payment.debit.submit')}
+          </button>
+        </div>
+      ),
+    },
+    {
+      id: "boleto",
+      name: t('plans.payment.boleto.name'),
+      icon: "/icons/icons8-código-de-barras-50.png",
+      component: (
+        <div className="boleto-form">
+          <h3 className="payment-heading">
+            {t('plans.payment.selectedPlanLabel')} <span className="plan-span">{selectedPlanName}</span>
+          </h3>
+          {renderChargeBreakdown()}
+          <p className="payment-description payment-description-spaced">
+            {t('plans.payment.boleto.deadlinePrefix')} <span className="payment-highlight">{t('plans.payment.boleto.deadlineHighlight')}</span>. {t('plans.payment.boleto.deadlineSuffix')}
+          </p>
+          <p className="payment-description">{t('plans.payment.boleto.instructions')}</p>
+          <div className="form-field form-field--stacked">
+            <label className="form-label">{t('plans.payment.fields.fullName')}</label>
+            <input className="pay-input" type="text" placeholder={t('plans.payment.placeholders.fullName')} />
+          </div>
+          <div className="form-field form-field--stacked">
+            <label className="form-label">{t('plans.payment.fields.document')}</label>
+            <input className="pay-input" type="text" placeholder={t('plans.payment.placeholders.document')} />
+          </div>
+          <button
+            className="btn-pay btn-pay--margin"
+            disabled={isCheckoutDisabled}
+            onClick={() => { void handleCheckout('boleto'); }}
+          >
+            {t('plans.payment.boleto.submit')}
+          </button>
+        </div>
+      ),
+    },
+  ]), [
+    copyPixKey,
+    handleCheckout,
+    installmentBreakdown,
+    isCheckoutDisabled,
+    renderChargeBreakdown,
+    selectedPlanName,
+    t,
+  ]);
 
   const [activePaymentMethod, setActivePaymentMethod] = useState<string | null>(null);
   const [contentHeight, setContentHeight] = useState<{ [key: string]: number }>({});
@@ -497,10 +513,10 @@ function Planos() {
                 return (
                   <div key={plan.slug} className="plan-slide">
                     <div className={`plan-card plan-card-${plan.slug}`}>
-                      <h2 className="plan-card-title">{plan.name}</h2>
-                      <p className="plan-card-description">{plan.description}</p>
+                      <h2 className="plan-card-title">{t(plan.nameKey)}</h2>
+                      <p className="plan-card-description">{t(plan.descriptionKey)}</p>
                       <div className="ben-gri plan-benefits-grid">
-                        {plan.benefits.map((benefit, benefitIndex) => {
+                        {plan.benefitsKeys.map((benefitKey, benefitIndex) => {
                           const hasBenefit =
                             (index === 0 && benefitIndex < 2) ||
                             (index === 1 && benefitIndex < 3) ||
@@ -510,22 +526,22 @@ function Planos() {
                               <div
                                 className={`benefit-icon ${hasBenefit ? "benefit-icon--active" : "benefit-icon--inactive"}`}
                               />
-                              <span>{benefit}</span>
+                              <span>{benefitKey ? t(benefitKey) : ''}</span>
                             </div>
                           );
                         })}
                       </div>
                       <div className="plan-card-footer">
-                        <p className="plan-card-price-label">No valor:</p>
+                        <p className="plan-card-price-label">{t('plans.carousel.priceLabel')}</p>
                         <h3 className="plan-card-price-value">
-                          R$ {plan.price.toFixed(2).replace('.', ',')}
+                          {formatCurrency(plan.price)}
                         </h3>
                         <button
                           className="plan-card-button"
                           disabled={isSelected}
                           onClick={() => handlePlanSelection(index)}
                         >
-                          {isSelected ? "PLANO SELECIONADO" : "SELECIONAR ESTE PLANO"}
+                          {isSelected ? t('plans.carousel.buttonSelected') : t('plans.carousel.buttonSelect')}
                         </button>
                       </div>
                     </div>
@@ -537,7 +553,7 @@ function Planos() {
 
           <div className="payment-section">
             <h2 className="payment-section-title">
-              Escolha seu metodo de <span className="payment-section-title-highlight">Pagamento</span>
+              {t('plans.payment.sectionTitlePrefix')} <span className="payment-section-title-highlight">{t('plans.payment.sectionTitleHighlight')}</span>
             </h2>
             <div className="payment-methods-list">
               {paymentMethods.map((method) => (

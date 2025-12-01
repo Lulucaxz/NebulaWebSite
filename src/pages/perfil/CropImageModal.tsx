@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "./getCroppedImg";
+import { useTranslation } from "react-i18next";
 
 interface CropImageModalProps {
   imageSrc: string;
@@ -12,6 +13,7 @@ export const CropImageModal: React.FC<CropImageModalProps> = ({ imageSrc, onCanc
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const { t } = useTranslation();
 
   const onCropCompleteCb = useCallback((_: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -46,7 +48,7 @@ export const CropImageModal: React.FC<CropImageModalProps> = ({ imageSrc, onCanc
           />
         </div>
         <div style={{ width: '100%', margin: '16px 0' }}>
-          <label style={{ color: 'var(--text-primary)', fontSize: '1rem' }}>Zoom:</label>
+          <label style={{ color: 'var(--text-primary)', fontSize: '1rem' }}>{t('crop.zoomLabel')}</label>
           <input
             type="range"
             min={1}
@@ -58,11 +60,11 @@ export const CropImageModal: React.FC<CropImageModalProps> = ({ imageSrc, onCanc
           />
         </div>
         <div style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: 8 }}>
-          Arraste a imagem para enquadrar e ajuste o zoom.
+          {t('crop.instructions')}
         </div>
         <div className="crop-modal-actions">
-          <button onClick={onCancel}>Cancelar</button>
-          <button onClick={handleDone}>Salvar recorte</button>
+          <button onClick={onCancel}>{t('common.cancel')}</button>
+          <button onClick={handleDone}>{t('crop.save')}</button>
         </div>
       </div>
     </div>

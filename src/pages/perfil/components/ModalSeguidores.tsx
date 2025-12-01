@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./ModalSeguidores.css";
 
 const imagemPerfilExemplo = "/img/users/icones-usuarios/FotoPerfil1.jpg";
@@ -26,6 +27,7 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
   removerSeguidor,
   canManage = true,
 }) => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredSeguidores = seguidores.filter((seguidor) =>
@@ -38,7 +40,7 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
         <input
           className="prf-editor-banner-btn"
           type="button"
-          value="Fechar"
+          value={t("common.close")}
           onClick={onCloseSeguidores}
         />
         <div className="seguidores-header">
@@ -47,7 +49,7 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
             id="prf-segui-op-seguidores"
             style={{ backgroundColor: "var(--roxo1)" }}
           >
-            <span>SEGUIDORES: {seguidores.length}</span>
+            <span>{t("perfil.followersCount", { count: seguidores.length })}</span>
           </div>
           <div
             className="prf-segui-op"
@@ -58,14 +60,14 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
               onOpenSeguindo();
             }}
           >
-            <span>SEGUINDO: {seguindo.length}</span>
+            <span>{t("perfil.followingCount", { count: seguindo.length })}</span>
           </div>
         </div>
         <div className="prf-segui-pesquisar">
           <input
             className="seguidores-search"
             type="text"
-            placeholder="Pesquise aqui..."
+            placeholder={t("common.searchHere")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -80,7 +82,7 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
                 <img
                   className="seguidor-foto"
                   src={seguidor.foto || imagemPerfilExemplo}
-                  alt="Foto do seguidor"
+                  alt={t("perfil.followersModal.followerPhotoAlt")}
                 />
                 <div className="seguidor-info">
                   <span className="seguidor-nome">{seguidor.nome}</span>
@@ -91,13 +93,13 @@ const ModalSeguidores: React.FC<ModalSeguidoresProps> = ({
                     className="seguidor-botao"
                     onClick={() => removerSeguidor(seguidor.usuario)}
                   >
-                    Remover
+                    {t("common.remove")}
                   </button>
                 )}
               </div>
             ))
           ) : (
-            <div className="perfil-nao-encontrado">Perfil não encontrado</div>
+            <div className="perfil-nao-encontrado">{t("perfil.profileNotFound")}</div>
           )}
         </div>
       </div>

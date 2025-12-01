@@ -1,19 +1,29 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "../perfil.css";
 
 interface ModalDenunciarProps {
   onClose: () => void; // Função para fechar o modal
 }
 
+const reportTopics = [
+  "displayName",
+  "username",
+  "biography",
+  "profilePhoto",
+  "banner",
+] as const;
+
 const ModalDenunciar: React.FC<ModalDenunciarProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const [denunCharCount, setDenunCharCount] = useState(0); // Estado para contagem de caracteres
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]); // Estado para tópicos selecionados
+  const [selectedTopics, setSelectedTopics] = useState<Array<typeof reportTopics[number]>>([]); // Estado para tópicos selecionados
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDenunCharCount(e.target.value.length); // Atualiza a contagem de caracteres
   };
 
-  const toggleTopic = (topic: string) => {
+  const toggleTopic = (topic: typeof reportTopics[number]) => {
     setSelectedTopics((prev) =>
       prev.includes(topic)
         ? prev.filter((t) => t !== topic) // Remove o tópico se já estiver selecionado
@@ -21,33 +31,20 @@ const ModalDenunciar: React.FC<ModalDenunciarProps> = ({ onClose }) => {
     );
   };
 
-  const topics = [
-    "NOME DE EXIBIÇÃO",
-    "USUARIO",
-    "BIOGRAFIA",
-    "FOTO PERFIL",
-    "BANNER",
-  ];
-
   return (
     <div className="prf-modal-backdrop" onClick={onClose}>
       <div className="aba-denunciar" onClick={(e) => e.stopPropagation()}>
         <span style={{ fontSize: "20px", color: "var(--branco)" }}>
-          Fale-nos o motivo de sua denúncia
+          {t("perfil.reportModal.title")}
         </span>
         <span style={{ color: "var(--cinza-claro1)", fontSize: "16px" }}>
-          Para que possamos analisar melhor o caso, por favor, explique de forma
-          clara o que você está denunciando. Você pode incluir o nome da conta,
-          o nome de usuário (arroba), o banner ou a biografia da pessoa. Se
-          possível, descreva também o motivo da denúncia e como o conteúdo
-          infringe as regras ou é ofensivo. Quanto mais detalhes você fornecer,
-          mais rápido e preciso será o processo de análise.
+          {t("perfil.reportModal.description")}
         </span>
         <span style={{ fontSize: "20px", color: "var(--branco)" }}>
-          Possíveis tópicos para denunciar
+          {t("perfil.reportModal.topicTitle")}
         </span>
         <div className="prf-denuncia-topicos">
-          {topics.map((topic) => (
+          {reportTopics.map((topic) => (
             <div
               key={topic}
               className="prf-denuncia-topico"
@@ -59,13 +56,13 @@ const ModalDenunciar: React.FC<ModalDenunciarProps> = ({ onClose }) => {
               }}
               onClick={() => toggleTopic(topic)}
             >
-              {topic}
+              {t(`perfil.reportModal.topics.${topic}`)}
             </div>
           ))}
         </div>
         <div className="prf-denuncia-container-texto">
           <span style={{ fontSize: "20px", color: "var(--branco)" }}>
-            Texto de denuncia
+            {t("perfil.reportModal.textTitle")}
           </span>
           <div
             style={{
@@ -74,13 +71,13 @@ const ModalDenunciar: React.FC<ModalDenunciarProps> = ({ onClose }) => {
               color: denunCharCount === 1000 ? "red" : "var(--cinza-claro1)",
             }}
           >
-            <span>Escreva aqui o que você deseja denunciar</span>
+            <span>{t("perfil.reportModal.textDescription")}</span>
             <span>{denunCharCount}/1000</span>
           </div>
 
           <textarea
             className="prf-editar-biografia"
-            placeholder="Descreva o motivo da denúncia..."
+            placeholder={t("perfil.reportModal.placeholder")}
             rows={5}
             maxLength={1000}
             style={{ maxHeight: "400px", overflowY: "auto" }}
@@ -95,10 +92,10 @@ const ModalDenunciar: React.FC<ModalDenunciarProps> = ({ onClose }) => {
             className="prf-botao-editar-enviar cancelar"
             onClick={onClose}
           >
-            CANCELAR
+            {t("common.cancel")}
           </button>
           <button className="prf-botao-editar-enviar" onClick={onClose}>
-            ENVIAR DENÚNCIA
+            {t("perfil.reportModal.submit")}
           </button>
         </div>
       </div>

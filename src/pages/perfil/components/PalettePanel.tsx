@@ -1,7 +1,8 @@
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AxiosError } from "axios";
 import "./PalettePanel.css";
 import { useTheme } from "../../../theme/useTheme";
+import { useTranslation } from "react-i18next";
 
 interface PalettePanelProps {
   onClose: () => void;
@@ -84,10 +85,10 @@ const hueToHex = (hue: number, saturation = 0.75, lightness = 0.5) => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
-const buildDefaultName = (count: number) => `Paleta ${count + 1}`;
 const TONE_DUPLICATE_EPSILON = 0.01;
 
 export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
+  const { t } = useTranslation();
   const {
     palette,
     palettes,
@@ -100,6 +101,10 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
   } = useTheme();
 
   const customCount = useMemo(() => palettes.filter((p) => !p.isDefault).length, [palettes]);
+  const buildDefaultName = useCallback(
+    (count: number) => t("palettePanel.defaultName", { index: count + 1 }),
+    [t]
+  );
 
   const [draftBaseTone, setDraftBaseTone] = useState(
     () => clamp01(palette.baseTone ?? (palette.base === "branco" ? 1 : 0))
@@ -169,7 +174,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
 
     const trimmedName = paletteName.trim();
     if (!trimmedName) {
-      setError("Digite um nome para salvar a paleta.");
+      setError(t("palettePanel.errors.emptyName"));
       return;
     }
 
@@ -181,7 +186,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
     });
 
     if (paletteAlreadyExists) {
-      setError("Você já possui uma paleta com estas cores.");
+      setError(t("palettePanel.errors.duplicate"));
       return;
     }
 
@@ -194,7 +199,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
     } catch (err) {
       const axiosError = err as AxiosError<{ error?: string }>;
       const serverMessage = axiosError.response?.data?.error;
-      setError(serverMessage || "Não foi possível salvar a paleta agora. Tente novamente.");
+      setError(serverMessage || t("palettePanel.errors.save"));
     } finally {
       setCreating(false);
     }
@@ -208,7 +213,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
       await selectPalette(id);
       onCommit();
     } catch {
-      setError("Falha ao aplicar a paleta selecionada.");
+      setError(t("palettePanel.errors.apply"));
     } finally {
       setSelectingId(null);
     }
@@ -222,7 +227,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
       await deletePalette(id);
       onCommit();
     } catch {
-      setError("Não foi possível remover esta paleta.");
+      setError(t("palettePanel.errors.delete"));
     } finally {
       setDeletingId(null);
     }
@@ -233,17 +238,17 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
       <div className="palette-panel" onClick={(event) => event.stopPropagation()}>
         <div className="palette-panel__header">
           <div>
-            <p className="palette-panel__eyebrow">Personalizar cores</p>
-            <h2>Construa a sua paleta</h2>
+            <p className="palette-panel__eyebrow">{t("palettePanel.eyebrow")}</p>
+            <h2>{t("palettePanel.heading")}</h2>
           </div>
-          <button className="palette-panel__close" onClick={onClose} aria-label="Fechar">
+          <button className="palette-panel__close" onClick={onClose} aria-label={t("common.close")}>
             ×
           </button>
         </div>
 
         <div className="palette-panel__builder">
           <div className="palette-panel__control-group">
-            <span className="palette-panel__label">Base</span>
+            <span className="palette-panel__label">{t("palettePanel.baseLabel")}</span>
             <input
               type="range"
               min={0}
@@ -257,14 +262,14 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
               }}
             />
             <div className="palette-panel__slider-labels">
-              <span>Preto</span>
+              <span>{t("palettePanel.dark")}</span>
               <span className="palette-panel__slider-value">{baseTonePercent}%</span>
-              <span>Branco</span>
+              <span>{t("palettePanel.light")}</span>
             </div>
           </div>
 
           <div className="palette-panel__control-group">
-            <span className="palette-panel__label">Cor primária</span>
+            <span className="palette-panel__label">{t("palettePanel.primaryLabel")}</span>
             <div
               ref={wheelRef}
               className="palette-panel__wheel"
@@ -288,14 +293,14 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
 
           <div className="palette-panel__control-group palette-panel__control-group--inline">
             <div className="palette-panel__input-wrapper">
-              <label htmlFor="palette-name">Nome</label>
+              <label htmlFor="palette-name">{t("palettePanel.nameLabel")}</label>
               <input
                 id="palette-name"
                 type="text"
                 value={paletteName}
                 onChange={(event) => setPaletteName(event.target.value)}
                 maxLength={60}
-                placeholder="Minha paleta"
+                placeholder={t("palettePanel.namePlaceholder")}
               />
             </div>
             <button
@@ -303,7 +308,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
               onClick={handleCreatePalette}
               disabled={creating || !paletteName.trim()}
             >
-              {creating ? "Salvando..." : "Selecionar"}
+              {creating ? t("palettePanel.saving") : t("palettePanel.select")}
             </button>
           </div>
         </div>
@@ -324,22 +329,24 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
                 <div className="palette-card__swatch">
                   <span
                     style={{ background: toneToHex(item.baseTone ?? (item.base === "branco" ? 1 : 0)) }}
-                    aria-label={`Base ${item.base}`}
+                    aria-label={t("palettePanel.baseSwatch", {
+                      tone: item.base === "preto" ? t("palettePanel.darkBase") : t("palettePanel.lightBase"),
+                    })}
                   />
                   <span
                     style={{ background: item.primary }}
-                    aria-label="Cor primária"
+                    aria-label={t("palettePanel.primarySwatch")}
                   />
                 </div>
                 <div className="palette-card__info">
                   <strong>{item.label}</strong>
-                  <small>{item.base === "preto" ? "Base escura" : "Base clara"}</small>
+                  <small>{item.base === "preto" ? t("palettePanel.darkBase") : t("palettePanel.lightBase")}</small>
                 </div>
                 {!item.isDefault && (
                   <span
                     className="palette-card__delete"
                     role="button"
-                    aria-label="Excluir paleta"
+                    aria-label={t("palettePanel.deleteLabel")}
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDeletePalette(item.id);
@@ -348,7 +355,7 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
                     ×
                   </span>
                 )}
-                {isActive && <span className="palette-card__tag">Ativa</span>}
+                {isActive && <span className="palette-card__tag">{t("palettePanel.activeTag")}</span>}
               </button>
             );
           })}

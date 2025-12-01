@@ -331,7 +331,7 @@ function Perfil() {
                   </div>
                   {isStudentView && (
                     <div className="prf-rank">
-                      <span>{rank !== null ? `#${rank}` : '#-'}</span>
+                      <span>{rank !== null ? `#${rank}` : "#-"}</span>
                     </div>
                   )}
                 </div>
@@ -343,13 +343,13 @@ function Perfil() {
                     onClick={() => setMostrarSeguidores(true)}
                     style={{ cursor: "pointer" }}
                   >
-                    Seguidores: {seguidores.length}
+                    {t("perfil.followersCount", { count: seguidores.length })}
                   </span>
                   <span
                     onClick={() => setMostrarSeguindo(true)}
                     style={{ cursor: "pointer" }}
                   >
-                    Seguindo: {seguindo.length}
+                    {t("perfil.followingCount", { count: seguindo.length })}
                   </span>
                 </div>
               )}
@@ -364,11 +364,11 @@ function Perfil() {
               >
                 {isStudentView && (
                   <span className="prf-titulo-informacoes">
-                    PREFERÊNCIA DA CONTA
+                    {t("perfil.accountPreferences")}
                   </span>
                 )}
                 <div className="prf-linguagem">
-                  <span>Linguagem:</span>
+                  <span>{t("perfil.language")}</span>
                   <div className="prf-option-group">
                     <label className="prf-option" htmlFor="idioma-ptbr">
                       <input
@@ -381,7 +381,7 @@ function Perfil() {
                         onChange={() => handleLanguageChange("pt-br")}
                       />
                       <span className="prf-option-text">
-                        Português (Brasil)
+                        {t("perfil.languagePtBr")}
                       </span>
                     </label>
                     <label className="prf-option" htmlFor="idioma-en">
@@ -394,7 +394,7 @@ function Perfil() {
                         checked={idioma === "en-us"}
                         onChange={() => handleLanguageChange("en-us")}
                       />
-                      <span className="prf-option-text">American English</span>
+                      <span className="prf-option-text">{t("perfil.languageEnUs")}</span>
                     </label>
                   </div>
                 </div>
@@ -402,10 +402,10 @@ function Perfil() {
                   className="prf-btn-config"
                   onClick={() => setMostrarPaletaPanel(true)}
                 >
-                  Personalizar paleta
+                  {t("perfil.customizePalette")}
                 </div>
                 {isStudentView && (
-                  <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
+                  <span className="prf-titulo-informacoes">{t("perfil.otherOptions")}</span>
                 )}
                 <div
                   className="prf-btn-config"
@@ -415,21 +415,21 @@ function Perfil() {
                     setMostrarEditor(true);
                   }}
                 >
-                  Editar perfil
+                  {t("perfil.editProfile")}
                 </div>
                 {isStudentView && (
                   <div
                     className="prf-btn-config"
                     onClick={() => setMostrarAvaliarPlanos(true)}
                   >
-                    Avaliar planos
+                    {t("perfil.reviewPlans")}
                   </div>
                 )}
-                <div className="prf-btn-config" onClick={logout}>Sair</div>
+                <div className="prf-btn-config" onClick={logout}>{t("perfil.logout")}</div>
               </div>
               <hr />
               <div className="prf-coluna2">
-                <span className="prf-titulo-informacoes">BIOGRAFIA</span>
+                <span className="prf-titulo-informacoes">{t("perfil.biography")}</span>
                 <div
                   className="prf-biografia"
                   style={{
@@ -441,7 +441,7 @@ function Perfil() {
                 </div>
                 {isStudentView && (
                   <>
-                    <span className="prf-titulo-informacoes">PROGRESSO</span>
+                    <span className="prf-titulo-informacoes">{t("perfil.progress")}</span>
                     <BarraDeProgresso
                       progresso1={progresso1}
                       progresso2={progresso2}
