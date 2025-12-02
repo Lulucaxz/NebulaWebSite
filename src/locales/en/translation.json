@@ -83,9 +83,9 @@
   "home.plans.description": "After watching the video above and understanding how our courses work, you can now choose the best plan for you.",
   "home.plans.benefits.videos": "Video lessons and PDFs",
   "home.plans.benefits.tasks": "Tasks",
-  "home.plans.benefits.routine": "Routine planning",
-  "home.plans.benefits.whatsapp": "WhatsApp group",
-  "home.plans.benefits.mentoring": "Private weekly mentoring",
+  "home.plans.benefits.routine": "Questions Forum",
+  "home.plans.benefits.whatsapp": "Chat between users",
+  "home.plans.benefits.mentoring": "Early access to new modules",
   "home.plans.benefits.certificate": "Digital certificate issuance",
   "home.plans.tiers.orbit.name": "Orbit",
   "home.plans.tiers.orbit.description": "For beginners, it covers basic physics and astronomy concepts, such as the Solar System and fundamental laws. Ideal for those starting their journey in the scientific universe.",
@@ -112,12 +112,12 @@
       }
     },
     "benefits": {
-      "certificates": "Official completion certificates",
-      "community": "Exclusive community",
+      "certificates": "Video lessons and PDFs",
+      "community": "Tasks",
       "forum": "Questions forum",
-      "prioritySupport": "Priority support",
+      "prioritySupport": "Chat between users",
       "earlyAccess": "Early access to new modules",
-      "customization": "Advanced customization"
+      "customization": "Issuance of digital certificates"
     },
     "installments": {
       "option": "{{count}}x of {{value}} interest-free"
