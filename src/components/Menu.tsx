@@ -1,10 +1,12 @@
 import "./menu.css";
 import { NavLink } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { type MouseEvent, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useTheme } from "../theme/useTheme";
 import { useUnread } from "../unreadContext";
+import { useUserAssinatura } from "../hooks/useUserAssinatura";
+import { hasAccessToPage, type PageAccessKey } from "../utils/pageAccess";
 
 interface User {
   idsite: string;
@@ -24,6 +26,7 @@ export function Menu() {
   const [user, setUser] = useState<User | null>(null);
   const { palette } = useTheme();
   const { chatUnreadTotal, notificationsUnreadTotal, refreshUnread, clearAllUnread } = useUnread();
+  const { planSlug, isLoading: planLoading } = useUserAssinatura();
   const temaClaro = palette.base === "branco";
   const isProfessor = user?.role === 'professor';
 
@@ -56,8 +59,8 @@ export function Menu() {
     }
   }, [isAuthenticated, refreshUnread, clearAllUnread]);
 
-  const getMenuItemClass = (isActive: boolean) =>
-    ["menu-icones", temaClaro ? "claro" : "", isActive ? "active" : ""]
+  const getMenuItemClass = (isActive: boolean, locked?: boolean) =>
+    ["menu-icones", temaClaro ? "claro" : "", isActive ? "active" : "", locked ? "locked" : ""]
       .filter(Boolean)
       .join(" ");
 
@@ -70,13 +73,59 @@ export function Menu() {
   const chatBadge = chatUnreadTotal > 0 ? formatBadgeValue(chatUnreadTotal) : null;
   const notificationBadge = notificationsUnreadTotal > 0 ? formatBadgeValue(notificationsUnreadTotal) : null;
 
+  const isPageLocked = (page?: PageAccessKey): boolean => {
+    if (!page || planLoading) {
+      return false;
+    }
+    return !hasAccessToPage(planSlug, page);
+  };
+
+  const handleLockedClick = (event: MouseEvent<HTMLAnchorElement>, locked: boolean) => {
+    if (!locked) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const lockTooltip = t("access.lockedMenuTooltip");
+
+  const renderLockBadge = (locked: boolean) =>
+    locked ? (
+      <span className="menu-lock-badge" aria-hidden="true">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M17 9H16V7C16 4.243 13.757 2 11 2C8.243 2 6 4.243 6 7V9H5C3.897 9 3 9.897 3 11V20C3 21.103 3.897 22 5 22H17C18.103 22 19 21.103 19 20V11C19 9.897 18.103 9 17 9ZM8 7C8 5.346 9.346 4 11 4C12.654 4 14 5.346 14 7V9H8V7ZM17 20H5V11H17L17.002 20H17Z"
+            fill="var(--roxo1)"
+          />
+        </svg>
+      </span>
+    ) : null;
+
+  const perfilLocked = isPageLocked('perfil');
+  const anotacoesLocked = isPageLocked('anotacoes');
+  const cursosLocked = isPageLocked('cursos');
+  const professorLocked = isPageLocked('professor');
+  const forumLocked = isPageLocked('forum');
+  const chatLocked = isPageLocked('chat');
+  const notificacoesLocked = isPageLocked('notificacoes');
+
   return (
     <div className={menuClassName}>
       <div id="menu-principais-icones">
         <NavLink
           to="/perfil"
-          className={({ isActive }) => getMenuItemClass(isActive)}
+          className={({ isActive }) => getMenuItemClass(isActive, perfilLocked)}
           id="perfil-icone"
+          onClick={(event) => handleLockedClick(event, perfilLocked)}
+          aria-disabled={perfilLocked}
+          title={perfilLocked ? lockTooltip : undefined}
         >
           {isAuthenticated ? (
             <img
@@ -93,16 +142,20 @@ export function Menu() {
               fill="currentColor"
             >
               <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+              
             </svg>
           )}
-
           <span className="texto-barra">{t("menu.profile")}</span>
+          {renderLockBadge(perfilLocked)}
         </NavLink>
 
         <NavLink
           to="/anotacoes"
-          className={({ isActive }) => getMenuItemClass(isActive)}
+          className={({ isActive }) => getMenuItemClass(isActive, anotacoesLocked)}
           id="anotacoes-icone"
+          onClick={(event) => handleLockedClick(event, anotacoesLocked)}
+          aria-disabled={anotacoesLocked}
+          title={anotacoesLocked ? lockTooltip : undefined}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -113,14 +166,17 @@ export function Menu() {
           >
             <path d="M160-400v-80h280v80H160Zm0-160v-80h440v80H160Zm0-160v-80h440v80H160Zm360 560v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T863-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
           </svg>
-
           <span className="texto-barra">{t("menu.notes")}</span>
+          {renderLockBadge(anotacoesLocked)}
         </NavLink>
 
         <NavLink
           to="/cursos"
-          className={({ isActive }) => getMenuItemClass(isActive)}
+          className={({ isActive }) => getMenuItemClass(isActive, cursosLocked)}
           id="cursos-icone"
+          onClick={(event) => handleLockedClick(event, cursosLocked)}
+          aria-disabled={cursosLocked}
+          title={cursosLocked ? lockTooltip : undefined}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -131,25 +187,32 @@ export function Menu() {
           >
             <path d="M300-80q-58 0-99-41t-41-99v-520q0-58 41-99t99-41h500v600q-25 0-42.5 17.5T740-220q0 25 17.5 42.5T800-160v80H300Zm-60-267q14-7 29-10t31-3h20v-440h-20q-25 0-42.5 17.5T240-740v393Zm160-13h320v-440H400v440Zm-160 13v-453 453Zm60 187h373q-6-14-9.5-28.5T660-220q0-16 3-31t10-29H300q-26 0-43 17.5T240-220q0 26 17 43t43 17Z" />
           </svg>
-
           <span className="texto-barra">{t("menu.courses")}</span>
+          {renderLockBadge(cursosLocked)}
         </NavLink>
 
         {isProfessor && (
           <NavLink
             to="/professor"
-            className={({ isActive }) => getMenuItemClass(isActive)}
+            className={({ isActive }) => getMenuItemClass(isActive, professorLocked)}
             id="professor-icone"
+            onClick={(event) => handleLockedClick(event, professorLocked)}
+            aria-disabled={professorLocked}
+            title={professorLocked ? lockTooltip : undefined}
           >
              <svg fill="currentColor" height="24px" width="24px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xmlSpace="preserve"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M501.552,59.003h-88.101c-5.77,0-10.448,4.678-10.448,10.448s4.677,10.448,10.448,10.448h77.653v290.453h-58.811 c-5.77,0-10.448,4.678-10.448,10.448s4.677,10.448,10.448,10.448h69.259c5.77,0,10.448-4.678,10.448-10.448V69.451 C512,63.68,507.323,59.003,501.552,59.003z"></path> </g> </g> <g> <g> <path d="M326.152,425.203h-0.137c-5.77,0-10.448,4.677-10.448,10.448c0,5.77,4.678,10.448,10.448,10.448h0.137 c5.77,0,10.448-4.677,10.448-10.448C336.6,429.88,331.923,425.203,326.152,425.203z"></path> </g> </g> <g> <g> <path d="M10.585,460.203h-0.137C4.678,460.203,0,464.881,0,470.651s4.678,10.448,10.448,10.448h0.137 c5.77,0,10.448-4.678,10.448-10.448S16.355,460.203,10.585,460.203z"></path> </g> </g> <g> <g> <path d="M501.501,460.202h-0.137c-5.77,0-10.448,4.677-10.448,10.448c0,5.77,4.677,10.448,10.448,10.448h0.137 c5.77,0,10.448-4.678,10.448-10.448C511.949,464.88,507.271,460.202,501.501,460.202z"></path> </g> </g> <g> <g> <path d="M266.228,230.469h-20.419c-5.77,0-10.448,4.677-10.448,10.448c0,11.39,9.267,20.658,20.658,20.658 s20.657-9.267,20.658-20.658C276.676,235.146,271.998,230.469,266.228,230.469z"></path> </g> </g> <g> <g> <path d="M130.295,250.2H55.918c-5.77,0-10.448,4.678-10.448,10.448c0,5.77,4.678,10.448,10.448,10.448h74.377 c5.77,0,10.448-4.678,10.448-10.448C140.743,254.877,136.066,250.2,130.295,250.2z"></path> </g> </g> <g> <g> <path d="M130.295,321.246H55.918c-5.77,0-10.448,4.678-10.448,10.448s4.678,10.448,10.448,10.448h74.377 c5.77,0,10.448-4.678,10.448-10.448C140.743,325.923,136.066,321.246,130.295,321.246z"></path> </g> </g> <g> <g> <path d="M130.295,285.722H55.918c-5.77,0-10.448,4.678-10.448,10.448s4.678,10.448,10.448,10.448h74.377 c5.77,0,10.448-4.678,10.448-10.448S136.066,285.722,130.295,285.722z"></path> </g> </g> <g> <g> <path d="M130.295,214.677H55.918c-5.77,0-10.448,4.678-10.448,10.448s4.678,10.448,10.448,10.448h74.377 c5.77,0,10.448-4.678,10.448-10.448S136.066,214.677,130.295,214.677z"></path> </g> </g> <g> <g> <path d="M458.619,250.2h-74.377c-5.77,0-10.448,4.678-10.448,10.448c0,5.77,4.678,10.448,10.448,10.448h74.377 c5.769,0,10.448-4.678,10.448-10.448C469.067,254.877,464.39,250.2,458.619,250.2z"></path> </g> </g> <g> <g> <path d="M458.619,285.722h-74.377c-5.77,0-10.448,4.678-10.448,10.448s4.678,10.448,10.448,10.448h74.377 c5.769,0,10.448-4.678,10.448-10.448S464.39,285.722,458.619,285.722z"></path> </g> </g> <g> <g> <path d="M467.563,460.203h-57.964V389.56c0-20.365-12.291-39.709-29.888-47.042l-67.241-28.016 c-2.392-0.996-3.936-3.313-3.936-5.904v-16.27l27.31-15.659c0.19-0.109,0.377-0.225,0.561-0.346 c13.674-9.03,22.654-25.091,24.02-42.961c0.021-0.264,0.03-0.531,0.03-0.796v-8.674c7.337-2.386,13.562-7.228,17.751-13.535 c1.183,0.085,2.366,0.14,3.551,0.14c27.638,0,50.123-22.485,50.123-50.123c0-6.381-1.222-12.69-3.571-18.576 c6.727-9.543,10.369-20.939,10.369-32.757c0-31.387-25.534-56.92-56.92-56.92c-0.191,0-0.382,0.001-0.575,0.003 c-7.957-12.947-22.31-21.223-37.807-21.223c-13.84,0-26.515,6.343-34.771,16.825c-15.418-9.007-33.338-14.177-52.445-14.177 c-19.181,0-37.167,5.21-52.625,14.282c-8.248-10.548-20.952-16.93-34.856-16.93c-15.497,0-29.849,8.276-37.807,21.223 c-0.192-0.002-0.383-0.003-0.575-0.003c-31.387,0-56.92,25.534-56.92,56.92c0,11.819,3.641,23.214,10.369,32.757 c-2.349,5.885-3.571,12.195-3.571,18.576c0,27.638,22.485,50.123,50.123,50.123c1.151,0,2.304-0.052,3.454-0.132 c4.189,6.302,10.412,11.142,17.746,13.527v8.674c0,0.265,0.01,0.532,0.03,0.796c1.372,17.943,10.288,34.003,23.852,42.961 c0.187,0.123,0.378,0.24,0.573,0.352l27.467,15.702v16.219c0,2.59-1.545,4.907-3.936,5.904l-67.242,28.017 c-11.861,4.942-21.302,15.344-26.203,27.833H20.948V79.9h48.06c5.77,0,10.448-4.678,10.448-10.448s-4.677-10.448-10.448-10.448 H10.5c-5.77,0-10.448,4.678-10.448,10.448V380.8c0,5.77,4.678,10.448,10.448,10.448h91.852v68.956H44.386 c-5.77,0-10.448,4.678-10.448,10.448c0,5.77,4.678,10.448,10.448,10.448h423.177c5.77,0,10.448-4.677,10.448-10.448 C478.011,464.882,473.333,460.203,467.563,460.203z M309.05,335.714l18.68,7.783l-28.194,34.157 c-3.57,4.326-3.088,10.697,1.091,14.437l5.829,5.217l-27.822,22.197L309.05,335.714z M343.375,51.797 c9.62,0,18.405,6.036,21.859,15.019c1.753,4.557,6.429,7.295,11.26,6.588c1.76-0.257,3.53-0.388,5.262-0.388 c19.864,0,36.025,16.161,36.025,36.024c0,9.025-3.356,17.66-9.448,24.314c-3.091,3.375-3.624,8.369-1.319,12.321 c2.596,4.45,3.969,9.532,3.969,14.697c0,15.439-12.035,28.111-27.214,29.15c-0.895-14.069-10.405-25.836-23.315-30.035v-21.645 c0-30.892-13.506-58.686-34.917-77.801C329.903,54.893,336.352,51.797,343.375,51.797z M128.18,189.516 c-15.132-1.088-27.112-13.738-27.112-29.142c0-5.165,1.372-10.247,3.969-14.697c2.307-3.952,1.772-8.947-1.319-12.321 c-6.093-6.655-9.448-15.289-9.448-24.314c0-19.864,16.161-36.024,36.024-36.024c1.731,0,3.501,0.131,5.262,0.388 c4.836,0.706,9.507-2.031,11.26-6.588c3.455-8.983,12.24-15.019,21.859-15.019c7.092,0,13.589,3.147,17.953,8.379 c-20.654,18.51-33.914,45.112-34.727,74.772c-0.265,0.919-0.407,1.892-0.407,2.897v21.645 C138.589,163.688,129.079,175.45,128.18,189.516z M186.636,258.712c-7.984-5.404-13.284-15.289-14.245-26.566v-17.052 c0-5.77-4.678-10.448-10.448-10.448c-7.143,0-12.954-5.812-12.954-12.954s5.812-12.954,12.954-12.954 c5.77,0,10.448-4.678,10.448-10.448v-27.687c0.239-0.878,0.368-1.802,0.368-2.756c0-45.987,37.413-83.4,83.4-83.4 s83.4,37.412,83.4,83.399v30.443c0,5.77,4.678,10.448,10.448,10.448c7.143,0,12.954,5.812,12.954,12.954 s-5.812,12.954-12.954,12.954c-5.77,0-10.448,4.677-10.448,10.448v17.05c-0.949,11.049-6.442,21.174-14.418,26.574 c0,0-57.988,33.33-58.666,33.691v-9.443c0-5.77-4.678-10.448-10.448-10.448s-10.448,4.677-10.448,10.448v9.495 C244.864,292.085,186.636,258.712,186.636,258.712z M203.219,335.58l30.464,83.923l-27.822-22.197l5.829-5.217 c4.179-3.74,4.66-10.112,1.091-14.437l-28.287-34.271L203.219,335.58z M123.246,460.203L123.246,460.203V389.56 c0-11.776,7.321-23.707,17.029-27.753l24.056-10.023l25.942,31.431l-7.56,6.765c-2.291,2.051-3.564,5.007-3.477,8.081 c0.087,3.074,1.523,5.954,3.928,7.872l66.477,53.035c0.621,0.495,1.287,0.902,1.98,1.236H123.246z M220.628,322.301 c2.362-4.073,3.684-8.77,3.684-13.705v-4.274l7.938,4.538c7.043,4.574,14.882,6.928,22.751,7.11 c0.337,0.032,0.678,0.051,1.024,0.051c0.37,0,0.734-0.021,1.095-0.057c7.814-0.212,15.593-2.563,22.585-7.107l7.931-4.548v4.288 c0,5.088,1.411,9.921,3.915,14.081l-35.393,97.503L220.628,322.301z M388.703,425.203h-28.751c-5.77,0-10.448,4.677-10.448,10.448 c0,5.77,4.677,10.448,10.448,10.448h28.751v14.105h-128c0.535-0.259,1.054-0.561,1.549-0.916c0.143-0.102,0.277-0.214,0.414-0.324 c0.003,0.001,0.005,0.003,0.008,0.004l66.477-53.035c2.404-1.917,3.841-4.798,3.928-7.871c0.087-3.074-1.185-6.031-3.477-8.081 l-7.56-6.765l25.848-31.317l23.783,9.909c9.708,4.045,17.029,15.976,17.029,27.753V425.203z"></path> </g> </g> <g> <g> <path d="M294.077,181.243c-6.44,0-11.679,5.239-11.679,11.679c0,6.439,5.239,11.678,11.679,11.678s11.679-5.239,11.679-11.678 C305.756,186.482,300.517,181.243,294.077,181.243z"></path> </g> </g> <g> <g> <path d="M217.872,181.243c-6.44,0-11.679,5.239-11.679,11.679c0,6.439,5.239,11.678,11.679,11.678s11.679-5.239,11.679-11.678 C229.549,186.482,224.311,181.243,217.872,181.243z"></path> </g> </g> <g> <g> <path d="M304.298,100.392c-13.405-11.666-30.565-18.091-48.324-18.091s-34.919,6.424-48.324,18.09 c-4.353,3.788-4.81,10.387-1.023,14.74c3.787,4.353,10.387,4.811,14.741,1.023c9.601-8.355,21.891-12.956,34.606-12.956 c12.715,0,25.005,4.601,34.606,12.956c1.979,1.722,4.422,2.567,6.855,2.567c2.918,0,5.82-1.215,7.886-3.589 C309.108,110.779,308.652,104.181,304.298,100.392z"></path> </g> </g> <g> <g> <path d="M290.571,129.015c-9.596-8.352-21.883-12.951-34.596-12.951c-12.713,0-25,4.599-34.596,12.951 c-4.354,3.787-4.81,10.387-1.023,14.74c3.787,4.353,10.387,4.811,14.74,1.023c5.793-5.041,13.208-7.817,20.879-7.817 c7.671,0,15.086,2.776,20.879,7.817c1.979,1.723,4.422,2.567,6.854,2.567c2.918,0,5.821-1.216,7.886-3.59 C295.381,139.403,294.924,132.804,290.571,129.015z"></path> </g> </g> <g> <g> <path d="M312.23,154.079h-31.866c-5.77,0-10.448,4.678-10.448,10.448s4.677,10.448,10.448,10.448h31.866 c5.77,0,10.448-4.678,10.448-10.448S318.001,154.079,312.23,154.079z"></path> </g> </g> <g> <g> <path d="M231.686,154.079H199.82c-5.77,0-10.448,4.678-10.448,10.448s4.678,10.448,10.448,10.448h31.866 c5.77,0,10.448-4.678,10.448-10.448S237.456,154.079,231.686,154.079z"></path> </g> </g> </g></svg>
              <span className="texto-barra">{t("menu.professor")}</span>
+            {renderLockBadge(professorLocked)}
           </NavLink>
         )}
 
         <NavLink
           to="/forum"
-          className={({ isActive }) => getMenuItemClass(isActive)}
+          className={({ isActive }) => getMenuItemClass(isActive, forumLocked)}
           id="forum-icone"
+          onClick={(event) => handleLockedClick(event, forumLocked)}
+          aria-disabled={forumLocked}
+          title={forumLocked ? lockTooltip : undefined}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -160,14 +223,17 @@ export function Menu() {
           >
             <path d="M880-80 720-240H320q-33 0-56.5-23.5T240-320v-40h440q33 0 56.5-23.5T760-440v-280h40q33 0 56.5 23.5T880-640v560ZM160-473l47-47h393v-280H160v327ZM80-280v-520q0-33 23.5-56.5T160-880h440q33 0 56.5 23.5T680-800v280q0 33-23.5 56.5T600-440H240L80-280Zm80-240v-280 280Z" />
           </svg>
-
           <span className="texto-barra">{t("menu.forum")}</span>
+          {renderLockBadge(forumLocked)}
         </NavLink>
 
         <NavLink
           to="/chat"
-          className={({ isActive }) => getMenuItemClass(isActive)}
+          className={({ isActive }) => getMenuItemClass(isActive, chatLocked)}
           id="chat-icone"
+          onClick={(event) => handleLockedClick(event, chatLocked)}
+          aria-disabled={chatLocked}
+          title={chatLocked ? lockTooltip : undefined}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -178,8 +244,8 @@ export function Menu() {
           >
             <path d="M80-160v-560q0-33 23-56.5t57-23.5h640q33 0 56.5 23.5T880-720v400q0 33-23.5 56.5T800-240H240L80-160Zm160-240h480v-80H240v80Zm0-160h480v-80H240v80Z" />
           </svg>
-
           <span className="texto-barra">{t("menu.chat")}</span>
+          {renderLockBadge(chatLocked)}
           {chatBadge && (
             <span className="menu-badge" aria-label={t("menu.newMessages")}>{chatBadge}</span>
           )}
@@ -207,8 +273,11 @@ export function Menu() {
       <div>
         <NavLink
           to="/notificacoes"
-          className={({ isActive }) => getMenuItemClass(isActive)}
+          className={({ isActive }) => getMenuItemClass(isActive, notificacoesLocked)}
           id="notificacoes-icone"
+          onClick={(event) => handleLockedClick(event, notificacoesLocked)}
+          aria-disabled={notificacoesLocked}
+          title={notificacoesLocked ? lockTooltip : undefined}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -219,8 +288,8 @@ export function Menu() {
           >
             <path d="M240-240h480v-280q0-100-70-170t-170-70q-100 0-170 70t-70 170v280Zm240 320q-33 0-56.5-23.5T400-0h160q0 33-23.5 56.5T480 80Zm-320-80v-120h-80v-80h80v-280q0-134 93-227t227-93q134 0 227 93t93 227v280h80v80h-80v120H160Z" />
           </svg>
-
           <span className="texto-barra">{t("menu.notifications")}</span>
+          {renderLockBadge(notificacoesLocked)}
           {notificationBadge && (
             <span className="menu-badge" aria-label={t("menu.newNotifications")}>{notificationBadge}</span>
           )}

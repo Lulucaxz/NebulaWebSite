@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AlertProvider } from './Alert';
 import NotificationListener from "./NotificationListener";
 import { UnreadProvider } from "./unreadContext";
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 import Perfil from './pages/perfil/Perfil';
 import Perfil2 from './pages/perfil/Perfil2';
@@ -37,37 +38,57 @@ function App() {
               <Perfil2 />
             } />
             <Route path="/anotacoes" element={
-              <Anotacoes />
+              <ProtectedRoute page="anotacoes">
+                <Anotacoes />
+              </ProtectedRoute>
             } />
             <Route path="/cursos" element={
-              <Cursos />
+              <ProtectedRoute page="cursos">
+                <Cursos />
+              </ProtectedRoute>
             } />
             <Route path="/professor" element={
-              <ProfessorWorkspace />
+              <ProtectedRoute page="professor">
+                <ProfessorWorkspace />
+              </ProtectedRoute>
             } />
             <Route path="/modulos/:assinatura/:moduloId" element={
-              <Modulos />
+              <ProtectedRoute page="modulos">
+                <Modulos />
+              </ProtectedRoute>
             } />
             <Route path="/modulos/:assinatura/:moduloId/atividades/:atividadeInd" element={
-              <Atividades />
+              <ProtectedRoute page="atividades">
+                <Atividades />
+              </ProtectedRoute>
             } />
             <Route path="/forum" element={
-              <Forum />
+              <ProtectedRoute page="forum">
+                <Forum />
+              </ProtectedRoute>
             } />
             <Route path="/chat" element={
-              <Chat />
+              <ProtectedRoute page="chat">
+                <Chat />
+              </ProtectedRoute>
             } />
             <Route path="/chat/:chatId" element={
-              <ChatConversation />
+              <ProtectedRoute page="chatConversation">
+                <ChatConversation />
+              </ProtectedRoute>
             } />
             <Route path="/planos" element={
               <Planos />
             } />
             <Route path="/configuracoes" element={
-              <Configuracoes />
+              <ProtectedRoute page="configuracoes">
+                <Configuracoes />
+              </ProtectedRoute>
             } />
             <Route path="/notificacoes" element={
-              <Notificacoes />
+              <ProtectedRoute page="notificacoes">
+                <Notificacoes />
+              </ProtectedRoute>
             } />
             <Route path="/cadastrar" element={
               <Login />
