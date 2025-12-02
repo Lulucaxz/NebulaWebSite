@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom'; 
 import Footer from "../../components/footer";
+import { LanguagePreference, normalizeLanguagePreference, toI18nLanguage } from "../../utils/language";
 
 axios.defaults.withCredentials = true; // Importante para sessões
 
@@ -14,9 +15,27 @@ const API_URL = "http://localhost:4000"; // Backend local
 function Configuracoes() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  // true = pt, false = en
-  const [idioma, setIdioma] = useState(i18n.language === 'pt');
+  const [idioma, setIdioma] = useState<LanguagePreference>(() => normalizeLanguagePreference(i18n.language));
   const [tema, setTema] = useState(false);
+
+  const handleLanguageChange = async (lang: LanguagePreference) => {
+    const normalized = normalizeLanguagePreference(lang);
+    setIdioma(normalized);
+    i18n.changeLanguage(toI18nLanguage(normalized));
+
+    try {
+      const formData = new FormData();
+      formData.append('idioma', normalized);
+      
+      await axios.put(`${API_URL}/auth/update`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+    } catch (error) {
+      console.error("Erro ao salvar idioma:", error);
+    }
+  };
 
   const logout = async () => {
     try{
@@ -38,20 +57,18 @@ function Configuracoes() {
         <div className="cnfg-botoes">
           <div
             className="cnfg-btn"
-            style={{ backgroundColor: idioma ? "var(--primary-500)" : "var(--surface-raised)" }}
+            style={{ backgroundColor: idioma === "pt-br" ? "var(--primary-500)" : "var(--surface-raised)" }}
             onClick={() => {
-              setIdioma(true);
-              i18n.changeLanguage('pt');
+              void handleLanguageChange('pt-br');
             }}
           >
             {t('PORTUGUÊS (BRASIL)')}
           </div>
           <div
             className="cnfg-btn"
-            style={{ backgroundColor: !idioma ? "var(--primary-500)" : "var(--surface-raised)" }}
+            style={{ backgroundColor: idioma === "en-us" ? "var(--primary-500)" : "var(--surface-raised)" }}
             onClick={() => {
-              setIdioma(false);
-              i18n.changeLanguage('en');
+              void handleLanguageChange('en-us');
             }}
           >
             {t('ENGLISH (US)')}

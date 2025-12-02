@@ -1,4 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback, type ChangeEvent, type KeyboardEvent } from "react";
+import { useTranslation } from "react-i18next";
+import "./forum-i18n"; // Importa as traduções
 import { Comentario } from "./components/Comentario";
 import type { ComentarioData, RespostaData, DestinoResposta } from "./types";
 import { initial_comentarios } from "./components/comentariosDados";
@@ -7,6 +9,7 @@ import Footer from "../../components/footer";
 import { API_BASE, fetchWithCredentials } from "../../api";
 import { showAlert } from "../../Alert";
 import "./Forum.css";
+import { translateForumTag } from "./tagUtils";
 
 interface ForumPostsResponse {
   items: ComentarioData[];
@@ -22,7 +25,8 @@ type UsuarioAtual = {
   avaliacaoClass: string;
 };
 
-const TAGS_DISPONIVEIS = [
+// Move TAGS_DISPONIVEIS inside component or translate them dynamically
+const TAGS_KEYS = [
   "Dúvida",
   "Órbita",
   "Galáxia",
@@ -157,6 +161,7 @@ const existeRespostaPorId = (respostas: RespostaData[], alvoId: number): boolean
   );
 
 function Forum() {
+  const { t } = useTranslation();
   const [comentarios, setComentarios] = useState<ComentarioData[]>([]);
   const [pesquisa, setPesquisa] = useState("");
   const [tagsSelecionadasFiltro, setTagsSelecionadasFiltro] = useState<string[]>([]);
@@ -197,6 +202,11 @@ function Forum() {
   const [enviandoResposta, setEnviandoResposta] = useState(false);
   const [salvandoComentarioEdicao, setSalvandoComentarioEdicao] = useState(false);
   const [salvandoRespostaEdicao, setSalvandoRespostaEdicao] = useState(false);
+
+  // Translate tags for display
+  const TAGS_DISPONIVEIS = useMemo(() => [...TAGS_KEYS], []);
+
+  const getTagLabel = useCallback((tag: string) => translateForumTag(tag, t), [t]);
 
   const aplicarAutoria = useCallback((lista: ComentarioData[], usuarioId?: number) => {
     if (!usuarioId) {
@@ -394,7 +404,7 @@ function Forum() {
 
   const handleCriarPublicacao = async () => {
     if (!formularioValido) {
-      showAlert('Por favor, preencha todos os campos obrigatórios');
+      showAlert(t('Por favor, preencha todos os campos obrigatórios'));
       return;
     }
 
@@ -430,7 +440,7 @@ function Forum() {
       handleResetFormulario();
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível criar sua publicação agora. Tente novamente mais tarde.');
+      showAlert(t('Não foi possível criar sua publicação agora. Tente novamente mais tarde.'));
     } finally {
       setEnviandoPublicacao(false);
     }
@@ -475,7 +485,7 @@ function Forum() {
   };
 
   const handleDeleteResposta = async (idResposta: number) => {
-    if (!window.confirm('Deseja realmente excluir esta resposta?')) {
+    if (!window.confirm(t('Deseja realmente excluir esta resposta?'))) {
       return;
     }
 
@@ -507,12 +517,12 @@ function Forum() {
       }
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível excluir a resposta. Tente novamente.');
+      showAlert(t('Não foi possível excluir a resposta. Tente novamente.'));
     }
   };
 
   const handleDeleteComentario = async (idComentario: number) => {
-    if (!window.confirm('Deseja realmente excluir esta publicação?')) {
+    if (!window.confirm(t('Deseja realmente excluir esta publicação?'))) {
       return;
     }
 
@@ -529,7 +539,7 @@ function Forum() {
       }
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível excluir esta publicação.');
+      showAlert(t('Não foi possível excluir esta publicação.'));
     }
   };
 
@@ -540,7 +550,7 @@ function Forum() {
       });
 
       if (resposta.status === 401) {
-        showAlert('Faça login para curtir publicações.');
+        showAlert(t('Faça login para curtir publicações.'));
         return;
       }
 
@@ -556,7 +566,7 @@ function Forum() {
       ));
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível atualizar a curtida da publicação.');
+      showAlert(t('Não foi possível atualizar a curtida da publicação.'));
     }
   };
 
@@ -567,7 +577,7 @@ function Forum() {
       });
 
       if (resposta.status === 401) {
-        showAlert('Faça login para curtir respostas.');
+        showAlert(t('Faça login para curtir respostas.'));
         return;
       }
 
@@ -590,7 +600,7 @@ function Forum() {
       }));
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível atualizar a curtida da resposta.');
+      showAlert(t('Não foi possível atualizar a curtida da resposta.'));
     }
   };
 
@@ -635,7 +645,7 @@ function Forum() {
   // Função para salvar edição de comentário
   const handleSalvarEdicaoComentario = async () => {
     if (!editandoComentario || !tituloPublicacao.trim() || !conteudoPublicacao.trim() || tagsSelecionadas.length === 0) {
-      showAlert('Por favor, preencha todos os campos obrigatórios');
+      showAlert(t('Por favor, preencha todos os campos obrigatórios'));
       return;
     }
 
@@ -667,10 +677,10 @@ function Forum() {
       ));
       setEditandoComentario(null);
       handleResetFormulario();
-      showAlert('Comentário editado com sucesso!');
+      showAlert(t('Comentário editado com sucesso!'));
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível salvar sua edição agora.');
+      showAlert(t('Não foi possível salvar sua edição agora.'));
     } finally {
       setSalvandoComentarioEdicao(false);
     }
@@ -679,7 +689,7 @@ function Forum() {
   // Função para salvar edição de resposta
   const handleSalvarEdicaoResposta = async () => {
     if (!editandoResposta || !conteudoPublicacao.trim()) {
-      showAlert('Por favor, preencha o conteúdo da resposta');
+      showAlert(t('Por favor, preencha o conteúdo da resposta'));
       return;
     }
 
@@ -719,10 +729,10 @@ function Forum() {
 
       setEditandoResposta(null);
       resetConteudoEImagem();
-      showAlert('Resposta editada com sucesso!');
+      showAlert(t('Resposta editada com sucesso!'));
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível salvar a edição da resposta.');
+      showAlert(t('Não foi possível salvar a edição da resposta.'));
     } finally {
       setSalvandoRespostaEdicao(false);
     }
@@ -734,7 +744,7 @@ function Forum() {
     }
 
     if (!conteudoPublicacao.trim()) {
-      showAlert('Por favor, preencha o conteúdo da resposta');
+      showAlert(t('Por favor, preencha o conteúdo da resposta'));
       return;
     }
 
@@ -753,7 +763,7 @@ function Forum() {
     });
 
     if (!destinoExiste) {
-      showAlert('Não foi possível encontrar a publicação original. Ela pode ter sido removida.');
+      showAlert(t('Não foi possível encontrar a publicação original. Ela pode ter sido removida.'));
       handleResponderA(null);
       resetConteudoEImagem();
       return;
@@ -798,7 +808,7 @@ function Forum() {
       setRespondendoA(null);
     } catch (error) {
       console.error(error);
-      showAlert('Não foi possível enviar sua resposta agora. Tente novamente.');
+      showAlert(t('Não foi possível enviar sua resposta agora. Tente novamente.'));
     } finally {
       setEnviandoResposta(false);
     }
@@ -824,7 +834,7 @@ function Forum() {
   const renderizarAreaCriarComentario = () => {
     const renderUploadSection = () => (
       <div className="forum-imagem-container">
-        <p>Escolha uma imagem</p>
+        <p>{t('Escolha uma imagem')}</p>
         <div
           className={`forum-upload-area ${imagemPublicacao ? 'has-preview' : ''}`}
           onClick={() => imagemInputRef.current?.click()}
@@ -834,7 +844,7 @@ function Forum() {
         >
           {imagemPublicacao ? (
             <div className="forum-upload-preview">
-              <img src={imagemPublicacao} alt="Pré-visualização da postagem" />
+              <img src={imagemPublicacao} alt={t('Pré-visualização da postagem')} />
               <button
                 type="button"
                 className="forum-upload-remove"
@@ -843,13 +853,13 @@ function Forum() {
                   handleRemoverImagem();
                 }}
               >
-                Remover imagem
+                {t('Remover imagem')}
               </button>
             </div>
           ) : (
             <>
               <img src="/icons/image-icon.svg" alt="Upload" />
-              <span>Selecione sua imagem</span>
+              <span>{t('Selecione sua imagem')}</span>
             </>
           )}
         </div>
@@ -868,11 +878,11 @@ function Forum() {
       return (
         <div className="forum-criar-comentario-conteudo">
           <div className="forum-criar-comentario-styck">
-            <h3>Você está editando sua postagem</h3>
+            <h3>{t('Você está editando sua postagem')}</h3>
 
             {/* Tags de escolha */}
             <div className="forum-escolha-tags">
-              <p>Escolha as etiquetas para sua postagem (obrigatório)</p>
+              <p>{t('Escolha as etiquetas para sua postagem (obrigatório)')}</p>
               <div className="forum-tags-opcoes">
                 {TAGS_DISPONIVEIS.map(tag => (
                   <button
@@ -880,7 +890,7 @@ function Forum() {
                     className={`forum-tag-opcao ${tagsSelecionadas.includes(tag) ? 'selecionada' : ''}`}
                     onClick={() => toggleTagSelecionada(tag)}
                   >
-                    {tag}
+                    {getTagLabel(tag)}
                   </button>
                 ))}
               </div>
@@ -888,10 +898,10 @@ function Forum() {
 
             {/* Título */}
             <div className="forum-titulo-container">
-              <p>Coloque um título (obrigatório)</p>
+              <p>{t('Coloque um título (obrigatório)')}</p>
               <input
                 type="text"
-                placeholder="Escreva aqui..."
+                placeholder={t('Escreva aqui...')}
                 value={tituloPublicacao}
                 onChange={(e) => setTituloPublicacao(e.target.value)}
                 className="forum-input-titulo"
@@ -905,9 +915,9 @@ function Forum() {
 
             {/* Texto */}
             <div className="forum-texto-container">
-              <p>Coloque o seu texto</p>
+              <p>{t('Coloque o seu texto')}</p>
               <textarea
-                placeholder="Escreva aqui..."
+                placeholder={t('Escreva aqui...')}
                 value={conteudoPublicacao}
                 onChange={(e) => setConteudoPublicacao(e.target.value)}
                 maxLength={1000}
@@ -922,14 +932,14 @@ function Forum() {
                 className="forum-botao-cancelar"
                 onClick={handleCancelarEdicao}
               >
-                Cancelar
+                {t('Cancelar')}
               </button>
               <button
                 className="forum-botao-enviar"
                 onClick={handleSalvarEdicaoComentario}
                 disabled={salvandoComentarioEdicao}
               >
-                {salvandoComentarioEdicao ? 'Salvando...' : 'Enviar'}
+                {salvandoComentarioEdicao ? t('Salvando...') : t('Enviar')}
               </button>
             </div>
           </div>
@@ -942,16 +952,16 @@ function Forum() {
       return (
         <div className="forum-criar-comentario-conteudo">
           <div className="forum-criar-comentario-styck">
-            <h3>Você está editando sua resposta</h3>
+            <h3>{t('Você está editando sua resposta')}</h3>
 
             {/* Upload de imagem */}
             {renderUploadSection()}
 
             {/* Texto */}
             <div className="forum-texto-container">
-              <p>Coloque o seu texto</p>
+              <p>{t('Coloque o seu texto')}</p>
               <textarea
-                placeholder="Escreva aqui..."
+                placeholder={t('Escreva aqui...')}
                 value={conteudoPublicacao}
                 onChange={(e) => setConteudoPublicacao(e.target.value)}
                 maxLength={1000}
@@ -966,14 +976,14 @@ function Forum() {
                 className="forum-botao-cancelar"
                 onClick={handleCancelarEdicao}
               >
-                Cancelar
+                {t('Cancelar')}
               </button>
               <button
                 className="forum-botao-enviar"
                 onClick={handleSalvarEdicaoResposta}
                 disabled={!conteudoPublicacao.trim() || salvandoRespostaEdicao}
               >
-                {salvandoRespostaEdicao ? 'Salvando...' : 'Enviar'}
+                {salvandoRespostaEdicao ? t('Salvando...') : t('Enviar')}
               </button>
             </div>
           </div>
@@ -986,11 +996,11 @@ function Forum() {
       return (
         <div className="forum-criar-comentario-conteudo">
           <div className="forum-criar-comentario-styck">
-            <h3>Crie sua postagem aqui</h3>
+            <h3>{t('Crie sua postagem aqui')}</h3>
 
             {/* Tags de escolha */}
             <div className="forum-escolha-tags">
-              <p>Escolha as etiquetas para sua postagem (obrigatório)</p>
+              <p>{t('Escolha as etiquetas para sua postagem (obrigatório)')}</p>
               <div className="forum-tags-opcoes">
                 {TAGS_DISPONIVEIS.map(tag => (
                   <button
@@ -998,7 +1008,7 @@ function Forum() {
                     className={`forum-tag-opcao ${tagsSelecionadas.includes(tag) ? 'selecionada' : ''}`}
                     onClick={() => toggleTagSelecionada(tag)}
                   >
-                    {tag}
+                    {getTagLabel(tag)}
                   </button>
                 ))}
               </div>
@@ -1006,10 +1016,10 @@ function Forum() {
 
             {/* Título */}
             <div className="forum-titulo-container">
-              <p>Coloque um título (obrigatório)</p>
+              <p>{t('Coloque um título (obrigatório)')}</p>
               <input
                 type="text"
-                placeholder="Escreva aqui..."
+                placeholder={t('Escreva aqui...')}
                 value={tituloPublicacao}
                 onChange={(e) => setTituloPublicacao(e.target.value)}
                 className="forum-input-titulo"
@@ -1023,9 +1033,9 @@ function Forum() {
 
             {/* Texto */}
             <div className="forum-texto-container">
-              <p>Coloque o seu texto</p>
+              <p>{t('Coloque o seu texto')}</p>
               <textarea
-                placeholder="Escreva aqui..."
+                placeholder={t('Escreva aqui...')}
                 value={conteudoPublicacao}
                 onChange={(e) => setConteudoPublicacao(e.target.value)}
                 maxLength={1000}
@@ -1041,7 +1051,7 @@ function Forum() {
                 onClick={handleResetFormulario}
                 type="button"
               >
-                Cancelar
+                {t('Cancelar')}
               </button>
               <button
                 className="forum-botao-enviar"
@@ -1049,7 +1059,7 @@ function Forum() {
                 disabled={!formularioValido || enviandoPublicacao}
                 type="button"
               >
-                {enviandoPublicacao ? 'Publicando...' : 'Enviar'}
+                {enviandoPublicacao ? t('Publicando...') : t('Enviar')}
               </button>
             </div>
           </div>
@@ -1062,7 +1072,7 @@ function Forum() {
       return (
         <div className="forum-criar-comentario-conteudo forum-estado-selecionar">
           <div className="forum-mensagem-selecionar">
-            <h3>Selecione um post para responder</h3>
+            <h3>{t('Selecione um post para responder')}</h3>
           </div>
         </div>
       );
@@ -1073,16 +1083,16 @@ function Forum() {
       return (
         <div className="forum-criar-comentario-conteudo">
           <div className="forum-criar-comentario-styck">
-            <h3>Respondendo {respondendoA.nome}</h3>
+            <h3>{t('Respondendo', { nome: respondendoA.nome })}</h3>
 
             {/* Upload de imagem */}
             {renderUploadSection()}
 
             {/* Texto */}
             <div className="forum-texto-container">
-              <p>Coloque o seu texto</p>
+              <p>{t('Coloque o seu texto')}</p>
               <textarea
-                placeholder="Escreva aqui..."
+                placeholder={t('Escreva aqui...')}
                 value={conteudoPublicacao}
                 onChange={(e) => setConteudoPublicacao(e.target.value)}
                 maxLength={1000}
@@ -1100,14 +1110,14 @@ function Forum() {
                   resetConteudoEImagem();
                 }}
               >
-                Cancelar
+                {t('Cancelar')}
               </button>
               <button
                 className="forum-botao-enviar"
                 onClick={handleEnviarResposta}
                 disabled={!conteudoPublicacao.trim() || enviandoResposta}
               >
-                {enviandoResposta ? 'Enviando...' : 'Enviar'}
+                {enviandoResposta ? t('Enviando...') : t('Enviar')}
               </button>
             </div>
           </div>
@@ -1164,7 +1174,7 @@ function Forum() {
               <div className="forum-pesquisa">
                 <input
                   type="text"
-                  placeholder="Pesquise aqui..."
+                  placeholder={t('Pesquise aqui...')}
                   value={pesquisa}
                   onChange={(e) => setPesquisa(e.target.value)}
                 />
@@ -1192,7 +1202,7 @@ function Forum() {
                       }
                   }
                 >
-                  <span className="forum-tags-titulo">Etiquetas</span>
+                  <span className="forum-tags-titulo">{t('Etiquetas')}</span>
                   <span className="forum-tags-arrow"
                     style={
                       tagsAbertas ?
@@ -1220,7 +1230,7 @@ function Forum() {
                         checked={tagsSelecionadasFiltro.includes(tag)}
                         onChange={() => toggleTagFiltro(tag)}
                       />
-                      <span>{tag}</span>
+                      <span>{getTagLabel(tag)}</span>
                     </label>
                   ))}
                 </div>
@@ -1236,7 +1246,7 @@ function Forum() {
               {carregandoPosts && comentarios.length === 0 ? (
                 <div className="forum-loading">
                   <div className="forum-loading__spinner" role="status" aria-live="polite">
-                    <span className="forum-loading__sr-only">Carregando publicações</span>
+                    <span className="forum-loading__sr-only">{t('Carregando publicações')}</span>
                   </div>
                 </div>
               ) : (
@@ -1255,7 +1265,7 @@ function Forum() {
                   />
 
                   {filteredComentarios.length === 0 && !carregandoPosts && (
-                    <div className="forum-feedback vazio">Nenhuma publicação encontrada.</div>
+                    <div className="forum-feedback vazio">{t('Nenhuma publicação encontrada.')}</div>
                   )}
                 </>
               )}
@@ -1263,7 +1273,7 @@ function Forum() {
               {temMaisPosts && comentarios.length > 0 && (
                 <div className="forum-load-more">
                   <button type="button" onClick={carregarMaisPosts} disabled={carregandoMais}>
-                    {carregandoMais ? 'Carregando...' : 'Carregar mais'}
+                    {carregandoMais ? t('Carregando...') : t('Carregar mais')}
                   </button>
                 </div>
               )}

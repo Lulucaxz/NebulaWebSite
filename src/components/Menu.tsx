@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useTheme } from "../theme/useTheme";
 import { useUnread } from "../unreadContext";
+import { normalizeLanguagePreference, toI18nLanguage } from "../utils/language";
 
 interface User {
   idsite: string;
@@ -15,11 +16,12 @@ interface User {
   provider: string;
   prf_user: string;
   tema?: string;
+  idioma?: string;
   role?: 'aluno' | 'professor';
 }
 
 export function Menu() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const { palette } = useTheme();
@@ -34,8 +36,17 @@ export function Menu() {
       .get("http://localhost:4000/auth/me", { withCredentials: true })
       .then((res) => {
         if (!isMounted) return;
-        setUser(res.data);
+        const userData = res.data;
+        setUser(userData);
         setIsAuthenticated(true);
+
+        const preference = normalizeLanguagePreference(userData?.idioma);
+        const targetLang = toI18nLanguage(preference);
+        if (i18n.language !== targetLang) {
+          i18n.changeLanguage(targetLang).catch((error) => {
+            console.error("Erro ao aplicar idioma do usuário:", error);
+          });
+        }
       })
       .catch(() => {
         if (!isMounted) return;

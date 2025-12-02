@@ -1,8 +1,10 @@
 // ComentarioItem.jsx - Componente atualizado
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Respostas } from "./respostas"
 import "./Comentario.css"
 import type { RespostaData, DestinoResposta } from "../types"
+import { useTranslation } from "react-i18next"
+import { translateForumTag } from "../tagUtils"
 
 interface ComentarioItemProps {
   idComentario: number
@@ -59,6 +61,7 @@ export function ComentarioItem({
   onToggleCurtirResposta,
   foiEditado = false
 }: ComentarioItemProps) {
+  const { t } = useTranslation();
   const [respostas, setRespostas] = useState(arrayRespostas)
   // Sincroniza respostas quando prop mudar (edição salva no pai)
   useEffect(() => {
@@ -114,6 +117,13 @@ export function ComentarioItem({
     opacity: estaAtivo ? 1 : 0
   }
 
+  const translatedTags = useMemo(() => {
+    return tags.map(tag => ({
+      original: tag,
+      label: translateForumTag(tag, t)
+    }));
+  }, [tags, t]);
+
   return (
     <div key={`frm-comentario${idComentario}`} id={`frm-comentario${idComentario}`}>
       <div className="frm-comentario" style={estiloComentario}>
@@ -151,9 +161,14 @@ export function ComentarioItem({
 
         {/* Tags */}
         <div className="frm-comentario-tags">
-          {tags.map((tag, index) => (
-            <span key={index} className="frm-comentario-tag">{tag}</span>
-          ))}
+          {translatedTags.map(({ original, label }, index) => {
+            if (!label?.trim()) {
+              return null;
+            }
+            return (
+              <span key={`${original ?? 'tag'}-${index}`} className="frm-comentario-tag">{label}</span>
+            );
+          })}
         </div>
 
         {/* Título do comentário */}

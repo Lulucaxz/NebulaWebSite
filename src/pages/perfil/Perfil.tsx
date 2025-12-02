@@ -13,6 +13,7 @@ import ModalSeguindo from "./components/ModalSeguindo";
 import ModalAvaliarPlanos from "./components/ModalAvaliarPlanos";
 import i18n from "i18next";
 import { PalettePanel } from "./components/PalettePanel";
+import { LanguagePreference, normalizeLanguagePreference, toI18nLanguage } from "../../utils/language";
 
 type User = {
   username: string;
@@ -50,7 +51,16 @@ function Perfil() {
   const [rank, setRank] = useState<number | null>(null);
   const [fotoUrl, setFotoUrl] = useState(DEFAULT_AVATAR);
   const [bannerUrl, setBannerUrl] = useState(DEFAULT_BANNER);
-  const [idioma, setIdioma] = useState("pt-br");
+  const [idioma, setIdioma] = useState<LanguagePreference>("pt-br");
+
+  const applyLanguagePreference = useCallback((preference: LanguagePreference) => {
+    const normalized = normalizeLanguagePreference(preference);
+    setIdioma(normalized);
+    const targetLang = toI18nLanguage(normalized);
+    if (i18n.language !== targetLang) {
+      i18n.changeLanguage(targetLang);
+    }
+  }, []);
   const [progresso1, setProgresso1] = useState(0);
   const [progresso2, setProgresso2] = useState(0);
   const [progresso3, setProgresso3] = useState(0);
@@ -125,8 +135,8 @@ function Perfil() {
     setRank(Number.isFinite(colocacaoNumerica) ? colocacaoNumerica : null);
   setFotoUrl(userData.icon || DEFAULT_AVATAR);
   setBannerUrl(userData.banner || DEFAULT_BANNER);
-        const idiomaNormalizado = (userData.idioma || "").toLowerCase();
-        setIdioma(idiomaNormalizado === "en-us" ? "en-us" : "pt-br");
+        const idiomaPreferencia = normalizeLanguagePreference(userData.idioma);
+        applyLanguagePreference(idiomaPreferencia);
         setProgresso1(userData.progresso1 || 0);
         setProgresso2(userData.progresso2 || 0);
         setProgresso3(userData.progresso3 || 0);
@@ -137,7 +147,7 @@ function Perfil() {
         console.error("Erro ao buscar usuário:", err);
         navigate("/cadastrar");
       });
-  }, [navigate]);
+  }, [navigate, applyLanguagePreference]);
 
   useEffect(() => {
     if (usuario) {
@@ -284,9 +294,20 @@ function Perfil() {
     }
   };
 
-  const handleLanguageChange = (language: string) => {
-    i18n.changeLanguage(language);
-    setIdioma(language);
+  const handleLanguageChange = async (language: LanguagePreference) => {
+    const normalized = normalizeLanguagePreference(language);
+    applyLanguagePreference(normalized);
+
+    try {
+      const formData = new FormData();
+      formData.append("idioma", normalized);
+      await axios.put("http://localhost:4000/auth/update", formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar idioma:", error);
+    }
   };
 
   const handleBannerReset = () => {
@@ -378,7 +399,9 @@ function Perfil() {
                         id="idioma-ptbr"
                         value="pt-br"
                         checked={idioma === "pt-br"}
-                        onChange={() => handleLanguageChange("pt-br")}
+                        onChange={() => {
+                          void handleLanguageChange("pt-br");
+                        }}
                       />
                       <span className="prf-option-text">
                         {t("perfil.languagePtBr")}
@@ -392,7 +415,9 @@ function Perfil() {
                         id="idioma-en"
                         value="en-us"
                         checked={idioma === "en-us"}
-                        onChange={() => handleLanguageChange("en-us")}
+                        onChange={() => {
+                          void handleLanguageChange("en-us");
+                        }}
                       />
                       <span className="prf-option-text">{t("perfil.languageEnUs")}</span>
                     </label>
