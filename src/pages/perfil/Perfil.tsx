@@ -13,6 +13,7 @@ import ModalSeguindo from "./components/ModalSeguindo";
 import ModalAvaliarPlanos from "./components/ModalAvaliarPlanos";
 import i18n from "i18next";
 import { PalettePanel } from "./components/PalettePanel";
+import { emitAuthLogout } from "../../utils/authEvents";
 
 type User = {
   username: string;
@@ -278,6 +279,7 @@ function Perfil() {
   const logout = async () => {
     try {
       await axios.get(`http://localhost:4000/auth/logout`);
+      emitAuthLogout();
       navigate("/");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
