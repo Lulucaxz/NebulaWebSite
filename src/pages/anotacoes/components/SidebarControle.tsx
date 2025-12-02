@@ -10,9 +10,17 @@ type SidebarControleProps = {
   onEnviar?: (anotacaoSalva: Anotacao) => void;
   editando?: { anotacao: Anotacao, colIdx: number, idx: number } | null;
   onCancelarEdicao?: () => void;
+  isVisible?: boolean;
+  isMobileView?: boolean;
 };
 
-function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarControleProps) {
+function SidebarControle({
+  onEnviar,
+  editando,
+  onCancelarEdicao,
+  isVisible = true,
+  isMobileView = false,
+}: SidebarControleProps) {
   const [blocoSelecionado, setBlocoSelecionado] = useState<number | null>(null);
   const [texto, setTexto] = useState<string>("");
   const [enviando, setEnviando] = useState(false);
@@ -159,7 +167,11 @@ function SidebarControle({ onEnviar, editando, onCancelarEdicao }: SidebarContro
   };
   
   return (
-    <div id="sdbc-container">
+    <div
+      id="sdbc-container"
+      className={!isVisible ? "sdbc-hidden" : undefined}
+      aria-hidden={isMobileView && !isVisible}
+    >
       <div id="sdbc-container2">
         <div className="sdbc-partes">
           <span className="controle-titulo">{editando ? "Editando" : "Crie sua anotação aqui"}</span>

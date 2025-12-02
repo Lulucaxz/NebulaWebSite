@@ -162,7 +162,7 @@
     top: calc(env(safe-area-inset-top, 0px) + 25px);
     left: 25px;
     border-radius: 50%;
-    z-index: 9999999999;
+    z-index: 10;
     transition: background-color 0.2s ease;
   }
 
@@ -186,7 +186,7 @@
 
   .menu-barra-lateral {
     transform: translateX(-110%);
-    z-index: 999999999;
+    z-index: 5;
     width: 100%;
     padding-top: 100px;
     box-sizing: border-box;

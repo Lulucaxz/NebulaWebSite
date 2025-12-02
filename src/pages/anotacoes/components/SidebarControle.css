@@ -4,7 +4,7 @@
     font-family: 'Questrial', sans-serif;
     font-size: 16px;
     height: 100vh;
-    width: 400px;
+    width: min(100vw, 400px);
     position: fixed;
     right: 0;
     top: 0;
@@ -12,6 +12,11 @@
     color: var(--cinza-claro2);
     display: flex;
     justify-content: center;
+    z-index: 6;
+}
+
+#sdbc-container.sdbc-hidden {
+    display: none;
 }
 
 #sdbc-container2 { 
@@ -163,4 +168,21 @@
 #sdbc-botao-enviar:hover {
     background-color: var(--branco);
     color: var(--roxo1);
+}
+
+@media (max-width: 768px) {
+    #sdbc-container {
+        width: calc(100% - 150px);
+    }
+}
+
+@media (max-width: 425px) {
+    #sdbc-container {
+        width:100%;
+        padding-top: 80px;
+
+        .controle-titulo {
+            padding: 10px;
+        }
+    }
 }
