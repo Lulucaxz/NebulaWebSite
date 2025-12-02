@@ -23,14 +23,14 @@
 }
 
 .modulo-item-locked {
-    color: #C8C8C8;
-    background-color: rgba(0,0,0,0.35);
+    color: var(--text-muted);
+    background-color: color-mix(in srgb, var(--surface-page) 85%, transparent);
     cursor: not-allowed;
 }
 
 .modulo-item-locked:hover {
-    background-color: #2C2C2C !important;
-    color: #C8C8C8;
+    background-color: var(--surface-panel) !important;
+    color: var(--text-muted);
     cursor: not-allowed;
 }
 

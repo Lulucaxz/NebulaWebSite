@@ -75,23 +75,23 @@
 }
 
 .menu-icones.claro {
-  color: var(--text-primary);
+  color: var(--palette-base);
 }
 
 .menu-icones.claro svg {
-  color: var(--primary-500);
+  color: inherit;
   fill: currentColor;
 }
 
 .menu-icones.claro:hover {
-  background-color: var(--text-primary);
+  background-color: var(--palette-base);
   cursor: pointer;
-  color: var(--primary-500);
+  color: var(--primary-600);
 }
 
 .menu-icones.claro.active {
-  background-color: var(--text-primary);
-  color: var(--primary-500);
+  background-color: var(--palette-base);
+  color: var(--primary-600);
 }
 
 .menu-badge {

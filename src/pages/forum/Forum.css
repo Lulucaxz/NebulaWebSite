@@ -17,13 +17,14 @@
   --forum-text-subtle: color-mix(in srgb, var(--text-muted) 60%, var(--text-primary) 40%);
   --forum-text-muted: color-mix(in srgb, var(--forum-text-soft) 70%, var(--text-primary) 30%);
   --forum-accent-soft: color-mix(in srgb, var(--primary-500) 65%, var(--text-primary) 35%);
-  --forum-accent-strong: #8a27d6;
+  --forum-accent-strong: color-mix(in srgb, var(--primary-500) 90%, var(--text-primary) 10%);
   --forum-scroll-thumb: color-mix(in srgb, var(--text-primary) 30%, transparent);
-  --forum-tag-duvida-bg: #4A2E5D;
-  --forum-tag-duvida-text: #E1C9FF;
-  --forum-tag-universo-bg: #6A2573;
-  --forum-tag-observacao-bg: #BCA0EA;
-  --forum-tag-observacao-text: #3A2D4C;
+  --forum-tag-duvida-bg: color-mix(in srgb, var(--primary-500) 70%, var(--surface-panel) 30%);
+  --forum-tag-duvida-text: var(--text-primary);
+  --forum-tag-universo-bg: color-mix(in srgb, var(--primary-500) 55%, var(--surface-raised) 45%);
+  --forum-tag-universo-text: var(--text-primary);
+  --forum-tag-observacao-bg: color-mix(in srgb, var(--surface-muted) 70%, var(--primary-500) 30%);
+  --forum-tag-observacao-text: var(--text-primary);
 }
 
 /* Layout Principal */

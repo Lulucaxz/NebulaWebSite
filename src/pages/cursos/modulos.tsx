@@ -307,10 +307,12 @@ function Modulos() {
                 }}>
                   <div className="carrocel-atividades-card-fundo">
                     <div className="carrocel-atividades-card-cima" style={{
-                      backgroundColor: atividade.terminado ? '#6B11B1' : '#323232'
+                      backgroundColor: atividade.terminado ? 'var(--primary-600)' : 'var(--surface-page)'
                     }}></div>
                     <div className="carrocel-atividades-card-baixo" style={{
-                      backgroundColor: atividade.terminado ? '#C9BDD3' : '#222222'
+                      backgroundColor: atividade.terminado
+                        ? 'color-mix(in srgb, var(--primary-500) 25%, var(--palette-contrast) 75%)'
+                        : 'var(--surface-panel)'
                     }}></div>
                   </div>
                     <div className="carrocel-atividades-card">
@@ -322,11 +324,11 @@ function Modulos() {
                     </div>
 
                     <Link to={`/modulos/${assinaturaSlug}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
-                      backgroundColor: atividade.terminado ? 'var(--text-primary)' : '#323232',
+                      backgroundColor: atividade.terminado ? 'var(--text-primary)' : 'var(--surface-page)',
                       cursor: 'pointer'
                     }}>
                       <div className="carrocel-atividades-card-butao" style={{
-                        color: atividade.terminado ? '#323232' : '#ffffff',
+                        color: atividade.terminado ? 'var(--palette-base)' : 'var(--text-on-primary)',
                       }}>ABRIR ATIVIDADE {index + 1}</div>
                     </Link>
                   </div>

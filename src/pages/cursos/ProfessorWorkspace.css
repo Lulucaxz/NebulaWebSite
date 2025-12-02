@@ -80,8 +80,8 @@
 
 .professor-danger {
   background-color: transparent;
-  border: 1px solid #ff5f5f;
-  color: #ff5f5f;
+  border: 1px solid var(--status-error-strong);
+  color: var(--status-error-strong);
 }
 
 .professor-modulos-grid {

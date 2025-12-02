@@ -2,6 +2,7 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState }
 import type { AxiosError } from "axios";
 import "./PalettePanel.css";
 import { useTheme } from "../../../theme/useTheme";
+import { DEFAULT_THEME_PALETTE } from "../../../theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
 interface PalettePanelProps {
@@ -185,7 +186,11 @@ export function PalettePanel({ onClose, onCommit }: PalettePanelProps) {
       return toneDiff <= TONE_DUPLICATE_EPSILON && item.primary.toLowerCase() === normalizedPrimary;
     });
 
-    if (paletteAlreadyExists) {
+    const matchesDefaultPalette =
+      Math.abs(DEFAULT_THEME_PALETTE.baseTone - normalizedTone) <= TONE_DUPLICATE_EPSILON &&
+      DEFAULT_THEME_PALETTE.primary.toLowerCase() === normalizedPrimary;
+
+    if (paletteAlreadyExists || matchesDefaultPalette) {
       setError(t("palettePanel.errors.duplicate"));
       return;
     }

@@ -251,7 +251,7 @@
     font-size: 20px;
     line-height: 22px;
 
-    color: #FFFFFF;
+    color: var(--text-on-primary);
 }
 
 .carrocel-atividades-card-descricao {
@@ -319,11 +319,11 @@
 }
 
 .questao-feedback.correta {
-    color: #57e38a;
+    color: var(--status-success);
 }
 
 .questao-feedback.incorreta {
-    color: #ff7a7a;
+    color: var(--status-error);
 }
 
 .questao-feedback-detalhe {
@@ -348,21 +348,21 @@
 }
 
 .questao-alternativa:hover {
-    background-color: #636363;
+    background-color: color-mix(in srgb, var(--surface-muted) 65%, var(--surface-panel) 35%);
 }
 
 .questao-alternativa.selecionada {
-    background-color: var(--text-primary);
-    color: #323232;
+    background-color: var(--primary-500);
+    color: var(--text-on-primary);
 }
 
 .questao-alternativa.selecionada .alternativa-letra {
-    background-color: #F1D9FF;
+    background-color: color-mix(in srgb, var(--palette-base) 70%, transparent);
     color: var(--primary-500);
 }
 
 .questao-alternativa.selecionada .alternativa-texto {
-    color: #323232;
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
@@ -438,7 +438,7 @@
 
 .tarefa-sessao-fim-button:hover {
     background-color: var(--text-primary) !important;
-    color: #323232;
+    color: var(--palette-base);
 }
 
 .tarefa-sessao-fim-acoes {
@@ -460,7 +460,7 @@
     margin: 0 0 10px 0;
     font-family: 'Archivo Black';
     font-size: 20px;
-    color: #FFFFFF;
+    color: var(--text-on-primary);
 }
 
 .tarefa-relatorio p {
@@ -482,7 +482,7 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 19px;
-    color: #CFC3D8;
+    color: var(--status-neutral);
     letter-spacing: 0.5px;
 }
 
@@ -490,9 +490,18 @@
 
 /* Keyframes para as animações de "piscar" */
 @keyframes pulse-green {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-    70% { transform: scale(1.01); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-success-strong) 70%, transparent);
+    }
+    70% {
+        transform: scale(1.01);
+        box-shadow: 0 0 0 10px color-mix(in srgb, var(--status-success-strong) 0%, transparent);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 transparent;
+    }
 }
 
 @keyframes shake-red {
@@ -505,13 +514,13 @@
 
 /* Estado CORRETO (pisca verde) */
 .questao-alternativa.correta {
-    background-color: #28a745; /* Verde de fundo */
-    border: 2px solid #d4edda;
+    background-color: var(--status-success-strong);
+    border: 2px solid var(--status-success-muted);
     animation: pulse-green 1s ease-in-out;
 }
 .questao-alternativa.correta .alternativa-letra {
     background-color: var(--text-primary);
-    color: #28a745; /* Letra verde */
+    color: var(--status-success-strong);
 }
 .questao-alternativa.correta .alternativa-texto {
     color: var(--text-primary);
@@ -520,13 +529,13 @@
 
 /* Estado INCORRETO (pisca vermelho) */
 .questao-alternativa.incorreta {
-    background-color: #dc3545; /* Vermelho de fundo */
-    border: 2px solid #f8d7da;
+    background-color: var(--status-error-strong);
+    border: 2px solid var(--status-error-muted);
     animation: shake-red 0.5s ease;
 }
 .questao-alternativa.incorreta .alternativa-letra {
     background-color: var(--text-primary);
-    color: #dc3545; /* Letra vermelha */
+    color: var(--status-error-strong);
 }
 .questao-alternativa.incorreta .alternativa-texto {
     color: var(--text-primary);
@@ -535,12 +544,14 @@
 
 .questao-alternativa.selecionada {
     background-color: var(--primary-500);
+    color: var(--text-on-primary);
 }
 .questao-alternativa.selecionada .alternativa-letra {
-    background-color: var(--text-primary);
+    background-color: color-mix(in srgb, var(--palette-base) 70%, transparent);
     color: var(--primary-500);
 }
 .questao-alternativa.selecionada .alternativa-texto {
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
@@ -559,17 +570,17 @@
 
 /* Não aplicar hover se a resposta já foi dada */
 .questao-alternativa.correta:hover {
-    background-color: #28a745; /* Mantém o verde */
+    background-color: var(--status-success-strong);
 }
 .questao-alternativa.incorreta:hover {
-    background-color: #dc3545; /* Mantém o vermelho */
+    background-color: var(--status-error-strong);
 }
 
 .questao-alternativa.correta:hover .alternativa-letra {
     background-color: var(--text-primary);
-    color: #28a745;
+    color: var(--status-success-strong);
 }
 .questao-alternativa.incorreta:hover .alternativa-letra {
     background-color: var(--text-primary);
-    color: #dc3545;
+    color: var(--status-error-strong);
 }

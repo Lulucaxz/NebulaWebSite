@@ -148,24 +148,35 @@ const applyStatusColors = (tone: number, root: HTMLElement) => {
   });
 };
 
-const defaultPalette: ThemePalette = {
+export const DEFAULT_THEME_PALETTE: ThemePalette = {
   base: DEFAULT_BASE,
   baseTone: DEFAULT_BASE_TONE,
   primary: DEFAULT_PRIMARY,
   source: "local",
 };
 
+const clearStoredPalette = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // ignore storage failures
+  }
+};
+
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 const readStoredPalette = (): ThemePalette => {
   if (typeof window === "undefined") {
-    return { ...defaultPalette };
+    return { ...DEFAULT_THEME_PALETTE };
   }
 
   try {
     const serialized = window.localStorage.getItem(STORAGE_KEY);
     if (!serialized) {
-      return { ...defaultPalette };
+      return { ...DEFAULT_THEME_PALETTE };
     }
     const parsed = JSON.parse(serialized) as Partial<ThemePalette> & { baseTone?: number };
     const base: ThemeBase = parsed.base === "branco" ? "branco" : "preto";
@@ -173,7 +184,7 @@ const readStoredPalette = (): ThemePalette => {
     const primary = normalizeHex(parsed.primary || DEFAULT_PRIMARY);
     return { base, baseTone, primary, source: "local" };
   } catch {
-    return { ...defaultPalette };
+    return { ...DEFAULT_THEME_PALETTE };
   }
 };
 
@@ -194,10 +205,13 @@ const applyPaletteToDocument = (palette: ThemePalette) => {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   const tone = clamp01(typeof palette.baseTone === "number" ? palette.baseTone : palette.base === "branco" ? 1 : 0);
+  const baseColor = toneToBaseColor(tone);
+  const contrastColor = contrastFromTone(tone);
   root.dataset.base = palette.base;
   root.style.setProperty("--primary-500", palette.primary);
-  root.style.setProperty("--palette-base", toneToBaseColor(tone));
-  root.style.setProperty("--palette-contrast", contrastFromTone(tone));
+  root.style.setProperty("--palette-base", baseColor);
+  root.style.setProperty("--palette-contrast", contrastColor);
+  root.style.setProperty("--text-on-primary", tone >= 0.5 ? baseColor : contrastColor);
   applyNeutralScale(tone, root);
   applyStatusColors(tone, root);
 };
@@ -209,12 +223,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const applyDefaultPalette = useCallback(() => {
-    setPalette(() => ({ ...defaultPalette }));
+    setPalette(() => ({ ...DEFAULT_THEME_PALETTE }));
   }, []);
 
   const resetPaletteState = useCallback(() => {
     setPalettes([]);
     setActivePaletteId(null);
+    clearStoredPalette();
     applyDefaultPalette();
     setLoading(false);
   }, [applyDefaultPalette]);

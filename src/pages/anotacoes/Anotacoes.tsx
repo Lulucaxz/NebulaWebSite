@@ -251,12 +251,24 @@ function Anotacoes2() {
                   cursor: 'pointer',
                   marginRight: "10px",
                   outline: 'none',
-                  borderColor: 'var(--roxo1)'
+                  borderColor: 'var(--roxo1)',
+                  color: 'var(--text-on-primary)'
                 }}
                 aria-label={t("anotacoes.confirmDelete.skipAria")}
               >
                 {skipDeleteConfirm && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                 )}
               </button>
               <span style={{ fontSize: "16px", color: 'var(--branco)', fontFamily: '"Questrial", sans-serif' }}>

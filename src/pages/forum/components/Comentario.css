@@ -93,6 +93,7 @@
 
 .frm-comentario-tag:nth-child(2) {
     background-color: var(--forum-tag-universo-bg);
+    color: var(--forum-tag-universo-text);
 }
 
 .frm-comentario-tag:nth-child(3) {
