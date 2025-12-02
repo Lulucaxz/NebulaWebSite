@@ -67,7 +67,7 @@
 
 
 .container-carrossel::-webkit-scrollbar {
-    height: 25px;
+    width: 10px;
 }
 
 .container-carrossel::-webkit-scrollbar-thumb:hover {
@@ -75,13 +75,11 @@
 }
 
 .container-carrossel::-webkit-scrollbar-track {
-    background: var(--surface-panel);
-    border-radius: 20px;
+    background: var(--surface-raised);
 }
 
 .container-carrossel::-webkit-scrollbar-thumb {
-    background-color: var(--roxo1);
-    border-radius: 20px;
+    background-color: var(--primary-500);
 }
 
 
