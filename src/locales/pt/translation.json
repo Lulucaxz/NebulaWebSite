@@ -357,8 +357,10 @@
   "AVALIAÇÕES": "AVALIAÇÕES",
   
   "_LOGIN_PAGE": "=== PÁGINA DE LOGIN ===",
-  "Bem-vindo, {name}!": "Bem-vindo, {name}!",
-  "Você está logado com o email: {email}": "Você está logado com o email: {email}",
+  "login": {
+    "welcome": "Bem-vindo, {{name}}!",
+    "loggedWithEmail": "Você está logado com o email: {{email}}"
+  },
   "Voltar": "Voltar",
   "Criar conta": "Criar conta",
   "Email": "Email",

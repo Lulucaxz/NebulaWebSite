@@ -3,9 +3,32 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { showAlert } from '../../Alert';
+import { emitAuthLogin } from '../../utils/authEvents';
 
 axios.defaults.withCredentials = true;
 const API_URL = "http://localhost:4000";
+
+type AuthenticatedUser = {
+  displayName: string;
+  email: string;
+  [key: string]: unknown;
+};
+
+const normalizeAuthenticatedUser = (payload: any): AuthenticatedUser => {
+  const usernameCandidates = [
+    payload?.username,
+    payload?.name,
+    payload?.nome,
+    payload?.user,
+  ];
+  const displayName = usernameCandidates.find((candidate) => typeof candidate === "string" && candidate.trim().length > 0)?.trim() ?? "";
+  const email = typeof payload?.email === "string" ? payload.email : "";
+  return {
+    ...(payload ?? {}),
+    displayName,
+    email,
+  };
+};
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -13,7 +36,7 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<AuthenticatedUser | null>(null);
 
   const handleRegisterClick = () => {
     setIsActive(true);
@@ -38,7 +61,8 @@ const LoginPage: React.FC = () => {
     try {
       await axios.post(`${API_URL}/auth/login`, { email, password }, { withCredentials: true });
       const res = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
-      setUser(res.data);
+      setUser(normalizeAuthenticatedUser(res.data));
+      emitAuthLogin();
     } catch (err: any) {
       showAlert(err.response?.data?.error || "Erro no login");
     }
@@ -52,8 +76,8 @@ const LoginPage: React.FC = () => {
     <div className="login-page">
       {user ? (
         <div className="user-logged-in">
-          <h1>{t('Bem-vindo, {name}!', { name: user.name })}</h1>
-          <p>{t('Você está logado com o email: {email}', { email: user.email })}</p>
+          <h1>{t('login.welcome', { name: user.displayName || t('Usuário') })}</h1>
+          <p>{t('login.loggedWithEmail', { email: user.email || t('Email') })}</p>
           <Link to="/">
                   <button>{t('Voltar')}</button>
             </Link>

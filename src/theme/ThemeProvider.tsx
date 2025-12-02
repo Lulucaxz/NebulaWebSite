@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { API_BASE } from "../api";
+import { onAuthLogin, onAuthLogout } from "../utils/authEvents";
 
 export type ThemeBase = "preto" | "branco";
 
@@ -207,6 +208,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [activePaletteId, setActivePaletteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const applyDefaultPalette = useCallback(() => {
+    setPalette(() => ({ ...defaultPalette }));
+  }, []);
+
+  const resetPaletteState = useCallback(() => {
+    setPalettes([]);
+    setActivePaletteId(null);
+    applyDefaultPalette();
+    setLoading(false);
+  }, [applyDefaultPalette]);
+
   type PalettePayload = {
     palettes: Array<{
       id: number;
@@ -253,9 +265,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           primary: activePalette.primary,
           source: "server",
         });
+      } else {
+        applyDefaultPalette();
       }
     },
-    [mapServerPalette]
+    [applyDefaultPalette, mapServerPalette]
   );
 
   const refreshPalette = useCallback(async () => {
@@ -264,13 +278,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const { data } = await axios.get<PalettePayload>(`${API_BASE}/api/palettes`, {
         withCredentials: true,
       });
-      applyServerPayload(data);
+      if (data) {
+        applyServerPayload(data);
+      } else {
+        applyDefaultPalette();
+      }
     } catch (error) {
-      console.warn("Não foi possível carregar paletas personalizadas", error);
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 401) {
+        resetPaletteState();
+      } else {
+        console.warn("Não foi possível carregar paletas personalizadas", error);
+      }
     } finally {
       setLoading(false);
     }
-  }, [applyServerPayload]);
+  }, [applyDefaultPalette, applyServerPayload, resetPaletteState]);
 
   const setBase = useCallback((base: ThemeBase) => {
     setPalette((prev) => ({ ...prev, base, baseTone: base === "branco" ? 1 : 0 }));
@@ -362,6 +385,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     refreshPalette();
   }, [refreshPalette]);
+
+  useEffect(() => {
+    const unsubscribeLogin = onAuthLogin(() => {
+      void refreshPalette();
+    });
+    const unsubscribeLogout = onAuthLogout(() => {
+      resetPaletteState();
+    });
+
+    return () => {
+      unsubscribeLogin();
+      unsubscribeLogout();
+    };
+  }, [refreshPalette, resetPaletteState]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({

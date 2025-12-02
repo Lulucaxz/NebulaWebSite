@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom'; 
 import Footer from "../../components/footer";
-import { LanguagePreference, normalizeLanguagePreference, toI18nLanguage } from "../../utils/language";
 
 axios.defaults.withCredentials = true; // Importante para sessões
 
@@ -40,6 +39,7 @@ function Configuracoes() {
   const logout = async () => {
     try{
       await axios.get(`${API_URL}/auth/logout`);
+      emitAuthLogout();
       navigate('/');
     }
     catch (error) {
