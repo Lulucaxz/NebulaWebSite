@@ -83,19 +83,19 @@
   "home.plans.description": "Após assistir o vídeo acima e entender como os nossos cursos funcionam, agora você poderá escolher qual o melhor plano para você.",
   "home.plans.benefits.videos": "Vídeo aulas e PDFs",
   "home.plans.benefits.tasks": "Tarefas",
-  "home.plans.benefits.routine": "Planejamento de rotina",
-  "home.plans.benefits.whatsapp": "Grupo no WhatsApp",
-  "home.plans.benefits.mentoring": "Mentorial semanal particular",
+  "home.plans.benefits.routine": "Fórum de dúvidas",
+  "home.plans.benefits.whatsapp": "Chat entre os usuários",
+  "home.plans.benefits.mentoring": "Acesso antecipado a novos módulos",
   "home.plans.benefits.certificate": "Emissão de certificado digital",
   "home.plans.tiers.orbit.name": "Órbita",
   "home.plans.tiers.orbit.description": "Para iniciantes, aborda conceitos básicos de física e astronomia, como o Sistema Solar e leis fundamentais. Ideal para quem está começando sua jornada no universo científico.",
-  "home.plans.tiers.orbit.price": "R$900,99",
+  "home.plans.tiers.orbit.price": "R$79,90",
   "home.plans.tiers.galaxy.name": "Galáxia",
   "home.plans.tiers.galaxy.description": "Explora temas intermediários como leis de Newton, estrelas, galáxias e introdução à relatividade. Perfeito para quem já conhece o básico e quer se aprofundar.",
-  "home.plans.tiers.galaxy.price": "R$990,99",
+  "home.plans.tiers.galaxy.price": "R$129,90",
   "home.plans.tiers.universe.name": "Universo",
   "home.plans.tiers.universe.description": "Plano avançado com conteúdos sobre física quântica, buracos negros, energia escura e cosmologia. Recomendado para quem busca uma formação completa e aprofundada.",
-  "home.plans.tiers.universe.price": "R$1.299,90",
+  "home.plans.tiers.universe.price": "R$179,90",
   "plans": {
     "options": {
       "orbita": {
@@ -112,12 +112,12 @@
       }
     },
     "benefits": {
-      "certificates": "Certificados oficiais de conclusão",
-      "community": "Comunidade exclusiva",
+      "certificates": "Vídeo aulas e PDFs",
+      "community": "Tarefas",
       "forum": "Fórum de dúvidas",
-      "prioritySupport": "Suporte prioritário",
+      "prioritySupport": "Chat entre os usuários",
       "earlyAccess": "Acesso antecipado a novos módulos",
-      "customization": "Customização avançada"
+      "customization": "Emissão de certificado digital"
     },
     "installments": {
       "option": "{{count}}x de {{value}} sem juros"
