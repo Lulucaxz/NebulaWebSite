@@ -49,6 +49,36 @@
   "menu.notifications": "Notifications",
   "menu.newNotifications": "New notifications",
   "menu.home": "Home",
+  "access": {
+    "lockedTitle": "Content locked",
+    "lockedDescription": "The {{page}} page is not included in your current plan.",
+    "currentPlan": "Current plan: {{plan}}",
+    "cta": "View plans",
+    "loading": "Checking your plan...",
+    "lockedMenuTooltip": "Upgrade your plan to access",
+    "pages": {
+      "home": "Home",
+      "perfil": "Profile",
+      "perfil2": "Classic profile",
+      "planos": "Plans",
+      "anotacoes": "Notes",
+      "cursos": "Courses",
+      "modulos": "Modules",
+      "atividades": "Activities",
+      "forum": "Forum",
+      "chat": "Chat",
+      "chatConversation": "Conversations",
+      "notificacoes": "Notifications",
+      "configuracoes": "Settings",
+      "professor": "Professor workspace"
+    },
+    "plans": {
+      "none": "No subscription",
+      "orbita": "Órbita",
+      "galaxia": "Galáxia",
+      "universo": "Universo"
+    }
+  },
   "pts": "pts",
   "home.banner.subtitle": "Welcome to",
   "home.banner.title": "NEBULA",
