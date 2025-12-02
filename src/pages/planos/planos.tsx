@@ -9,30 +9,7 @@ import { API_BASE, fetchWithCredentials } from "../../api";
 import { AssinaturaSlug } from "../../utils/assinaturaAccess";
 import { useUserAssinatura } from "../../hooks/useUserAssinatura";
 
-/* Dependências principais (já devem estar no seu package.json):
-bash
-npm install react react-dom typescript
-npm install @types/react @types/react-dom
 
-Dependências específicas do projeto:
-bash
-# Carrossel e estilos
-npm install react-slick slick-carousel
-npm install @types/react-slick --save-dev
-
-# Componentes estilizados (styled-components)
-npm install styled-components
-npm install @types/styled-components --save-dev
-
-# Fontes (opcional - já está via CDN no seu CSS)
-npm install @fontsource/archivo-black @fontsource/questrial
-
-# Para ambiente de desenvolvimento
-npm install --save-dev @types/node
-npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
-
-npm install react react-dom typescript react-slick slick-carousel styled-components @types/react @types/react-dom @types/react-slick @types/styled-components --save
-*/
 
 interface PlanConfig {
   slug: AssinaturaSlug;
@@ -519,7 +496,7 @@ function Planos() {
                         {plan.benefitsKeys.map((benefitKey, benefitIndex) => {
                           const hasBenefit =
                             (index === 0 && benefitIndex < 2) ||
-                            (index === 1 && benefitIndex < 3) ||
+                            (index === 1 && benefitIndex < 4) ||
                             index === 2;
                           return (
                             <div key={`${plan.slug}-${benefitIndex}`} className="benefit-item">

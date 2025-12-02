@@ -371,9 +371,10 @@ input:focus {
 
 .qrcode-content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   margin: 20px 0;
-  gap: 2.5rem;
+  gap: 1.5rem;
   overflow: hidden;
   transition: all 0.3s ease;
   flex-wrap: wrap;
@@ -382,8 +383,8 @@ input:focus {
 
 .pix-qrcode {
   background-color: var(--text-primary);
-  height: 350px;
-  width: 350px;
+  height: 300px;
+  width: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,11 +395,21 @@ input:focus {
 .pix-key-card {
   white-space: pre-wrap;
   word-break: break-word;
-  height: 350px;
   width: 350px;
-  margin-top: 20px;
-  margin-left: 2.5rem;
+  max-width: 100%;
+  margin: 0;
   text-align: justify;
+}
+
+@media (max-width: 768px) {
+  .qrcode-content {
+    justify-content: center;
+  }
+
+  .pix-qrcode,
+  .pix-key-card {
+    margin: 0 auto;
+  }
 }
 
 .pix-key-title {

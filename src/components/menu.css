@@ -111,6 +111,18 @@
   pointer-events: none;
 }
 
+.menu-icones.locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.menu-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  color: var(--roxo1);
+}
+
 @media screen and (max-width: 425px) {
   .menu-barra-lateral {
     display: none;
