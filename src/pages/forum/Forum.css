@@ -245,6 +245,13 @@
   padding: 30px 50px;
   overflow-y: auto;
   flex: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
 }
 
 /* Sessão da Direita - Criar Comentários */
@@ -720,6 +727,7 @@
     align-items: stretch;
     gap: 15px;
     padding: 15px 20px;
+    max-width: calc(100vw - 150px);
   }
 
   .forum-pesquisa {
@@ -738,6 +746,19 @@
 
   .forum-pesquisa-container {
     padding: 15px;
+    width: 100%;
+    max-width: 425px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    z-index: 3;
+  }
+
+  .forum-pesquisa {
+    width: 100%;
+  }
+
+  .forum-tags-wrapper {
+    width: 100%;
   }
 
   .forum-criar-comentario-conteudo {

@@ -1,14 +1,15 @@
 /* Comentario.css - Estilos atualizados para corresponder à imagem */
 .frm-comentario {
-    width: 800px; /* Ajustado para uma largura mais próxima da imagem */
+    width: min(100%, 820px); /* Ajustado para manter proporção máxima sem ultrapassar o container */
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-self: center;
     padding: 0;
-    margin-bottom: 30px;
+    margin: 0 auto 30px;
     transition: all 0.5s;
     border-radius: 0 !important;
+    box-sizing: border-box;
 }
 
 /* Topo do comentário - informações do usuário e botões de ação */
@@ -268,18 +269,22 @@
 }
 
 .ver-respostas-form {
-    width: calc(800px - (50px * 2)); /* Ajustado para a nova largura */
+    width: 100%;
+    max-width: 760px;
     background-color: var(--forum-surface-strong);
     overflow: hidden;
     border-radius: 0 0 10px 10px;
     display: flex;
     justify-self: center;
-    gap: 50px;
-    padding: 50px;
+    gap: clamp(16px, 4vw, 50px);
+    padding: clamp(20px, 5vw, 50px);
+    box-sizing: border-box;
+    margin: 0 auto;
 }
 
 .ver-respostas-form textarea {
-    width: calc(100% - 125px);
+    flex: 1;
+    min-width: 0;
     height: 130px;
     background-color: var(--forum-surface-strong);
     border: 2px solid var(--forum-border-strong);
@@ -302,6 +307,7 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .ver-respostas-form button:hover {

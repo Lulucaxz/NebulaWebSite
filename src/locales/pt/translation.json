@@ -49,6 +49,13 @@
   "menu.notifications": "Notificações",
   "menu.newNotifications": "Novas notificações",
   "menu.home": "Início",
+  "forum": {
+    "toggleComposer": {
+      "open": "Criar nova postagem",
+      "close": "Ocultar formulário",
+      "responding": "Responder publicação"
+    }
+  },
   "footer": {
     "eyebrow": "Nebula Curso",
     "headline": "Aprenda, construa e compartilhe todos os dias.",
