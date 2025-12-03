@@ -20,6 +20,7 @@ import Forum from './pages/forum/forum';
 import Chat from './pages/chat/Chat';
 import ChatConversation from './pages/chat/ChatConversation';
 import Notificacoes from './pages/notificacoes/notificacoes';
+import VideoPlayer from './pages/cursos/VideoPlayer';
 
 function App() {
   return (
@@ -60,6 +61,11 @@ function App() {
             <Route path="/modulos/:assinatura/:moduloId/atividades/:atividadeInd" element={
               <ProtectedRoute page="atividades">
                 <Atividades />
+              </ProtectedRoute>
+            } />
+            <Route path="/video-player" element={
+              <ProtectedRoute page="modulos">
+                <VideoPlayer />
               </ProtectedRoute>
             } />
             <Route path="/forum" element={
