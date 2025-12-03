@@ -53,14 +53,9 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
       const payload = await response.json().catch(() => null);
 
       if (!response.ok || !payload) {
-<<<<<<< HEAD
-        throw new Error((payload as { error?: string } | null)?.error || t("perfil.reviewModal.error.submit"));
-=======
         throw new Error(
-          (payload as { error?: string } | null)?.error ||
-            "Não foi possível enviar sua avaliação agora."
+          (payload as { error?: string } | null)?.error || t("perfil.reviewModal.error.submit")
         );
->>>>>>> origin/responsividade-perfil
       }
 
       const avaliacaoCriada = payload as AvaliacaoCard;
@@ -76,14 +71,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
         onClose();
       }, 2000);
     } catch (error) {
-<<<<<<< HEAD
       const message = error instanceof Error ? error.message : t("perfil.reviewModal.error.unexpected");
-=======
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Erro inesperado ao enviar sua avaliação.";
->>>>>>> origin/responsividade-perfil
       setMensagemErro(message);
     } finally {
       setSubmitting(false);
@@ -97,18 +85,7 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
           {t("perfil.reviewModal.title")}
         </span>
         <span style={{ color: "var(--cinza-claro1)", fontSize: "16px" }}>
-<<<<<<< HEAD
           {t("perfil.reviewModal.description")}
-=======
-          Aqui no nosso curso de astronomia, acreditamos que aprender vai além
-          das aulas — é também sobre ouvir quem está do outro lado da tela:
-          você!
-          <br />
-          <br /> Sua avaliação nos ajuda a melhorar, entender o que está
-          funcionando e ajustar aquilo que pode ser ainda melhor. Se você curtiu
-          as aulas, os materiais, o suporte ou teve qualquer experiência
-          marcante durante o curso, conta pra gente!
->>>>>>> origin/responsividade-perfil
         </span>
         <span style={{ fontSize: "20px", color: "var(--branco)" }}>
           {t("perfil.reviewModal.ratingPrompt")}
@@ -150,15 +127,6 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             onChange={handleFeedbackChange}
           />
         </div>
-<<<<<<< HEAD
-        {mensagemErro && (
-          <span style={{ color: "var(--status-error)", fontSize: "14px" }}>{mensagemErro}</span>
-        )}
-        {mensagemSucesso && (
-          <span style={{ color: "var(--roxo1)", fontSize: "14px" }}>{mensagemSucesso}</span>
-        )}
-=======
->>>>>>> origin/responsividade-perfil
         <div
           className="modal-actions"
           style={{ display: "flex", justifyContent: "end", gap: "25px" }}

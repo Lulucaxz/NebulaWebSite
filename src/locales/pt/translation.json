@@ -64,6 +64,7 @@
       "anotacoes": "Anotações",
       "cursos": "Cursos",
       "modulos": "Módulos",
+      "videoPlayer": "Reprodutor de vídeo",
       "atividades": "Atividades",
       "forum": "Fórum",
       "chat": "Chat",
@@ -126,6 +127,12 @@
   "home.plans.tiers.universe.name": "Universo",
   "home.plans.tiers.universe.description": "Plano avançado com conteúdos sobre física quântica, buracos negros, energia escura e cosmologia. Recomendado para quem busca uma formação completa e aprofundada.",
   "home.plans.tiers.universe.price": "R$179,90",
+  "videoPlayer": {
+    "loading": "Verificando seu acesso...",
+    "loginRequiredTitle": "Faça login para continuar",
+    "loginRequiredDescription": "Entre na sua conta para desbloquear este vídeo.",
+    "loginRequiredCta": "Ir para login"
+  },
   "plans": {
     "options": {
       "orbita": {

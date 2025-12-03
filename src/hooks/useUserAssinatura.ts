@@ -7,6 +7,7 @@ interface UseUserAssinaturaResult {
   isLoading: boolean;
   error: string | null;
   refresh: () => void;
+  isAuthenticated: boolean;
 }
 
 const UserAssinaturaContext = createContext<UseUserAssinaturaResult | undefined>(undefined);
@@ -15,6 +16,7 @@ const useProvideUserAssinatura = (): UseUserAssinaturaResult => {
   const [planSlug, setPlanSlug] = useState<AssinaturaSlug | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const isMountedRef = useRef(true);
 
   const loadPlan = useCallback(async () => {
@@ -33,6 +35,7 @@ const useProvideUserAssinatura = (): UseUserAssinaturaResult => {
           return;
         }
         setPlanSlug(null);
+        setIsAuthenticated(false);
         return;
       }
 
@@ -50,6 +53,7 @@ const useProvideUserAssinatura = (): UseUserAssinaturaResult => {
       }
 
       setPlanSlug(normalized);
+      setIsAuthenticated(true);
     } catch (err) {
       console.error('[Cursos] Erro ao carregar assinatura do usuário', err);
       if (!isMountedRef.current) {
@@ -57,6 +61,7 @@ const useProvideUserAssinatura = (): UseUserAssinaturaResult => {
       }
       setPlanSlug(null);
       setError('Não foi possível carregar sua assinatura no momento.');
+      setIsAuthenticated(false);
     } finally {
       if (isMountedRef.current) {
         setIsLoading(false);
@@ -75,7 +80,7 @@ const useProvideUserAssinatura = (): UseUserAssinaturaResult => {
   const refresh = useCallback(() => {
     void loadPlan();
   }, [loadPlan]);
-  return { planSlug, isLoading, error, refresh };
+  return { planSlug, isLoading, error, refresh, isAuthenticated };
 };
 
 export const UserAssinaturaProvider = ({ children }: { children: ReactNode }) => {

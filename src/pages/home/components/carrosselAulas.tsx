@@ -3,60 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_BASE, fetchWithCredentials } from "../../../api";
-
-interface CarouselVideo {
-  key: string;
-  image: string;
-  url?: string;
-  fallbackTitle: string;
-  alwaysUnlocked?: boolean;
-}
-
-const CAROUSEL_VIDEOS: CarouselVideo[] = [
-  {
-    key: "video1",
-    image: "/img/videos/video1.jpg",
-    url: "https://youtu.be/wvZH-IC4G_U",
-    fallbackTitle: "AULA 1",
-    alwaysUnlocked: true,
-  },
-  {
-    key: "video2",
-    image: "/img/videos/video2.jpg",
-    url: "https://youtu.be/zYOeQNq347c",
-    fallbackTitle: "AULA 2",
-  },
-  {
-    key: "video3",
-    image: "/img/videos/video3.jpg",
-    url: "https://youtu.be/TYejsohIFWI",
-    fallbackTitle: "AULA 3",
-  },
-  {
-    key: "video4",
-    image: "/img/videos/video4.jpg",
-    url: "https://youtu.be/H2SlLWFlnCU",
-    fallbackTitle: "AULA 4",
-  },
-  {
-    key: "video5",
-    image: "/img/videos/video5.jpg",
-    url: "https://youtu.be/QqwPbX5HRTY",
-    fallbackTitle: "AULA 5",
-  },
-  {
-    key: "video6",
-    image: "/img/videos/video6.jpg",
-    url: "https://youtu.be/wvZH-IC4G_U",
-    fallbackTitle: "AULA 6",
-  },
-  {
-    key: "video7",
-    image: "/img/videos/video7.jpg",
-    url: "https://youtu.be/sfi5eyJqq2k",
-    fallbackTitle: "AULA 7",
-  },
-];
+import { FREE_VIDEO_ENTRIES } from "../../../data/freeVideos";
 
 const buildVideoPlayerLink = ({
   url,
@@ -119,7 +66,7 @@ function CarrosselAulas() {
       </div>
 
       <div className="container-carrossel">
-        {CAROUSEL_VIDEOS.map((video) => {
+        {FREE_VIDEO_ENTRIES.map((video) => {
           const localizedTitle = t(`home.carousel.videos.${video.key}.title`);
           const finalTitle = localizedTitle || video.fallbackTitle;
           const isLocked = !video.url || (!video.alwaysUnlocked && (checkingAuth || !isLogged));

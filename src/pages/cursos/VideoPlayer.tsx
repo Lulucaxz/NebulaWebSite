@@ -1,14 +1,35 @@
 import { useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ReactPlayer from 'react-player';
 import { Menu } from '../../components/Menu';
 import Footer from '../../components/footer';
+import { useUserAssinatura } from '../../hooks/useUserAssinatura';
+import { ALWAYS_AVAILABLE_VIDEO_URLS } from '../../data/freeVideos';
 
 const getParam = (value: string | null, fallback = '') => value?.trim() || fallback;
 
+const LockIcon = () => (
+  <svg
+    width="32"
+    height="32"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path
+      d="M17 9H16V7C16 4.243 13.757 2 11 2C8.243 2 6 4.243 6 7V9H5C3.897 9 3 9.897 3 11V20C3 21.103 3.897 22 5 22H17C18.103 22 19 21.103 19 20V11C19 9.897 18.103 9 17 9ZM8 7C8 5.346 9.346 4 11 4C12.654 4 14 5.346 14 7V9H8V7ZM17 20H5V11H17L17.002 20H17Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export default function VideoPlayer() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [search] = useSearchParams();
+  const { isLoading: authLoading, isAuthenticated } = useUserAssinatura();
 
   const videoUrl = getParam(search.get('url'));
   const title = getParam(search.get('title'), 'Vídeo da aula');
@@ -17,10 +38,49 @@ export default function VideoPlayer() {
   const background = getParam(search.get('background'));
 
   const canPlay = useMemo(() => ReactPlayer.canPlay(videoUrl), [videoUrl]);
+  const isPreviewVideo = Boolean(videoUrl && ALWAYS_AVAILABLE_VIDEO_URLS.has(videoUrl));
+  const waitingAuth = authLoading && !isPreviewVideo;
+  const requiresLogin = !authLoading && !isAuthenticated && !isPreviewVideo;
 
   const goBack = () => {
     navigate(-1);
   };
+
+  if (waitingAuth) {
+    return (
+      <>
+        <Menu />
+        <div className="locked-page locked-page-loading" aria-busy="true">
+          <div className="locked-page-card locked-page-card--loading">
+            <div className="locked-page-icon" aria-hidden="true" />
+            <p>{t('videoPlayer.loading')}</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (requiresLogin) {
+    return (
+      <>
+        <Menu />
+        <div className="locked-page" aria-live="polite">
+          <div className="locked-page-card" role="alert">
+            <div className="locked-page-icon">
+              <LockIcon />
+            </div>
+            <h1>{t('videoPlayer.loginRequiredTitle')}</h1>
+            <p>{t('videoPlayer.loginRequiredDescription')}</p>
+            <Link to="/cadastrar" className="locked-page-cta">
+              {t('videoPlayer.loginRequiredCta')}
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>

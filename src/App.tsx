@@ -66,7 +66,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/video-player" element={
-              <ProtectedRoute page="modulos">
+              <ProtectedRoute page="videoPlayer">
                 <VideoPlayer />
               </ProtectedRoute>
             } />

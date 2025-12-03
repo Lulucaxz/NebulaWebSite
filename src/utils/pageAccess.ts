@@ -10,6 +10,7 @@ export type PageAccessKey =
   | 'anotacoes'
   | 'cursos'
   | 'modulos'
+  | 'videoPlayer'
   | 'atividades'
   | 'forum'
   | 'chat'
@@ -28,6 +29,7 @@ const PAGE_ACCESS_MATRIX: Record<PageAccessKey, EffectivePlan[]> = {
   anotacoes: ['orbita', 'galaxia', 'universo'],
   cursos: ['orbita', 'galaxia', 'universo'],
   modulos: ['orbita', 'galaxia', 'universo'],
+  videoPlayer: ['none', 'orbita', 'galaxia', 'universo'],
   atividades: ['orbita', 'galaxia', 'universo'],
   forum: ['galaxia', 'universo'],
   chat: ['galaxia', 'universo'],
@@ -45,6 +47,7 @@ const PAGE_LABEL_KEY: Record<PageAccessKey, string> = {
   anotacoes: 'access.pages.anotacoes',
   cursos: 'access.pages.cursos',
   modulos: 'access.pages.modulos',
+  videoPlayer: 'access.pages.videoPlayer',
   atividades: 'access.pages.atividades',
   forum: 'access.pages.forum',
   chat: 'access.pages.chat',
