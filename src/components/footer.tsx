@@ -30,15 +30,15 @@ const navSections: NavSection[] = [
 const socialLinks = [
   {
     labelKey: "footer.social.instagram",
-    href: "https://www.instagram.com/nebulaacademy",
+    href: "#",
   },
   {
     labelKey: "footer.social.linkedin",
-    href: "https://www.linkedin.com/company/nebulaacademy",
+    href: "#",
   },
   {
     labelKey: "footer.social.youtube",
-    href: "https://www.youtube.com/@nebulaacademy",
+    href: "#",
   },
 ];
 

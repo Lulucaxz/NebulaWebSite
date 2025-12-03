@@ -523,7 +523,6 @@ function Modulos() {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     </>
   );

@@ -194,7 +194,7 @@ export function Rank() {
         <div
           className="prf-header-informacoes"
           style={{
-            backgroundColor: "#481A6B",
+            backgroundColor: "var(--roxo3)",
             padding: "10px 25px",
             fontFamily: "'Questrial', sans-serif",
             fontSize: "20px",

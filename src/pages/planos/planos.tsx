@@ -573,8 +573,6 @@ function Planos() {
             {toastMessage}
           </div>
         )}
-     <Footer />
-
       </div>
     </>
   );

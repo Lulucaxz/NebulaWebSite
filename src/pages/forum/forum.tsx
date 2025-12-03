@@ -1288,7 +1288,6 @@ function Forum() {
 
         {/* Sessão de Baixo - Footer */}
         <div className="forum-sessao-baixo">
-          <Footer />
         </div>
       </div>
     </>

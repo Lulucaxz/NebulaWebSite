@@ -39,7 +39,6 @@ function Cursos() {
           </div>
 
         </div>
-        <Footer />
       </div>
     </>
   );

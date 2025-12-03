@@ -572,7 +572,6 @@ function Atividades() {
                     <span className='tarefa-tentativas'>Tentativas registradas: {tentativasCarregadas ? tentativas : '...'}</span>
                 </div>
             </div>
-            <Footer />
         </div>
         </>
     )
