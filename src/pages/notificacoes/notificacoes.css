@@ -150,15 +150,34 @@
   border-left: 3px solid #5fa8f5;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .notifications-fullscreen {
-    width: 100%;
+    width: calc(100vw - 150px);
     position: relative;
     padding: 20px;
+    margin-left: 150px;
   }
 
   .notification-card {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 425px) {
+  .notifications-fullscreen {
+    width: 100vw;
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .notifications-header {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .notifications-clean {
+    width: 100%;
+    text-align: center;
   }
 }
 
