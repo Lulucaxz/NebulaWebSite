@@ -64,10 +64,7 @@
   
 }
 
-.locked-page-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 32px rgba(124, 77, 255, 0.45);
-}
+
 
 @media (max-width: 640px) {
   .locked-page-card {
