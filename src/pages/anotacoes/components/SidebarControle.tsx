@@ -22,6 +22,7 @@ function SidebarControle({
   isVisible = true,
   isMobileView = false,
 }: SidebarControleProps) {
+  const { t } = useTranslation();
   const [blocoSelecionado, setBlocoSelecionado] = useState<number | null>(null);
   const [texto, setTexto] = useState<string>("");
   const [enviando, setEnviando] = useState(false);
