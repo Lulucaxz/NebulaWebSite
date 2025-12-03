@@ -6,34 +6,38 @@ html {
 }
 
 .container-planos {
-  width: calc(100% - 220px);
-  margin-left: 220px;
+  width: 100%;
+  margin-left: 0;
   position: relative;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .planos-wrapper {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 100px 0;
+  width: calc(100vw - 220px);
+  margin: 0 -40px;
+  padding: clamp(48px, 6vw, 120px) 0 120px;
   color: var(--text-primary);
   background-color: var(--surface-raised);
   min-height: 100vh;
   font-family: "Questrial", sans-serif;
   user-select: none;
-  transform: scale(1.1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 60px;
 }
 
 .plan-carousel {
-  width: calc(100vw - 220px);
-  margin: 0 10px 60px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 60px;
   display: flex;
   justify-content: center;
   position: relative;
-  left: -20px;
+  left: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .plan-carousel .slick-slider {
@@ -94,7 +98,7 @@ html {
 
 .plan-card {
   padding: 25px;
-  height: 400px;
+  min-height: 400px;
   color: var(--text-primary);
   box-shadow: 0 10px 20px color-mix(in srgb, var(--palette-base) 30%, transparent);
   background: var(--primary-500);
@@ -128,12 +132,11 @@ html {
 
 .plan-benefits-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 15px;
   margin-bottom: 60px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: clamp(16px, 2vw, 20px);
   font-family: "Archivo black";
   list-style: none;
 }
@@ -193,13 +196,14 @@ html {
 
 .payment-section {
   width: 100%;
-  max-width: 800px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(16px, 5vw, 40px);
   align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .payment-section-title {
@@ -401,17 +405,6 @@ input:focus {
   text-align: justify;
 }
 
-@media (max-width: 768px) {
-  .qrcode-content {
-    justify-content: center;
-  }
-
-  .pix-qrcode,
-  .pix-key-card {
-    margin: 0 auto;
-  }
-}
-
 .pix-key-title {
   font-family: "Archivo black";
 }
@@ -529,6 +522,126 @@ option:hover {
   }
 }
 
+@media (min-width: 1100px) {
+  .container-planos {
+    width: calc(100% - 220px);
+    margin-left: 220px;
+    padding: 0 40px;
+  }
+
+  .plan-carousel {
+    padding: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .container-planos {
+    padding: 0 16px;
+  }
+
+  .plan-carousel {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .plan-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .planos-wrapper {
+    padding: 48px 0 80px;
+    gap: 40px;
+  }
+
+  .plan-carousel .slick-slider {
+    max-width: 100%;
+  }
+
+  .plan-card {
+    padding: 20px;
+  }
+
+  .plan-card-title {
+    font-size: 1.6rem;
+  }
+
+  .plan-card-description {
+    font-size: 1rem;
+  }
+
+  .plan-benefits-grid {
+    gap: 12px;
+  }
+
+  .payment-section-title {
+    font-size: 1.6rem;
+  }
+
+  .payment-section {
+    padding: 0 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .pay-input,
+  .pay-input-validade,
+  .pay-input-cvv,
+  .payment-select {
+    width: 100%;
+  }
+
+  .qrcode-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pix-qrcode {
+    width: min(260px, 100%);
+    height: min(260px, 100%);
+  }
+
+  .pix-key-card {
+    width: 100%;
+  }
+
+  .btn-pay {
+    font-size: 18px;
+  }
+
+  .slick-center,
+  .slick-slide:not(.slick-center) {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-planos {
+    padding: 0 8px;
+  }
+
+  .plan-card-title {
+    font-size: 1.4rem;
+  }
+
+  .plan-card-price-value {
+    font-size: 2rem;
+  }
+
+  .payment-section-title {
+    font-size: 1.4rem;
+  }
+
+  .payment-method-button {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
 @media screen and (min-width: 1025px) {
   .slick-list {
     margin: 0 -10px !important;
@@ -558,3 +671,49 @@ option:hover {
   }
 }
 
+@media (max-width: 768px) {
+  .planos-wrapper {
+    width: calc(100vw - 150px);
+    margin-left: 135px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .slick-list {   
+    padding: 0 20px !important;
+    margin: 0 -5px !important;
+    overflow: hidden !important;
+  }
+
+  .plan-card {
+    min-height: 450px;
+    box-shadow: none;
+    margin: 0 20px;
+  }
+  
+  #menu-barra-lateral {
+    max-height: 100vh;
+  }
+
+  .pix-qrcode {
+    height: 250px;
+    width: 250px;
+  }
+
+  .payment-content {
+    height: auto !important;
+  }
+
+  .pay-input {
+    width: calc(100% - 20px);
+  }
+}
+
+@media (max-width: 425px) {
+  .planos-wrapper {
+    width: 100vw;
+    margin-left: -8px;
+  }
+}

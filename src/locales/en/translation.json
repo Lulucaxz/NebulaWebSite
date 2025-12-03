@@ -114,9 +114,9 @@
     },
     "plans": {
       "none": "No subscription",
-      "orbita": "Órbita",
-      "galaxia": "Galáxia",
-      "universo": "Universo"
+      "orbita": "Orbit",
+      "galaxia": "Galaxy",
+      "universo": "Universe"
     }
   },
   "pts": "pts",
@@ -204,7 +204,7 @@
   "plans": {
     "options": {
       "orbita": {
-        "name": "ORBITA",
+        "name": "ORBIT",
         "description": "For those starting to explore astronomy."
       },
       "galaxia": {

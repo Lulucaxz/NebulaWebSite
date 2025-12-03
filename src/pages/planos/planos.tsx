@@ -480,7 +480,7 @@ function Planos() {
   };
 
   return (
-    <>
+    <body>
       <Menu />
       <div className="container-planos">
         <div className="planos-wrapper">
@@ -574,7 +574,7 @@ function Planos() {
           </div>
         )}
       </div>
-    </>
+    </body>
   );
 }
 
