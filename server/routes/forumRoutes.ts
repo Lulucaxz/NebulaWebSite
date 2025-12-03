@@ -353,7 +353,7 @@ const mapPostRow = (
   assinatura: row.assinatura,
   dataHora: new Date(row.created_at).toISOString(),
   conteudoComentario: row.conteudo,
-  numeroAvaliacao: postLikeCounts.get(row.id) ?? Number(row.numero_avaliacao ?? 0),
+  numeroAvaliacao: postLikeCounts.get(row.id) ?? 0,
   avaliacaoDoUsuario: row.avaliacao_do_usuario,
   eDoUsuario: Boolean(currentUserId && row.usuario_id && currentUserId === row.usuario_id),
   fotoPerfil: row.foto_perfil,
