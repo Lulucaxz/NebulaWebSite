@@ -56,7 +56,6 @@ export default function VideoPlayer() {
             <p>{t('videoPlayer.loading')}</p>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -77,7 +76,6 @@ export default function VideoPlayer() {
             </Link>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -134,7 +132,6 @@ export default function VideoPlayer() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

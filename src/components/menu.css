@@ -10,11 +10,26 @@
   flex-direction: column;
   justify-content: space-between;
 
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 
   z-index: 2;
   transform: translateX(0);
   transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.menu-barra-lateral::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-barra-lateral::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu-barra-lateral::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--primary-500) 60%, transparent);
+  border-radius: 999px;
 }
 
 .menu-barra-lateral.claro {

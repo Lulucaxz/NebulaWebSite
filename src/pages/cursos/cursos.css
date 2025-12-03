@@ -583,3 +583,56 @@
     background-color: var(--text-primary);
     color: var(--status-error-strong);
 }
+
+
+@media (max-width: 768px) {
+    .cursos-espacamento {
+        padding: 20px 20px 20px 20px;
+    }
+
+    .videos-sessao-card {
+        height: 350px;
+    }
+
+    .carrocel-atividades-card-cont {
+        width: calc(100% / 2);
+        height: 300px;
+    }
+
+    .questao-alternativa {
+        max-width: calc(100vw - 190px);
+    }
+
+    .tarefa-sessao-fim {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 425px) {
+.cursos-espacamento {
+        padding: 15px 15px 15px 15px;
+        width: 100vw;
+    }
+
+    .questao-alternativa {
+        max-width: calc(100vw - 30px);
+    }
+
+    .tarefa-sessao-fim-button {
+        width: calc(100vw - 30px)
+    }
+
+    .container {
+        overflow-x: hidden;
+    }
+
+    .carrocel-atividades-card-cont {
+        width: calc(100% );
+        height: auto;
+    }
+
+    .carrocel-atividades-card-baixo {
+        padding: 10px 0;
+    }
+}

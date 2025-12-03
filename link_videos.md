@@ -1,10 +1,5 @@
 Responsividade
-    pagina inicial
-    perfil
     forum
-    carrinho
-    anotacoes
-
 
 AULA 1 https://youtu.be/wvZH-IC4G_U
 AULA 2 https://youtu.be/zYOeQNq347c
