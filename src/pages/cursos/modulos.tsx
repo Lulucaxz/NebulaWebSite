@@ -307,28 +307,32 @@ function Modulos() {
                 }}>
                   <div className="carrocel-atividades-card-fundo">
                     <div className="carrocel-atividades-card-cima" style={{
-                      backgroundColor: atividade.terminado ? 'var(--primary-600)' : 'var(--surface-page)'
+                      backgroundColor: atividade.terminado ? 'var(--primary-600)' : 'color-mix(in srgb, var(--surface-raised) 97%, var(--palette-contrast) 3%)'
                     }}></div>
                     <div className="carrocel-atividades-card-baixo" style={{
                       backgroundColor: atividade.terminado
-                        ? 'color-mix(in srgb, var(--primary-500) 25%, var(--palette-contrast) 75%)'
-                        : 'var(--surface-panel)'
+                        ? 'color-mix(in srgb, var(--primary-500) 30%, var(--palette-contrast) 70%)'
+                        : 'color-mix(in srgb, var(--surface-page) 92%, var(--palette-contrast) 8%)'
                     }}></div>
                   </div>
                     <div className="carrocel-atividades-card">
                     <div className="carrocel-atividades-card-cima" style={{
-                      backgroundColor: atividade.terminado ? 'var(--primary-500)' : 'var(--surface-muted)'
+                      backgroundColor: atividade.terminado ? 'var(--primary-500)' : 'color-mix(in srgb, var(--surface-raised) 90%, var(--palette-contrast) 10%)'
                     }}>
-                      <div className="carrocel-atividades-card-titulo">{atividade.template?.titulo ?? ''}</div>
-                      <div className="carrocel-atividades-card-descricao">{atividade.template?.descricao ?? ''}</div>
+                      <div className="carrocel-atividades-card-titulo" style={{
+                        color: atividade.terminado ? 'var(--text-on-primary)' : 'var(--text-primary)'
+                      }}>{atividade.template?.titulo ?? ''}</div>
+                      <div className="carrocel-atividades-card-descricao" style={{
+                        color: atividade.terminado ? 'var(--text-on-primary)' : 'var(--text-primary)'
+                      }}>{atividade.template?.descricao ?? ''}</div>
                     </div>
 
                     <Link to={`/modulos/${assinaturaSlug}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
-                      backgroundColor: atividade.terminado ? 'var(--text-primary)' : 'var(--surface-page)',
+                      backgroundColor: atividade.terminado ? 'color-mix(in srgb, var(--primary-500) 15%, var(--palette-contrast) 85%)' : 'color-mix(in srgb, var(--surface-page) 90%, var(--palette-contrast) 10%)',
                       cursor: 'pointer'
                     }}>
                       <div className="carrocel-atividades-card-butao" style={{
-                        color: atividade.terminado ? 'var(--palette-base)' : 'var(--text-on-primary)',
+                        color: atividade.terminado ? 'var(--text-on-primary)' : 'var(--text-primary)'
                       }}>ABRIR ATIVIDADE {index + 1}</div>
                     </Link>
                   </div>
