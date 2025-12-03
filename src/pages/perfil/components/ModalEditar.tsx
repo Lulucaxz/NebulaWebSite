@@ -69,7 +69,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
             className="prf-banner-reset"
             onClick={onBannerReset}
           >
-            {t("USAR BANNER PADRÃO")}
+            {t("Usar banner padrão")}
           </button>
         </div>
 
@@ -85,6 +85,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
               }}
             ></div>
             <div className="prf-editor-foto-info">
+<<<<<<< HEAD
               <span style={{ fontSize: "20px", color:"var(--branco)" }}>{t("Foto de perfil")}</span>
               <span
                 style={{
@@ -93,12 +94,21 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
                 }}
               >
                 {t("perfil.editor.choosePhoto")}
+=======
+              <span className="prf-sfi1">{t("Foto de perfil")}</span>
+              <span className="prf-sfi2">
+                {t("Escolha uma foto de perfil")}
+>>>>>>> origin/responsividade-perfil
               </span>
               <label
                 className="prf-editar-foto-label"
                 htmlFor="prf-editar-foto"
               >
+<<<<<<< HEAD
                 <span>{t("perfil.editor.changePhoto")}</span>
+=======
+                <span className="prf-sfi3" >Alterar foto</span>
+>>>>>>> origin/responsividade-perfil
                 <input
                   hidden
                   id="prf-editar-foto"
@@ -111,6 +121,7 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
             </div>
 
             <div className="prf-editor-nome-info">
+<<<<<<< HEAD
               <span style={{ fontSize: "20px", color:"var(--branco)"}}>{t("perfil.editor.nickname")}</span>
               <span
                 style={{
@@ -119,6 +130,11 @@ const ModalEditar: React.FC<ModalEditarProps> = ({
                 }}
               >
                 {t("perfil.editor.nicknameHint")}
+=======
+              <span className="prf-sni1">{t("Apelido")}</span>
+              <span className="prf-sni2">
+                {t("Escolha seu apelido (usuário não pode ser alterado)")}
+>>>>>>> origin/responsividade-perfil
               </span>
               <input
                 className="prf-editar-nome"

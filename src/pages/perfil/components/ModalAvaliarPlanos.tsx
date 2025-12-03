@@ -41,20 +41,32 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
     setSubmitting(true);
 
     try {
-      const response = await fetchWithCredentials(`${API_BASE}/api/avaliacoes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ estrelas: rating, texto: feedback.trim() }),
-      });
+      const response = await fetchWithCredentials(
+        `${API_BASE}/api/avaliacoes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ estrelas: rating, texto: feedback.trim() }),
+        }
+      );
 
       const payload = await response.json().catch(() => null);
 
       if (!response.ok || !payload) {
+<<<<<<< HEAD
         throw new Error((payload as { error?: string } | null)?.error || t("perfil.reviewModal.error.submit"));
+=======
+        throw new Error(
+          (payload as { error?: string } | null)?.error ||
+            "Não foi possível enviar sua avaliação agora."
+        );
+>>>>>>> origin/responsividade-perfil
       }
 
       const avaliacaoCriada = payload as AvaliacaoCard;
-      window.dispatchEvent(new CustomEvent("nebula-avaliacao-criada", { detail: avaliacaoCriada }));
+      window.dispatchEvent(
+        new CustomEvent("nebula-avaliacao-criada", { detail: avaliacaoCriada })
+      );
 
       setMensagemSucesso(t("perfil.reviewModal.success"));
       setTimeout(() => {
@@ -64,7 +76,14 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
         onClose();
       }, 2000);
     } catch (error) {
+<<<<<<< HEAD
       const message = error instanceof Error ? error.message : t("perfil.reviewModal.error.unexpected");
+=======
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Erro inesperado ao enviar sua avaliação.";
+>>>>>>> origin/responsividade-perfil
       setMensagemErro(message);
     } finally {
       setSubmitting(false);
@@ -78,7 +97,18 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
           {t("perfil.reviewModal.title")}
         </span>
         <span style={{ color: "var(--cinza-claro1)", fontSize: "16px" }}>
+<<<<<<< HEAD
           {t("perfil.reviewModal.description")}
+=======
+          Aqui no nosso curso de astronomia, acreditamos que aprender vai além
+          das aulas — é também sobre ouvir quem está do outro lado da tela:
+          você!
+          <br />
+          <br /> Sua avaliação nos ajuda a melhorar, entender o que está
+          funcionando e ajustar aquilo que pode ser ainda melhor. Se você curtiu
+          as aulas, os materiais, o suporte ou teve qualquer experiência
+          marcante durante o curso, conta pra gente!
+>>>>>>> origin/responsividade-perfil
         </span>
         <span style={{ fontSize: "20px", color: "var(--branco)" }}>
           {t("perfil.reviewModal.ratingPrompt")}
@@ -99,7 +129,17 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             </span>
           ))}
         </div>
-        <div className="prf-avaliar-planos-feedback">
+        <div className="prf-avaliar-planos-feedback" style={{position:"relative"}}>
+          {mensagemErro && (
+            <span style={{ color: "#ff6b6b", position:"absolute", top:"-30px" }}>
+              {mensagemErro}
+            </span>
+          )}
+          {mensagemSucesso && (
+            <span style={{ color: "var(--roxo1)", position:"absolute", top:"-30px" }}>
+              {mensagemSucesso}
+            </span>
+          )}
           <textarea
             className="prf-editar-biografia"
             placeholder={t("perfil.reviewModal.placeholder")}
@@ -110,12 +150,15 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             onChange={handleFeedbackChange}
           />
         </div>
+<<<<<<< HEAD
         {mensagemErro && (
           <span style={{ color: "var(--status-error)", fontSize: "14px" }}>{mensagemErro}</span>
         )}
         {mensagemSucesso && (
           <span style={{ color: "var(--roxo1)", fontSize: "14px" }}>{mensagemSucesso}</span>
         )}
+=======
+>>>>>>> origin/responsividade-perfil
         <div
           className="modal-actions"
           style={{ display: "flex", justifyContent: "end", gap: "25px" }}
@@ -130,7 +173,9 @@ const ModalAvaliarPlanos: React.FC<ModalAvaliarPlanosProps> = ({ onClose }) => {
             className="prf-botao-editar-enviar"
             onClick={handleSubmit}
             disabled={submitting}
-            style={submitting ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
+            style={
+              submitting ? { opacity: 0.7, cursor: "not-allowed" } : undefined
+            }
           >
             {submitting ? t("perfil.reviewModal.sending") : t("perfil.reviewModal.submit")}
           </button>

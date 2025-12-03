@@ -26,11 +26,14 @@ export function Menu() {
   const { t, i18n } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const { palette } = useTheme();
-  const { chatUnreadTotal, notificationsUnreadTotal, refreshUnread, clearAllUnread } = useUnread();
-  const { planSlug, isLoading: planLoading } = useUserAssinatura();
-  const temaClaro = palette.base === "branco";
-  const isProfessor = user?.role === 'professor';
+
+  const [temaClaro, setTemaClaro] = useState(false);
+  const [isNarrowWidth, setIsNarrowWidth] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth <= 425 : false
+  );
+  const [menuAberto, setMenuAberto] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth > 425 : true
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -63,6 +66,7 @@ export function Menu() {
   }, []);
 
   useEffect(() => {
+<<<<<<< HEAD
     if (isAuthenticated) {
       void refreshUnread();
     } else {
@@ -130,6 +134,74 @@ export function Menu() {
   return (
     <div className={menuClassName}>
       <div id="menu-principais-icones">
+=======
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    let wasNarrow = window.innerWidth <= 425;
+
+    const atualizarLargura = () => {
+      const estreito = window.innerWidth <= 425;
+      setIsNarrowWidth(estreito);
+      if (!estreito) {
+        setMenuAberto(true);
+      } else if (!wasNarrow && estreito) {
+        setMenuAberto(false);
+      }
+      wasNarrow = estreito;
+    };
+
+    atualizarLargura();
+    window.addEventListener("resize", atualizarLargura);
+    return () => window.removeEventListener("resize", atualizarLargura);
+  }, []);
+
+  const getMenuItemClass = (isActive: boolean) =>
+    ["menu-icones", temaClaro ? "claro" : "", isActive ? "active" : ""]
+      .filter(Boolean)
+      .join(" ");
+
+  const alternarMenuMobile = () => {
+    if (!isNarrowWidth) {
+      return;
+    }
+    setMenuAberto((prev) => !prev);
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        className={`menu-botao-puxar${isNarrowWidth && menuAberto ? " ativo" : ""}`}
+        onClick={alternarMenuMobile}
+        aria-expanded={isNarrowWidth && menuAberto}
+        aria-controls="menu-barra-lateral"
+        aria-label={
+          isNarrowWidth && menuAberto
+            ? t("Fechar menu")
+            : t("Abrir menu")
+        }
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="var(--branco)"
+        >
+          <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+        </svg>
+      </button>
+
+      <div
+        id="menu-barra-lateral"
+        className={`menu-barra-lateral${isNarrowWidth && menuAberto ? " menu-mobile-open" : ""}`}
+        role="navigation"
+        aria-hidden={isNarrowWidth && !menuAberto}
+      >
+        <div id="menu-principais-icones">
+>>>>>>> origin/responsividade-perfil
         <NavLink
           to="/perfil"
           className={({ isActive }) => getMenuItemClass(isActive, perfilLocked)}
@@ -324,6 +396,7 @@ export function Menu() {
           <span className="texto-barra">{t("menu.home")}</span>
         </NavLink>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

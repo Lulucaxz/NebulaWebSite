@@ -32,6 +32,12 @@ function Anotacoes2() {
   const [confirmDelete, setConfirmDelete] = useState<{ anotacao: Anotacao } | null>(null);
   const [skipDeleteConfirm, setSkipDeleteConfirm] = useState(() => localStorage.getItem('skipDeleteConfirm') === 'true');
   const [carregando, setCarregando] = useState(true); // Estado de loading
+  const [isSidebarNarrow, setIsSidebarNarrow] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false
+  );
+  const [sidebarAberto, setSidebarAberto] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth > 768 : true
+  );
 
   // 4. CARREGAR DADOS DO BACKEND NA INICIALIZAÇÃO
   const carregarAnotacoes = async () => {
@@ -61,6 +67,36 @@ function Anotacoes2() {
   useEffect(() => {
     carregarAnotacoes();
   }, []); // O array vazio [] garante que isso rode só uma vez
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    let wasNarrow = window.innerWidth <= 768;
+
+    const atualizarLargura = () => {
+      const estreito = window.innerWidth <= 768;
+      setIsSidebarNarrow(estreito);
+      if (!estreito) {
+        setSidebarAberto(true);
+      } else if (!wasNarrow && estreito) {
+        setSidebarAberto(false);
+      }
+      wasNarrow = estreito;
+    };
+
+    atualizarLargura();
+    window.addEventListener("resize", atualizarLargura);
+    return () => window.removeEventListener("resize", atualizarLargura);
+  }, []);
+
+  const alternarSidebarMobile = () => {
+    if (!isSidebarNarrow) {
+      return;
+    }
+    setSidebarAberto((prev) => !prev);
+  };
 
   // 5. FUNÇÃO ATUALIZADA (agora recebe a anotação salva do backend)
   const adicionarAnotacao = (anotacaoSalva: Anotacao) => {
@@ -191,6 +227,18 @@ function Anotacoes2() {
   return (
     <>
       <Menu />
+      {isSidebarNarrow && (
+        <button
+          type="button"
+          className={`anotacoes-sidebar-toggle${sidebarAberto ? " ativo" : ""}`}
+          onClick={alternarSidebarMobile}
+          aria-expanded={sidebarAberto}
+          aria-controls="sdbc-container"
+          aria-label={sidebarAberto ? "Fechar painel de anotações" : "Abrir painel de anotações"}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
+        </button>
+      )}
       {carregando ? (
         <div className="anotacoes-loading">
           <div className="anotacoes-loading__spinner" role="status" aria-live="polite">
@@ -211,6 +259,8 @@ function Anotacoes2() {
         onEnviar={adicionarAnotacao} // Passa a função de callback
         editando={editando}
         onCancelarEdicao={handleCancelarEdicao}
+        isVisible={!isSidebarNarrow || sidebarAberto}
+        isMobileView={isSidebarNarrow}
       />
 
       {confirmDelete && (
