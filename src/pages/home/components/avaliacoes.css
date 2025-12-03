@@ -228,9 +228,15 @@
     gap: 5px;
 }
 
-.comentario-avaliacao img {
+.comentario-estrela {
     width: 20px;
     height: 20px;
+    fill: color-mix(in srgb, var(--text-secondary) 80%, transparent);
+    transition: fill 0.2s ease;
+}
+
+.comentario-estrela.filled {
+    fill: var(--primary-500);
 }
 
 .comentario-conteudo {

@@ -3,6 +3,7 @@ import "../../index.css";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useSearchParams, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Menu } from "../../components/Menu";
 import { Rank } from "./components/rank";
 import { BarraDeProgresso } from "./components/barraProgresso";
@@ -38,7 +39,7 @@ type FollowEntry = {
 
 function Perfil2() {
   const [loading, setLoading] = useState(true);
-  const [perfilErro, setPerfilErro] = useState<string | null>(null);
+  const [perfilErroKey, setPerfilErroKey] = useState<string | null>(null);
 
   // Estados dos dados do usuário
   const [nome, setNome] = useState("");
@@ -67,6 +68,7 @@ function Perfil2() {
   const locationState = (location.state as { userTag?: string; userId?: number } | null) || null;
   const userHandleParam = searchParams.get("user") || locationState?.userTag || "";
   const userIdState = locationState?.userId;
+  const { t } = useTranslation();
 
   const fetchFollowData = useCallback(async (handle: string) => {
     if (!handle) {
@@ -104,13 +106,13 @@ function Perfil2() {
 
   useEffect(() => {
     if (!userHandleParam && !userIdState) {
-      setPerfilErro("Selecione um usuário pelo ranking para visualizar o perfil.");
+      setPerfilErroKey("perfil2.errors.selectUser");
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    setPerfilErro(null);
+    setPerfilErroKey(null);
 
     const queryParams: Record<string, string | number> = userHandleParam
       ? { user: userHandleParam }
@@ -141,7 +143,7 @@ function Perfil2() {
       })
       .catch((err) => {
         console.error("Erro ao buscar perfil público:", err);
-        setPerfilErro("Não foi possível carregar o perfil selecionado.");
+        setPerfilErroKey("perfil2.errors.load");
         setLoading(false);
       });
   }, [userHandleParam, userIdState]);
@@ -185,7 +187,7 @@ function Perfil2() {
     ); // Ou um spinner
   }
 
-  if (perfilErro) {
+  if (perfilErroKey) {
     return (
       <div className="container">
         <div className="container-perfil">
@@ -202,7 +204,7 @@ function Perfil2() {
               textAlign: "center",
             }}
           >
-            <p>{perfilErro}</p>
+            <p>{t(perfilErroKey)}</p>
           </div>
         </div>
         <Rank />
@@ -224,7 +226,7 @@ function Perfil2() {
           <div className="prf-usuario-barra">
             <div className="prf-container">
               <div className="prf-informacoes-header">
-                <img className="prf-foto" src={fotoUrl} alt="Foto de perfil" />
+                <img className="prf-foto" src={fotoUrl} alt={t("perfil2.profilePhotoAlt")} />
 
                 <div className="prf-infomacoes">
                   <div className="prf-nome-usuario">
@@ -244,13 +246,13 @@ function Perfil2() {
                   onClick={() => setMostrarSeguidores(true)}
                   style={{ cursor: "pointer" }}
                 >
-                  Seguidores: {seguidoresCount}
+                  {t("perfil2.stats.followers", { count: seguidoresCount })}
                 </span>
                 <span
                   onClick={() => setMostrarSeguindo(true)}
                   style={{ cursor: "pointer" }}
                 >
-                  Seguindo: {seguindoCount}
+                  {t("perfil2.stats.following", { count: seguindoCount })}
                 </span>
               </div>
             </div>
@@ -263,7 +265,7 @@ function Perfil2() {
                 style={{ color: "var(--branco)", minWidth: "300px" }}
               >
                 <span className="prf-titulo-informacoes">
-                  OPÇÕES PARA A CONTA
+                  {t("perfil2.titles.accountOptions")}
                 </span>
                 <div
                   className="prf-btn-config"
@@ -275,23 +277,23 @@ function Perfil2() {
                   }}
                 >
                   {isSelfProfile
-                    ? "Esta é a sua conta"
+                    ? t("perfil2.buttons.self")
                     : seguindoConta
-                      ? "Seguindo"
-                      : "Seguir conta"}
+                      ? t("perfil2.buttons.following")
+                      : t("perfil2.buttons.follow")}
                 </div>
-                <span className="prf-titulo-informacoes">OUTRAS OPÇÕES</span>
+                <span className="prf-titulo-informacoes">{t("perfil2.titles.otherOptions")}</span>
                 <div
                   className="prf-btn-config"
                   onClick={() => setMostrarModalDenunciar(true)}
                   style={{ cursor: "pointer" }}
                 >
-                  Denunciar conta
+                  {t("perfil2.actions.report")}
                 </div>
               </div>
               <hr />
               <div className="prf-coluna2">
-                <span className="prf-titulo-informacoes">BIOGRAFIA</span>
+                <span className="prf-titulo-informacoes">{t("perfil2.titles.biography")}</span>
                 <div
                   className="prf-biografia"
                   style={{
@@ -301,7 +303,7 @@ function Perfil2() {
                 >
                   <span>{biografia}</span>
                 </div>
-                <span className="prf-titulo-informacoes">PROGRESSO</span>
+                <span className="prf-titulo-informacoes">{t("perfil2.titles.progress")}</span>
                 <BarraDeProgresso
                   progresso1={progresso1}
                   progresso2={progresso2}

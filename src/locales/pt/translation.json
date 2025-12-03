@@ -49,6 +49,45 @@
   "menu.notifications": "Notificações",
   "menu.newNotifications": "Novas notificações",
   "menu.home": "Início",
+  "footer": {
+    "eyebrow": "Nebula Curso",
+    "headline": "Aprenda, construa e compartilhe todos os dias.",
+    "description": "Um ecossistema completo com mentorias, fóruns e módulos sob demanda para impulsionar sua carreira em tecnologia.",
+    "navLabel": "Mapa do site",
+    "nav": {
+      "explore": {
+        "title": "Explorar",
+        "links": {
+          "home": "Início",
+          "courses": "Cursos",
+          "plans": "Planos",
+          "community": "Comunidade"
+        }
+      },
+      "experience": {
+        "title": "Experiência",
+        "links": {
+          "liveChat": "Chat ao vivo",
+          "notes": "Anotações",
+          "notifications": "Notificações",
+          "preferences": "Preferências"
+        }
+      }
+    },
+    "social": {
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube"
+    },
+    "contact": {
+      "title": "Contato",
+      "supportHours": "Suporte das 09h às 18h (BRT)"
+    },
+    "bottom": {
+      "rights": "© {{year}} Nebula Curso. Todos os direitos reservados.",
+      "community": "Feito pela comunidade Nebula para a sua evolução."
+    }
+  },
   "access": {
     "lockedTitle": "Conteúdo bloqueado",
     "lockedDescription": "A página {{page}} não faz parte do seu plano atual.",
@@ -109,6 +148,35 @@
   "home.carousel.videos.video5.title": "Relatividade geral",
   "home.carousel.videos.video6.title": "Ondas de Schrödinger",
   "home.carousel.videos.video7.title": "Leis de Kepler",
+  "home.reviews.filters.courses.orbit": "ÓRBITA",
+  "home.reviews.filters.courses.galaxy": "GALÁXIA",
+  "home.reviews.filters.courses.universe": "UNIVERSO",
+  "home.reviews.courseLabel": "Cursa - {{course}}",
+  "home.reviews.loading": "Carregando avaliações...",
+  "home.reviews.error": "Erro ao carregar avaliações.",
+  "modulesPage": {
+    "invalidSubscription": "Assinatura informada não é válida.",
+    "checkingPlan": "Verificando sua assinatura...",
+    "lockedContent": "Este conteúdo é exclusivo do plano {{plan}}.",
+    "status": {
+      "loadingModule": "Carregando módulo...",
+      "notFound": "Módulo não encontrado."
+    },
+    "errors": {
+      "load": "Não foi possível carregar este módulo.",
+      "selected": "Erro ao carregar o módulo selecionado."
+    },
+    "sections": {
+      "introduction": "INTRODUÇÃO",
+      "activities": "ATIVIDADES",
+      "videoLessons": "VÍDEO AULAS"
+    },
+    "cta": {
+      "downloadPdf": "BAIXAR PDF",
+      "downloadPdfAria": "Baixar material em PDF",
+      "openActivity": "ABRIR ATIVIDADE {{index}}"
+    }
+  },
   "home.plans.title": "Encontre o melhor plano para você",
   "home.plans.playAlt": "Iniciar vídeo sobre planos",
   "home.plans.description": "Após assistir o vídeo acima e entender como os nossos cursos funcionam, agora você poderá escolher qual o melhor plano para você.",
@@ -285,6 +353,13 @@
   "perfil.editor.nickname": "Apelido",
   "perfil.editor.nicknameHint": "Escolha seu apelido (usuário não pode ser alterado)",
   "perfil.editor.bioHint": "Altere a sua biografia como quiser",
+  "perfil.rank": {
+    "searchLabel": "Pesquise por outros alunos",
+    "profileColumn": "Perfil",
+    "pointsColumn": "Pontos",
+    "positionColumn": "Posição",
+    "emptyState": "Nenhum usuário encontrado."
+  },
   
   "_HOME_PAGE": "=== PÁGINA INICIAL ===",
   "QUEM SOMOS": "QUEM SOMOS",
@@ -406,6 +481,31 @@
   "perfil.followingModal.followingPhotoAlt": "Foto de quem você segue",
   "perfil.followingModal.unfollow": "Deixar de seguir",
   "perfil.profileNotFound": "Nenhum perfil encontrado.",
+  "perfil2": {
+    "errors": {
+      "selectUser": "Selecione um usuário pelo ranking para visualizar o perfil.",
+      "load": "Não foi possível carregar o perfil selecionado."
+    },
+    "stats": {
+      "followers": "Seguidores: {{count}}",
+      "following": "Seguindo: {{count}}"
+    },
+    "titles": {
+      "accountOptions": "Opções para a conta",
+      "otherOptions": "Outras opções",
+      "biography": "Biografia",
+      "progress": "Progresso"
+    },
+    "buttons": {
+      "self": "Esta é a sua conta",
+      "following": "Seguindo",
+      "follow": "Seguir conta"
+    },
+    "actions": {
+      "report": "Denunciar conta"
+    },
+    "profilePhotoAlt": "Foto de perfil"
+  },
   "perfil.reviewModal.error.noStars": "Selecione uma quantidade de estrelas.",
   "perfil.reviewModal.error.minChars": "Escreva pelo menos 10 caracteres.",
   "perfil.reviewModal.error.submit": "Não foi possível enviar sua avaliação.",
@@ -429,6 +529,21 @@
   "perfil.reportModal.textDescription": "Explique o ocorrido em até 1000 caracteres",
   "perfil.reportModal.placeholder": "Descreva por que este perfil deve ser analisado...",
   "perfil.reportModal.submit": "Enviar denúncia",
+  "notificationsPage": {
+    "title": "Notificações",
+    "clearAll": "Limpar tudo",
+    "clearAllAria": "Limpar notificações",
+    "loading": "Carregando notificações...",
+    "empty": "Nenhuma notificação por aqui.",
+    "loadError": "Não foi possível carregar as notificações.",
+    "clearError": "Não foi possível limpar as notificações.",
+    "source": {
+      "chat": "Chat"
+    },
+    "badge": {
+      "new": "Nova notificação"
+    }
+  },
   
   "_COURSES_PAGE": "=== PÁGINA DE CURSOS ===",
   "CURSO UNIVERSO": "CURSO UNIVERSO",

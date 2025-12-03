@@ -7,6 +7,7 @@ import { API_BASE, fetchWithCredentials } from '../../api';
 import { Link } from "react-router-dom";
 import { useUserAssinatura } from '../../hooks/useUserAssinatura';
 import { ASSINATURA_LABEL_BY_SLUG, hasAccessToAssinatura, normalizeAssinaturaValue } from '../../utils/assinaturaAccess';
+import { useTranslation } from 'react-i18next';
 
 const DEFAULT_VIDEO_FALLBACKS = [
   { title: 'AULA 1', url: 'https://youtu.be/wvZH-IC4G_U' },
@@ -22,6 +23,7 @@ const PDF_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1WDIRkL
 const getVideoFallback = (index: number) => DEFAULT_VIDEO_FALLBACKS[index] ?? DEFAULT_VIDEO_FALLBACKS[0];
 
 function Modulos() {
+  const { t } = useTranslation();
   const params = useParams<{ assinatura: string; moduloId: string }>();
   const navigate = useNavigate();
   const assinaturaParam = params.assinatura ?? '';
@@ -32,14 +34,16 @@ function Modulos() {
   const canAccessCourse = assinaturaSlug ? hasAccessToAssinatura(planSlug, assinaturaSlug) : false;
 
   // Minimal local types for this component to avoid `any` lint errors
+  type TemplateInfo = { titulo?: string; descricao?: string };
   type Video = { id: number; titulo?: string; video?: string; subtitulo?: string; descricao?: string; backgroundImage?: string };
   type Questao = { questao?: string; dissertativa?: boolean; alternativas?: string[]; respostaCorreta?: string };
-  type Atividade = { id: number; template?: { titulo?: string; descricao?: string }; terminado?: boolean; questoes?: Questao[] };
+  type Atividade = { id: number; template?: TemplateInfo; terminado?: boolean; questoes?: Questao[] };
   type ModuloType = {
     id: number;
     introducao: { id: number; descricao: string; videoBackground: string; video: string };
     atividades: Atividade[];
     videoAulas: Video[];
+    template?: TemplateInfo;
   };
 
   const cloneModule = (mod?: ModuloType | null): ModuloType | null => {
@@ -47,6 +51,7 @@ function Modulos() {
     return {
       ...mod,
       introducao: { ...mod.introducao },
+      template: mod.template ? { ...mod.template } : undefined,
       atividades: Array.isArray(mod.atividades)
         ? mod.atividades.map((atividade) => ({
             ...atividade,
@@ -66,7 +71,8 @@ function Modulos() {
   const [baseModule, setBaseModule] = useState<ModuloType | null>(null);
   const [moduloData, setModuloData] = useState<ModuloType | null>(null);
   const [loadingModule, setLoadingModule] = useState(false);
-  const [moduleError, setModuleError] = useState<string | null>(null);
+  const [moduleErrorKey, setModuleErrorKey] = useState<string | null>(null);
+  const [moduleErrorMessage, setModuleErrorMessage] = useState<string | null>(null);
   const [progressSets, setProgressSets] = useState<{ moduleSet: Set<string>; activitySet: Set<string> } | null>(null);
 
   // Matriz para controlar destaque do carrossel
@@ -115,14 +121,16 @@ function Modulos() {
     if (!moduloId) {
       setBaseModule(null);
       setModuloData(null);
-      setModuleError('Módulo não encontrado.');
+      setModuleErrorKey('modulesPage.status.notFound');
+      setModuleErrorMessage(null);
       setLoadingModule(false);
       return;
     }
 
     let active = true;
     setLoadingModule(true);
-    setModuleError(null);
+    setModuleErrorKey(null);
+    setModuleErrorMessage(null);
 
     const loadModule = async () => {
       try {
@@ -132,7 +140,13 @@ function Modulos() {
         if (!res.ok || !data.module) {
           setBaseModule(null);
           setModuloData(null);
-          setModuleError(data.error || 'Não foi possível carregar este módulo.');
+          if (data.error) {
+            setModuleErrorMessage(data.error);
+            setModuleErrorKey(null);
+          } else {
+            setModuleErrorKey('modulesPage.errors.load');
+            setModuleErrorMessage(null);
+          }
           return;
         }
         const normalized = cloneModule(data.module as ModuloType);
@@ -142,7 +156,8 @@ function Modulos() {
         console.error('Erro ao carregar módulo', error);
         setBaseModule(null);
         setModuloData(null);
-        setModuleError('Erro ao carregar o módulo selecionado.');
+        setModuleErrorKey('modulesPage.errors.selected');
+        setModuleErrorMessage(null);
       } finally {
         if (active) {
           setLoadingModule(false);
@@ -212,7 +227,7 @@ function Modulos() {
         <Menu />
         <div className="container">
           <div className="cursos-espacamento">
-            Assinatura informada não é válida.
+            {t('modulesPage.invalidSubscription')}
           </div>
         </div>
         <Footer />
@@ -225,7 +240,7 @@ function Modulos() {
       <>
         <Menu />
         <div className="container">
-          <div className="cursos-espacamento">Verificando sua assinatura...</div>
+          <div className="cursos-espacamento">{t('modulesPage.checkingPlan')}</div>
         </div>
         <Footer />
       </>
@@ -239,7 +254,7 @@ function Modulos() {
         <div className="container">
           <div className="cursos-espacamento">
             <div className="modulos-  ">
-              Este conteúdo é exclusivo do plano {ASSINATURA_LABEL_BY_SLUG[assinaturaSlug]}.
+              {t('modulesPage.lockedContent', { plan: ASSINATURA_LABEL_BY_SLUG[assinaturaSlug] })}
             </div>
           </div>
         </div>
@@ -249,12 +264,13 @@ function Modulos() {
   }
 
   if (!moduloData) {
+    const resolvedModuleError = moduleErrorMessage ?? (moduleErrorKey ? t(moduleErrorKey) : undefined);
     return (
       <>
         <Menu />
         <div className="container">
           <div className="cursos-espacamento">
-            {loadingModule ? 'Carregando módulo...' : (moduleError || 'Módulo não encontrado.')}
+            {loadingModule ? t('modulesPage.status.loadingModule') : (resolvedModuleError ?? t('modulesPage.status.notFound'))}
           </div>
         </div>
         <Footer />
@@ -306,7 +322,7 @@ function Modulos() {
         <div className="cursos-espacamento">
 
           <div className="sessao">
-            <h1>INTRODUÇÃO</h1>
+            <h1>{t('modulesPage.sections.introduction')}</h1>
             <hr />
           </div>
           <p>{m.introducao.descricao}</p>
@@ -335,6 +351,7 @@ function Modulos() {
             className="curso-download"
             role="button"
             tabIndex={0}
+            aria-label={t('modulesPage.cta.downloadPdfAria')}
             onClick={handlePdfDownload}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
@@ -343,11 +360,11 @@ function Modulos() {
               }
             }}
           >
-            Baixar PDF
+            {t('modulesPage.cta.downloadPdf')}
           </div>
 
           <div className="sessao">
-            <h1>ATIVIDADES</h1>
+            <h1>{t('modulesPage.sections.activities')}</h1>
             <hr />
           </div>
           <hr />
@@ -398,7 +415,7 @@ function Modulos() {
                     }}>
                       <div className="carrocel-atividades-card-butao" style={{
                         color: atividade.terminado ? 'var(--text-on-primary)' : 'var(--text-primary)'
-                      }}>ABRIR ATIVIDADE {index + 1}</div>
+                      }}>{t('modulesPage.cta.openActivity', { index: index + 1 })}</div>
                     </Link>
                   </div>
                 </div>
@@ -418,7 +435,7 @@ function Modulos() {
           <hr />
 
           <div className="sessao">
-            <h1>VÍDEO AULAS</h1>
+            <h1>{t('modulesPage.sections.videoLessons')}</h1>
             <hr />
           </div>
           <div className="sessao">

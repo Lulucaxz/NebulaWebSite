@@ -49,6 +49,45 @@
   "menu.notifications": "Notifications",
   "menu.newNotifications": "New notifications",
   "menu.home": "Home",
+  "footer": {
+    "eyebrow": "Nebula Course",
+    "headline": "Learn, build, and share every day.",
+    "description": "A complete ecosystem with mentoring, forums, and on-demand modules to boost your tech career.",
+    "navLabel": "Site map",
+    "nav": {
+      "explore": {
+        "title": "Explore",
+        "links": {
+          "home": "Home",
+          "courses": "Courses",
+          "plans": "Plans",
+          "community": "Community"
+        }
+      },
+      "experience": {
+        "title": "Experience",
+        "links": {
+          "liveChat": "Live chat",
+          "notes": "Notes",
+          "notifications": "Notifications",
+          "preferences": "Preferences"
+        }
+      }
+    },
+    "social": {
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube"
+    },
+    "contact": {
+      "title": "Contact",
+      "supportHours": "Support from 9am to 6pm (BRT)"
+    },
+    "bottom": {
+      "rights": "© {{year}} Nebula Course. All rights reserved.",
+      "community": "Built by the Nebula community to power your growth."
+    }
+  },
   "access": {
     "lockedTitle": "Content locked",
     "lockedDescription": "The {{page}} page is not included in your current plan.",
@@ -109,6 +148,35 @@
   "home.carousel.videos.video5.title": "General relativity",
   "home.carousel.videos.video6.title": "Schrödinger waves",
   "home.carousel.videos.video7.title": "Kepler's laws",
+  "home.reviews.filters.courses.orbit": "Orbit",
+  "home.reviews.filters.courses.galaxy": "Galaxy",
+  "home.reviews.filters.courses.universe": "Universe",
+  "home.reviews.courseLabel": "Studying - {{course}}",
+  "home.reviews.loading": "Loading reviews...",
+  "home.reviews.error": "We couldn't load your reviews.",
+  "modulesPage": {
+    "invalidSubscription": "The provided subscription is not valid.",
+    "checkingPlan": "Checking your subscription...",
+    "lockedContent": "This content is exclusive to the {{plan}} plan.",
+    "status": {
+      "loadingModule": "Loading module...",
+      "notFound": "Module not found."
+    },
+    "errors": {
+      "load": "We couldn't load this module.",
+      "selected": "Error loading the selected module."
+    },
+    "sections": {
+      "introduction": "INTRODUCTION",
+      "activities": "ACTIVITIES",
+      "videoLessons": "VIDEO LESSONS"
+    },
+    "cta": {
+      "downloadPdf": "DOWNLOAD PDF",
+      "downloadPdfAria": "Download course material in PDF",
+      "openActivity": "OPEN ACTIVITY {{index}}"
+    }
+  },
   "home.plans.title": "Find the best plan for you",
   "home.plans.playAlt": "Start plans video",
   "home.plans.description": "After watching the video above and understanding how our courses work, you can now choose the best plan for you.",
@@ -285,6 +353,13 @@
   "perfil.editor.nickname": "Nickname",
   "perfil.editor.nicknameHint": "Pick your nickname (username cannot be changed)",
   "perfil.editor.bioHint": "Update your biography however you like",
+  "perfil.rank": {
+    "searchLabel": "Search for other students",
+    "profileColumn": "Profile",
+    "pointsColumn": "Points",
+    "positionColumn": "Position",
+    "emptyState": "No users found."
+  },
   
   "_HOME_PAGE": "=== HOME PAGE ===",
   "QUEM SOMOS": "WHO WE ARE",
@@ -395,6 +470,31 @@
   "perfil.followingModal.followingPhotoAlt": "Following user photo",
   "perfil.followingModal.unfollow": "Unfollow",
   "perfil.profileNotFound": "No profiles found.",
+  "perfil2": {
+    "errors": {
+      "selectUser": "Select a user from the ranking to view the profile.",
+      "load": "We couldn't load the selected profile."
+    },
+    "stats": {
+      "followers": "Followers: {{count}}",
+      "following": "Following: {{count}}"
+    },
+    "titles": {
+      "accountOptions": "Account options",
+      "otherOptions": "Other options",
+      "biography": "Biography",
+      "progress": "Progress"
+    },
+    "buttons": {
+      "self": "This is your account",
+      "following": "Following",
+      "follow": "Follow account"
+    },
+    "actions": {
+      "report": "Report account"
+    },
+    "profilePhotoAlt": "Profile photo"
+  },
   "perfil.reviewModal.error.noStars": "Select a number of stars.",
   "perfil.reviewModal.error.minChars": "Write at least 10 characters.",
   "perfil.reviewModal.error.submit": "We couldn't submit your review.",
@@ -418,6 +518,21 @@
   "perfil.reportModal.textDescription": "Explain what happened in up to 1000 characters",
   "perfil.reportModal.placeholder": "Describe why this profile should be reviewed...",
   "perfil.reportModal.submit": "Submit report",
+  "notificationsPage": {
+    "title": "Notifications",
+    "clearAll": "Clear all",
+    "clearAllAria": "Clear notifications",
+    "loading": "Loading notifications...",
+    "empty": "No notifications yet.",
+    "loadError": "We couldn't load your notifications.",
+    "clearError": "We couldn't clear your notifications.",
+    "source": {
+      "chat": "Chat"
+    },
+    "badge": {
+      "new": "New notification"
+    }
+  },
   
   "_COURSES_PAGE": "=== COURSES PAGE ===",
   "CURSO UNIVERSO": "UNIVERSE COURSE",

@@ -8,6 +8,7 @@ import './planos.css'
 import { API_BASE, fetchWithCredentials } from "../../api";
 import { AssinaturaSlug } from "../../utils/assinaturaAccess";
 import { useUserAssinatura } from "../../hooks/useUserAssinatura";
+import Footer from "../../components/footer";
 
 
 
@@ -572,6 +573,8 @@ function Planos() {
             {toastMessage}
           </div>
         )}
+     <Footer />
+
       </div>
     </>
   );

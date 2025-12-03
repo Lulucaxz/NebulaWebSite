@@ -7,6 +7,11 @@ import { ChatMessage } from "../chat/chatData";
 import { getSocket } from "../../socket";
 import { useUnread } from "../../unreadContext";
 
+const I18N_PREFIX = "__i18n__";
+const toI18nError = (key: string) => `${I18N_PREFIX}${key}`;
+const extractI18nKey = (value: string) =>
+  value.startsWith(I18N_PREFIX) ? value.slice(I18N_PREFIX.length) : null;
+
 interface NotificationEntry {
   notificationId?: number;
   messageId: number;
@@ -22,8 +27,25 @@ function Notificacoes() {
   const [notifications, setNotifications] = useState<NotificationEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [clearing, setClearing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { refreshUnread, clearNotificationsUnread } = useUnread();
+
+  const assignError = useCallback((err: unknown, fallbackKey: string) => {
+    if (err instanceof Error) {
+      const key = extractI18nKey(err.message);
+      if (key) {
+        setErrorKey(key);
+        setErrorMessage(null);
+        return;
+      }
+      setErrorMessage(err.message);
+      setErrorKey(null);
+      return;
+    }
+    setErrorKey(fallbackKey);
+    setErrorMessage(null);
+  }, []);
 
   const formatTime = useCallback((value: string) => {
     const date = new Date(value);
@@ -40,12 +62,13 @@ function Notificacoes() {
 
   const loadNotifications = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setErrorKey(null);
+    setErrorMessage(null);
     try {
       const response = await fetchWithCredentials(`${API_BASE}/api/chat/notifications`);
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        throw new Error(body?.error ?? t("Não foi possível carregar as notificações."));
+        throw new Error(body?.error ?? toI18nError("notificationsPage.loadError"));
       }
       const data = await response.json() as Array<{
         id: number;
@@ -72,12 +95,12 @@ function Notificacoes() {
       await refreshUnread({ notificationsTotal: data.length });
     } catch (err) {
       console.error("Failed to load notifications", err);
-      setError(err instanceof Error ? err.message : t("Não foi possível carregar as notificações."));
+      assignError(err, "notificationsPage.loadError");
       setNotifications([]);
     } finally {
       setLoading(false);
     }
-  }, [refreshUnread, t]);
+  }, [assignError, refreshUnread]);
 
   useEffect(() => {
     void loadNotifications();
@@ -116,20 +139,21 @@ function Notificacoes() {
     }
 
     setClearing(true);
-    setError(null);
+    setErrorKey(null);
+    setErrorMessage(null);
     try {
       const response = await fetchWithCredentials(`${API_BASE}/api/chat/notifications/clear`, {
         method: "POST",
       });
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        throw new Error(body?.error ?? t("Não foi possível limpar as notificações."));
+        throw new Error(body?.error ?? toI18nError("notificationsPage.clearError"));
       }
       setNotifications([]);
       clearNotificationsUnread();
     } catch (err) {
       console.error("Failed to clear notifications", err);
-      setError(err instanceof Error ? err.message : t("Não foi possível limpar as notificações."));
+      assignError(err, "notificationsPage.clearError");
     } finally {
       setClearing(false);
     }
@@ -156,44 +180,46 @@ function Notificacoes() {
         <section className="notifications-panel" aria-live="polite">
           <header className="notifications-header">
             <div>
-              <h1>{t("Notificações")}</h1>
+              <h1>{t("notificationsPage.title")}</h1>
             </div>
             <button
               type="button"
               className="notifications-clean"
-              aria-label={t("Limpar notificações")}
+              aria-label={t("notificationsPage.clearAllAria")}
               onClick={handleClear}
               disabled={!renderedNotifications.length || clearing}
             >
-              {t("Limpar tudo")}
+              {t("notificationsPage.clearAll")}
             </button>
           </header>
 
           <div className="notifications-list" role="list">
             {loading && (
-              <div className="notifications-empty">{t("Carregando notificações...")}</div>
+              <div className="notifications-empty">{t("notificationsPage.loading")}</div>
             )}
-            {!loading && error && (
-              <div className="notifications-empty">{error}</div>
+            {!loading && (errorMessage || errorKey) && (
+              <div className="notifications-empty">{errorMessage ?? t(errorKey as string)}</div>
             )}
-            {!loading && !error && renderedNotifications.length === 0 && (
+            {!loading && !errorMessage && !errorKey && renderedNotifications.length === 0 && (
               <div className="notifications-empty">
-                <strong>{t("Nenhuma notificação por aqui.")}</strong>
+                <strong>{t("notificationsPage.empty")}</strong>
               </div>
             )}
-            {!loading && !error && renderedNotifications.map((item) => (
+            {!loading && !errorMessage && !errorKey && renderedNotifications.map((item) => (
               <article
                 key={item.notificationId ?? item.messageId}
                 className={`notification-card notification-card--chat ${item.isRecent ? "is-new" : ""}`}
                 role="listitem"
               >
                 <div className="notification-card-pill">
-                  <span>{t("Chat")}</span>
+                  <span>{t("notificationsPage.source.chat")}</span>
                 </div>
                 <div className="notification-card-content">
                   <div className="notification-card-header">
                     <strong>{item.conversationName}</strong>
-                    {item.isRecent && <span className="notification-dot" aria-label={t("Nova notificacão")}></span>}
+                    {item.isRecent && (
+                      <span className="notification-dot" aria-label={t("notificationsPage.badge.new")}></span>
+                    )}
                   </div>
                   <p>
                     <strong>{item.authorName}</strong>: {item.content}

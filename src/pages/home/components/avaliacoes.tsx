@@ -1,9 +1,25 @@
 import "./avaliacoes.css";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { avaliacoes1, avaliacoes2, avaliacoes3, avaliacoes4 } from "./avaliacoesDados";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { API_BASE, fetchWithCredentials } from "../../../api";
 import type { AvaliacaoCard } from "../../../types/avaliacao";
+
+const courseFilters = [
+  { value: "ÓRBITA", labelKey: "home.reviews.filters.courses.orbit" },
+  { value: "GALÁXIA", labelKey: "home.reviews.filters.courses.galaxy" },
+  { value: "UNIVERSO", labelKey: "home.reviews.filters.courses.universe" },
+];
+
+const courseLabelKeyMap = courseFilters.reduce<Record<string, string>>((acc, filter) => {
+  acc[filter.value.toUpperCase()] = filter.labelKey;
+  return acc;
+}, {});
+
+const normalizeCourseValue = (value: string) => (value ? value.toUpperCase() : value);
+
+const MAX_STARS = 5;
+const STAR_PATH = "M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21z";
 
 const criarSeeds = (): AvaliacaoCard[] => {
   const conjuntos = [avaliacoes1, avaliacoes2, avaliacoes3, avaliacoes4];
@@ -46,10 +62,11 @@ function Avaliacoes() {
   const [erroAvaliacoes, setErroAvaliacoes] = useState<string | null>(null);
 
   const toggleFiltroCurso = (filtro: string) => {
+    const normalized = normalizeCourseValue(filtro);
     setFiltrosSelecionados((prev) =>
-      prev.includes(filtro)
-        ? prev.filter((item) => item !== filtro)
-        : [...prev, filtro]
+      prev.includes(normalized)
+        ? prev.filter((item) => item !== normalized)
+        : [...prev, normalized]
     );
     setContainerHeight(1000);
   };
@@ -79,7 +96,7 @@ function Avaliacoes() {
         if (!ativo) return;
 
         if (!resposta.ok || !Array.isArray(payload)) {
-          throw new Error((payload as { error?: string } | null)?.error || "Erro ao carregar avaliações.");
+          throw new Error((payload as { error?: string } | null)?.error || t("home.reviews.error"));
         }
 
         if (payload.length > 0) {
@@ -87,7 +104,7 @@ function Avaliacoes() {
         }
       } catch (error) {
         if (!ativo || controller.signal.aborted) return;
-        const mensagem = error instanceof Error ? error.message : "Erro inesperado ao carregar avaliações.";
+        const mensagem = error instanceof Error ? error.message : t("home.reviews.error");
         setErroAvaliacoes(mensagem);
       } finally {
         if (ativo) {
@@ -102,7 +119,7 @@ function Avaliacoes() {
       ativo = false;
       controller.abort();
     };
-  }, [seedAvaliacoes]);
+  }, [seedAvaliacoes, t]);
 
   useEffect(() => {
     const handleNovaAvaliacao = (event: CustomEvent<AvaliacaoCard>) => {
@@ -159,8 +176,9 @@ function Avaliacoes() {
 
   const filtrarAvaliacoes = useCallback((lista: AvaliacaoCard[]) => {
     return lista.filter((item) => {
+      const cursoNormalizado = normalizeCourseValue(item.curso);
       const cursoCondicao =
-        filtrosSelecionados.length === 0 || filtrosSelecionados.includes(item.curso.toUpperCase());
+        filtrosSelecionados.length === 0 || filtrosSelecionados.includes(cursoNormalizado);
       const estrelaCondicao =
         filtroEstrelaSelecionada === null || item.estrelas === filtroEstrelaSelecionada;
 
@@ -170,6 +188,11 @@ function Avaliacoes() {
 
   const avaliacoesFiltradas = useMemo(() => filtrarAvaliacoes(avaliacoes), [avaliacoes, filtrarAvaliacoes]);
   const colunasAvaliacoes = useMemo(() => distribuirEmColunas(avaliacoesFiltradas), [avaliacoesFiltradas]);
+
+  const getCourseLabel = useCallback((curso: string) => {
+    const key = courseLabelKeyMap[normalizeCourseValue(curso)];
+    return key ? t(key) : curso;
+  }, [t]);
 
   return (
     <>
@@ -202,15 +225,18 @@ function Avaliacoes() {
           </nav>
 
           <nav className="nav-filtros-extras-cursos">
-            {["ÓRBITA", "GALÁXIA", "UNIVERSO"].map((filtro) => (
-              <div
-                key={filtro}
-                className={`filtros-extra ${filtrosSelecionados.includes(filtro) ? "ativo" : ""}`}
-                onClick={() => toggleFiltroCurso(filtro)}
-              >
-                {filtro}
-              </div>
-            ))}
+            {courseFilters.map((filtro) => {
+              const normalizedValue = normalizeCourseValue(filtro.value);
+              return (
+                <div
+                  key={filtro.value}
+                  className={`filtros-extra ${filtrosSelecionados.includes(normalizedValue) ? "ativo" : ""}`}
+                  onClick={() => toggleFiltroCurso(filtro.value)}
+                >
+                  {t(filtro.labelKey)}
+                </div>
+              );
+            })}
           </nav>
 
         </div>
@@ -229,20 +255,20 @@ function Avaliacoes() {
                       <img className="comentario-usuario-icon" src={item.foto} alt="Foto do usuário" />
                       <div className="comentario-usuario-titulo">
                         <h3>{item.nome}</h3>
-                        <h4>Cursa - {item.curso}</h4>
+                        <h4>{t("home.reviews.courseLabel", { course: getCourseLabel(item.curso) })}</h4>
                       </div>
                     </div>
                     <div className="comentario-avaliacao">
-                      {[...Array(5)].map((_, i) => (
-                        <img
+                      {[...Array(MAX_STARS)].map((_, i) => (
+                        <svg
                           key={i}
-                          src={
-                            i < item.estrelas
-                              ? "/icons/estrela-clara.svg"
-                              : "/icons/estrela-escura.svg"
-                          }
-                          alt={`Estrela ${i + 1}`}
-                        />
+                          className={`comentario-estrela ${i < item.estrelas ? "filled" : ""}`}
+                          viewBox="0 0 24 24"
+                          role="presentation"
+                          aria-hidden="true"
+                        >
+                          <path d={STAR_PATH} />
+                        </svg>
                       ))}
                     </div>
                     <p className="comentario-conteudo">{item.texto}</p>
@@ -258,7 +284,7 @@ function Avaliacoes() {
         )}
         {carregandoAvaliacoes && (
           <p style={{ marginTop: "16px", color: "var(--cinza-claro1)", textAlign: "center" }}>
-            Carregando avaliações...
+            {t("home.reviews.loading")}
           </p>
         )}
         <div className="avl-botoes-mais-menos">
