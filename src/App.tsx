@@ -3,6 +3,7 @@ import { AlertProvider } from './Alert';
 import NotificationListener from "./NotificationListener";
 import { UnreadProvider } from "./unreadContext";
 import { ProtectedRoute } from './components/ProtectedRoute';
+import AuthLogoutReset from "./AuthLogoutReset";
 
 import Perfil from './pages/perfil/Perfil';
 import Perfil2 from './pages/perfil/Perfil2';
@@ -28,6 +29,7 @@ function App() {
       <UnreadProvider>
         <Router>
           <NotificationListener />
+          <AuthLogoutReset />
           <Routes>
             <Route path="/" element={
               <Home />

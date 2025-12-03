@@ -119,13 +119,13 @@
   "home.plans.benefits.certificate": "Digital certificate issuance",
   "home.plans.tiers.orbit.name": "Orbit",
   "home.plans.tiers.orbit.description": "For beginners, it covers basic physics and astronomy concepts, such as the Solar System and fundamental laws. Ideal for those starting their journey in the scientific universe.",
-  "home.plans.tiers.orbit.price": "R$900.99",
+  "home.plans.tiers.orbit.price": "R$79.90",
   "home.plans.tiers.galaxy.name": "Galaxy",
   "home.plans.tiers.galaxy.description": "Explores intermediate topics such as Newton's laws, stars, galaxies and introduction to relativity. Perfect for those who already know the basics and want to go deeper.",
-  "home.plans.tiers.galaxy.price": "R$990.99",
+  "home.plans.tiers.galaxy.price": "R$129.90",
   "home.plans.tiers.universe.name": "Universe",
   "home.plans.tiers.universe.description": "Advanced plan with content on quantum physics, black holes, dark energy and cosmology. Recommended for those seeking complete and in-depth training.",
-  "home.plans.tiers.universe.price": "R$1,299.90",
+  "home.plans.tiers.universe.price": "R$179.90",
   "plans": {
     "options": {
       "orbita": {

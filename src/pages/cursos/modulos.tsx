@@ -17,6 +17,8 @@ const DEFAULT_VIDEO_FALLBACKS = [
   { title: 'AULA 7', url: 'https://youtu.be/sfi5eyJqq2k' },
 ];
 
+const PDF_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1WDIRkL4pIhnVaJVssIG06RI_fIB_QxGI';
+
 const getVideoFallback = (index: number) => DEFAULT_VIDEO_FALLBACKS[index] ?? DEFAULT_VIDEO_FALLBACKS[0];
 
 function Modulos() {
@@ -262,6 +264,11 @@ function Modulos() {
 
   const m = moduloData;
 
+  const handlePdfDownload = () => {
+    if (typeof window === 'undefined') return;
+    window.open(PDF_DOWNLOAD_URL, '_blank', 'noopener');
+  };
+
   function updateMatrizAtividades(index: number) {
     setMatrizAtividadesIndex(index);
   }
@@ -324,7 +331,20 @@ function Modulos() {
             <img src="/icons/arrow-video.png" alt="" />
           </div>
 
-          <div className="curso-download">Baixar PDF</div>
+          <div
+            className="curso-download"
+            role="button"
+            tabIndex={0}
+            onClick={handlePdfDownload}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handlePdfDownload();
+              }
+            }}
+          >
+            Baixar PDF
+          </div>
 
           <div className="sessao">
             <h1>ATIVIDADES</h1>
@@ -356,7 +376,7 @@ function Modulos() {
                     }}></div>
                     <div className="carrocel-atividades-card-baixo" style={{
                       backgroundColor: atividade.terminado
-                        ? 'color-mix(in srgb, var(--primary-500) 30%, var(--palette-contrast) 70%)'
+                        ? 'color-mix(in srgb, var(--primary-600) 85%, #000 15%)'
                         : 'color-mix(in srgb, var(--surface-page) 92%, var(--palette-contrast) 8%)'
                     }}></div>
                   </div>
@@ -373,7 +393,7 @@ function Modulos() {
                     </div>
 
                     <Link to={`/modulos/${assinaturaSlug}/${m.id}/atividades/${index}`} className="carrocel-atividades-card-baixo" style={{
-                      backgroundColor: atividade.terminado ? 'color-mix(in srgb, var(--primary-500) 15%, var(--palette-contrast) 85%)' : 'color-mix(in srgb, var(--surface-page) 90%, var(--palette-contrast) 10%)',
+                      backgroundColor: atividade.terminado ? 'color-mix(in srgb, var(--primary-600) 92%, #000 8%)' : 'color-mix(in srgb, var(--surface-page) 90%, var(--palette-contrast) 10%)',
                       cursor: 'pointer'
                     }}>
                       <div className="carrocel-atividades-card-butao" style={{
