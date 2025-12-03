@@ -620,13 +620,14 @@
 .prf-denuncia-topicos {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .prf-denuncia-topico {
   padding: 10px 25px;
   width: auto;
   font-size: 14px;
-  background-color: var(--text-secondary);
+  background-color: var(--surface-muted);
   color: var(--text-primary);
   display: flex;
   justify-content: center;

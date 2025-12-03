@@ -118,6 +118,9 @@ const fromPublicModuleId = (publicId: number) => {
   return publicId - CUSTOM_MODULE_ID_OFFSET;
 };
 
+const MAX_VIDEO_URL_LENGTH = 1024;
+const MAX_BACKGROUND_URL_LENGTH = 64000;
+
 const sanitizeText = (value: unknown, maxLength: number) => {
   const text = String(value ?? '').trim();
   if (!text) return '';
@@ -250,13 +253,16 @@ const sanitizeVideo = (payload: unknown) => {
   }
   const data = payload as Record<string, unknown>;
   const titulo = sanitizeText(data.titulo, 255);
-  const video = sanitizeText(data.videoUrl ?? data.video, 2048);
+  const video = sanitizeText(data.videoUrl ?? data.video, MAX_VIDEO_URL_LENGTH);
   if (!titulo || !video) {
     return null;
   }
   const subtitulo = sanitizeText(data.subtitulo, 255) || undefined;
   const descricao = sanitizeText(data.descricao, 2000) || undefined;
-  const background = sanitizeText(data.backgroundUrl ?? data.backgroundImage, 2048) || undefined;
+  const background = sanitizeText(
+    data.backgroundUrl ?? data.backgroundImage,
+    MAX_BACKGROUND_URL_LENGTH
+  ) || undefined;
   const ordem = Number.isFinite(Number(data.ordem)) ? Number(data.ordem) : 0;
   return { titulo, video, subtitulo, descricao, background, ordem };
 };
@@ -342,8 +348,11 @@ router.post(
     const titulo = sanitizeText(req.body?.titulo, 255);
     const descricao = sanitizeText(req.body?.descricao, 2000);
     const introDescricao = sanitizeText(req.body?.introducaoDescricao, 4000);
-    const introVideo = sanitizeText(req.body?.introducaoVideo, 2048);
-    const introBackground = sanitizeText(req.body?.introducaoBackground, 2048);
+    const introVideo = sanitizeText(req.body?.introducaoVideo, MAX_VIDEO_URL_LENGTH);
+    const introBackground = sanitizeText(
+      req.body?.introducaoBackground,
+      MAX_BACKGROUND_URL_LENGTH
+    );
     const ordem = Number.isFinite(Number(req.body?.ordem)) ? Number(req.body?.ordem) : 0;
 
     if (!assinatura || !titulo || !descricao || !introDescricao || !introVideo || !introBackground) {

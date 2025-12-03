@@ -450,6 +450,7 @@ function Modulos() {
                   >
                       <VideoCard
                         src={safeVideoSource}
+                        backgroundImage={videoCard.backgroundImage}
                         width="100%"
                         height="100%"
                         showPlayIcon={true}
