@@ -206,7 +206,10 @@
     "loading": "Verificando seu acesso...",
     "loginRequiredTitle": "Faça login para continuar",
     "loginRequiredDescription": "Entre na sua conta para desbloquear este vídeo.",
-    "loginRequiredCta": "Ir para login"
+    "loginRequiredCta": "Ir para login",
+    "defaultTitle": "Vídeo da aula",
+    "backButton": "Voltar",
+    "loadError": "Não foi possível carregar este vídeo. Verifique se o link é válido."
   },
   "plans": {
     "options": {

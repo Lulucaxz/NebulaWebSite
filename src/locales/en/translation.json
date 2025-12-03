@@ -206,7 +206,10 @@
     "loading": "Checking your access...",
     "loginRequiredTitle": "Log in to continue",
     "loginRequiredDescription": "Sign in to your account to unlock this video.",
-    "loginRequiredCta": "Go to login"
+    "loginRequiredCta": "Go to login",
+    "defaultTitle": "Lesson video",
+    "backButton": "Back",
+    "loadError": "We couldn't load this video. Please verify the link is valid."
   },
   "plans": {
     "options": {

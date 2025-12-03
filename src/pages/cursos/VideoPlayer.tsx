@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactPlayer from 'react-player';
 import { Menu } from '../../components/Menu';
-import Footer from '../../components/footer';
+
 import { useUserAssinatura } from '../../hooks/useUserAssinatura';
 import { ALWAYS_AVAILABLE_VIDEO_URLS } from '../../data/freeVideos';
 
@@ -30,9 +30,12 @@ export default function VideoPlayer() {
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const { isLoading: authLoading, isAuthenticated } = useUserAssinatura();
+  const defaultTitle = t('videoPlayer.defaultTitle');
+  const backButtonLabel = t('videoPlayer.backButton');
+  const loadError = t('videoPlayer.loadError');
 
   const videoUrl = getParam(search.get('url'));
-  const title = getParam(search.get('title'), 'Vídeo da aula');
+  const title = getParam(search.get('title'), defaultTitle);
   const subtitle = getParam(search.get('subtitle'));
   const description = getParam(search.get('description'));
   const background = getParam(search.get('background'));
@@ -97,7 +100,7 @@ export default function VideoPlayer() {
               cursor: 'pointer'
             }}
           >
-            VOLTAR
+            {backButtonLabel}
           </button>
 
           {canPlay ? (
@@ -121,13 +124,13 @@ export default function VideoPlayer() {
             </div>
           ) : (
             <div style={{ padding: '2rem', border: '1px solid var(--border-muted, rgba(255,255,255,0.2))', borderRadius: '12px' }}>
-              Não foi possível carregar este vídeo. Verifique se o link é válido.
+              {loadError}
             </div>
           )}
 
           <div style={{ marginTop: '2rem' }}>
-            <h1>{title}</h1>
-            {subtitle && <h2 style={{ fontWeight: 400 }}>{subtitle}</h2>}
+            <h1 style={{ lineHeight: "35px"}}>{title}</h1>
+            {subtitle && <h2 style={{ fontWeight: 400, marginTop: '0.5rem' }}>{subtitle}</h2>}
             {description && <p style={{ marginTop: '1rem', lineHeight: 1.6 }}>{description}</p>}
           </div>
         </div>
