@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Menu } from "../../components/Menu";
 import Footer from "../../components/footer";
 import { useState, useEffect } from 'react';
@@ -8,8 +8,20 @@ import { Link } from "react-router-dom";
 import { useUserAssinatura } from '../../hooks/useUserAssinatura';
 import { ASSINATURA_LABEL_BY_SLUG, hasAccessToAssinatura, normalizeAssinaturaValue } from '../../utils/assinaturaAccess';
 
+const DEFAULT_VIDEO_FALLBACKS = [
+  { title: 'AULA 1', url: 'https://youtu.be/wvZH-IC4G_U' },
+  { title: 'AULA 2', url: 'https://youtu.be/zYOeQNq347c' },
+  { title: 'AULA 3', url: 'https://youtu.be/TYejsohIFWI' },
+  { title: 'AULA 4', url: 'https://youtu.be/H2SlLWFlnCU' },
+  { title: 'AULA 5', url: 'https://youtu.be/QqwPbX5HRTY' },
+  { title: 'AULA 7', url: 'https://youtu.be/sfi5eyJqq2k' },
+];
+
+const getVideoFallback = (index: number) => DEFAULT_VIDEO_FALLBACKS[index] ?? DEFAULT_VIDEO_FALLBACKS[0];
+
 function Modulos() {
   const params = useParams<{ assinatura: string; moduloId: string }>();
+  const navigate = useNavigate();
   const assinaturaParam = params.assinatura ?? '';
   const moduloId = params.moduloId;
   const assinaturaSlug = normalizeAssinaturaValue(assinaturaParam);
@@ -254,6 +266,32 @@ function Modulos() {
     setMatrizAtividadesIndex(index);
   }
 
+  const goToVideoPlayer = ({
+    videoUrl,
+    title,
+    subtitle,
+    description,
+    background,
+  }: {
+    videoUrl?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    description?: string | null;
+    background?: string | null;
+  }) => {
+    const normalizedUrl = videoUrl?.trim();
+    if (!normalizedUrl) return;
+
+    const params = new URLSearchParams();
+    params.set('url', normalizedUrl);
+    if (title) params.set('title', title);
+    if (subtitle) params.set('subtitle', subtitle);
+    if (description) params.set('description', description);
+    if (background) params.set('background', background);
+
+    navigate(`/video-player?${params.toString()}`);
+  };
+
   return (
     <>
       <Menu />
@@ -275,6 +313,13 @@ function Modulos() {
               isActive={activeVideoIndex === m.introducao.id}
               onActivate={() => setActiveVideoIndex(m.introducao.id)}
               onDeactivate={() => setActiveVideoIndex(null)}
+              onPlay={() => goToVideoPlayer({
+                videoUrl: m.introducao.video,
+                title: m.template?.titulo ?? 'Introdução',
+                subtitle: m.introducao.descricao,
+                description: m.template?.descricao ?? undefined,
+                background: m.introducao.videoBackground,
+              })}
             />
             <img src="/icons/arrow-video.png" alt="" />
           </div>
@@ -359,11 +404,16 @@ function Modulos() {
           <div className="sessao">
             <div className="videos-sessao-container">
               <div className="videos-sessao-container-int">
-                {m.videoAulas.map((videoCard: Video, videoCargIndex: number) => (
-                  <div
-                    key={videoCard.id}
-                    className="videos-sessao-card"
-                    style={{
+                {m.videoAulas.map((videoCard: Video, videoCargIndex: number) => {
+                  const fallback = getVideoFallback(videoCargIndex);
+                  const safeVideoSource = videoCard.video?.trim() || fallback.url;
+                  const safeVideoTitle = videoCard.titulo?.trim() || fallback.title;
+
+                  return (
+                    <div
+                      key={videoCard.id}
+                      className="videos-sessao-card"
+                      style={{
                       width: 
                       matrizVideos[videoCargIndex] ?
                         itemsPerView < 2 ?
@@ -396,27 +446,29 @@ function Modulos() {
                       filter: videoCargIndex < matrizVideoIndex || videoCargIndex >= matrizVideoIndex + 3 ? 'brightness(0.3)' : 'none',
                       border: videoCargIndex === matrizVideoIndex ? '1px solid white' : 'none',
                     }}
+                    onClickCapture={() => updateMatrizVideos(videoCargIndex)}
                   >
-                    <VideoCard
-                      src={videoCard.video ?? ''}
-                      width="100%"
-                      height="100%"
-                      showPlayIcon={true}
-                      isActive={activeVideoIndex === videoCard.id}
-                      autoPlayBlurred={matrizVideos[videoCargIndex]}
-                      onActivate={() => setActiveVideoIndex(videoCard.id)}
-                      onDeactivate={() => setActiveVideoIndex(null)}
-                    />
-                    <div
-                      className="videos-sessao-card-click"
-                      onClick={() => updateMatrizVideos(videoCargIndex)}
-                      style={{
-                        pointerEvents: matrizVideos[videoCargIndex] ? 'none' : 'auto',
-                      }}
-                    />
-                    <div className="videos-sessao-card-titulo">{videoCard.titulo}</div>
-                  </div>
-                ))}
+                      <VideoCard
+                        src={safeVideoSource}
+                        width="100%"
+                        height="100%"
+                        showPlayIcon={true}
+                        isActive={activeVideoIndex === videoCard.id}
+                        autoPlayBlurred={matrizVideos[videoCargIndex]}
+                        onActivate={() => setActiveVideoIndex(videoCard.id)}
+                        onDeactivate={() => setActiveVideoIndex(null)}
+                        onPlay={() => goToVideoPlayer({
+                          videoUrl: safeVideoSource,
+                          title: safeVideoTitle,
+                          subtitle: videoCard.subtitulo,
+                          description: videoCard.descricao,
+                          background: videoCard.backgroundImage ?? m.introducao.videoBackground,
+                        })}
+                      />
+                      <div className="videos-sessao-card-titulo">{safeVideoTitle}</div>
+                    </div>
+                  );
+                })}
                 <div className="videos-sessao-arrow-left" onClick={() => {
                   if (matrizVideoIndex - 1 >= 0) {
                     updateMatrizVideos(matrizVideoIndex - 1)

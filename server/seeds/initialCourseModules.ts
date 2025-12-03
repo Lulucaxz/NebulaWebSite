@@ -660,7 +660,59 @@ const questoesFormacaoGalaxias = [
     }
 ];
 
-export const initialCourseModules = {
+const YOUTUBE_LESSON_LINKS = [
+    'https://youtu.be/wvZH-IC4G_U',
+    'https://youtu.be/zYOeQNq347c',
+    'https://youtu.be/TYejsohIFWI',
+    'https://youtu.be/H2SlLWFlnCU',
+    'https://youtu.be/QqwPbX5HRTY',
+    'https://youtu.be/sfi5eyJqq2k'
+];
+
+type WithVideoField = { video?: string };
+type ModuleWithVideos = {
+    introducao?: WithVideoField & Record<string, unknown>;
+    videoAulas?: Array<WithVideoField & Record<string, unknown>>;
+};
+type ModuleMap = Record<string, ModuleWithVideos[]>;
+
+const isYoutubeLink = (value?: string): boolean => Boolean(value && /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(value));
+
+const selectYoutubeLink = (index: number): string => YOUTUBE_LESSON_LINKS[index % YOUTUBE_LESSON_LINKS.length];
+
+const ensureYoutubeVideo = (current: string | undefined, index: number): string => {
+    if (current && isYoutubeLink(current)) {
+        return current;
+    }
+    return selectYoutubeLink(index);
+};
+
+const normalizeVideoList = <T extends WithVideoField>(videos?: T[]): T[] =>
+    (videos ?? []).map((video, index) => ({
+        ...video,
+        video: ensureYoutubeVideo(video.video, index)
+    }));
+
+const normalizeCourseModules = <T extends ModuleMap>(modules: T): T => {
+    const normalizedEntries = Object.entries(modules).map(([key, moduleList]) => {
+        const normalizedModules = moduleList.map((module) => ({
+            ...module,
+            introducao: module.introducao
+                ? {
+                    ...module.introducao,
+                    video: ensureYoutubeVideo(module.introducao.video, 0)
+                }
+                : module.introducao,
+            videoAulas: normalizeVideoList(module.videoAulas)
+        }));
+
+        return [key, normalizedModules];
+    });
+
+    return Object.fromEntries(normalizedEntries) as T;
+};
+
+const courseModulesData = {
     universo: [
         {
             id: 4526672,
@@ -3037,3 +3089,5 @@ export const initialCourseModules = {
         }
     ]
 }
+
+export const initialCourseModules = normalizeCourseModules(courseModulesData);
